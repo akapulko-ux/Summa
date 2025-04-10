@@ -195,7 +195,7 @@ export function ServiceList() {
                     </TableCell>
                     <TableCell className="max-w-md">
                       <div className="truncate">
-                        {service.description || t.services.noDescription}
+                        {service.description || "Нет описания"}
                       </div>
                     </TableCell>
                     <TableCell>{formatCashback(service.cashback)}</TableCell>
@@ -230,7 +230,7 @@ export function ServiceList() {
         <CardFooter className="border-t px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-sm text-muted-foreground">
-              {t.services.showingServices.replace('{count}', String(data.services.length)).replace('{total}', String(data.total))}
+              Показано {data.services.length} из {data.total} сервисов
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -240,7 +240,7 @@ export function ServiceList() {
                 disabled={page === 1}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                Previous
+                {t.common.prev}
               </Button>
               <Button
                 variant="outline"
@@ -248,7 +248,7 @@ export function ServiceList() {
                 onClick={handleNextPage}
                 disabled={page >= Math.ceil(data.total / limit)}
               >
-                Next
+                {t.common.next}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -260,7 +260,7 @@ export function ServiceList() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Edit Service</DialogTitle>
+            <DialogTitle>{t.services.editService}</DialogTitle>
           </DialogHeader>
           {selectedServiceId && (
             <ServiceForm 
@@ -278,7 +278,7 @@ export function ServiceList() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Service Details</DialogTitle>
+            <DialogTitle>{t.services.serviceDetails}</DialogTitle>
           </DialogHeader>
           {selectedServiceId && (
             <ServiceDetails serviceId={selectedServiceId} />
@@ -306,7 +306,7 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
   }
 
   if (!service) {
-    return <div className="p-4 text-muted-foreground">Service not found</div>;
+    return <div className="p-4 text-muted-foreground">{t.services.noServices}</div>;
   }
 
   return (
@@ -332,7 +332,7 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
 
       {service.description && (
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">Description</h4>
+          <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.serviceDescription}</h4>
           <p className="text-sm">{service.description}</p>
         </div>
       )}
