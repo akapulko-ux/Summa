@@ -24,6 +24,7 @@ import { Service } from "@shared/schema";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ServiceForm } from "./service-form";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "@/hooks/use-translations";
 
 export function ServiceList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,6 +34,7 @@ export function ServiceList() {
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const { user } = useAuth();
+  const { t } = useTranslations();
   const isAdmin = user?.role === "admin";
 
   const {
@@ -63,7 +65,7 @@ export function ServiceList() {
   };
 
   const handleDelete = (serviceId: number) => {
-    if (window.confirm("Are you sure you want to delete this service?")) {
+    if (window.confirm(t.services.confirmDelete)) {
       deleteServiceMutation.mutate(serviceId);
     }
   };

@@ -18,7 +18,7 @@ interface Subscription {
 }
 
 export function RecentSubscriptions() {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const { data, isLoading } = useQuery<{ subscriptions: Subscription[] }>({
     queryKey: ["/api/subscriptions", { limit: 5 }],
   });
@@ -100,7 +100,7 @@ export function RecentSubscriptions() {
                     <td className="p-4 align-middle">
                       {formatDistanceToNow(new Date(sub.createdAt), {
                         addSuffix: true,
-                        locale: t.language === 'ru' ? ru : undefined
+                        locale: language === 'ru' ? ru : undefined
                       })}
                     </td>
                     <td className="p-4 align-middle">
