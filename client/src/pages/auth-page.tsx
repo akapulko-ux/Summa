@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { loginSchema, registerSchema, magicLinkSchema } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "@/hooks/use-translations";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,6 +19,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation } from "wouter";
 import { Loader2, Mail } from "lucide-react";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
 
 export default function AuthPage() {
   const [location, navigate] = useLocation();

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "@/hooks/use-translations";
 import { Bell, Menu } from "lucide-react";
 import { useState } from "react";
 import {
@@ -11,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link, useLocation } from "wouter";
+import { LanguageSwitcher } from "./language-switcher";
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -24,6 +26,8 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const handleLogout = () => {
     logoutMutation.mutate();
   };
+
+  const { t } = useTranslations();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -53,24 +57,25 @@ export function Header({ onMenuToggle }: HeaderProps) {
             >
               <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
             </svg>
-            <span className="ml-2 text-xl font-bold">SaaSly</span>
+            <span className="ml-2 text-xl font-bold">{t.common.appName}</span>
           </Link>
         </div>
         <nav className="mx-6 flex items-center space-x-4 lg:space-x-6 hidden md:flex">
           <Link href="/" className="text-sm font-medium transition-colors hover:text-primary">
-            Dashboard
+            {t.nav.dashboard}
           </Link>
           <Link href="/subscriptions" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            Subscriptions
+            {t.nav.subscriptions}
           </Link>
           <Link href="/services" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            Services
+            {t.nav.services}
           </Link>
           <Link href="/users" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            Users
+            {t.nav.users}
           </Link>
         </nav>
         <div className="ml-auto flex items-center space-x-4">
+          <LanguageSwitcher />
           <Button variant="ghost" size="icon" className="relative">
             <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-secondary"></span>
             <Bell className="h-5 w-5" />
@@ -97,14 +102,14 @@ export function Header({ onMenuToggle }: HeaderProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => navigate("/profile")}>
-                Profile
+                {t.nav.profile}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/subscriptions")}>
-                My Subscriptions
+                {t.nav.subscriptions}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
-                Log out
+                {t.common.logout}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
