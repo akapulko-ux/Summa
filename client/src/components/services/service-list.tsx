@@ -338,25 +338,25 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
       )}
 
       <div>
-        <h4 className="text-sm font-medium text-muted-foreground mb-1">Cashback</h4>
+        <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.cashback}</h4>
         <p className="text-sm">
           {service.cashback ? (
             service.cashback.endsWith("%") ? (
-              <>{service.cashback} of subscription value</>
+              <>{service.cashback} от стоимости подписки</>
             ) : (
-              <>${service.cashback} fixed cashback</>
+              <>{service.cashback}₽ фиксированный кэшбэк</>
             )
           ) : (
-            "No cashback available"
+            "Кэшбэк недоступен"
           )}
         </p>
       </div>
 
-      {service.customFields && Object.keys(service.customFields).length > 0 && (
+      {service.customFields && typeof service.customFields === 'object' && Object.keys(service.customFields).length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">Custom Fields</h4>
+          <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.customFields}</h4>
           <div className="space-y-2">
-            {Object.entries(service.customFields).map(([key, value]) => (
+            {Object.entries(service.customFields as Record<string, unknown>).map(([key, value]) => (
               <div key={key} className="flex">
                 <span className="text-sm font-medium mr-2">{key}:</span>
                 <span className="text-sm">{String(value)}</span>
@@ -367,8 +367,8 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
       )}
 
       <div className="flex justify-between text-sm text-muted-foreground pt-4 border-t">
-        <div>Created: {new Date(service.createdAt).toLocaleDateString()}</div>
-        <div>Updated: {new Date(service.updatedAt).toLocaleDateString()}</div>
+        <div>{t.common.date} создания: {new Date(service.createdAt).toLocaleDateString(t.language === 'ru' ? 'ru-RU' : 'en-US')}</div>
+        <div>{t.common.date} обновления: {new Date(service.updatedAt).toLocaleDateString(t.language === 'ru' ? 'ru-RU' : 'en-US')}</div>
       </div>
     </div>
   );
