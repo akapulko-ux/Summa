@@ -99,13 +99,13 @@ export function ServiceList() {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Services</CardTitle>
+          <CardTitle>{t.services.title}</CardTitle>
           <div className="flex items-center gap-2">
             <div className="relative">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search services..."
+                placeholder={t.common.search}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -115,12 +115,12 @@ export function ServiceList() {
               <Dialog>
                 <DialogTrigger asChild>
                   <Button>
-                    Add Service
+                    {t.services.addService}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
-                    <DialogTitle>Add New Service</DialogTitle>
+                    <DialogTitle>{t.services.addService}</DialogTitle>
                   </DialogHeader>
                   <ServiceForm 
                     onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/services"] })} 
@@ -136,10 +136,10 @@ export function ServiceList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Service</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Cashback</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t.services.serviceTitle}</TableHead>
+                <TableHead>{t.services.serviceDescription}</TableHead>
+                <TableHead>{t.services.cashback}</TableHead>
+                <TableHead>{t.common.edit}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -161,13 +161,13 @@ export function ServiceList() {
               ) : isError ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                    Error loading services. Please try again.
+                    {t.messages.serverError}
                   </TableCell>
                 </TableRow>
               ) : data?.services.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                    No services found.
+                    {t.services.noServices}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -195,7 +195,7 @@ export function ServiceList() {
                     </TableCell>
                     <TableCell className="max-w-md">
                       <div className="truncate">
-                        {service.description || "No description provided"}
+                        {service.description || t.services.noDescription}
                       </div>
                     </TableCell>
                     <TableCell>{formatCashback(service.cashback)}</TableCell>
@@ -230,7 +230,7 @@ export function ServiceList() {
         <CardFooter className="border-t px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-sm text-muted-foreground">
-              Showing {data.services.length} of {data.total} services
+              {t.services.showingServices.replace('{count}', String(data.services.length)).replace('{total}', String(data.total))}
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -290,6 +290,7 @@ export function ServiceList() {
 }
 
 function ServiceDetails({ serviceId }: { serviceId: number }) {
+  const { t } = useTranslations();
   const { data: service, isLoading } = useQuery<Service>({
     queryKey: [`/api/services/${serviceId}`],
   });
