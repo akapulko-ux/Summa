@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
+import { ru } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import { useTranslations } from "@/hooks/use-translations";
@@ -26,12 +27,12 @@ export function RecentSubscriptions() {
   const getBadgeVariant = (status: string) => {
     switch (status) {
       case "active":
-        return "outline-success";
+        return "outline";
       case "pending":
-        return "outline-warning";
+        return "secondary";
       case "expired":
       case "canceled":
-        return "outline-destructive";
+        return "destructive";
       default:
         return "outline";
     }
@@ -94,16 +95,21 @@ export function RecentSubscriptions() {
                   >
                     <td className="p-4 align-middle">{sub.title}</td>
                     <td className="p-4 align-middle">
-                      {sub.userName || `User #${sub.userId}`}
+                      {sub.userName || `${t.users.title} #${sub.userId}`}
                     </td>
                     <td className="p-4 align-middle">
                       {formatDistanceToNow(new Date(sub.createdAt), {
                         addSuffix: true,
+                        locale: t.language === 'ru' ? ru : undefined
                       })}
                     </td>
                     <td className="p-4 align-middle">
                       <Badge variant={getBadgeVariant(sub.status)}>
-                        {sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}
+                        {sub.status === "active" ? t.subscriptions.statusActive :
+                         sub.status === "pending" ? t.subscriptions.statusPending :
+                         sub.status === "expired" ? t.subscriptions.statusExpired :
+                         sub.status === "canceled" ? t.subscriptions.statusCanceled :
+                         sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}
                       </Badge>
                     </td>
                   </tr>
@@ -111,7 +117,7 @@ export function RecentSubscriptions() {
               ) : (
                 <tr>
                   <td colSpan={4} className="p-4 text-center text-muted-foreground">
-                    No subscriptions found.
+                    {t.subscriptions.noSubscriptions}
                   </td>
                 </tr>
               )}
