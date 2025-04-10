@@ -8,17 +8,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { SubscriptionForm } from "@/components/subscriptions/subscription-form";
 import { ServiceForm } from "@/components/services/service-form";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "@/hooks/use-translations";
 import { useState } from "react";
 import { Link } from "wouter";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useTranslations();
   const isAdmin = user?.role === "admin";
   const [isSubscriptionDialogOpen, setIsSubscriptionDialogOpen] = useState(false);
   const [isServiceDialogOpen, setIsServiceDialogOpen] = useState(false);
 
   return (
-    <AppLayout title="Dashboard">
+    <AppLayout title={t.dashboard.title}>
       {/* Quick action buttons */}
       <div className="flex justify-end">
         <div className="flex gap-2">
@@ -26,12 +28,12 @@ export default function Dashboard() {
             <DialogTrigger asChild>
               <Button className="hidden md:flex">
                 <Plus className="h-4 w-4 mr-2" />
-                New Subscription
+                {t.dashboard.newSubscription}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle>Add New Subscription</DialogTitle>
+                <DialogTitle>{t.subscriptions.addSubscription}</DialogTitle>
               </DialogHeader>
               <SubscriptionForm 
                 onSuccess={() => setIsSubscriptionDialogOpen(false)} 
@@ -44,12 +46,12 @@ export default function Dashboard() {
               <DialogTrigger asChild>
                 <Button className="hidden md:flex" variant="outline">
                   <Plus className="h-4 w-4 mr-2" />
-                  New Service
+                  {t.dashboard.newService}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                  <DialogTitle>Add New Service</DialogTitle>
+                  <DialogTitle>{t.services.addService}</DialogTitle>
                 </DialogHeader>
                 <ServiceForm 
                   onSuccess={() => setIsServiceDialogOpen(false)} 
@@ -85,24 +87,24 @@ export default function Dashboard() {
       <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         <div className="col-span-1">
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-            <h3 className="text-lg font-semibold mb-2">Manage Subscriptions</h3>
+            <h3 className="text-lg font-semibold mb-2">{t.dashboard.manageSubscriptions}</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              View and manage all your active service subscriptions
+              {t.subscriptions.manageSubscriptions}
             </p>
             <Button asChild className="w-full">
-              <Link href="/subscriptions">View Subscriptions</Link>
+              <Link href="/subscriptions">{t.dashboard.viewSubscriptions}</Link>
             </Button>
           </div>
         </div>
         
         <div className="col-span-1">
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-            <h3 className="text-lg font-semibold mb-2">Browse Services</h3>
+            <h3 className="text-lg font-semibold mb-2">{t.dashboard.browseServices}</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Explore available services and their details
+              {t.services.browseServices}
             </p>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/services">View Services</Link>
+              <Link href="/services">{t.dashboard.viewServices}</Link>
             </Button>
           </div>
         </div>
@@ -110,12 +112,12 @@ export default function Dashboard() {
         {isAdmin && (
           <div className="col-span-1">
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-2">User Management</h3>
+              <h3 className="text-lg font-semibold mb-2">{t.dashboard.userManagement}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Manage users, permissions and account settings
+                {t.users.manageUsers}
               </p>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/users">Manage Users</Link>
+                <Link href="/users">{t.dashboard.manageUsers}</Link>
               </Button>
             </div>
           </div>
@@ -123,12 +125,12 @@ export default function Dashboard() {
         {!isAdmin && (
           <div className="col-span-1">
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-2">Account Settings</h3>
+              <h3 className="text-lg font-semibold mb-2">{t.dashboard.accountSettings}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Update your profile and account preferences
+                {t.profile.updateProfile}
               </p>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/profile">View Profile</Link>
+                <Link href="/profile">{t.dashboard.viewProfile}</Link>
               </Button>
             </div>
           </div>

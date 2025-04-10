@@ -105,6 +105,7 @@ export type Translation = {
     recentActivity: string;
     popularServices: string;
     recentSubscriptions: string;
+    activeServices: string;
   };
 
   // Сервисы
