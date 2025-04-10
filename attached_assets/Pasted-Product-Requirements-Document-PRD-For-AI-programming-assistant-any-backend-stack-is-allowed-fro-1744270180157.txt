@@ -1,0 +1,119 @@
+Product Requirements Document (PRD)
+For: AI programming assistant (any backend stack is allowed, frontend must use shadcn/ui)
+
+⸻
+
+1. Purpose
+
+Provide an automated development of an MVP web application (SaaS) with a client account (personal cabinet) and an admin panel. The AI should be able to interpret this document and generate the corresponding code.
+
+⸻
+
+2. Business Logic and Entities
+	1.	User
+	•	Fields: id, email, passwordHash, phone, name, companyName, telegramId, isActive, createdAt, updatedAt.
+	•	Actions: registration, confirmation (email/phone), authorization (email+password or magic link), profile editing.
+	2.	Service
+	•	Fields: id, title, iconUrl, description, cashback (fixed amount or percentage), customFields (description of fields), createdAt, updatedAt.
+	•	Actions: add/edit/delete services in the admin panel, view the list of clients who use the service.
+	3.	Subscription
+	•	Fields: id, userId, serviceId (or null), title, domain, loginId, paymentPeriod, paidUntil, paymentAmount, licensesCount, usersCount, createdAt, updatedAt.
+	•	Actions: add/edit/delete a subscription, display and filter subscriptions.
+	4.	Custom Fields
+	•	Fields: id, entityType, entityId, fieldName, fieldType, fieldValue, isVisibleForUser.
+	•	Actions: create/edit/delete fields for users, services, or subscriptions.
+
+⸻
+
+3. Key Modules
+	1.	Registration and Authorization
+	•	Validate email/phone.
+	•	Encrypt passwords.
+	•	Support for “magic link” login.
+	2.	Personal Cabinet (Client UI)
+	•	View/edit profile.
+	•	Specify company details.
+	•	Link to Telegram (via telegramId or webhook).
+	3.	Subscription Management
+	•	Create a subscription (select from a predefined list or “other” service).
+	•	Display services as a table or cards.
+	•	Calculate/show cashback (if applicable).
+	4.	Admin Panel
+	•	Client list (filter, search).
+	•	Add/manage services (predefined list).
+	•	View and edit user profiles, custom fields.
+	•	Statistics (registrations, activity, charts).
+	•	Mass mailings (email, Telegram) to all, specific, or filtered users.
+	5.	Notifications
+	•	Telegram bot (Bot API).
+	•	Email mailings (SMTP/external service).
+	•	Mailing mechanism configured in the admin panel.
+
+⸻
+
+4. UI Requirements
+	1.	UI library: must use shadcn/ui.
+	2.	Components: buttons, tables, forms, modals, dropdowns must be taken from shadcn/ui or extended as needed.
+	3.	Responsiveness: correct display on mobile devices, tablets, and desktops.
+	4.	Basic layout:
+	•	Header (navigation, icons, notifications).
+	•	Main area (tables, cards, forms).
+	•	Footer (if necessary).
+
+⸻
+
+5. Technical Requirements
+	1.	Structure and API
+	•	Backend in any stack (e.g., Express.js, Server Actions, etc.).
+	•	Frontend in Next.js 13+ (preferred) or another React framework.
+	•	PostgreSQL integration (via ORM or direct SQL).
+	2.	CRUD operations
+	•	POST /users, GET /users/{id}, PATCH /users/{id}, DELETE /users/{id}.
+	•	Similar for services and subscriptions.
+	3.	Telegram Bot API Integration
+	•	Send notifications to clients by ID or via webhook.
+	•	Bulk messages (mailing) through the admin panel.
+	4.	Email Service Integration
+	•	SMTP (or external API).
+	•	Bulk emails and email verification.
+	5.	Security
+	•	Password encryption (bcrypt or similar).
+	•	Protection against XSS, CSRF, SQL injections.
+	•	HTTPS certificate.
+	6.	Backups
+	•	Daily database backups.
+	•	System to restore from backups.
+
+⸻
+
+6. Functional Scenarios
+	1.	New Registration
+	•	Create user.
+	•	Confirm email/phone.
+	•	Fill in profile.
+	2.	Adding a Subscription
+	•	If a predefined service is selected → show custom fields.
+	•	If “other” is selected → show standard fields.
+	•	Save data, display subscription in the list.
+	3.	Sending Bulk Mailings
+	•	Filter client list.
+	•	Compose message text.
+	•	Send (Telegram/email), record the result.
+	4.	Display Analytics
+	•	Show registration chart over a given period.
+	•	Show the total cost of subscriptions, the number of active/inactive clients.
+
+⸻
+
+7. Acceptance Criteria
+	1.	Successful registration, authorization, and logout.
+	2.	Subscription management: add, edit, delete in the client cabinet.
+	3.	Service management: add, edit, delete in the admin panel.
+	4.	Mailings: works for selected users (Telegram and email).
+	5.	UI: built using shadcn/ui components.
+	6.	Security: passwords are not stored in plain text, all requests use HTTPS.
+	7.	Backups: database backup occurs on a schedule.
+
+⸻
+
+Document Complete
