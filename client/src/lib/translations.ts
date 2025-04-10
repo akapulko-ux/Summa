@@ -24,6 +24,7 @@ export type Translation = {
     settings: string;
     notification: string;
     appName: string;
+    optional: string;
   };
 
   // Аутентификация
@@ -249,6 +250,7 @@ export const en: Translation = {
     settings: "Settings",
     notification: "Notification",
     appName: "SaaSly",
+    optional: "Optional",
   },
 
   auth: {
@@ -466,6 +468,7 @@ export const ru: Translation = {
     settings: "Настройки",
     notification: "Уведомление",
     appName: "SaaSly",
+    optional: "Необязательно",
   },
 
   auth: {

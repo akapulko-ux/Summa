@@ -24,6 +24,7 @@ import { LanguageSwitcher } from "@/components/layout/language-switcher";
 export default function AuthPage() {
   const [location, navigate] = useLocation();
   const { user, loginMutation, registerMutation, magicLinkMutation } = useAuth();
+  const { t } = useTranslations();
   const [authMode, setAuthMode] = useState<"login" | "register" | "magic-link">("login");
 
   // Redirect if already logged in
@@ -83,19 +84,19 @@ export default function AuthPage() {
   if (errorParam) {
     switch (errorParam) {
       case "invalid-token":
-        errorMessage = "Invalid login link. Please request a new one.";
+        errorMessage = t.messages.invalidToken;
         break;
       case "expired-token":
-        errorMessage = "Login link has expired. Please request a new one.";
+        errorMessage = t.messages.expiredToken;
         break;
       case "user-not-found":
-        errorMessage = "User not found with the provided email.";
+        errorMessage = t.messages.userNotFound;
         break;
       case "login-failed":
-        errorMessage = "Login failed. Please try again.";
+        errorMessage = t.messages.loginFailed;
         break;
       default:
-        errorMessage = "An error occurred. Please try again.";
+        errorMessage = t.messages.somethingWentWrong;
     }
   }
 
@@ -105,11 +106,10 @@ export default function AuthPage() {
       <div className="bg-secondary w-full md:w-1/2 p-8 md:p-12 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center md:text-left">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Welcome to SaaSly
+            {t.auth.welcomeTitle}
           </h1>
           <p className="text-white/80 text-lg mb-6">
-            The all-in-one platform to manage your SaaS subscriptions efficiently.
-            Track expenses, manage licenses, and optimize your software stack.
+            {t.auth.welcomeSubtitle}
           </p>
           <div className="space-y-4">
             <div className="flex items-start">
@@ -120,8 +120,8 @@ export default function AuthPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <h3 className="text-white font-medium">Subscription Management</h3>
-                <p className="text-white/70 text-sm">Track all your SaaS subscriptions in one place</p>
+                <h3 className="text-white font-medium">{t.auth.feature1Title}</h3>
+                <p className="text-white/70 text-sm">{t.auth.feature1Desc}</p>
               </div>
             </div>
             <div className="flex items-start">
@@ -131,8 +131,8 @@ export default function AuthPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <h3 className="text-white font-medium">Cost Optimization</h3>
-                <p className="text-white/70 text-sm">Monitor expenses and optimize your spending</p>
+                <h3 className="text-white font-medium">{t.auth.feature2Title}</h3>
+                <p className="text-white/70 text-sm">{t.auth.feature2Desc}</p>
               </div>
             </div>
             <div className="flex items-start">
@@ -143,8 +143,8 @@ export default function AuthPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <h3 className="text-white font-medium">Insights and Analytics</h3>
-                <p className="text-white/70 text-sm">Get valuable insights on your SaaS usage</p>
+                <h3 className="text-white font-medium">{t.auth.feature3Title}</h3>
+                <p className="text-white/70 text-sm">{t.auth.feature3Desc}</p>
               </div>
             </div>
           </div>
@@ -155,21 +155,24 @@ export default function AuthPage() {
       <div className="w-full md:w-1/2 p-8 md:p-12 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <div className="flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-secondary">
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </svg>
-              <h2 className="text-2xl font-bold ml-2">SaaSly</h2>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-secondary">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                </svg>
+                <h2 className="text-2xl font-bold ml-2">{t.common.appName}</h2>
+              </div>
+              <LanguageSwitcher />
             </div>
             <CardTitle className="text-center text-2xl">
-              {authMode === "login" ? "Sign In" : authMode === "register" ? "Create Account" : "Magic Link Sign In"}
+              {authMode === "login" ? t.auth.login : authMode === "register" ? t.auth.createAccount : t.auth.magicLink}
             </CardTitle>
             <CardDescription className="text-center">
               {authMode === "login" 
-                ? "Enter your credentials to access your account" 
+                ? t.auth.enterCredentials 
                 : authMode === "register" 
-                ? "Fill in your details to create a new account"
-                : "Enter your email to receive a sign-in link"}
+                ? t.auth.fillDetails
+                : t.auth.enterEmail}
             </CardDescription>
             {errorMessage && (
               <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md mt-2">
@@ -180,9 +183,9 @@ export default function AuthPage() {
           <CardContent>
             <Tabs value={authMode} onValueChange={(v) => setAuthMode(v as any)} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
-                <TabsTrigger value="magic-link">Magic Link</TabsTrigger>
+                <TabsTrigger value="login">{t.auth.login}</TabsTrigger>
+                <TabsTrigger value="register">{t.auth.register}</TabsTrigger>
+                <TabsTrigger value="magic-link">{t.auth.magicLink}</TabsTrigger>
               </TabsList>
               
               {/* Login Form */}
@@ -194,9 +197,9 @@ export default function AuthPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t.auth.email}</FormLabel>
                           <FormControl>
-                            <Input placeholder="name@example.com" {...field} />
+                            <Input placeholder={t.auth.emailPlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -207,9 +210,9 @@ export default function AuthPage() {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>{t.auth.password}</FormLabel>
                           <FormControl>
-                            <Input type="password" placeholder="••••••••" {...field} />
+                            <Input type="password" placeholder={t.auth.passwordPlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -219,10 +222,10 @@ export default function AuthPage() {
                       {loginMutation.isPending ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Signing in...
+                          {t.auth.signingIn}
                         </>
                       ) : (
-                        "Sign In"
+                        t.auth.loginAction
                       )}
                     </Button>
                   </form>
@@ -238,9 +241,9 @@ export default function AuthPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t.auth.email}</FormLabel>
                           <FormControl>
-                            <Input placeholder="name@example.com" {...field} />
+                            <Input placeholder={t.auth.emailPlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -251,9 +254,9 @@ export default function AuthPage() {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>{t.auth.password}</FormLabel>
                           <FormControl>
-                            <Input type="password" placeholder="••••••••" {...field} />
+                            <Input type="password" placeholder={t.auth.passwordPlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -264,9 +267,9 @@ export default function AuthPage() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>{t.auth.name}</FormLabel>
                           <FormControl>
-                            <Input placeholder="John Doe" {...field} />
+                            <Input placeholder={t.auth.namePlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -277,9 +280,9 @@ export default function AuthPage() {
                       name="companyName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Company Name (Optional)</FormLabel>
+                          <FormLabel>{t.auth.company} ({t.common.optional})</FormLabel>
                           <FormControl>
-                            <Input placeholder="Acme Inc." {...field} />
+                            <Input placeholder={t.auth.companyPlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -290,9 +293,9 @@ export default function AuthPage() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number (Optional)</FormLabel>
+                          <FormLabel>{t.auth.phone} ({t.common.optional})</FormLabel>
                           <FormControl>
-                            <Input placeholder="+1 (555) 123-4567" {...field} />
+                            <Input placeholder={t.auth.phonePlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -302,10 +305,10 @@ export default function AuthPage() {
                       {registerMutation.isPending ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating account...
+                          {t.auth.creatingAccount}
                         </>
                       ) : (
-                        "Create Account"
+                        t.auth.createAccount
                       )}
                     </Button>
                   </form>
@@ -321,9 +324,9 @@ export default function AuthPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t.auth.email}</FormLabel>
                           <FormControl>
-                            <Input placeholder="name@example.com" {...field} />
+                            <Input placeholder={t.auth.emailPlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -333,18 +336,18 @@ export default function AuthPage() {
                       {magicLinkMutation.isPending ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Sending link...
+                          {t.auth.sendingLink}
                         </>
                       ) : (
                         <>
                           <Mail className="mr-2 h-4 w-4" />
-                          Send Magic Link
+                          {t.auth.sendMagicLink}
                         </>
                       )}
                     </Button>
                     {magicLinkMutation.isSuccess && (
                       <div className="bg-green-100 text-green-800 p-3 rounded-md text-sm">
-                        Magic link sent! Check your email for login instructions.
+                        {t.auth.magicLinkSent}
                       </div>
                     )}
                   </form>
@@ -356,32 +359,32 @@ export default function AuthPage() {
             <div className="text-sm text-muted-foreground text-center">
               {authMode === "login" ? (
                 <>
-                  Don't have an account?{" "}
+                  {t.auth.dontHaveAccount}{" "}
                   <button 
                     className="text-secondary underline" 
                     onClick={() => setAuthMode("register")}
                   >
-                    Sign up
+                    {t.auth.registerAction}
                   </button>
                 </>
               ) : authMode === "register" ? (
                 <>
-                  Already have an account?{" "}
+                  {t.auth.alreadyHaveAccount}{" "}
                   <button 
                     className="text-secondary underline" 
                     onClick={() => setAuthMode("login")}
                   >
-                    Sign in
+                    {t.auth.loginAction}
                   </button>
                 </>
               ) : (
                 <>
-                  Remember your password?{" "}
+                  {t.auth.rememberPassword}{" "}
                   <button 
                     className="text-secondary underline" 
                     onClick={() => setAuthMode("login")}
                   >
-                    Sign in
+                    {t.auth.loginAction}
                   </button>
                 </>
               )}
