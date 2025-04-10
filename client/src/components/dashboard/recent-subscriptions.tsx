@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Subscription {
   id: number;
@@ -16,6 +17,7 @@ interface Subscription {
 }
 
 export function RecentSubscriptions() {
+  const { t } = useTranslations();
   const { data, isLoading } = useQuery<{ subscriptions: Subscription[] }>({
     queryKey: ["/api/subscriptions", { limit: 5 }],
   });
@@ -39,9 +41,9 @@ export function RecentSubscriptions() {
     <Card className="h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Recent Subscriptions</CardTitle>
+          <CardTitle>{t.dashboard.recentSubscriptions}</CardTitle>
           <Button variant="ghost" asChild>
-            <Link href="/subscriptions">View All</Link>
+            <Link href="/subscriptions">{t.dashboard.viewSubscriptions}</Link>
           </Button>
         </div>
       </CardHeader>
@@ -51,16 +53,16 @@ export function RecentSubscriptions() {
             <thead className="[&_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Service
+                  {t.subscriptions.service}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  User
+                  {t.users.title}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Date
+                  {t.common.date}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Status
+                  {t.subscriptions.status}
                 </th>
               </tr>
             </thead>

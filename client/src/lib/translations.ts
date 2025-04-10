@@ -25,6 +25,7 @@ export type Translation = {
     notification: string;
     appName: string;
     optional: string;
+    date: string;
   };
 
   // Аутентификация
@@ -252,6 +253,7 @@ export const en: Translation = {
     notification: "Notification",
     appName: "SaaSly",
     optional: "Optional",
+    date: "Date",
   },
 
   auth: {
@@ -329,6 +331,7 @@ export const en: Translation = {
     recentActivity: "Recent Activity",
     popularServices: "Popular Services",
     recentSubscriptions: "Recent Subscriptions",
+    activeServices: "Active Services",
   },
 
   services: {
@@ -470,6 +473,7 @@ export const ru: Translation = {
     notification: "Уведомление",
     appName: "SaaSly",
     optional: "Необязательно",
+    date: "Дата",
   },
 
   auth: {
@@ -547,6 +551,7 @@ export const ru: Translation = {
     recentActivity: "Последние действия",
     popularServices: "Популярные сервисы",
     recentSubscriptions: "Последние подписки",
+    activeServices: "Активные сервисы",
   },
 
   services: {
