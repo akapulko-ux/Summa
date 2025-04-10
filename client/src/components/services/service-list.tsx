@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Service } from "@shared/schema";
 import { 
   Table,
   TableBody,
@@ -20,7 +21,6 @@ import { SearchIcon, Pencil, Trash, Eye, ChevronLeft, ChevronRight } from "lucid
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Service } from "@shared/schema";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ServiceForm } from "./service-form";
 import { useAuth } from "@/hooks/use-auth";
@@ -290,7 +290,7 @@ export function ServiceList() {
 }
 
 function ServiceDetails({ serviceId }: { serviceId: number }) {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const { data: service, isLoading } = useQuery<Service>({
     queryKey: [`/api/services/${serviceId}`],
   });
@@ -356,7 +356,7 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
         <div>
           <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.customFields}</h4>
           <div className="space-y-2">
-            {Object.entries(service.customFields as Record<string, unknown>).map(([key, value]) => (
+            {Object.entries(service.customFields as Record<string, any>).map(([key, value]) => (
               <div key={key} className="flex">
                 <span className="text-sm font-medium mr-2">{key}:</span>
                 <span className="text-sm">{String(value)}</span>
@@ -367,8 +367,8 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
       )}
 
       <div className="flex justify-between text-sm text-muted-foreground pt-4 border-t">
-        <div>{t.common.date} создания: {new Date(service.createdAt).toLocaleDateString(t.language === 'ru' ? 'ru-RU' : 'en-US')}</div>
-        <div>{t.common.date} обновления: {new Date(service.updatedAt).toLocaleDateString(t.language === 'ru' ? 'ru-RU' : 'en-US')}</div>
+        <div>{t.common.date} создания: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
+        <div>{t.common.date} обновления: {new Date(service.updatedAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
       </div>
     </div>
   );
