@@ -80,14 +80,14 @@ export default function ProfilePage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
-        title: "Profile updated",
-        description: "Your profile information has been updated successfully.",
+        title: t.profile.profileUpdated,
+        description: t.messages.welcomeBack,
       });
     },
     onError: (error) => {
       toast({
-        title: "Update failed",
-        description: error.message || "Failed to update profile",
+        title: t.messages.somethingWentWrong,
+        description: error.message || t.messages.serverError,
         variant: "destructive",
       });
     },
@@ -110,14 +110,14 @@ export default function ProfilePage() {
         confirmPassword: "",
       });
       toast({
-        title: "Password updated",
-        description: "Your password has been changed successfully.",
+        title: t.profile.passwordUpdated,
+        description: t.messages.welcomeBack,
       });
     },
     onError: (error) => {
       toast({
-        title: "Password change failed",
-        description: error.message || "Failed to update password",
+        title: t.messages.somethingWentWrong,
+        description: error.message || t.messages.serverError,
         variant: "destructive",
       });
     },
@@ -306,7 +306,7 @@ export default function ProfilePage() {
                         {updatePasswordMutation.isPending && (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Change Password
+                        {t.profile.changePassword}
                       </Button>
                     </form>
                   </Form>
