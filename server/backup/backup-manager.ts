@@ -29,7 +29,7 @@ export interface IBackupManager {
   listBackups(): Promise<{ name: string; size: number; date: Date }[]>;
   
   // Настроить автоматическое резервное копирование
-  setupScheduledBackup(cronExpression: string): void;
+  setupScheduledBackup(intervalHours: number): void;
   
   // Удалить резервную копию
   deleteBackup(backupFileName: string): Promise<boolean>;
@@ -137,17 +137,17 @@ export class PostgresBackupManager implements IBackupManager {
 
   /**
    * Настраивает регулярное автоматическое резервное копирование
-   * @param cronExpression Выражение для расписания (часы)
+   * @param intervalHours Интервал в часах для резервного копирования
    */
-  setupScheduledBackup(interval: number = 24): void {
+  setupScheduledBackup(intervalHours: number = 24): void {
     if (this.scheduledJob) {
       clearInterval(this.scheduledJob);
     }
     
     // Конвертируем интервал в миллисекунды (часы в мс)
-    const intervalMs = interval * 60 * 60 * 1000;
+    const intervalMs = intervalHours * 60 * 60 * 1000;
     
-    log(`Scheduled automatic backup every ${interval} hours`, "backup");
+    log(`Scheduled automatic backup every ${intervalHours} hours`, "backup");
     
     // Запускаем задачу по расписанию
     this.scheduledJob = setInterval(async () => {

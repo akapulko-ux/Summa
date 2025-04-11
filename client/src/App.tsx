@@ -12,6 +12,7 @@ import ProfilePage from "@/pages/profile-page";
 import ServicesPage from "@/pages/services-page";
 import SubscriptionsPage from "@/pages/subscriptions-page";
 import UserManagement from "@/pages/user-management";
+import BackupsPage from "@/pages/backups-page";
 
 function Router() {
   return (

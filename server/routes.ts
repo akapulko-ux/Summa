@@ -5,6 +5,7 @@ import { setupAuth } from "./auth";
 import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { zValidationErrorToMessage } from "./utils";
+import backupRoutes from "./backup/backup-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -436,6 +437,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch service stats" });
     }
   });
+
+  // Подключаем маршруты для резервного копирования базы данных
+  app.use("/api/backups", backupRoutes);
 
   const httpServer = createServer(app);
 
