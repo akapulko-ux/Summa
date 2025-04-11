@@ -18,6 +18,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Service } from "@shared/schema";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 // Form schema
 const serviceFormSchema = z.object({
@@ -91,7 +92,7 @@ export function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) {
   });
 
   // Update form values when service data is loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (serviceData) {
       form.reset({
         title: serviceData.title,
