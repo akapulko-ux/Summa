@@ -40,7 +40,7 @@ export default function Dashboard() {
               />
             </DialogContent>
           </Dialog>
-          
+
           {isAdmin && (
             <Dialog open={isServiceDialogOpen} onOpenChange={setIsServiceDialogOpen}>
               <DialogTrigger asChild>
@@ -59,7 +59,7 @@ export default function Dashboard() {
               </DialogContent>
             </Dialog>
           )}
-          
+
           {/* Mobile action button */}
           <Button 
             className="md:hidden flex items-center justify-center h-9 w-9 p-0" 
@@ -96,7 +96,7 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
-        
+
         <div className="col-span-1">
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
             <h3 className="text-lg font-semibold mb-2">{t.dashboard.browseServices}</h3>
@@ -108,7 +108,7 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
-        
+
         {isAdmin && (
           <div className="col-span-1">
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
