@@ -21,11 +21,11 @@ export default function UserManagement() {
   }
 
   return (
-    <AppLayout title="User Management">
+    <AppLayout title={t.users.title}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-muted-foreground">
-            Manage user accounts and permissions
+            {t.users.manageUsers}
           </p>
         </div>
 
@@ -33,12 +33,12 @@ export default function UserManagement() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Add User
+              {t.users.addUser}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>
+              <DialogTitle>{t.users.addUser}</DialogTitle>
             </DialogHeader>
             <UserForm 
               onSuccess={() => setIsFormOpen(false)} 

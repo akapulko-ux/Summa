@@ -5,16 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useTranslations } from "@/hooks/use-translations";
 
 export default function SubscriptionsPage() {
+  const { t } = useTranslations();
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
-    <AppLayout title="Subscriptions">
+    <AppLayout title={t.subscriptions.title}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-muted-foreground">
-            Manage all your active service subscriptions
+            {t.subscriptions.manageSubscriptions}
           </p>
         </div>
 
@@ -22,12 +24,12 @@ export default function SubscriptionsPage() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Add Subscription
+              {t.subscriptions.addSubscription}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Add New Subscription</DialogTitle>
+              <DialogTitle>{t.subscriptions.addSubscription}</DialogTitle>
             </DialogHeader>
             <SubscriptionForm 
               onSuccess={() => setIsFormOpen(false)} 

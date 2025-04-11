@@ -21,6 +21,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "@/hooks/use-translations";
 
 // Profile form schema
 const profileFormSchema = z.object({
@@ -46,6 +47,7 @@ type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 export default function ProfilePage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslations();
 
   // Profile form
   const profileForm = useForm<ProfileFormValues>({
@@ -150,7 +152,7 @@ export default function ProfilePage() {
                   <h3 className="text-lg font-medium">{user?.name || "User"}</h3>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Role: {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1) || "Client"}
+                    {t.profile.role}: {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : t.users.roleClient}
                   </p>
                 </div>
               </div>
