@@ -72,19 +72,30 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
       console.log("Creating subscription with data:", data);
       
       // Преобразуем данные в формат, который ожидает сервер
-      const transformedData = {
+      // Создаем базовую структуру данных
+      const transformedData: any = {
         title: data.title,
         userId: user?.id, // Всегда устанавливаем текущего пользователя
-        serviceId: data.serviceId && data.serviceId !== "other" ? parseInt(data.serviceId) : null,
-        domain: data.domain || null,
-        loginId: data.loginId || null,
+        domain: data.domain || undefined,
+        loginId: data.loginId || undefined,
         paymentPeriod: data.paymentPeriod || "monthly",
-        paidUntil: data.paidUntil ? new Date(data.paidUntil) : null,
-        paymentAmount: data.paymentAmount ? parseFloat(data.paymentAmount) : null,
         licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
         usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
         status: data.status || "active"
       };
+      
+      // Добавляем необязательные поля только если они имеют значение
+      if (data.serviceId && data.serviceId !== "other" && data.serviceId !== "") {
+        transformedData.serviceId = parseInt(data.serviceId);
+      }
+      
+      if (data.paidUntil) {
+        transformedData.paidUntil = new Date(data.paidUntil);
+      }
+      
+      if (data.paymentAmount) {
+        transformedData.paymentAmount = parseFloat(data.paymentAmount);
+      }
       
       console.log("Transformed data for API:", transformedData);
       
@@ -127,18 +138,29 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
       console.log("Updating subscription with data:", data);
       
       // Преобразуем данные в формат, который ожидает сервер
-      const transformedData = {
+      // Создаем базовую структуру данных
+      const transformedData: any = {
         title: data.title,
-        serviceId: data.serviceId && data.serviceId !== "other" ? parseInt(data.serviceId) : null,
-        domain: data.domain || null,
-        loginId: data.loginId || null,
+        domain: data.domain || undefined,
+        loginId: data.loginId || undefined,
         paymentPeriod: data.paymentPeriod || "monthly",
-        paidUntil: data.paidUntil ? new Date(data.paidUntil) : null,
-        paymentAmount: data.paymentAmount ? parseFloat(data.paymentAmount) : null,
         licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
         usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
         status: data.status || "active"
       };
+      
+      // Добавляем необязательные поля только если они имеют значение
+      if (data.serviceId && data.serviceId !== "other" && data.serviceId !== "") {
+        transformedData.serviceId = parseInt(data.serviceId);
+      }
+      
+      if (data.paidUntil) {
+        transformedData.paidUntil = new Date(data.paidUntil);
+      }
+      
+      if (data.paymentAmount) {
+        transformedData.paymentAmount = parseFloat(data.paymentAmount);
+      }
       
       console.log("Transformed data for API:", transformedData);
       
