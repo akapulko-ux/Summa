@@ -133,14 +133,14 @@ export default function ProfilePage() {
   };
 
   return (
-    <AppLayout title="Profile Settings">
+    <AppLayout title={t.profile.title}>
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>Profile</CardTitle>
+              <CardTitle>{t.profile.personalInfo}</CardTitle>
               <CardDescription>
-                Manage your personal information and account settings
+                {t.profile.accountSettings}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -163,16 +163,16 @@ export default function ProfilePage() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
+              <CardTitle>{t.profile.accountSettings}</CardTitle>
               <CardDescription>
-                Update your account preferences and security settings
+                {t.profile.updateProfile}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="profile">Profile</TabsTrigger>
-                  <TabsTrigger value="password">Password</TabsTrigger>
+                  <TabsTrigger value="profile">{t.profile.personalInfo}</TabsTrigger>
+                  <TabsTrigger value="password">{t.profile.changePassword}</TabsTrigger>
                 </TabsList>
                 
                 {/* Profile Form */}
@@ -184,12 +184,12 @@ export default function ProfilePage() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>{t.auth.email}</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
                             <FormDescription>
-                              This is your email address used for login
+                              {t.auth.emailPlaceholder}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -201,9 +201,9 @@ export default function ProfilePage() {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Full Name</FormLabel>
+                            <FormLabel>{t.auth.name}</FormLabel>
                             <FormControl>
-                              <Input placeholder="John Doe" {...field} />
+                              <Input placeholder={t.auth.namePlaceholder} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -215,9 +215,9 @@ export default function ProfilePage() {
                         name="companyName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Company</FormLabel>
+                            <FormLabel>{t.auth.company}</FormLabel>
                             <FormControl>
-                              <Input placeholder="Acme Inc." {...field} />
+                              <Input placeholder={t.auth.companyPlaceholder} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -229,9 +229,9 @@ export default function ProfilePage() {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel>{t.auth.phone}</FormLabel>
                             <FormControl>
-                              <Input placeholder="+1 (555) 123-4567" {...field} />
+                              <Input placeholder={t.auth.phonePlaceholder} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -246,7 +246,7 @@ export default function ProfilePage() {
                         {updateProfileMutation.isPending && (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Save Changes
+                        {t.common.save}
                       </Button>
                     </form>
                   </Form>
@@ -261,7 +261,7 @@ export default function ProfilePage() {
                         name="currentPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Current Password</FormLabel>
+                            <FormLabel>{t.profile.currentPassword}</FormLabel>
                             <FormControl>
                               <Input type="password" {...field} />
                             </FormControl>
@@ -275,7 +275,7 @@ export default function ProfilePage() {
                         name="newPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>New Password</FormLabel>
+                            <FormLabel>{t.profile.newPassword}</FormLabel>
                             <FormControl>
                               <Input type="password" {...field} />
                             </FormControl>
@@ -289,7 +289,7 @@ export default function ProfilePage() {
                         name="confirmPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Confirm New Password</FormLabel>
+                            <FormLabel>{t.profile.confirmNewPassword}</FormLabel>
                             <FormControl>
                               <Input type="password" {...field} />
                             </FormControl>
