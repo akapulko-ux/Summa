@@ -124,7 +124,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
   });
 
   // Update form values when subscription data is loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (subscriptionData) {
       const paidUntil = subscriptionData.paidUntil 
         ? new Date(subscriptionData.paidUntil).toISOString().split('T')[0]
