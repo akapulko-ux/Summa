@@ -17,12 +17,26 @@ interface SidebarProps {
   className?: string;
 }
 
+type NavItem = {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+  visibleFor: string[];
+};
+
+type DividerItem = {
+  type: 'divider';
+};
+
+type SidebarItem = NavItem | DividerItem;
+
 export function Sidebar({ className }: SidebarProps) {
   const [location] = useLocation();
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
 
-  const navItems = [
+  // Общие маршруты для всех пользователей
+  const commonNavItems = [
     {
       title: "Dashboard",
       href: "/",
@@ -30,45 +44,9 @@ export function Sidebar({ className }: SidebarProps) {
       visibleFor: ["client", "admin"],
     },
     {
-      title: "User Management",
-      href: "/users",
-      icon: <Users className="h-4 w-4" />,
-      visibleFor: ["admin"],
-    },
-    {
-      title: "Services",
-      href: "/services",
-      icon: <MessagesSquare className="h-4 w-4" />,
-      visibleFor: ["client", "admin"],
-    },
-    {
       title: "Subscriptions",
       href: "/subscriptions",
       icon: <CreditCard className="h-4 w-4" />,
-      visibleFor: ["client", "admin"],
-    },
-    {
-      title: "Analytics",
-      href: "/analytics",
-      icon: <BarChart4 className="h-4 w-4" />,
-      visibleFor: ["admin"],
-    },
-    {
-      title: "Reports",
-      href: "/reports",
-      icon: <FileText className="h-4 w-4" />,
-      visibleFor: ["admin"],
-    },
-    {
-      title: "Backups",
-      href: "/backups",
-      icon: <Database className="h-4 w-4" />,
-      visibleFor: ["admin"],
-    },
-    {
-      title: "Notifications",
-      href: "/notifications",
-      icon: <Bell className="h-4 w-4" />,
       visibleFor: ["client", "admin"],
     },
     {
@@ -79,18 +57,59 @@ export function Sidebar({ className }: SidebarProps) {
     },
   ];
 
+  // Маршруты только для администраторов
+  const adminNavItems = [
+    {
+      title: "User Management",
+      href: "/admin/users",
+      icon: <Users className="h-4 w-4" />,
+      visibleFor: ["admin"],
+    },
+    {
+      title: "Services",
+      href: "/admin/services",
+      icon: <MessagesSquare className="h-4 w-4" />,
+      visibleFor: ["admin"],
+    },
+    {
+      title: "Backups",
+      href: "/admin/backups",
+      icon: <Database className="h-4 w-4" />,
+      visibleFor: ["admin"],
+    },
+    {
+      title: "Analytics",
+      href: "/admin/analytics",
+      icon: <BarChart4 className="h-4 w-4" />,
+      visibleFor: ["admin"],
+    },
+    {
+      title: "Reports",
+      href: "/admin/reports",
+      icon: <FileText className="h-4 w-4" />,
+      visibleFor: ["admin"],
+    },
+  ];
+
+  // Объединяем маршруты в зависимости от роли пользователя
+  const navItems: SidebarItem[] = isAdmin 
+    ? [...commonNavItems, { type: 'divider' } as DividerItem, ...adminNavItems] 
+    : commonNavItems;
+
   return (
     <aside className={cn("pb-12", className)}>
       <nav className="flex flex-col space-y-1">
-        {navItems.map((item) => {
-          // Only show items the user has access to
-          if (
-            !isAdmin &&
-            !item.visibleFor.includes("client")
-          ) {
-            return null;
+        {navItems.map((item, index) => {
+          // Рендерим разделитель
+          if (item.type === 'divider') {
+            return (
+              <div key={`divider-${index}`} className="my-2 border-t border-border px-3">
+                {isAdmin && <p className="mt-2 text-xs font-semibold text-muted-foreground">Admin Panel</p>}
+              </div>
+            );
           }
-
+          
+          // Нормальные пункты меню
           return (
             <Link
               key={item.href}

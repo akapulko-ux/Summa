@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import { AuthProvider } from "@/hooks/use-auth";
 import { TranslationProvider } from "@/hooks/use-translations";
 import { ProtectedRoute } from "@/lib/protected-route";
+import { AdminRoute } from "@/lib/admin-route";
 import AuthPage from "@/pages/auth-page";
 import Dashboard from "@/pages/dashboard";
 import ProfilePage from "@/pages/profile-page";
@@ -17,13 +18,20 @@ import BackupsPage from "@/pages/backups-page";
 function Router() {
   return (
     <Switch>
+      {/* Клиентские маршруты (доступны для всех аутентифицированных пользователей) */}
       <ProtectedRoute path="/" component={Dashboard} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
-      <ProtectedRoute path="/services" component={ServicesPage} />
       <ProtectedRoute path="/subscriptions" component={SubscriptionsPage} />
-      <ProtectedRoute path="/users" component={UserManagement} />
-      <ProtectedRoute path="/backups" component={BackupsPage} />
+      
+      {/* Административные маршруты (доступны только для администраторов) */}
+      <AdminRoute path="/admin/services" component={ServicesPage} />
+      <AdminRoute path="/admin/users" component={UserManagement} />
+      <AdminRoute path="/admin/backups" component={BackupsPage} />
+      
+      {/* Страница аутентификации (доступна для всех) */}
       <Route path="/auth" component={AuthPage} />
+      
+      {/* Обработка неизвестных маршрутов */}
       <Route component={NotFound} />
     </Switch>
   );
