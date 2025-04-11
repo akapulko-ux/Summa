@@ -29,6 +29,30 @@ export type Translation = {
     restore: string;
     information: string;
   };
+  
+  // Резервное копирование
+  backups: {
+    title: string;
+    manageBackups: string;
+    createBackup: string;
+    restoreBackup: string;
+    deleteBackup: string;
+    backupName: string;
+    backupSize: string;
+    backupDate: string;
+    manualBackup: string;
+    scheduledBackup: string;
+    setupSchedule: string;
+    confirmRestore: string;
+    confirmDelete: string;
+    noBackups: string;
+    backupCreated: string;
+    backupRestored: string;
+    backupDeleted: string;
+    cleanOldBackups: string;
+    keepCount: string;
+    scheduleInterval: string;
+  };
 
   // Аутентификация
   auth: {
@@ -257,6 +281,31 @@ export const en: Translation = {
     appName: "SaaSly",
     optional: "Optional",
     date: "Date",
+    restore: "Restore",
+    information: "Information",
+  },
+  
+  backups: {
+    title: "Database Backups",
+    manageBackups: "Manage database backups",
+    createBackup: "Create Backup",
+    restoreBackup: "Restore Backup",
+    deleteBackup: "Delete Backup",
+    backupName: "Backup Name",
+    backupSize: "Size",
+    backupDate: "Date",
+    manualBackup: "Manual Backup",
+    scheduledBackup: "Scheduled Backup",
+    setupSchedule: "Setup Schedule",
+    confirmRestore: "Are you sure you want to restore this backup? All current data will be replaced.",
+    confirmDelete: "Are you sure you want to delete this backup?",
+    noBackups: "No backups found",
+    backupCreated: "Backup created successfully",
+    backupRestored: "Backup restored successfully",
+    backupDeleted: "Backup deleted successfully",
+    cleanOldBackups: "Clean Old Backups",
+    keepCount: "Keep Count",
+    scheduleInterval: "Schedule Interval (hours)",
   },
 
   auth: {
@@ -478,6 +527,31 @@ export const ru: Translation = {
     appName: "SaaSly",
     optional: "Необязательно",
     date: "Дата",
+    restore: "Восстановить",
+    information: "Информация",
+  },
+  
+  backups: {
+    title: "Резервные копии базы данных",
+    manageBackups: "Управление резервными копиями базы данных",
+    createBackup: "Создать резервную копию",
+    restoreBackup: "Восстановить из копии",
+    deleteBackup: "Удалить копию",
+    backupName: "Имя файла",
+    backupSize: "Размер",
+    backupDate: "Дата",
+    manualBackup: "Создать вручную",
+    scheduledBackup: "Запланированное копирование",
+    setupSchedule: "Настроить расписание",
+    confirmRestore: "Вы уверены, что хотите восстановить базу данных из этой копии? Все текущие данные будут заменены.",
+    confirmDelete: "Вы уверены, что хотите удалить эту резервную копию?",
+    noBackups: "Резервные копии не найдены",
+    backupCreated: "Резервная копия успешно создана",
+    backupRestored: "База данных успешно восстановлена из копии",
+    backupDeleted: "Резервная копия успешно удалена",
+    cleanOldBackups: "Очистить старые копии",
+    keepCount: "Количество сохраняемых",
+    scheduleInterval: "Интервал расписания (часы)",
   },
 
   auth: {

@@ -169,12 +169,10 @@ export default function BackupsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {language === 'ru' ? "Управление резервными копиями" : "Backup Management"}
+              {t.backups.title}
             </h1>
             <p className="text-muted-foreground">
-              {language === 'ru' 
-                ? "Создание и восстановление резервных копий базы данных"
-                : "Create and restore database backups"}
+              {t.backups.manageBackups}
             </p>
           </div>
           
@@ -191,7 +189,7 @@ export default function BackupsPage() {
                     ) : (
                       <DownloadCloud className="mr-2 h-4 w-4" />
                     )}
-                    {language === 'ru' ? "Создать копию" : "Create Backup"}
+                    {t.backups.createBackup}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -215,7 +213,7 @@ export default function BackupsPage() {
                     ) : (
                       <Clock className="mr-2 h-4 w-4" />
                     )}
-                    {language === 'ru' ? "Очистить старые" : "Clean Old Backups"}
+                    {t.backups.cleanOldBackups}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -256,11 +254,9 @@ export default function BackupsPage() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{language === 'ru' ? "Доступные резервные копии" : "Available Backups"}</CardTitle>
+            <CardTitle>{t.backups.title}</CardTitle>
             <CardDescription>
-              {language === 'ru'
-                ? "Список всех сохраненных резервных копий базы данных"
-                : "List of all saved database backups"}
+              {t.backups.manageBackups}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -270,15 +266,11 @@ export default function BackupsPage() {
               </div>
             ) : isError ? (
               <div className="text-center py-8 text-muted-foreground">
-                {language === 'ru'
-                  ? "Ошибка при загрузке списка резервных копий"
-                  : "Error loading backup list"}
+                {t.common.error}
               </div>
             ) : !backups || backups.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                {language === 'ru'
-                  ? "Резервные копии не найдены"
-                  : "No backup files found"}
+                {t.backups.noBackups}
               </div>
             ) : (
               <div className="overflow-x-auto">
