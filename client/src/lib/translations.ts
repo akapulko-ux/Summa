@@ -129,6 +129,7 @@ export type Translation = {
     serviceCreated: string;
     serviceUpdated: string;
     serviceDeleted: string;
+    servicesByCount: string;
   };
 
   // Подписки
@@ -353,6 +354,7 @@ export const en: Translation = {
     serviceCreated: "Service created successfully",
     serviceUpdated: "Service updated successfully",
     serviceDeleted: "Service deleted successfully",
+    servicesByCount: "Top services by subscription count",
   },
 
   subscriptions: {
@@ -573,6 +575,7 @@ export const ru: Translation = {
     serviceCreated: "Сервис успешно создан",
     serviceUpdated: "Сервис успешно обновлен",
     serviceDeleted: "Сервис успешно удален",
+    servicesByCount: "Топ сервисов по количеству подписок",
   },
 
   subscriptions: {

@@ -27,6 +27,7 @@ const bgColors = [
 ];
 
 export function PopularServices() {
+  const { t } = useTranslations();
   const { data, isLoading } = useQuery<ServicePopularityItem[]>({
     queryKey: ["/api/stats/services"],
   });
@@ -40,8 +41,8 @@ export function PopularServices() {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle>Popular Services</CardTitle>
-        <CardDescription>Top services by subscription count</CardDescription>
+        <CardTitle>{t.dashboard.popularServices}</CardTitle>
+        <CardDescription>{t.services.servicesByCount}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -96,7 +97,7 @@ export function PopularServices() {
             })
           ) : (
             <div className="text-center text-muted-foreground py-4">
-              No service data available.
+              {t.services.noServices}
             </div>
           )}
         </div>
