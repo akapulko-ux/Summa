@@ -25,6 +25,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ServiceForm } from "./service-form";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
+import { ru } from "date-fns/locale";
 
 export function ServiceList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +35,7 @@ export function ServiceList() {
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const { user } = useAuth();
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const isAdmin = user?.role === "admin";
 
   const {
@@ -84,7 +85,7 @@ export function ServiceList() {
 
   // Function to format cashback value for display
   const formatCashback = (cashback: string | null | undefined) => {
-    if (!cashback) return "None";
+    if (!cashback) return language === 'ru' ? "Нет" : "None";
     
     // Display as percentage if it ends with %
     if (cashback.endsWith("%")) {
@@ -92,7 +93,7 @@ export function ServiceList() {
     }
     
     // Otherwise display as currency
-    return `$${cashback}`;
+    return `${language === 'ru' ? '₽' : '$'}${cashback}`;
   };
 
   return (
@@ -195,7 +196,7 @@ export function ServiceList() {
                     </TableCell>
                     <TableCell className="max-w-md">
                       <div className="truncate">
-                        {service.description || "Нет описания"}
+                        {service.description || (language === 'ru' ? "Нет описания" : "No description")}
                       </div>
                     </TableCell>
                     <TableCell>{formatCashback(service.cashback)}</TableCell>
@@ -203,17 +204,17 @@ export function ServiceList() {
                       <div className="flex items-center gap-2">
                         <Button variant="ghost" size="sm" onClick={() => handleView(service.id)}>
                           <Eye className="h-4 w-4" />
-                          <span className="sr-only">View</span>
+                          <span className="sr-only">{language === 'ru' ? 'Просмотр' : 'View'}</span>
                         </Button>
                         {isAdmin && (
                           <>
                             <Button variant="ghost" size="sm" onClick={() => handleEdit(service.id)}>
                               <Pencil className="h-4 w-4" />
-                              <span className="sr-only">Edit</span>
+                              <span className="sr-only">{language === 'ru' ? 'Редактировать' : 'Edit'}</span>
                             </Button>
                             <Button variant="ghost" size="sm" onClick={() => handleDelete(service.id)}>
                               <Trash className="h-4 w-4" />
-                              <span className="sr-only">Delete</span>
+                              <span className="sr-only">{language === 'ru' ? 'Удалить' : 'Delete'}</span>
                             </Button>
                           </>
                         )}
@@ -230,7 +231,9 @@ export function ServiceList() {
         <CardFooter className="border-t px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-sm text-muted-foreground">
-              Показано {data.services.length} из {data.total} сервисов
+              {language === 'ru' 
+                ? `Показано ${data.services.length} из ${data.total} сервисов` 
+                : `Showing ${data.services.length} of ${data.total} services`}
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -342,12 +345,12 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
         <p className="text-sm">
           {service.cashback ? (
             service.cashback.endsWith("%") ? (
-              <>{service.cashback} от стоимости подписки</>
+              <>{service.cashback} {language === 'ru' ? 'от стоимости подписки' : 'of subscription cost'}</>
             ) : (
-              <>{service.cashback}₽ фиксированный кэшбэк</>
+              <>{service.cashback}{language === 'ru' ? '₽ фиксированный кэшбэк' : '$ fixed cashback'}</>
             )
           ) : (
-            "Кэшбэк недоступен"
+            language === 'ru' ? "Кэшбэк недоступен" : "Cashback not available"
           )}
         </p>
       </div>
