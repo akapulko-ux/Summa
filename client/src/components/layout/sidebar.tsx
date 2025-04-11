@@ -17,16 +17,21 @@ interface SidebarProps {
   className?: string;
 }
 
-type NavItem = {
+interface NavItem {
   title: string;
   href: string;
   icon: React.ReactNode;
   visibleFor: string[];
-};
+}
 
-type DividerItem = {
+interface DividerItem {
   type: 'divider';
-};
+}
+
+// Использование type guard для определения типа элемента
+function isDivider(item: SidebarItem): item is DividerItem {
+  return 'type' in item && item.type === 'divider';
+}
 
 type SidebarItem = NavItem | DividerItem;
 
@@ -96,36 +101,36 @@ export function Sidebar({ className }: SidebarProps) {
     ? [...commonNavItems, { type: 'divider' } as DividerItem, ...adminNavItems] 
     : commonNavItems;
 
+  // Render function for NavItem
+  const renderNavItem = (item: NavItem) => (
+    <Link
+      key={item.href}
+      href={item.href}
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+        location === item.href 
+          ? "bg-accent text-accent-foreground" 
+          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+      )}
+    >
+      {item.icon}
+      {item.title}
+    </Link>
+  );
+
+  // Render function for DividerItem
+  const renderDivider = (index: number) => (
+    <div key={`divider-${index}`} className="my-2 border-t border-border px-3">
+      {isAdmin && <p className="mt-2 text-xs font-semibold text-muted-foreground">Admin Panel</p>}
+    </div>
+  );
+
   return (
     <aside className={cn("pb-12", className)}>
       <nav className="flex flex-col space-y-1">
-        {navItems.map((item, index) => {
-          // Рендерим разделитель
-          if (item.type === 'divider') {
-            return (
-              <div key={`divider-${index}`} className="my-2 border-t border-border px-3">
-                {isAdmin && <p className="mt-2 text-xs font-semibold text-muted-foreground">Admin Panel</p>}
-              </div>
-            );
-          }
-          
-          // Нормальные пункты меню
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                location === item.href 
-                  ? "bg-accent text-accent-foreground" 
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              {item.icon}
-              {item.title}
-            </Link>
-          );
-        })}
+        {navItems.map((item, index) => 
+          isDivider(item) ? renderDivider(index) : renderNavItem(item)
+        )}
       </nav>
     </aside>
   );
