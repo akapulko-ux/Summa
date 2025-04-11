@@ -370,8 +370,8 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
       )}
 
       <div className="flex justify-between text-sm text-muted-foreground pt-4 border-t">
-        <div>{t.common.date} создания: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
-        <div>{t.common.date} обновления: {new Date(service.updatedAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
+        <div>{t.common.date} {language === 'ru' ? 'создания' : 'created'}: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
+        <div>{t.common.date} {language === 'ru' ? 'обновления' : 'updated'}: {new Date(service.updatedAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
       </div>
     </div>
   );

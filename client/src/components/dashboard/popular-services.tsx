@@ -27,7 +27,7 @@ const bgColors = [
 ];
 
 export function PopularServices() {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const { data, isLoading } = useQuery<ServicePopularityItem[]>({
     queryKey: ["/api/stats/services"],
   });
@@ -79,7 +79,7 @@ export function PopularServices() {
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-medium">
-                        {service.serviceTitle || `Service #${service.serviceId}`}
+                        {service.serviceTitle || (language === 'ru' ? `Сервис #${service.serviceId}` : `Service #${service.serviceId}`)}
                       </span>
                       <span className="text-sm">{percentage}%</span>
                     </div>
