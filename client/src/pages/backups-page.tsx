@@ -277,10 +277,10 @@ export default function BackupsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{language === 'ru' ? "Имя файла" : "Filename"}</TableHead>
+                      <TableHead>{t.backups.backupName}</TableHead>
                       <TableHead>{language === 'ru' ? "Тип" : "Type"}</TableHead>
-                      <TableHead>{language === 'ru' ? "Размер" : "Size"}</TableHead>
-                      <TableHead>{language === 'ru' ? "Дата создания" : "Created"}</TableHead>
+                      <TableHead>{t.backups.backupSize}</TableHead>
+                      <TableHead>{t.backups.backupDate}</TableHead>
                       <TableHead className="text-right">{language === 'ru' ? "Действия" : "Actions"}</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -329,23 +329,21 @@ export default function BackupsPage() {
                                     onClick={() => setSelectedBackup(backup.name)}
                                   >
                                     <Upload className="h-4 w-4 mr-1" />
-                                    {language === 'ru' ? "Восстановить" : "Restore"}
+                                    {t.common.restore}
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>
-                                      {language === 'ru' ? "Восстановить из резервной копии?" : "Restore from backup?"}
+                                      {t.backups.restoreBackup}
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      {language === 'ru'
-                                        ? "Это действие перезапишет текущие данные и восстановит базу данных из выбранной резервной копии. Этот процесс невозможно отменить."
-                                        : "This action will overwrite current data and restore the database from the selected backup. This process cannot be undone."}
+                                      {t.backups.confirmRestore}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>
-                                      {language === 'ru' ? "Отмена" : "Cancel"}
+                                      {t.common.cancel}
                                     </AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => {
@@ -358,7 +356,7 @@ export default function BackupsPage() {
                                       {restoreBackupMutation.isPending && (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                       )}
-                                      {language === 'ru' ? "Восстановить" : "Restore"}
+                                      {t.common.restore}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -374,24 +372,22 @@ export default function BackupsPage() {
                                   >
                                     <Trash2 className="h-4 w-4" />
                                     <span className="sr-only">
-                                      {language === 'ru' ? "Удалить" : "Delete"}
+                                      {t.common.delete}
                                     </span>
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>
-                                      {language === 'ru' ? "Удалить резервную копию?" : "Delete backup file?"}
+                                      {t.backups.deleteBackup}
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      {language === 'ru'
-                                        ? "Вы уверены, что хотите удалить эту резервную копию? Это действие невозможно отменить."
-                                        : "Are you sure you want to delete this backup file? This action cannot be undone."}
+                                      {t.backups.confirmDelete}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>
-                                      {language === 'ru' ? "Отмена" : "Cancel"}
+                                      {t.common.cancel}
                                     </AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => {
@@ -405,7 +401,7 @@ export default function BackupsPage() {
                                       {deleteBackupMutation.isPending && (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                       )}
-                                      {language === 'ru' ? "Удалить" : "Delete"}
+                                      {t.common.delete}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -424,7 +420,7 @@ export default function BackupsPage() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{language === 'ru' ? "Информация" : "Information"}</CardTitle>
+            <CardTitle>{t.common.information}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
