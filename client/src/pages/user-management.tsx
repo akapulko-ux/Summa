@@ -7,9 +7,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "@/hooks/use-translations";
 
 export default function UserManagement() {
   const { user } = useAuth();
+  const { t } = useTranslations();
   const isAdmin = user?.role === "admin";
   const [isFormOpen, setIsFormOpen] = useState(false);
 
