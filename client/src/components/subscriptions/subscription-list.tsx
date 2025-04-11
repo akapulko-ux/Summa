@@ -123,21 +123,6 @@ export function SubscriptionList() {
                 className="pl-8"
               />
             </div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>
-                  Add Subscription
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px]">
-                <DialogHeader>
-                  <DialogTitle>Add New Subscription</DialogTitle>
-                </DialogHeader>
-                <SubscriptionForm 
-                  onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] })} 
-                />
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
       </CardHeader>
