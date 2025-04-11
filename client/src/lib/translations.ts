@@ -189,6 +189,10 @@ export type Translation = {
     subscriptionCreated: string;
     subscriptionUpdated: string;
     subscriptionDeleted: string;
+    mySubscriptions: string;
+    active: string;
+    activeUntil: string;
+    nextPayment: string;
   };
 
   // Пользователи
@@ -230,6 +234,9 @@ export type Translation = {
     profileUpdated: string;
     passwordUpdated: string;
     role: string;
+    accountStatus: string;
+    active: string;
+    memberSince: string;
   };
 
   // Ошибки и сообщения
@@ -406,6 +413,8 @@ export const en: Translation = {
     serviceUpdated: "Service updated successfully",
     serviceDeleted: "Service deleted successfully",
     servicesByCount: "Top services by subscription count",
+    availableServices: "Available Services",
+    availableToSubscribe: "Available to subscribe",
   },
 
   subscriptions: {
@@ -438,6 +447,10 @@ export const en: Translation = {
     subscriptionCreated: "Subscription created successfully",
     subscriptionUpdated: "Subscription updated successfully",
     subscriptionDeleted: "Subscription deleted successfully",
+    mySubscriptions: "My Subscriptions",
+    active: "Active",
+    activeUntil: "Active Until",
+    nextPayment: "Next Payment",
   },
 
   users: {
@@ -477,6 +490,9 @@ export const en: Translation = {
     profileUpdated: "Profile updated successfully",
     passwordUpdated: "Password updated successfully",
     role: "Role",
+    accountStatus: "Account Status",
+    active: "Active",
+    memberSince: "Member since",
   },
 
   messages: {
@@ -652,6 +668,8 @@ export const ru: Translation = {
     serviceUpdated: "Сервис успешно обновлен",
     serviceDeleted: "Сервис успешно удален",
     servicesByCount: "Топ сервисов по количеству подписок",
+    availableServices: "Доступные сервисы",
+    availableToSubscribe: "Доступно для подписки",
   },
 
   subscriptions: {
@@ -684,6 +702,10 @@ export const ru: Translation = {
     subscriptionCreated: "Подписка успешно создана",
     subscriptionUpdated: "Подписка успешно обновлена",
     subscriptionDeleted: "Подписка успешно удалена",
+    mySubscriptions: "Мои подписки",
+    active: "Активные",
+    activeUntil: "Активна до",
+    nextPayment: "Следующий платёж",
   },
 
   users: {
@@ -723,6 +745,9 @@ export const ru: Translation = {
     profileUpdated: "Профиль успешно обновлен",
     passwordUpdated: "Пароль успешно обновлен",
     role: "Роль",
+    accountStatus: "Статус аккаунта",
+    active: "Активен",
+    memberSince: "Участник с",
   },
 
   messages: {
