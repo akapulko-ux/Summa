@@ -27,6 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Subscription, Service } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 // Form schema
 const subscriptionFormSchema = z.object({
@@ -34,12 +35,13 @@ const subscriptionFormSchema = z.object({
   serviceId: z.string().optional(),
   domain: z.string().optional(),
   loginId: z.string().optional(),
-  paymentPeriod: z.enum(["monthly", "quarterly", "yearly"]),
+  paymentPeriod: z.enum(["monthly", "quarterly", "yearly"]).default("monthly"),
   paidUntil: z.string().optional(),
   paymentAmount: z.string().transform((val) => val ? parseFloat(val) : undefined).optional(),
-  licensesCount: z.string().transform((val) => val ? parseInt(val) : 1),
-  usersCount: z.string().transform((val) => val ? parseInt(val) : 1),
-  status: z.enum(["active", "pending", "expired", "canceled"]),
+  licensesCount: z.string().transform((val) => val ? parseInt(val) : 1).default("1"),
+  usersCount: z.string().transform((val) => val ? parseInt(val) : 1).default("1"),
+  status: z.enum(["active", "pending", "expired", "canceled"]).default("active"),
+  userId: z.number().optional(), // Добавляем поле userId для серверной валидации
 });
 
 type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>;
@@ -51,6 +53,7 @@ interface SubscriptionFormProps {
 
 export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionFormProps) {
   const { user } = useAuth();
+  const { toast } = useToast();
 
   // Fetch subscription data if editing
   const { data: subscriptionData, isLoading: isLoadingSubscription } = useQuery({
@@ -68,20 +71,29 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
     mutationFn: async (data: any) => {
       console.log("Creating subscription with data:", data);
       
-      // Add the current user ID if not specified
-      if (!data.userId && user) {
-        data.userId = user.id;
-      }
+      // Преобразуем данные в формат, который ожидает сервер
+      const transformedData = {
+        title: data.title,
+        userId: user?.id, // Всегда устанавливаем текущего пользователя
+        serviceId: data.serviceId && data.serviceId !== "other" ? parseInt(data.serviceId) : null,
+        domain: data.domain || null,
+        loginId: data.loginId || null,
+        paymentPeriod: data.paymentPeriod || "monthly",
+        paidUntil: data.paidUntil ? new Date(data.paidUntil) : null,
+        paymentAmount: data.paymentAmount ? parseFloat(data.paymentAmount) : null,
+        licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
+        usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
+        status: data.status || "active"
+      };
       
-      // Convert serviceId to number if it's not "other"
-      if (data.serviceId && data.serviceId !== "other") {
-        data.serviceId = parseInt(data.serviceId);
-      } else {
-        data.serviceId = null;
-      }
+      console.log("Transformed data for API:", transformedData);
       
       try {
-        const res = await apiRequest("POST", "/api/subscriptions", data);
+        if (!transformedData.userId) {
+          throw new Error("User must be logged in to create a subscription");
+        }
+        
+        const res = await apiRequest("POST", "/api/subscriptions", transformedData);
         const jsonResponse = await res.json();
         console.log("Subscription created successfully:", jsonResponse);
         return jsonResponse;
@@ -92,32 +104,71 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
     },
     onSuccess: (data) => {
       console.log("Mutation onSuccess triggered with data:", data);
+      toast({
+        title: "Subscription created",
+        description: "New subscription has been created successfully",
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
       if (onSuccess) onSuccess();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Mutation onError triggered:", error);
-      alert("Failed to create subscription. See console for details.");
+      toast({
+        title: "Error creating subscription",
+        description: error.message || "Failed to create subscription. See console for details.", 
+        variant: "destructive",
+      });
     }
   });
 
   // Update mutation for existing subscriptions
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
-      // Convert serviceId to number if it's not "other"
-      if (data.serviceId && data.serviceId !== "other") {
-        data.serviceId = parseInt(data.serviceId);
-      } else {
-        data.serviceId = null;
-      }
+      console.log("Updating subscription with data:", data);
       
-      const res = await apiRequest("PATCH", `/api/subscriptions/${subscriptionId}`, data);
-      return await res.json();
+      // Преобразуем данные в формат, который ожидает сервер
+      const transformedData = {
+        title: data.title,
+        serviceId: data.serviceId && data.serviceId !== "other" ? parseInt(data.serviceId) : null,
+        domain: data.domain || null,
+        loginId: data.loginId || null,
+        paymentPeriod: data.paymentPeriod || "monthly",
+        paidUntil: data.paidUntil ? new Date(data.paidUntil) : null,
+        paymentAmount: data.paymentAmount ? parseFloat(data.paymentAmount) : null,
+        licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
+        usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
+        status: data.status || "active"
+      };
+      
+      console.log("Transformed data for API:", transformedData);
+      
+      try {
+        const res = await apiRequest("PATCH", `/api/subscriptions/${subscriptionId}`, transformedData);
+        const jsonResponse = await res.json();
+        console.log("Subscription updated successfully:", jsonResponse);
+        return jsonResponse;
+      } catch (error) {
+        console.error("Error updating subscription:", error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Update mutation onSuccess triggered with data:", data);
+      toast({
+        title: "Subscription updated",
+        description: "Subscription has been updated successfully",
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
       if (onSuccess) onSuccess();
     },
+    onError: (error: any) => {
+      console.error("Update mutation onError triggered:", error);
+      toast({
+        title: "Error updating subscription",
+        description: error.message || "Failed to update subscription. See console for details.", 
+        variant: "destructive",
+      });
+    }
   });
 
   // Setup form with default values
