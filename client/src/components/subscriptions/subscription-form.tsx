@@ -66,6 +66,8 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
   // Create mutation for new subscriptions
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
+      console.log("Creating subscription with data:", data);
+      
       // Add the current user ID if not specified
       if (!data.userId && user) {
         data.userId = user.id;
@@ -78,13 +80,25 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         data.serviceId = null;
       }
       
-      const res = await apiRequest("POST", "/api/subscriptions", data);
-      return await res.json();
+      try {
+        const res = await apiRequest("POST", "/api/subscriptions", data);
+        const jsonResponse = await res.json();
+        console.log("Subscription created successfully:", jsonResponse);
+        return jsonResponse;
+      } catch (error) {
+        console.error("Error creating subscription:", error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Mutation onSuccess triggered with data:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
       if (onSuccess) onSuccess();
     },
+    onError: (error) => {
+      console.error("Mutation onError triggered:", error);
+      alert("Failed to create subscription. See console for details.");
+    }
   });
 
   // Update mutation for existing subscriptions
