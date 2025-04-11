@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessageSquare, CreditCard, Package, BarChart4, Palette } from "lucide-react";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface ServicePopularityItem {
   serviceId: number;
