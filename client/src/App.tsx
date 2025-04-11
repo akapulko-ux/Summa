@@ -22,6 +22,7 @@ function Router() {
       <ProtectedRoute path="/services" component={ServicesPage} />
       <ProtectedRoute path="/subscriptions" component={SubscriptionsPage} />
       <ProtectedRoute path="/users" component={UserManagement} />
+      <ProtectedRoute path="/backups" component={BackupsPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>

@@ -9,6 +9,7 @@ import {
   Bell,
   Settings,
   MessagesSquare,
+  Database,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -56,6 +57,12 @@ export function Sidebar({ className }: SidebarProps) {
       title: "Reports",
       href: "/reports",
       icon: <FileText className="h-4 w-4" />,
+      visibleFor: ["admin"],
+    },
+    {
+      title: "Backups",
+      href: "/backups",
+      icon: <Database className="h-4 w-4" />,
       visibleFor: ["admin"],
     },
     {

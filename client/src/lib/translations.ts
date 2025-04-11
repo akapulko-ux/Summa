@@ -26,6 +26,8 @@ export type Translation = {
     appName: string;
     optional: string;
     date: string;
+    restore: string;
+    information: string;
   };
 
   // Аутентификация
