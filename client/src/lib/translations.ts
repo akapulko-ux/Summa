@@ -148,6 +148,35 @@ export type Translation = {
     serviceIcon: string;
     cashback: string;
     customFields: string;
+    customFieldsDesc: string;
+    editCustomFields: string;
+    editCustomFieldsDesc: string;
+    fieldName: string;
+    fieldNamePlaceholder: string;
+    fieldType: string;
+    fieldTypeText: string;
+    fieldTypeNumber: string;
+    fieldTypeBoolean: string;
+    fieldTypeDate: string;
+    fieldTypeSelect: string;
+    selectFieldType: string;
+    defaultValue: string;
+    defaultValuePlaceholder: string;
+    selectOptionsHint: string;
+    visibleToUsers: string;
+    visibleToUsersDesc: string;
+    addCustomField: string;
+    addCustomFieldsPrompt: string;
+    fieldNumber: string;
+    noCustomFields: string;
+    noCustomFieldsAdmin: string;
+    adminOnly: string;
+    customFieldsUpdated: string;
+    customFieldsUpdatedDesc: string;
+    customFieldsDeleted: string;
+    customFieldsDeletedDesc: string;
+    confirmDeleteAllFields: string;
+    confirmDeleteAllFieldsDesc: string;
     createService: string;
     updateService: string;
     confirmDelete: string;
@@ -242,6 +271,45 @@ export type Translation = {
     memberSince: string;
   };
   
+  // Массовые рассылки
+  broadcast: {
+    title: "Broadcast Messages",
+    sendBroadcast: "Send Broadcast",
+    connectedUsers: "Connected Users",
+    newBroadcast: "New Broadcast Message",
+    newBroadcastDesc: "Create a new message to send to all connected users",
+    recipientFilter: "Recipient Filter",
+    selectRecipients: "Select recipients",
+    allUsers: "All Users",
+    adminUsers: "Admin Users Only",
+    clientUsers: "Client Users Only",
+    recipientFilterDesc: "Choose which group of users will receive this message",
+    messageContent: "Message Content",
+    messageContentPlaceholder: "Enter your message here...",
+    messageContentDesc: "This message will be sent to all selected users with connected Telegram accounts",
+    sendNow: "Send Now",
+    broadcastSent: "Broadcast sent",
+    broadcastSentDesc: "Your message was sent to {success} users (failed: {failed})",
+    broadcastFailed: "Broadcast failed",
+    lastBroadcastResult: "Last broadcast result",
+    deliveredCount: "Delivered",
+    failedCount: "Failed",
+    tips: "Broadcast Tips",
+    tip1: "Keep your messages concise and clear for better user experience",
+    tip2: "Use broadcast messages sparingly to avoid overwhelming users",
+    tip3: "Consider sending broadcasts during business hours when users are likely to see them",
+    tip4: "Include a clear call-to-action if you want users to take specific steps",
+    connectedUsersDesc: "Users with linked Telegram accounts",
+    totalConnected: "Total connected users",
+    userId: "User ID",
+    telegramChatId: "Telegram Chat ID",
+    linkedOn: "Linked on",
+    messageThis: "Message",
+    testMessageToUser: "This is a test message for user {userId} from the admin panel.",
+    noConnectedUsers: "No connected users",
+    noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
+  },
+
   // Telegram
   telegram: {
     title: string;
@@ -288,6 +356,43 @@ export type Translation = {
 };
 
 export const en: Translation = {
+  broadcast: {
+    title: "Broadcast Messages",
+    sendBroadcast: "Send Broadcast",
+    connectedUsers: "Connected Users",
+    newBroadcast: "New Broadcast Message",
+    newBroadcastDesc: "Create a new message to send to all connected users",
+    recipientFilter: "Recipient Filter",
+    selectRecipients: "Select recipients",
+    allUsers: "All Users",
+    adminUsers: "Admin Users Only",
+    clientUsers: "Client Users Only",
+    recipientFilterDesc: "Choose which group of users will receive this message",
+    messageContent: "Message Content",
+    messageContentPlaceholder: "Enter your message here...",
+    messageContentDesc: "This message will be sent to all selected users with connected Telegram accounts",
+    sendNow: "Send Now",
+    broadcastSent: "Broadcast sent",
+    broadcastSentDesc: "Your message was sent to {success} users (failed: {failed})",
+    broadcastFailed: "Broadcast failed",
+    lastBroadcastResult: "Last broadcast result",
+    deliveredCount: "Delivered",
+    failedCount: "Failed",
+    tips: "Broadcast Tips",
+    tip1: "Keep your messages concise and clear for better user experience",
+    tip2: "Use broadcast messages sparingly to avoid overwhelming users",
+    tip3: "Consider sending broadcasts during business hours when users are likely to see them",
+    tip4: "Include a clear call-to-action if you want users to take specific steps",
+    connectedUsersDesc: "Users with linked Telegram accounts",
+    totalConnected: "Total connected users",
+    userId: "User ID",
+    telegramChatId: "Telegram Chat ID",
+    linkedOn: "Linked on",
+    messageThis: "Message",
+    testMessageToUser: "This is a test message for user {userId} from the admin panel.",
+    noConnectedUsers: "No connected users",
+    noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
+  },
   common: {
     loading: "Loading...",
     error: "An error occurred",
@@ -429,6 +534,35 @@ export const en: Translation = {
     serviceIcon: "Icon URL",
     cashback: "Cashback",
     customFields: "Custom Fields",
+    customFieldsDesc: "Additional fields for this service",
+    editCustomFields: "Edit Custom Fields",
+    editCustomFieldsDesc: "Add or modify additional fields for this service",
+    fieldName: "Field Name",
+    fieldNamePlaceholder: "Enter field name",
+    fieldType: "Field Type",
+    fieldTypeText: "Text",
+    fieldTypeNumber: "Number",
+    fieldTypeBoolean: "Yes/No",
+    fieldTypeDate: "Date",
+    fieldTypeSelect: "Dropdown",
+    selectFieldType: "Select field type",
+    defaultValue: "Default Value",
+    defaultValuePlaceholder: "Enter default value",
+    selectOptionsHint: "For dropdown fields, enter options separated by commas",
+    visibleToUsers: "Visible to Users",
+    visibleToUsersDesc: "Show this field to regular users",
+    addCustomField: "Add Custom Field",
+    addCustomFieldsPrompt: "No custom fields yet. Click the button below to add your first custom field.",
+    fieldNumber: "Field {number}",
+    noCustomFields: "No custom fields found for this service",
+    noCustomFieldsAdmin: "No custom fields defined yet. Click Edit to add custom fields.",
+    adminOnly: "Admin only",
+    customFieldsUpdated: "Custom fields updated",
+    customFieldsUpdatedDesc: "The custom fields have been successfully updated",
+    customFieldsDeleted: "Custom fields deleted",
+    customFieldsDeletedDesc: "All custom fields have been successfully deleted",
+    confirmDeleteAllFields: "Delete all custom fields?",
+    confirmDeleteAllFieldsDesc: "This action will delete all custom fields for this entity and cannot be undone.",
     createService: "Create Service",
     updateService: "Update Service",
     confirmDelete: "Are you sure you want to delete this service?",
@@ -564,6 +698,43 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  broadcast: {
+    title: "Broadcast Messages",
+    sendBroadcast: "Send Broadcast",
+    connectedUsers: "Connected Users",
+    newBroadcast: "New Broadcast Message",
+    newBroadcastDesc: "Create a new message to send to all connected users",
+    recipientFilter: "Recipient Filter",
+    selectRecipients: "Select recipients",
+    allUsers: "All Users",
+    adminUsers: "Admin Users Only",
+    clientUsers: "Client Users Only",
+    recipientFilterDesc: "Choose which group of users will receive this message",
+    messageContent: "Message Content",
+    messageContentPlaceholder: "Enter your message here...",
+    messageContentDesc: "This message will be sent to all selected users with connected Telegram accounts",
+    sendNow: "Send Now",
+    broadcastSent: "Broadcast sent",
+    broadcastSentDesc: "Your message was sent to {success} users (failed: {failed})",
+    broadcastFailed: "Broadcast failed",
+    lastBroadcastResult: "Last broadcast result",
+    deliveredCount: "Delivered",
+    failedCount: "Failed",
+    tips: "Broadcast Tips",
+    tip1: "Keep your messages concise and clear for better user experience",
+    tip2: "Use broadcast messages sparingly to avoid overwhelming users",
+    tip3: "Consider sending broadcasts during business hours when users are likely to see them",
+    tip4: "Include a clear call-to-action if you want users to take specific steps",
+    connectedUsersDesc: "Users with linked Telegram accounts",
+    totalConnected: "Total connected users",
+    userId: "User ID",
+    telegramChatId: "Telegram Chat ID",
+    linkedOn: "Linked on",
+    messageThis: "Message",
+    testMessageToUser: "This is a test message for user {userId} from the admin panel.",
+    noConnectedUsers: "No connected users",
+    noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
+  },
   common: {
     loading: "Загрузка...",
     error: "Произошла ошибка",
@@ -705,6 +876,35 @@ export const ru: Translation = {
     serviceIcon: "URL иконки",
     cashback: "Кэшбэк",
     customFields: "Дополнительные поля",
+    customFieldsDesc: "Дополнительные поля для этого сервиса",
+    editCustomFields: "Редактирование полей",
+    editCustomFieldsDesc: "Добавление или изменение дополнительных полей для этого сервиса",
+    fieldName: "Название поля",
+    fieldNamePlaceholder: "Введите название поля",
+    fieldType: "Тип поля",
+    fieldTypeText: "Текст",
+    fieldTypeNumber: "Число",
+    fieldTypeBoolean: "Да/Нет",
+    fieldTypeDate: "Дата",
+    fieldTypeSelect: "Выпадающий список",
+    selectFieldType: "Выберите тип поля",
+    defaultValue: "Значение по умолчанию",
+    defaultValuePlaceholder: "Введите значение по умолчанию",
+    selectOptionsHint: "Для выпадающих списков введите варианты через запятую",
+    visibleToUsers: "Видимо пользователям",
+    visibleToUsersDesc: "Показывать это поле обычным пользователям",
+    addCustomField: "Добавить поле",
+    addCustomFieldsPrompt: "Нет дополнительных полей. Нажмите кнопку ниже, чтобы добавить первое поле.",
+    fieldNumber: "Поле {number}",
+    noCustomFields: "Дополнительные поля не найдены для этого сервиса",
+    noCustomFieldsAdmin: "Дополнительные поля еще не определены. Нажмите Редактировать, чтобы добавить поля.",
+    adminOnly: "Только для администраторов",
+    customFieldsUpdated: "Дополнительные поля обновлены",
+    customFieldsUpdatedDesc: "Дополнительные поля были успешно обновлены",
+    customFieldsDeleted: "Дополнительные поля удалены",
+    customFieldsDeletedDesc: "Все дополнительные поля были успешно удалены",
+    confirmDeleteAllFields: "Удалить все дополнительные поля?",
+    confirmDeleteAllFieldsDesc: "Это действие удалит все дополнительные поля для этого элемента и не может быть отменено.",
     createService: "Создать сервис",
     updateService: "Обновить сервис",
     confirmDelete: "Вы уверены, что хотите удалить этот сервис?",
@@ -794,6 +994,44 @@ export const ru: Translation = {
     accountStatus: "Статус аккаунта",
     active: "Активен",
     memberSince: "Участник с",
+  },
+  
+  broadcast: {
+    title: "Массовые рассылки",
+    sendBroadcast: "Отправить рассылку",
+    connectedUsers: "Подключенные пользователи",
+    newBroadcast: "Новое сообщение для рассылки",
+    newBroadcastDesc: "Создайте новое сообщение для отправки всем подключенным пользователям",
+    recipientFilter: "Фильтр получателей",
+    selectRecipients: "Выберите получателей",
+    allUsers: "Все пользователи",
+    adminUsers: "Только администраторы",
+    clientUsers: "Только клиенты",
+    recipientFilterDesc: "Выберите группу пользователей, которые получат это сообщение",
+    messageContent: "Содержание сообщения",
+    messageContentPlaceholder: "Введите ваше сообщение здесь...",
+    messageContentDesc: "Это сообщение будет отправлено всем выбранным пользователям с подключенными аккаунтами Telegram",
+    sendNow: "Отправить сейчас",
+    broadcastSent: "Рассылка отправлена",
+    broadcastSentDesc: "Ваше сообщение было отправлено {success} пользователям (не доставлено: {failed})",
+    broadcastFailed: "Ошибка рассылки",
+    lastBroadcastResult: "Результат последней рассылки",
+    deliveredCount: "Доставлено",
+    failedCount: "Не доставлено",
+    tips: "Советы по рассылкам",
+    tip1: "Делайте сообщения краткими и понятными для лучшего восприятия",
+    tip2: "Используйте рассылки экономно, чтобы не перегружать пользователей",
+    tip3: "Отправляйте рассылки в рабочее время, когда пользователи с большей вероятностью их увидят",
+    tip4: "Включайте четкий призыв к действию, если хотите, чтобы пользователи выполнили определенные шаги",
+    connectedUsersDesc: "Пользователи с привязанными аккаунтами Telegram",
+    totalConnected: "Всего подключенных пользователей",
+    userId: "ID пользователя",
+    telegramChatId: "ID чата Telegram",
+    linkedOn: "Подключен",
+    messageThis: "Написать",
+    testMessageToUser: "Это тестовое сообщение для пользователя {userId} из админ-панели.",
+    noConnectedUsers: "Нет подключенных пользователей",
+    noConnectedUsersDesc: "В настоящее время нет пользователей с привязанными аккаунтами Telegram."
   },
   
   telegram: {

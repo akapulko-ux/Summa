@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { useTranslation } from "@/hooks/use-translations";
+import { useTranslations } from "@/hooks/use-translations";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 // Типы для кастомных полей
@@ -61,7 +61,7 @@ interface CustomFieldsManagerProps {
 }
 
 export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: CustomFieldsManagerProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslations();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
 
