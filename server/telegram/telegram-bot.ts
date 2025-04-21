@@ -184,18 +184,18 @@ export class TelegramBotManager implements ITelegramBotManager {
    */
   async sendBroadcastMessage(message: string, filter?: { role?: 'admin' | 'client' }): Promise<{ success: number; failed: number }> {
     // Запрос на получение пользователей
-    let query = db.select().from(users);
+    let usersList = [];
     
     // Применить фильтр по роли, если он указан
     if (filter?.role) {
-      query = db.select().from(users).where(eq(users.role, filter.role));
+      usersList = await db.select().from(users).where(eq(users.role, filter.role));
+    } else {
+      usersList = await db.select().from(users);
     }
     
-    // Получить всех пользователей
-    const allUsers = await query;
-    
     // Отфильтровать только тех, у кого есть привязанный Telegram аккаунт
-    const linkedUsers = allUsers.filter(user => user.telegramChatId !== null && user.telegramChatId !== '');
+    const linkedUsers = usersList.filter((user: { telegramChatId: string | null }) => 
+      user.telegramChatId !== null && user.telegramChatId !== '');
     
     let success = 0;
     let failed = 0;

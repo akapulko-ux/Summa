@@ -147,7 +147,7 @@ export function TelegramConnect() {
         <AlertDialogTrigger asChild>
           <Button 
             variant="outline" 
-            className="mt-4 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="w-full mt-4 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:text-destructive"
             disabled={disconnectTelegramMutation.isPending}
           >
             {disconnectTelegramMutation.isPending ? (
@@ -165,7 +165,7 @@ export function TelegramConnect() {
               {t.telegram.confirmDisconnect}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t.telegram.disconnectWarning || "This action will disconnect your Telegram account from the system. You will stop receiving notifications. You can reconnect anytime."}
+              {t.telegram.disconnectWarning}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

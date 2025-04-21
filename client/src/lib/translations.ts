@@ -260,6 +260,7 @@ export type Translation = {
     disconnect: string;
     disconnected: string;
     confirmDisconnect: string;
+    disconnectWarning: string;
   };
 
   // Ошибки и сообщения
@@ -536,6 +537,7 @@ export const en: Translation = {
     disconnect: "Disconnect Telegram",
     disconnected: "Your Telegram account has been disconnected",
     confirmDisconnect: "Are you sure you want to disconnect your Telegram account?",
+    disconnectWarning: "This action will disconnect your Telegram account from the system. You will stop receiving notifications. You can reconnect anytime.",
   },
 
   messages: {
@@ -811,6 +813,7 @@ export const ru: Translation = {
     disconnect: "Отключить Telegram",
     disconnected: "Ваш аккаунт Telegram был отключен",
     confirmDisconnect: "Вы уверены, что хотите отключить свой аккаунт Telegram?",
+    disconnectWarning: "Это действие отключит ваш аккаунт Telegram от системы. Вы перестанете получать уведомления. Вы можете снова подключиться в любое время.",
   },
 
   messages: {
