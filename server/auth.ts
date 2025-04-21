@@ -97,6 +97,35 @@ export function setupAuth(app: Express) {
     }
   });
 
+  // Debug admin account
+  app.post("/api/debug/create-admin", async (req, res) => {
+    if (process.env.NODE_ENV !== "development") {
+      return res.status(403).json({ message: "Only available in development" });
+    }
+
+    try {
+      const adminUser = await storage.createUser({
+        email: "admin@debug.local",
+        passwordHash: await hashPassword("admin123"),
+        name: "Debug Admin",
+        companyName: "Debug Company",
+        phone: "",
+        role: "admin",
+        isActive: true,
+      });
+
+      res.status(201).json({ 
+        message: "Debug admin created",
+        credentials: {
+          email: "admin@debug.local",
+          password: "admin123"
+        }
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Registration endpoint
   app.post("/api/register", async (req, res, next) => {
     try {
