@@ -6,6 +6,7 @@ import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema 
 import { ZodError } from "zod";
 import { zValidationErrorToMessage } from "./utils";
 import backupRoutes from "./backup/backup-routes";
+import { setupTelegramRoutes } from "./telegram/telegram-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -440,6 +441,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Подключаем маршруты для резервного копирования базы данных
   app.use("/api/backups", backupRoutes);
+
+  // Подключаем маршруты для Telegram бота
+  setupTelegramRoutes(app);
 
   const httpServer = createServer(app);
 

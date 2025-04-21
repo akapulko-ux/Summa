@@ -238,6 +238,21 @@ export type Translation = {
     active: string;
     memberSince: string;
   };
+  
+  // Telegram
+  telegram: {
+    title: string;
+    description: string;
+    connect: string;
+    connected: string;
+    notConnected: string;
+    generateLink: string;
+    linkInstructions: string;
+    openBot: string;
+    sendCommand: string;
+    afterLink: string;
+    receiveNotifications: string;
+  };
 
   // Ошибки и сообщения
   messages: {
