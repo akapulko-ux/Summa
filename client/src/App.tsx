@@ -14,6 +14,8 @@ import ServicesPage from "@/pages/services-page";
 import SubscriptionsPage from "@/pages/subscriptions-page";
 import UserManagement from "@/pages/user-management";
 import BackupsPage from "@/pages/backups-page";
+import AnalyticsPage from "@/pages/analytics-page";
+import ReportsPage from "@/pages/reports-page";
 
 function Router() {
   return (
@@ -27,6 +29,8 @@ function Router() {
       <AdminRoute path="/admin/services" component={ServicesPage} />
       <AdminRoute path="/admin/users" component={UserManagement} />
       <AdminRoute path="/admin/backups" component={BackupsPage} />
+      <AdminRoute path="/admin/analytics" component={AnalyticsPage} />
+      <AdminRoute path="/admin/reports" component={ReportsPage} />
       
       {/* Страница аутентификации (доступна для всех) */}
       <Route path="/auth" component={AuthPage} />
