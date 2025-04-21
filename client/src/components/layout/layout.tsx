@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
 
@@ -7,16 +7,22 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header onMenuToggle={toggleSidebar} />
       <div className="flex flex-1">
-        <div className="hidden md:flex w-[250px] flex-col border-r bg-background">
+        <div className={`${sidebarOpen ? 'block' : 'hidden'} md:block w-[250px] flex-col border-r bg-background transition-all duration-300 ease-in-out`}>
           <div className="p-6">
             <Sidebar />
           </div>
         </div>
-        <main className="flex-1 md:p-0">{children}</main>
+        <main className="flex-1 p-0">{children}</main>
       </div>
     </div>
   );

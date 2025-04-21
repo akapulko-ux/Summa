@@ -305,7 +305,7 @@ export default function ReportsPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-2 border rounded-md">
                     <div className="flex items-center gap-2">
-                      <FilePdf className="h-5 w-5 text-red-500" />
+                      <File className="h-5 w-5 text-red-500" />
                       <div>
                         <p className="text-sm font-medium">Subscription Report</p>
                         <p className="text-xs text-muted-foreground">{format(new Date(), "PPP")}</p>
@@ -331,7 +331,7 @@ export default function ReportsPage() {
                   
                   <div className="flex items-center justify-between p-2 border rounded-md">
                     <div className="flex items-center gap-2">
-                      <FilePdf className="h-5 w-5 text-red-500" />
+                      <File className="h-5 w-5 text-red-500" />
                       <div>
                         <p className="text-sm font-medium">Financial Report Q1</p>
                         <p className="text-xs text-muted-foreground">{format(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), "PPP")}</p>

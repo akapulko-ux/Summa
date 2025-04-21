@@ -40,17 +40,17 @@ export default function AnalyticsPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   // Запрос статистики подписок
-  const { data: subscriptionStats, isLoading: isLoadingSubscriptions } = useQuery({
+  const { data: subscriptionStats = {}, isLoading: isLoadingSubscriptions } = useQuery<any>({
     queryKey: ["/api/stats/subscriptions"],
   });
 
   // Запрос статистики пользователей
-  const { data: userStats, isLoading: isLoadingUsers } = useQuery({
+  const { data: userStats = {}, isLoading: isLoadingUsers } = useQuery<any>({
     queryKey: ["/api/stats/users"],
   });
 
   // Запрос популярности сервисов
-  const { data: servicePopularity, isLoading: isLoadingServices } = useQuery({
+  const { data: servicePopularity = [], isLoading: isLoadingServices } = useQuery<any[]>({
     queryKey: ["/api/stats/services"],
   });
 
@@ -238,8 +238,8 @@ export default function AnalyticsPage() {
                       <PieChart>
                         <Pie
                           data={[
-                            { name: "Active", value: parseInt(userStats.active) || 0 },
-                            { name: "Inactive", value: parseInt(userStats.total) - parseInt(userStats.active) || 0 }
+                            { name: "Active", value: parseInt((userStats as any).active || "0") },
+                            { name: "Inactive", value: parseInt((userStats as any).total || "0") - parseInt((userStats as any).active || "0") }
                           ]}
                           cx="50%"
                           cy="50%"
