@@ -28,6 +28,7 @@ export type Translation = {
     date: string;
     restore: string;
     information: string;
+    refresh: string;
   };
   
   // Резервное копирование
@@ -156,6 +157,8 @@ export type Translation = {
     serviceUpdated: string;
     serviceDeleted: string;
     servicesByCount: string;
+    availableServices: string;
+    availableToSubscribe: string;
   };
 
   // Подписки
@@ -305,6 +308,7 @@ export const en: Translation = {
     date: "Date",
     restore: "Restore",
     information: "Information",
+    refresh: "Refresh",
   },
   
   backups: {
@@ -574,6 +578,7 @@ export const ru: Translation = {
     date: "Дата",
     restore: "Восстановить",
     information: "Информация",
+    refresh: "Обновить",
   },
   
   backups: {
