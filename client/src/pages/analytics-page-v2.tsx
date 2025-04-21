@@ -45,6 +45,7 @@ export default function AnalyticsPage() {
   const [period, setPeriod] = useState("month");
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [animatedData, setAnimatedData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("revenue");
   
   // Эффект для создания анимированных данных при изменении периода
   useEffect(() => {
@@ -119,9 +120,21 @@ export default function AnalyticsPage() {
   return (
     <Layout>
       <div className="container py-6">
-        <h1 className="text-3xl font-bold mb-6">{t.nav.analytics}</h1>
+        <motion.h1 
+          className="text-3xl font-bold mb-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {t.nav.analytics}
+        </motion.h1>
         
-        <div className="flex items-center mb-6 space-x-2">
+        <motion.div 
+          className="flex items-center mb-6 space-x-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           <Select
             value={period}
             onValueChange={(value) => setPeriod(value)}
@@ -160,9 +173,9 @@ export default function AnalyticsPage() {
               />
             </PopoverContent>
           </Popover>
-        </div>
+        </motion.div>
         
-        <Tabs defaultValue="revenue">
+        <Tabs defaultValue="revenue" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="revenue" className="relative overflow-hidden group">
               <span className="relative z-10">Revenue Analytics</span>
@@ -207,9 +220,7 @@ export default function AnalyticsPage() {
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                      </div>
+                      <AnimatedLoader text="Загрузка данных о доходах..." />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -266,9 +277,7 @@ export default function AnalyticsPage() {
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                      </div>
+                      <AnimatedLoader text="Загрузка распределения доходов..." />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -330,9 +339,7 @@ export default function AnalyticsPage() {
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingUsers ? (
-                      <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                      </div>
+                      <AnimatedLoader text="Загрузка данных о росте пользователей..." />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -396,9 +403,7 @@ export default function AnalyticsPage() {
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingUsers ? (
-                      <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                      </div>
+                      <AnimatedLoader text="Загрузка данных об активности..." />
                     ) : userStats ? (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -461,9 +466,7 @@ export default function AnalyticsPage() {
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingServices ? (
-                      <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                      </div>
+                      <AnimatedLoader text="Загрузка популярных сервисов..." />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -520,9 +523,7 @@ export default function AnalyticsPage() {
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <div className="flex items-center justify-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                      </div>
+                      <AnimatedLoader text="Загрузка данных о доходах сервисов..." />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -578,6 +579,32 @@ export default function AnalyticsPage() {
             </div>
           </TabsContent>
         </Tabs>
+        
+        {/* Вспомогательная навигация с анимацией */}
+        <motion.div 
+          className="mt-8 flex justify-center space-x-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          {["revenue", "users", "services"].map((tab) => (
+            <motion.button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-full ${
+                activeTab === tab 
+                  ? "bg-primary text-primary-foreground" 
+                  : "bg-muted hover:bg-primary/10"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {tab === "revenue" && "Доходы"}
+              {tab === "users" && "Пользователи"}
+              {tab === "services" && "Сервисы"}
+            </motion.button>
+          ))}
+        </motion.div>
       </div>
     </Layout>
   );

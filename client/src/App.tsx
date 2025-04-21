@@ -14,7 +14,7 @@ import ServicesPage from "@/pages/services-page";
 import SubscriptionsPage from "@/pages/subscriptions-page";
 import UserManagement from "@/pages/user-management";
 import BackupsPage from "@/pages/backups-page";
-import AnalyticsPage from "@/pages/analytics-page";
+import AnalyticsPage from "@/pages/analytics-page-v2";
 import ReportsPage from "@/pages/reports-page";
 
 function Router() {
