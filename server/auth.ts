@@ -69,8 +69,11 @@ export function setupAuth(app: Express) {
       { usernameField: "email" },
       async (email, password, done) => {
         try {
+          console.log("Login attempt:", email);
           const user = await storage.getUserByEmail(email);
+          console.log("User found:", !!user);
           if (!user || !user.passwordHash || !(await comparePasswords(password, user.passwordHash))) {
+            console.log("Authentication failed");
             return done(null, false, { message: "Invalid email or password" });
           }
           
