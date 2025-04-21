@@ -24,7 +24,8 @@ import {
   LineChart,
   Line,
   Area,
-  AreaChart
+  AreaChart,
+  ComposedChart
 } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
@@ -96,6 +97,28 @@ export default function AnalyticsPage() {
   // Запрос популярности сервисов
   const { data: servicePopularity = [], isLoading: isLoadingServices } = useQuery<any[]>({
     queryKey: ["/api/stats/services"],
+  });
+  
+  // Новые данные аналитики
+  
+  // Статистика регистраций пользователей
+  const { data: registrationStats = [], isLoading: isLoadingRegistrations } = useQuery<any[]>({
+    queryKey: ["/api/stats/registrations", { period }],
+  });
+  
+  // Статистика по кэшбэку
+  const { data: cashbackStats = [], isLoading: isLoadingCashback } = useQuery<any[]>({
+    queryKey: ["/api/stats/cashback", { period }],
+  });
+  
+  // Статистика активности клиентов
+  const { data: clientsActivityStats = {}, isLoading: isLoadingClientsActivity } = useQuery<any>({
+    queryKey: ["/api/stats/clients-activity"],
+  });
+  
+  // Статистика по стоимости подписок
+  const { data: subscriptionCostsStats = [], isLoading: isLoadingSubscriptionCosts } = useQuery<any[]>({
+    queryKey: ["/api/stats/subscription-costs", { period }],
   });
 
   // Placeholder данные для примера
@@ -176,12 +199,12 @@ export default function AnalyticsPage() {
         </motion.div>
         
         <Tabs defaultValue="revenue" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             <TabsTrigger 
               value="revenue" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Revenue Analytics</span>
+              <span>Revenue</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -195,7 +218,7 @@ export default function AnalyticsPage() {
               value="users" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>User Analytics</span>
+              <span>Users</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -209,12 +232,40 @@ export default function AnalyticsPage() {
               value="services" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Service Analytics</span>
+              <span>Services</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
                 animate={{ 
                   scaleX: activeTab === "services" ? 1 : 0
+                }}
+                transition={{ duration: 0.3 }}
+              />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="cashback" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
+            >
+              <span>Cashback</span>
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                initial={{ scaleX: 0 }}
+                animate={{ 
+                  scaleX: activeTab === "cashback" ? 1 : 0
+                }}
+                transition={{ duration: 0.3 }}
+              />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="activity" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
+            >
+              <span>Activity</span>
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                initial={{ scaleX: 0 }}
+                animate={{ 
+                  scaleX: activeTab === "activity" ? 1 : 0
                 }}
                 transition={{ duration: 0.3 }}
               />
@@ -602,7 +653,7 @@ export default function AnalyticsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          {["revenue", "users", "services"].map((tab) => (
+          {["revenue", "users", "services", "cashback", "activity"].map((tab) => (
             <motion.button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -617,6 +668,8 @@ export default function AnalyticsPage() {
               {tab === "revenue" && "Доходы"}
               {tab === "users" && "Пользователи"}
               {tab === "services" && "Сервисы"}
+              {tab === "cashback" && "Кэшбэк"}
+              {tab === "activity" && "Активность"}
             </motion.button>
           ))}
         </motion.div>
