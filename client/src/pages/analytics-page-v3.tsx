@@ -32,7 +32,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, CreditCard, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Layout from "@/components/layout/layout";
 import { motion, AnimatePresence } from "framer-motion";
@@ -635,6 +635,236 @@ export default function AnalyticsPage() {
                                 radius={[0, 4, 4, 0]}
                               />
                             </RechartBarChart>
+                          </ResponsiveContainer>
+                        </motion.div>
+                      </AnimatePresence>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="cashback" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Cashback Analytics</CardTitle>
+                    <CardDescription>Cashback amount by period</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-80">
+                    {isLoadingCashback ? (
+                      <AnimatedLoader text="Загрузка данных о кэшбэке..." />
+                    ) : (
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={`cashback-chart-${period}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className="h-full"
+                        >
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart
+                              data={cashbackStats}
+                              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="period" />
+                              <YAxis />
+                              <Tooltip 
+                                contentStyle={{ 
+                                  borderRadius: '8px',
+                                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                  border: 'none'
+                                }} 
+                                formatter={(value) => [`$${value}`, 'Amount']}
+                              />
+                              <Legend />
+                              <Line 
+                                type="monotone" 
+                                dataKey="amount" 
+                                stroke="#ff7300" 
+                                name="Cashback" 
+                                activeDot={{ r: 8 }}
+                                strokeWidth={2}
+                                animationDuration={1500}
+                              />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </motion.div>
+                      </AnimatePresence>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Cashback Summary</CardTitle>
+                    <CardDescription>Total cashback statistics</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-80">
+                    {isLoadingCashback ? (
+                      <AnimatedLoader text="Загрузка статистики кэшбэка..." />
+                    ) : (
+                      <div className="flex flex-col h-full justify-center items-center">
+                        <div className="grid grid-cols-1 gap-6 w-full">
+                          <div className="flex flex-col items-center justify-center p-6 bg-muted rounded-xl">
+                            <div className="text-3xl font-bold mb-2">
+                              ${cashbackStats.reduce((sum, item) => sum + parseFloat(item.amount), 0).toFixed(2)}
+                            </div>
+                            <div className="text-muted-foreground">Total Cashback</div>
+                          </div>
+                          
+                          <div className="flex flex-col items-center justify-center p-6 bg-muted rounded-xl">
+                            <div className="text-3xl font-bold mb-2">
+                              {cashbackStats.length > 0 ? 
+                                `$${cashbackStats[cashbackStats.length - 1].amount}` : 
+                                '$0.00'}
+                            </div>
+                            <div className="text-muted-foreground">Latest Cashback</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="activity" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Client Activity</CardTitle>
+                    <CardDescription>Active vs Inactive clients</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-80">
+                    {isLoadingClientsActivity ? (
+                      <AnimatedLoader text="Загрузка данных об активности..." />
+                    ) : (
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={`activity-chart-${period}`}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          transition={{ duration: 0.5 }}
+                          className="h-full"
+                        >
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={[
+                                  { name: 'Active', value: clientsActivityStats.active || 0 },
+                                  { name: 'Inactive', value: clientsActivityStats.inactive || 0 }
+                                ]}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={true}
+                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                outerRadius={100}
+                                fill="#8884d8"
+                                dataKey="value"
+                              >
+                                <Cell fill="#4CAF50" /> {/* Active */}
+                                <Cell fill="#F44336" /> {/* Inactive */}
+                              </Pie>
+                              <Tooltip 
+                                contentStyle={{ 
+                                  borderRadius: '8px',
+                                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                  border: 'none'
+                                }} 
+                              />
+                              <Legend />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </motion.div>
+                      </AnimatePresence>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Subscription Costs</CardTitle>
+                    <CardDescription>Average, min and max subscription prices</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-80">
+                    {isLoadingSubscriptionCosts ? (
+                      <AnimatedLoader text="Загрузка данных о стоимости подписок..." />
+                    ) : (
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={`costs-chart-${period}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className="h-full"
+                        >
+                          <ResponsiveContainer width="100%" height="100%">
+                            <ComposedChart
+                              data={subscriptionCostsStats}
+                              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="period" />
+                              <YAxis />
+                              <Tooltip 
+                                contentStyle={{ 
+                                  borderRadius: '8px',
+                                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                  border: 'none'
+                                }} 
+                                formatter={(value) => [`$${value}`, 'Price']}
+                              />
+                              <Legend />
+                              <Area 
+                                type="monotone" 
+                                dataKey="avgPrice" 
+                                fill="#8884d8" 
+                                stroke="#8884d8" 
+                                name="Average Price"
+                              />
+                              <Line 
+                                type="monotone" 
+                                dataKey="maxPrice" 
+                                stroke="#ff7300" 
+                                name="Maximum Price" 
+                              />
+                              <Line 
+                                type="monotone" 
+                                dataKey="minPrice" 
+                                stroke="#4CAF50" 
+                                name="Minimum Price" 
+                              />
+                            </ComposedChart>
                           </ResponsiveContainer>
                         </motion.div>
                       </AnimatePresence>
