@@ -148,22 +148,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </Link>
             {isAdmin && (
               <>
-                <Link href="/admin/services">
-                  <span className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
+                <button 
+                  onClick={() => window.location.href = "/admin/services"} 
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary border-0 bg-transparent cursor-pointer p-0",
                     location === "/admin/services" ? "text-primary" : "text-muted-foreground"
-                  )}>
-                    {t.nav.services}
-                  </span>
-                </Link>
-                <Link href="/admin/users">
-                  <span className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
+                  )}
+                >
+                  {t.nav.services}
+                </button>
+                <button 
+                  onClick={() => window.location.href = "/admin/users"} 
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary border-0 bg-transparent cursor-pointer p-0",
                     location === "/admin/users" ? "text-primary" : "text-muted-foreground"
-                  )}>
-                    {t.nav.users}
-                  </span>
-                </Link>
+                  )}
+                >
+                  {t.nav.users}
+                </button>
               </>
             )}
           </nav>
@@ -241,7 +243,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t.auth.logout}</span>
+                  <span>{t.auth.logoutAction}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
