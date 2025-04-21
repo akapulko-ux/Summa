@@ -23,6 +23,9 @@ export interface ITelegramBotManager {
   // Линковка Telegram аккаунта с пользователем в системе (через код)
   linkUserAccount(linkCode: string, telegramChatId: number): Promise<boolean>;
   
+  // Отключение Telegram аккаунта пользователя
+  disconnectUser(userId: number): Promise<boolean>;
+  
   // Генерация кода для привязки аккаунта
   generateLinkCode(userId: number): Promise<string>;
   

@@ -255,6 +255,11 @@ export type Translation = {
     sendCommand: string;
     afterLink: string;
     receiveNotifications: string;
+    sendTestNotification: string;
+    testNotificationSent: string;
+    disconnect: string;
+    disconnected: string;
+    confirmDisconnect: string;
   };
 
   // Ошибки и сообщения
@@ -526,6 +531,11 @@ export const en: Translation = {
     sendCommand: "Send this command to the bot",
     afterLink: "After sending the command, you'll receive a confirmation message",
     receiveNotifications: "You'll now receive notifications about your subscriptions via Telegram",
+    sendTestNotification: "Send Test Notification",
+    testNotificationSent: "Test notification was sent successfully",
+    disconnect: "Disconnect Telegram",
+    disconnected: "Your Telegram account has been disconnected",
+    confirmDisconnect: "Are you sure you want to disconnect your Telegram account?",
   },
 
   messages: {
@@ -796,6 +806,11 @@ export const ru: Translation = {
     sendCommand: "Отправьте эту команду боту",
     afterLink: "После отправки команды вы получите подтверждающее сообщение",
     receiveNotifications: "Теперь вы будете получать уведомления о ваших подписках через Telegram",
+    sendTestNotification: "Отправить тестовое уведомление",
+    testNotificationSent: "Тестовое уведомление успешно отправлено",
+    disconnect: "Отключить Telegram",
+    disconnected: "Ваш аккаунт Telegram был отключен",
+    confirmDisconnect: "Вы уверены, что хотите отключить свой аккаунт Telegram?",
   },
 
   messages: {

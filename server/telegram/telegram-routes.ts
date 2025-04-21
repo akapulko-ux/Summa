@@ -31,7 +31,7 @@ export function setupTelegramRoutes(app: Express) {
     }
   });
 
-  // API для отправки тестового уведомления (только для админов)
+  // API для отправки тестового уведомления (для админов - могут отправить любому пользователю)
   app.post('/api/telegram/send-test-notification', isAdmin, async (req: Request, res: Response) => {
     try {
       const { userId, message } = req.body;
@@ -50,6 +50,36 @@ export function setupTelegramRoutes(app: Express) {
     } catch (error: any) {
       console.error('Error sending test notification:', error);
       res.status(500).json({ message: error.message || 'Failed to send notification' });
+    }
+  });
+  
+  // API для отправки тестового уведомления себе
+  app.post('/api/telegram/send-self-test', async (req: Request, res: Response) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: 'Not authenticated' });
+      }
+      
+      const user = req.user as User;
+      const { message } = req.body;
+      
+      // Если сообщение не указано, используем стандартное
+      const testMessage = message || 'Это тестовое уведомление от SaaSly. Ваш Telegram успешно подключен!';
+      
+      if (!user.telegramChatId) {
+        return res.status(400).json({ message: 'Your Telegram account is not connected yet' });
+      }
+      
+      const success = await telegramBotManager.sendNotificationToUser(user.id, testMessage);
+      
+      if (success) {
+        res.json({ message: 'Test notification sent successfully' });
+      } else {
+        res.status(400).json({ message: 'Failed to send test notification' });
+      }
+    } catch (error: any) {
+      console.error('Error sending self test notification:', error);
+      res.status(500).json({ message: error.message || 'Failed to send test notification' });
     }
   });
 
@@ -94,6 +124,32 @@ export function setupTelegramRoutes(app: Express) {
     }
   });
 
+  // API для отключения Telegram для текущего пользователя
+  app.post('/api/telegram/disconnect', async (req: Request, res: Response) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: 'Not authenticated' });
+      }
+
+      const user = req.user as User;
+      
+      if (!user.telegramChatId) {
+        return res.status(400).json({ message: 'Your Telegram account is not connected yet' });
+      }
+      
+      const success = await telegramBotManager.disconnectUser(user.id);
+      
+      if (success) {
+        res.json({ message: 'Your Telegram account has been disconnected successfully' });
+      } else {
+        res.status(400).json({ message: 'Failed to disconnect your Telegram account' });
+      }
+    } catch (error: any) {
+      console.error('Error disconnecting Telegram:', error);
+      res.status(500).json({ message: error.message || 'Failed to disconnect Telegram' });
+    }
+  });
+  
   // API для получения списка пользователей с подключенным Telegram (только для админов)
   app.get('/api/telegram/linked-users', isAdmin, async (req: Request, res: Response) => {
     try {
