@@ -219,7 +219,7 @@ export default function BroadcastPage() {
                     {t.broadcast.lastBroadcastResult}
                     <div className="mt-2 flex space-x-4">
                       <div className="flex items-center">
-                        <Badge variant="success" className="mr-2">
+                        <Badge variant="outline" className="mr-2 bg-green-100 text-green-700 hover:bg-green-200">
                           {lastBroadcastResult.success}
                         </Badge>
                         <span>{t.broadcast.deliveredCount}</span>
