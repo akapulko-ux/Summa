@@ -18,6 +18,7 @@ import {
   X,
   Bell
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -185,14 +186,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-1"
-              onClick={() => setLanguage(language === 'en' ? 'ru' : 'en')}
-            >
-              {language === 'en' ? 'EN' : 'РУ'}
-            </Button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1"
+                onClick={() => setLanguage(language === 'en' ? 'ru' : 'en')}
+              >
+                {language === 'en' ? 'EN' : 'РУ'}
+              </Button>
+            </div>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
