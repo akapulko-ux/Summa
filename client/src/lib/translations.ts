@@ -34,6 +34,16 @@ export type Translation = {
     deleteAll: string;
   };
   
+  // Layout
+  layout: {
+    adminPanel: string;
+    notifications: string;
+    noNotifications: string;
+    userMenu: string;
+    toggleTheme: string;
+    toggleSidebar: string;
+  };
+  
   // Резервное копирование
   backups: {
     title: string;
@@ -390,6 +400,14 @@ export const en: Translation = {
     no: "No",
     deleteAll: "Delete All"
   },
+  layout: {
+    adminPanel: "Admin Panel",
+    notifications: "Notifications",
+    noNotifications: "No new notifications",
+    userMenu: "User Menu",
+    toggleTheme: "Toggle Theme",
+    toggleSidebar: "Toggle Sidebar"
+  },
   broadcast: {
     title: "Broadcast Messages",
     sendBroadcast: "Send Broadcast",
@@ -704,6 +722,14 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  layout: {
+    adminPanel: "Панель администратора",
+    notifications: "Уведомления",
+    noNotifications: "Нет новых уведомлений",
+    userMenu: "Меню пользователя",
+    toggleTheme: "Переключить тему",
+    toggleSidebar: "Переключить боковую панель"
+  },
   common: {
     loading: "Загрузка...",
     error: "Произошла ошибка",
