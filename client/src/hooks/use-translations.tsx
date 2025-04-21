@@ -1,79 +1,57 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Translation, en, ru } from '@/lib/translations';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { en, ru, Translation } from '@/lib/translations';
 
-// Типы доступных языков
 type LanguageCode = 'en' | 'ru';
 
-// Контекст для языковых настроек
 type TranslationContextType = {
   t: Translation;
   language: LanguageCode;
   setLanguage: (language: LanguageCode) => void;
 };
 
-// Создаем контекст
-const TranslationContext = createContext<TranslationContextType | null>(null);
+export const TranslationContext = createContext<TranslationContextType | null>(null);
 
-// Сохраняем выбор языка в localStorage
-const LANGUAGE_KEY = 'saasly-language';
-
-// Провайдер для языковых настроек
 export function TranslationProvider({ children }: { children: ReactNode }) {
-  // Определяем начальный язык (из localStorage или из настроек браузера)
+  // Функция для получения начального языка из localStorage или из языка браузера
   const getInitialLanguage = (): LanguageCode => {
-    // Пробуем получить из localStorage
-    const savedLanguage = localStorage.getItem(LANGUAGE_KEY) as LanguageCode | null;
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+    // Проверяем наличие сохраненного языка в localStorage
+    const savedLanguage = localStorage.getItem('language') as LanguageCode;
+    if (savedLanguage && ['en', 'ru'].includes(savedLanguage)) {
       return savedLanguage;
     }
-    
-    // Проверяем настройки браузера
-    const browserLanguages = navigator.languages || [navigator.language];
-    for (const lang of browserLanguages) {
-      if (lang.startsWith('ru')) {
-        return 'ru';
-      }
+
+    // Если в localStorage ничего не сохранено, проверяем язык браузера
+    const browserLanguage = navigator.language.substring(0, 2);
+    if (browserLanguage === 'ru') {
+      return 'ru';
     }
-    
-    // По умолчанию английский
+
+    // По умолчанию используем английский
     return 'en';
   };
 
-  // Состояние текущего языка
-  const [language, setLanguageState] = useState<LanguageCode>(getInitialLanguage);
-  
-  // Словарь перевода для текущего языка
-  const translations: Record<LanguageCode, Translation> = {
-    en,
-    ru,
-  };
+  const [language, setLanguageState] = useState<LanguageCode>(getInitialLanguage());
+  const [translations, setTranslations] = useState<Translation>(language === 'ru' ? ru : en);
 
-  // Установка языка с сохранением в localStorage
   const setLanguage = (lang: LanguageCode) => {
-    localStorage.setItem(LANGUAGE_KEY, lang);
     setLanguageState(lang);
+    localStorage.setItem('language', lang);
+    setTranslations(lang === 'ru' ? ru : en);
+    document.documentElement.lang = lang;
   };
 
-  // Эффект для обновления HTML lang атрибута
+  // Установка языка при монтировании компонента
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
 
-  // Возвращаем контекст с переводом и функциями управления языком
   return (
-    <TranslationContext.Provider
-      value={{
-        t: translations[language],
-        language,
-        setLanguage,
-      }}
-    >
+    <TranslationContext.Provider value={{ t: translations, language, setLanguage }}>
       {children}
     </TranslationContext.Provider>
   );
 }
 
-// Хук для использования переводов
 export function useTranslations() {
   const context = useContext(TranslationContext);
   if (!context) {
