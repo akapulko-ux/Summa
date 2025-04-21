@@ -19,8 +19,14 @@ p, h1, h2, h3, h4, h5, h6, button, a, span {
 
 /* Специальные стили для активных пунктов меню в темной теме */
 .dark .text-primary {
-  @apply text-primary/90 !important;
-  text-shadow: 0 0 3px rgba(255, 255, 255, 0.15);
+  @apply text-white !important;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+}
+
+.dark .dark\:text-primary-foreground {
+  @apply text-white !important;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
   font-weight: 700;
 }
 

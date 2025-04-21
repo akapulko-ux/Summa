@@ -133,16 +133,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <nav className="ml-8 hidden md:flex gap-6 items-center">
             <Link href="/">
               <span className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                location === "/" ? "text-primary" : "text-muted-foreground"
+                "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
+                location === "/" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
               )}>
                 {t.nav.dashboard}
               </span>
             </Link>
             <Link href="/subscriptions">
               <span className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                location === "/subscriptions" ? "text-primary" : "text-muted-foreground"
+                "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
+                location === "/subscriptions" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
               )}>
                 {t.nav.subscriptions}
               </span>
