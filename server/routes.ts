@@ -438,6 +438,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch service stats" });
     }
   });
+  
+  // API для получения данных о регистрациях пользователей
+  app.get("/api/stats/registrations", isAdmin, async (req, res) => {
+    try {
+      const period = req.query.period as string || 'month';
+      // Формат данных: [{date: '2023-01', count: 5}, ...]
+      const registrationsData = await storage.getUserRegistrationsStats(period);
+      res.json(registrationsData);
+    } catch (error) {
+      console.error("Error fetching registration stats:", error);
+      res.status(500).json({ message: "Failed to fetch registration stats" });
+    }
+  });
+
+  // API для получения данных о кэшбэке
+  app.get("/api/stats/cashback", isAdmin, async (req, res) => {
+    try {
+      const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
+      const period = req.query.period as string || 'month';
+      
+      const cashbackData = await storage.getCashbackStats(userId, period);
+      res.json(cashbackData);
+    } catch (error) {
+      console.error("Error fetching cashback stats:", error);
+      res.status(500).json({ message: "Failed to fetch cashback stats" });
+    }
+  });
+
+  // API для получения статистики активных/неактивных клиентов
+  app.get("/api/stats/clients-activity", isAdmin, async (req, res) => {
+    try {
+      const clientsActivityData = await storage.getClientsActivityStats();
+      res.json(clientsActivityData);
+    } catch (error) {
+      console.error("Error fetching clients activity stats:", error);
+      res.status(500).json({ message: "Failed to fetch clients activity stats" });
+    }
+  });
+
+  // API для получения статистики по стоимости подписок
+  app.get("/api/stats/subscription-costs", isAdmin, async (req, res) => {
+    try {
+      const period = req.query.period as string || 'month';
+      const subscriptionCostsData = await storage.getSubscriptionCostsStats(period);
+      res.json(subscriptionCostsData);
+    } catch (error) {
+      console.error("Error fetching subscription costs stats:", error);
+      res.status(500).json({ message: "Failed to fetch subscription costs stats" });
+    }
+  });
 
   // Подключаем маршруты для резервного копирования базы данных
   app.use("/api/backups", backupRoutes);

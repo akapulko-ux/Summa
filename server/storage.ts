@@ -53,6 +53,12 @@ export interface IStorage {
   getUserStats(): Promise<any>;
   getServicePopularity(): Promise<any>;
   
+  // Расширенная аналитика
+  getUserRegistrationsStats(period: string): Promise<any[]>;
+  getCashbackStats(userId?: number, period?: string): Promise<any[]>;
+  getClientsActivityStats(): Promise<any>;
+  getSubscriptionCostsStats(period?: string): Promise<any[]>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }
@@ -291,6 +297,61 @@ export class DatabaseStorage implements IStorage {
       .groupBy(subscriptions.serviceId, services.title)
       .orderBy(desc(sql<number>`count(*)`))
       .limit(5);
+  }
+
+  // Новые методы для расширенной аналитики
+
+  async getUserRegistrationsStats(period: string): Promise<any[]> {
+    // Заглушка для статистики регистраций пользователей
+    // В реальном приложении здесь должен быть SQL-запрос
+    const registrationData = [
+      { date: '2024-01', count: 12 },
+      { date: '2024-02', count: 18 },
+      { date: '2024-03', count: 15 },
+      { date: '2024-04', count: 22 },
+      { date: '2024-05', count: 28 }
+    ];
+    
+    return registrationData;
+  }
+  
+  async getCashbackStats(userId?: number, period: string = 'month'): Promise<any[]> {
+    // Заглушка для данных о кэшбэке
+    // В реальном приложении здесь должен быть SQL-запрос
+    const cashbackData = [
+      { period: '2024-01', amount: '24.50' },
+      { period: '2024-02', amount: '35.75' },
+      { period: '2024-03', amount: '42.20' },
+      { period: '2024-04', amount: '18.90' },
+      { period: '2024-05', amount: '29.30' }
+    ];
+    
+    return cashbackData;
+  }
+  
+  async getClientsActivityStats(): Promise<any> {
+    // Заглушка для статистики активности клиентов
+    // В реальном приложении здесь должен быть SQL-запрос
+    return {
+      active: 35,
+      inactive: 15,
+      total: 50,
+      activePercentage: '70.0'
+    };
+  }
+  
+  async getSubscriptionCostsStats(period: string = 'month'): Promise<any[]> {
+    // Заглушка для статистики по стоимости подписок
+    // В реальном приложении здесь должен быть SQL-запрос
+    const costData = [
+      { period: '2024-01', avgPrice: '24.99', minPrice: '9.99', maxPrice: '49.99', count: 18 },
+      { period: '2024-02', avgPrice: '26.50', minPrice: '9.99', maxPrice: '59.99', count: 22 },
+      { period: '2024-03', avgPrice: '28.75', minPrice: '14.99', maxPrice: '69.99', count: 20 },
+      { period: '2024-04', avgPrice: '29.90', minPrice: '14.99', maxPrice: '79.99', count: 25 },
+      { period: '2024-05', avgPrice: '32.50', minPrice: '19.99', maxPrice: '99.99', count: 30 }
+    ];
+    
+    return costData;
   }
 }
 
