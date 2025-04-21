@@ -29,6 +29,9 @@ export type Translation = {
     restore: string;
     information: string;
     refresh: string;
+    yes: string;
+    no: string;
+    deleteAll: string;
   };
   
   // Резервное копирование
@@ -356,6 +359,37 @@ export type Translation = {
 };
 
 export const en: Translation = {
+  common: {
+    loading: "Loading...",
+    error: "An error occurred",
+    save: "Save",
+    cancel: "Cancel",
+    delete: "Delete",
+    edit: "Edit",
+    search: "Search",
+    back: "Back",
+    submit: "Submit",
+    next: "Next",
+    prev: "Previous",
+    add: "Add",
+    remove: "Remove",
+    welcome: "Welcome",
+    logout: "Logout",
+    theme: "Theme",
+    language: "Language",
+    profile: "Profile",
+    settings: "Settings",
+    notification: "Notification",
+    appName: "SaaSly",
+    optional: "Optional",
+    date: "Date",
+    restore: "Restore",
+    information: "Information",
+    refresh: "Refresh",
+    yes: "Yes",
+    no: "No",
+    deleteAll: "Delete All"
+  },
   broadcast: {
     title: "Broadcast Messages",
     sendBroadcast: "Send Broadcast",
@@ -392,34 +426,6 @@ export const en: Translation = {
     testMessageToUser: "This is a test message for user {userId} from the admin panel.",
     noConnectedUsers: "No connected users",
     noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
-  },
-  common: {
-    loading: "Loading...",
-    error: "An error occurred",
-    save: "Save",
-    cancel: "Cancel",
-    delete: "Delete",
-    edit: "Edit",
-    search: "Search",
-    back: "Back",
-    submit: "Submit",
-    next: "Next",
-    prev: "Previous",
-    add: "Add",
-    remove: "Remove",
-    welcome: "Welcome",
-    logout: "Logout",
-    theme: "Theme",
-    language: "Language",
-    profile: "Profile",
-    settings: "Settings",
-    notification: "Notification",
-    appName: "SaaSly",
-    optional: "Optional",
-    date: "Date",
-    restore: "Restore",
-    information: "Information",
-    refresh: "Refresh",
   },
   
   backups: {
@@ -698,42 +704,36 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
-  broadcast: {
-    title: "Broadcast Messages",
-    sendBroadcast: "Send Broadcast",
-    connectedUsers: "Connected Users",
-    newBroadcast: "New Broadcast Message",
-    newBroadcastDesc: "Create a new message to send to all connected users",
-    recipientFilter: "Recipient Filter",
-    selectRecipients: "Select recipients",
-    allUsers: "All Users",
-    adminUsers: "Admin Users Only",
-    clientUsers: "Client Users Only",
-    recipientFilterDesc: "Choose which group of users will receive this message",
-    messageContent: "Message Content",
-    messageContentPlaceholder: "Enter your message here...",
-    messageContentDesc: "This message will be sent to all selected users with connected Telegram accounts",
-    sendNow: "Send Now",
-    broadcastSent: "Broadcast sent",
-    broadcastSentDesc: "Your message was sent to {success} users (failed: {failed})",
-    broadcastFailed: "Broadcast failed",
-    lastBroadcastResult: "Last broadcast result",
-    deliveredCount: "Delivered",
-    failedCount: "Failed",
-    tips: "Broadcast Tips",
-    tip1: "Keep your messages concise and clear for better user experience",
-    tip2: "Use broadcast messages sparingly to avoid overwhelming users",
-    tip3: "Consider sending broadcasts during business hours when users are likely to see them",
-    tip4: "Include a clear call-to-action if you want users to take specific steps",
-    connectedUsersDesc: "Users with linked Telegram accounts",
-    totalConnected: "Total connected users",
-    userId: "User ID",
-    telegramChatId: "Telegram Chat ID",
-    linkedOn: "Linked on",
-    messageThis: "Message",
-    testMessageToUser: "This is a test message for user {userId} from the admin panel.",
-    noConnectedUsers: "No connected users",
-    noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
+  common: {
+    loading: "Загрузка...",
+    error: "Произошла ошибка",
+    save: "Сохранить",
+    cancel: "Отмена",
+    delete: "Удалить",
+    edit: "Редактировать",
+    search: "Поиск",
+    back: "Назад",
+    submit: "Отправить",
+    next: "Далее",
+    prev: "Назад",
+    add: "Добавить",
+    remove: "Удалить",
+    welcome: "Добро пожаловать",
+    logout: "Выйти",
+    theme: "Тема",
+    language: "Язык",
+    profile: "Профиль",
+    settings: "Настройки",
+    notification: "Уведомление",
+    appName: "SaaSly",
+    optional: "Необязательно",
+    date: "Дата",
+    restore: "Восстановить",
+    information: "Информация",
+    refresh: "Обновить",
+    yes: "Да",
+    no: "Нет",
+    deleteAll: "Удалить все"
   },
   common: {
     loading: "Загрузка...",

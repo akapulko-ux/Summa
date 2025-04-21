@@ -63,7 +63,7 @@ interface LinkedUser {
 }
 
 export default function BroadcastPage() {
-  const { t } = useTranslation();
+  const { t } = useTranslations();
   const { toast } = useToast();
   const [lastBroadcastResult, setLastBroadcastResult] = useState<{ success: number; failed: number } | null>(null);
 
