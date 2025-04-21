@@ -13,6 +13,10 @@ html {
   transition-duration: 300ms;
 }
 
+.dark {
+  color-scheme: dark;
+}
+
 @layer base {
   * {
     @apply border-border;
