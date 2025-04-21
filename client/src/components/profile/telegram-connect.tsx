@@ -132,11 +132,53 @@ export function TelegramConnect() {
       <Alert className="mt-4">
         <AlertTitle className="font-semibold">{t.telegram.linkInstructions}</AlertTitle>
         <AlertDescription className="mt-2">
-          <p className="mb-2">1. {t.telegram.openBot}: <a href="https://t.me/your_bot_username" target="_blank" rel="noopener noreferrer" className="text-primary underline">@your_bot_username</a></p>
+          <p className="mb-2">1. {t.telegram.openBot}: <a href="https://t.me/SaaSlyServiceBot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@SaaSlyServiceBot</a></p>
           <p className="mb-2">2. {t.telegram.sendCommand}: <code className="bg-muted px-2 py-1 rounded">/link {linkCode}</code></p>
           <p>{t.telegram.afterLink}</p>
         </AlertDescription>
       </Alert>
+    );
+  };
+  
+  // Диалог подтверждения отключения
+  const renderDisconnectDialog = () => {
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="mt-4 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            disabled={disconnectTelegramMutation.isPending}
+          >
+            {disconnectTelegramMutation.isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <LogOut className="mr-2 h-4 w-4" />
+            )}
+            {t.telegram.disconnect}
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              {t.telegram.confirmDisconnect}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.telegram.disconnectWarning || "This action will disconnect your Telegram account from the system. You will stop receiving notifications. You can reconnect anytime."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDisconnect}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t.telegram.disconnect}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   };
 
@@ -171,9 +213,30 @@ export function TelegramConnect() {
               <CheckCircle className="h-6 w-6" />
               <span className="text-lg font-medium">{t.telegram.connected}</span>
             </div>
-            <p className="text-center text-muted-foreground">
+            
+            <p className="text-center text-muted-foreground mb-2">
               {t.telegram.receiveNotifications}
             </p>
+            
+            {/* Кнопка отправки тестового уведомления */}
+            <Button 
+              onClick={handleSendTestNotification}
+              variant="secondary"
+              className="w-full"
+              disabled={sendTestNotificationMutation.isPending}
+            >
+              {sendTestNotificationMutation.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <BellRing className="mr-2 h-4 w-4" />
+              )}
+              {t.telegram.sendTestNotification}
+            </Button>
+            
+            {/* Кнопка отключения с диалогом подтверждения */}
+            <div className="w-full">
+              {renderDisconnectDialog()}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col space-y-4">
