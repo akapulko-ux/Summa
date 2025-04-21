@@ -4,17 +4,24 @@
 
 /* Анимации для переходов между светлой и темной темой */
 html {
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  transition: background-color 0.4s ease, color 0.2s ease;
 }
 
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
+/* Фиксированная высота строк для предотвращения "прыжков" контента */
+p, h1, h2, h3, h4, h5, h6, button, a, span {
+  @apply leading-normal;
 }
 
+/* Улучшенные переходы для темной темы */
 .dark {
   color-scheme: dark;
+}
+
+/* Специальные стили для активных пунктов меню в темной теме */
+.dark .text-primary {
+  @apply text-primary/90 !important;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.15);
+  font-weight: 700;
 }
 
 @layer base {

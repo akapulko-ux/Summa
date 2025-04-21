@@ -152,8 +152,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <button 
                   onClick={() => window.location.href = "/admin/services"} 
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary border-0 bg-transparent cursor-pointer p-0",
-                    location === "/admin/services" ? "text-primary" : "text-muted-foreground"
+                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold border-0 bg-transparent cursor-pointer p-0",
+                    location === "/admin/services" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
                   )}
                 >
                   {t.nav.services}
@@ -161,8 +161,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <button 
                   onClick={() => window.location.href = "/admin/users"} 
                   className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary border-0 bg-transparent cursor-pointer p-0",
-                    location === "/admin/users" ? "text-primary" : "text-muted-foreground"
+                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold border-0 bg-transparent cursor-pointer p-0",
+                    location === "/admin/users" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
                   )}
                 >
                   {t.nav.users}
@@ -263,7 +263,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Button
                 key={item.path}
                 variant={location === item.path ? "secondary" : "ghost"}
-                className="w-full justify-start text-left"
+                className={cn(
+                  "w-full justify-start text-left",
+                  location === item.path && "dark:bg-primary/10 dark:text-primary-foreground dark:font-medium"
+                )}
                 asChild
               >
                 <Link href={item.path}>
@@ -282,7 +285,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Button
                     key={item.path}
                     variant={location === item.path ? "secondary" : "ghost"}
-                    className="w-full justify-start"
+                    className={cn(
+                      "w-full justify-start text-left",
+                      location === item.path && "dark:bg-primary/10 dark:text-primary-foreground dark:font-medium"
+                    )}
                     asChild
                   >
                     <Link href={item.path}>
