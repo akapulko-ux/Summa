@@ -509,6 +509,20 @@ export const en: Translation = {
     active: "Active",
     memberSince: "Member since",
   },
+  
+  telegram: {
+    title: "Telegram Connection",
+    description: "Connect your Telegram account to receive notifications",
+    connect: "Connect Telegram",
+    connected: "Connected",
+    notConnected: "Not connected to Telegram yet",
+    generateLink: "Generate Link Code",
+    linkInstructions: "Follow these steps to connect your Telegram",
+    openBot: "Open Telegram bot",
+    sendCommand: "Send this command to the bot",
+    afterLink: "After sending the command, you'll receive a confirmation message",
+    receiveNotifications: "You'll now receive notifications about your subscriptions via Telegram",
+  },
 
   messages: {
     invalidCredentials: "Invalid email or password",
@@ -763,6 +777,20 @@ export const ru: Translation = {
     accountStatus: "Статус аккаунта",
     active: "Активен",
     memberSince: "Участник с",
+  },
+  
+  telegram: {
+    title: "Подключение Telegram",
+    description: "Подключите свою учетную запись Telegram для получения уведомлений",
+    connect: "Подключить Telegram",
+    connected: "Подключено",
+    notConnected: "Еще не подключено к Telegram",
+    generateLink: "Сгенерировать код подключения",
+    linkInstructions: "Следуйте этим шагам для подключения Telegram",
+    openBot: "Откройте бота в Telegram",
+    sendCommand: "Отправьте эту команду боту",
+    afterLink: "После отправки команды вы получите подтверждающее сообщение",
+    receiveNotifications: "Теперь вы будете получать уведомления о ваших подписках через Telegram",
   },
 
   messages: {

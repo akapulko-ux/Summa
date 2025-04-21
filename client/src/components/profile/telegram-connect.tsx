@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from '@/hooks/use-translations';
 
 export function TelegramConnect() {
-  const { t } = useTranslations();
+  const translations = useTranslations();
   const { toast } = useToast();
   const [linkCode, setLinkCode] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -34,7 +34,7 @@ export function TelegramConnect() {
     },
     onError: (error: Error) => {
       toast({
-        title: t('error'),
+        title: translations.common.error,
         description: error.message,
         variant: 'destructive',
       });
@@ -57,11 +57,11 @@ export function TelegramConnect() {
 
     return (
       <Alert className="mt-4">
-        <AlertTitle className="font-semibold">{t('telegram.linkInstructions')}</AlertTitle>
+        <AlertTitle className="font-semibold">{translations.telegram.linkInstructions}</AlertTitle>
         <AlertDescription className="mt-2">
-          <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/your_bot_username" target="_blank" rel="noopener noreferrer" className="text-primary underline">@your_bot_username</a></p>
-          <p className="mb-2">2. {t('telegram.sendCommand')}: <code className="bg-muted px-2 py-1 rounded">/link {linkCode}</code></p>
-          <p>{t('telegram.afterLink')}</p>
+          <p className="mb-2">1. {translations.telegram.openBot}: <a href="https://t.me/your_bot_username" target="_blank" rel="noopener noreferrer" className="text-primary underline">@your_bot_username</a></p>
+          <p className="mb-2">2. {translations.telegram.sendCommand}: <code className="bg-muted px-2 py-1 rounded">/link {linkCode}</code></p>
+          <p>{translations.telegram.afterLink}</p>
         </AlertDescription>
       </Alert>
     );
@@ -72,8 +72,8 @@ export function TelegramConnect() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{t('telegram.title')}</CardTitle>
-          <CardDescription>{t('telegram.description')}</CardDescription>
+          <CardTitle>{translations.telegram.title}</CardTitle>
+          <CardDescription>{translations.telegram.description}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center py-6">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -87,25 +87,25 @@ export function TelegramConnect() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
-          {t('telegram.title')}
+          {translations.telegram.title}
         </CardTitle>
-        <CardDescription>{t('telegram.description')}</CardDescription>
+        <CardDescription>{translations.telegram.description}</CardDescription>
       </CardHeader>
       <CardContent>
         {telegramStatus?.connected ? (
           <div className="flex flex-col items-center space-y-4">
             <div className="flex items-center gap-2 text-green-600">
               <CheckCircle className="h-6 w-6" />
-              <span className="text-lg font-medium">{t('telegram.connected')}</span>
+              <span className="text-lg font-medium">{translations.telegram.connected}</span>
             </div>
             <p className="text-center text-muted-foreground">
-              {t('telegram.receiveNotifications')}
+              {translations.telegram.receiveNotifications}
             </p>
           </div>
         ) : (
           <div className="flex flex-col space-y-4">
             <p className="text-center text-muted-foreground mb-2">
-              {t('telegram.notConnected')}
+              {translations.telegram.notConnected}
             </p>
             <Button 
               onClick={handleGenerateLink} 
@@ -117,7 +117,7 @@ export function TelegramConnect() {
               ) : (
                 <LinkIcon className="mr-2 h-4 w-4" />
               )}
-              {t('telegram.generateLink')}
+              {translations.telegram.generateLink}
             </Button>
             
             {renderLinkInstructions()}
@@ -130,7 +130,7 @@ export function TelegramConnect() {
                 disabled={generateLinkMutation.isPending}
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
-                {t('refresh')}
+                {translations.common.save}
               </Button>
             </div>
           </div>

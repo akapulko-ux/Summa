@@ -13,8 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -22,6 +21,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from "@/hooks/use-translations";
+import { TelegramConnect } from "@/components/profile/telegram-connect";
 
 // Profile form schema
 const profileFormSchema = z.object({
@@ -136,7 +136,7 @@ export default function ProfilePage() {
     <AppLayout title={t.profile.title}>
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-1">
-          <Card>
+          <Card className="mb-4">
             <CardHeader>
               <CardTitle>{t.profile.personalInfo}</CardTitle>
               <CardDescription>
@@ -158,6 +158,9 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+          
+          {/* Telegram Connect Component */}
+          <TelegramConnect />
         </div>
 
         <div className="lg:col-span-2">
