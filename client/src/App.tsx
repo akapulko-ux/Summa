@@ -16,6 +16,7 @@ import UserManagement from "@/pages/user-management";
 import BackupsPage from "@/pages/backups-page";
 import AnalyticsPage from "@/pages/analytics-page-v3";
 import ReportsPage from "@/pages/reports-page";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 function Router() {
   return (
@@ -46,8 +47,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TranslationProvider>
         <AuthProvider>
-          <Router />
-          <Toaster />
+          <ThemeProvider defaultTheme="light">
+            <Router />
+            <Toaster />
+          </ThemeProvider>
         </AuthProvider>
       </TranslationProvider>
     </QueryClientProvider>

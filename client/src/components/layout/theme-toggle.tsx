@@ -1,29 +1,14 @@
-import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun } from 'lucide-react';
 import { useTranslations } from '@/hooks/use-translations';
+import { useTheme } from "@/providers/theme-provider";
 
 export function ThemeToggle() {
   const { t } = useTranslations();
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  useEffect(() => {
-    // Получаем текущую тему из localStorage или из системных настроек
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
+  const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (
@@ -33,11 +18,12 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={t.layout.toggleTheme}
       title={t.layout.toggleTheme}
+      className="animate-fade-in"
     >
-      {theme === 'light' ? (
-        <Moon className="h-5 w-5" />
+      {theme === 'dark' ? (
+        <Sun className="h-5 w-5 transition-all rotate-0 scale-100" />
       ) : (
-        <Sun className="h-5 w-5" />
+        <Moon className="h-5 w-5 transition-all rotate-0 scale-100" />
       )}
     </Button>
   );
