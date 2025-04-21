@@ -17,6 +17,7 @@ export const users = pgTable('users', {
   name: text('name'),
   companyName: text('company_name'),
   telegramId: text('telegram_id'),
+  telegramChatId: text('telegram_chat_id'),
   isActive: boolean('is_active').default(true).notNull(),
   role: userRoleEnum('role').default('client').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -74,6 +75,7 @@ export const insertUserSchema = createInsertSchema(users, {
   name: z.string().optional(),
   companyName: z.string().optional(),
   telegramId: z.string().optional(),
+  telegramChatId: z.string().optional(),
   isActive: z.boolean().default(true),
   role: z.enum(['admin', 'client']).default('client'),
 }).omit({ id: true, createdAt: true, updatedAt: true });
