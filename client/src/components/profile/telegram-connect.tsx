@@ -2,11 +2,31 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CheckCircle, MessageCircle, Link as LinkIcon, RefreshCw, Loader2 } from 'lucide-react';
+import { 
+  CheckCircle, 
+  MessageCircle, 
+  Link as LinkIcon, 
+  RefreshCw, 
+  Loader2, 
+  BellRing,
+  LogOut,
+  AlertTriangle 
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from '@/hooks/use-translations';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export function TelegramConnect() {
   const { t } = useTranslations();
@@ -40,10 +60,63 @@ export function TelegramConnect() {
       });
     },
   });
+  
+  // Мутация для отправки тестового уведомления
+  const sendTestNotificationMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest('POST', '/api/telegram/send-self-test');
+      return res.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: t.telegram.testNotificationSent,
+        description: data.message,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t.common.error,
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+  
+  // Мутация для отключения Telegram
+  const disconnectTelegramMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest('POST', '/api/telegram/disconnect');
+      return res.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: t.telegram.disconnected,
+        description: data.message,
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/telegram/status'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t.common.error,
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
   // Генерация кода привязки
   const handleGenerateLink = () => {
     generateLinkMutation.mutate();
+  };
+
+  // Отправка тестового уведомления
+  const handleSendTestNotification = () => {
+    sendTestNotificationMutation.mutate();
+  };
+  
+  // Отключение Telegram
+  const handleDisconnect = () => {
+    disconnectTelegramMutation.mutate();
   };
 
   // Проверка статуса подключения

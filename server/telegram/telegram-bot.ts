@@ -123,7 +123,11 @@ export class TelegramBotManager implements ITelegramBotManager {
           const statusEmoji = status === 'active' ? '✅' : status === 'pending' ? '⏳' : status === 'expired' ? '❌' : '❓';
           
           message += `${index + 1}. ${sub.serviceName || 'Сервис'} - ${statusEmoji} ${status}\n`;
-          message += `   Оплачено до: ${new Date(sub.subscription.paidUntil).toLocaleDateString()}\n`;
+          // Обработка даты с проверкой на null
+          const paidUntilDate = sub.subscription.paidUntil 
+            ? new Date(sub.subscription.paidUntil).toLocaleDateString() 
+            : 'Не указано';
+          message += `   Оплачено до: ${paidUntilDate}\n`;
           message += `   Сумма: $${sub.subscription.paymentAmount}\n\n`;
         });
         
@@ -179,16 +183,19 @@ export class TelegramBotManager implements ITelegramBotManager {
    * @returns Статистика отправки сообщений
    */
   async sendBroadcastMessage(message: string, filter?: { role?: 'admin' | 'client' }): Promise<{ success: number; failed: number }> {
-    let userQuery = db.select().from(users);
+    // Запрос на получение пользователей
+    let query = db.select().from(users);
     
-    // Применить фильтр, если он указан
+    // Применить фильтр по роли, если он указан
     if (filter?.role) {
-      userQuery = userQuery.where(eq(users.role, filter.role));
+      query = db.select().from(users).where(eq(users.role, filter.role));
     }
     
-    // Получить всех пользователей с привязанными Telegram аккаунтами
-    const allUsers = await userQuery;
-    const linkedUsers = allUsers.filter(user => user.telegramChatId);
+    // Получить всех пользователей
+    const allUsers = await query;
+    
+    // Отфильтровать только тех, у кого есть привязанный Telegram аккаунт
+    const linkedUsers = allUsers.filter(user => user.telegramChatId !== null && user.telegramChatId !== '');
     
     let success = 0;
     let failed = 0;
@@ -279,17 +286,66 @@ export class TelegramBotManager implements ITelegramBotManager {
   }
   
   /**
+   * Отключение Telegram аккаунта пользователя
+   * @param userId ID пользователя в системе
+   * @returns Результат отключения
+   */
+  async disconnectUser(userId: number): Promise<boolean> {
+    try {
+      // Найти пользователя по ID
+      const [user] = await db.select()
+        .from(users)
+        .where(eq(users.id, userId));
+      
+      if (!user) {
+        console.log(`User ${userId} does not exist`);
+        return false;
+      }
+      
+      if (!user.telegramChatId) {
+        console.log(`User ${userId} doesn't have Telegram connected`);
+        return true; // Считаем успехом, т.к. уже отключено
+      }
+      
+      // Отправим уведомление пользователю о том, что его аккаунт отключен
+      try {
+        const telegramChatId = parseInt(user.telegramChatId);
+        await this.bot.sendMessage(
+          telegramChatId, 
+          'Ваш аккаунт Telegram был отключен от SaaSly. Вы больше не будете получать уведомления. Для повторного подключения используйте код из вашего профиля.'
+        );
+      } catch (notifyError) {
+        console.error('Error sending disconnect notification:', notifyError);
+        // Не прерываем процесс отключения, если уведомление не отправилось
+      }
+      
+      // Обновить пользователя, удалив привязку к Telegram
+      await db.update(users)
+        .set({ telegramChatId: null })
+        .where(eq(users.id, userId));
+      
+      return true;
+    } catch (error) {
+      console.error('Error disconnecting user from Telegram:', error);
+      return false;
+    }
+  }
+  
+  /**
    * Получение информации о привязанных пользователях
    * @returns Список привязанных пользователей
    */
   async getLinkedUsers(): Promise<{ userId: number; telegramChatId: number; linkDate: Date }[]> {
-    const linkedUsers = await db.select({
+    // Получаем всех пользователей
+    const allUsers = await db.select({
       id: users.id,
       telegramChatId: users.telegramChatId,
       updatedAt: users.updatedAt
     })
-    .from(users)
-    .where(eq(users.telegramChatId, ''));
+    .from(users);
+    
+    // Фильтруем только тех, у кого есть telegramChatId
+    const linkedUsers = allUsers.filter(user => user.telegramChatId !== null && user.telegramChatId !== '');
     
     return linkedUsers.map(user => ({
       userId: user.id,
