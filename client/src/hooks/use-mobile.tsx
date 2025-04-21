@@ -1,19 +1,25 @@
-import * as React from "react"
-
-const MOBILE_BREAKPOINT = 768
+import { useState, useEffect } from 'react';
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [isMobile, setIsMobile] = useState(false);
 
-  React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
+  useEffect(() => {
+    // Функция для проверки размера экрана
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
 
-  return !!isMobile
+    // Проверяем размер экрана при загрузке
+    checkScreenSize();
+
+    // Добавляем слушатель изменения размера окна
+    window.addEventListener('resize', checkScreenSize);
+
+    // Очистка слушателя при размонтировании компонента
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, []);
+
+  return isMobile;
 }

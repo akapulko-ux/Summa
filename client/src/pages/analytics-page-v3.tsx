@@ -176,31 +176,46 @@ export default function AnalyticsPage() {
         </motion.div>
         
         <Tabs defaultValue="revenue" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="revenue" className="relative overflow-hidden group">
-              <span className="z-10 relative font-medium group-data-[state=active]:text-primary-foreground">Revenue Analytics</span>
-              <motion.div 
-                className="absolute inset-0 bg-primary opacity-0 group-data-[state=active]:opacity-100 -z-10"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger 
+              value="revenue" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
+            >
+              <span>Revenue Analytics</span>
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                initial={{ scaleX: 0 }}
+                animate={{ 
+                  scaleX: activeTab === "revenue" ? 1 : 0
+                }}
                 transition={{ duration: 0.3 }}
               />
             </TabsTrigger>
-            <TabsTrigger value="users" className="relative overflow-hidden group">
-              <span className="z-10 relative font-medium group-data-[state=active]:text-primary-foreground">User Analytics</span>
-              <motion.div 
-                className="absolute inset-0 bg-primary opacity-0 group-data-[state=active]:opacity-100 -z-10"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+            <TabsTrigger 
+              value="users" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
+            >
+              <span>User Analytics</span>
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                initial={{ scaleX: 0 }}
+                animate={{ 
+                  scaleX: activeTab === "users" ? 1 : 0
+                }}
                 transition={{ duration: 0.3 }}
               />
             </TabsTrigger>
-            <TabsTrigger value="services" className="relative overflow-hidden group">
-              <span className="z-10 relative font-medium group-data-[state=active]:text-primary-foreground">Service Analytics</span>
-              <motion.div 
-                className="absolute inset-0 bg-primary opacity-0 group-data-[state=active]:opacity-100 -z-10"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+            <TabsTrigger 
+              value="services" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
+            >
+              <span>Service Analytics</span>
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                initial={{ scaleX: 0 }}
+                animate={{ 
+                  scaleX: activeTab === "services" ? 1 : 0
+                }}
                 transition={{ duration: 0.3 }}
               />
             </TabsTrigger>
@@ -580,7 +595,7 @@ export default function AnalyticsPage() {
           </TabsContent>
         </Tabs>
         
-        {/* Вспомогательная навигация с анимацией */}
+        {/* Дополнительная навигация с анимацией */}
         <motion.div 
           className="mt-8 flex justify-center space-x-2"
           initial={{ opacity: 0, y: 20 }}
