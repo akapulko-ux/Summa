@@ -654,12 +654,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Cashback Analytics</CardTitle>
-                    <CardDescription>Cashback amount by period</CardDescription>
+                    <CardTitle>{t.analytics.cashbackAnalytics}</CardTitle>
+                    <CardDescription>{t.analytics.cashbackAmount}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingCashback ? (
-                      <AnimatedLoader text="Загрузка данных о кэшбэке..." />
+                      <AnimatedLoader text={t.analytics.loadingCashback} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div

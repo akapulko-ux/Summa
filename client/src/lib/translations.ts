@@ -146,6 +146,15 @@ export type Translation = {
     loadingActivity: string;
     loadingCashback: string;
     loadingServices: string;
+    loadingPopularServices: string;
+    loadingServiceRevenue: string;
+    loadingSubscriptionCosts: string;
+    cashbackAnalytics: string;
+    cashbackAmount: string;
+    cashbackSummary: string;
+    totalCashback: string;
+    latestCashback: string;
+    revenueByService: string;
     period: string;
     selectPeriod: string;
     daily: string;
@@ -155,6 +164,9 @@ export type Translation = {
     yearly: string;
     pickDate: string;
     newUsers: string;
+    popularServices: string;
+    servicesByCount: string;
+    avgMinMaxPrices: string;
   };
 
   // Дашборд
@@ -423,6 +435,15 @@ export const en: Translation = {
     loadingActivity: "Loading activity data...",
     loadingCashback: "Loading cashback data...",
     loadingServices: "Loading services data...",
+    loadingPopularServices: "Loading popular services...",
+    loadingServiceRevenue: "Loading service revenue data...",
+    loadingSubscriptionCosts: "Loading subscription cost data...",
+    cashbackAnalytics: "Cashback Analytics",
+    cashbackAmount: "Cashback amount by period",
+    cashbackSummary: "Cashback Summary",
+    totalCashback: "Total Cashback",
+    latestCashback: "Latest Cashback",
+    revenueByService: "Revenue by service",
     period: "Period",
     selectPeriod: "Select period",
     daily: "Daily",
@@ -432,6 +453,9 @@ export const en: Translation = {
     yearly: "Yearly",
     pickDate: "Pick a date",
     newUsers: "New Users",
+    popularServices: "Popular Services",
+    servicesByCount: "Services by subscription count",
+    avgMinMaxPrices: "Average, min and max subscription prices",
   },
   common: {
     loading: "Loading...",
@@ -808,6 +832,15 @@ export const ru: Translation = {
     loadingActivity: "Загрузка данных об активности...",
     loadingCashback: "Загрузка данных о кэшбэке...",
     loadingServices: "Загрузка данных о сервисах...",
+    loadingPopularServices: "Загрузка популярных сервисов...",
+    loadingServiceRevenue: "Загрузка данных о доходах сервисов...",
+    loadingSubscriptionCosts: "Загрузка данных о стоимости подписок...",
+    cashbackAnalytics: "Аналитика кэшбэка",
+    cashbackAmount: "Сумма кэшбэка по периодам",
+    cashbackSummary: "Сводка по кэшбэку",
+    totalCashback: "Общий кэшбэк",
+    latestCashback: "Последний кэшбэк",
+    revenueByService: "Доход по сервисам",
     period: "Период",
     selectPeriod: "Выберите период",
     daily: "Ежедневно",
@@ -817,6 +850,10 @@ export const ru: Translation = {
     yearly: "Ежегодно",
     pickDate: "Выберите дату",
     newUsers: "Новые пользователи",
+    popularServices: "Популярные сервисы",
+    servicesByCount: "Сервисы по количеству подписок",
+    avgMinMaxPrices: "Средняя, минимальная и максимальная цены подписок",
+
   },
   common: {
     loading: "Загрузка...",
