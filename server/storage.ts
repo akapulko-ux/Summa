@@ -16,6 +16,8 @@ import { db, pool } from "./db";
 import { eq, and, desc, asc, like, or, sql } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
+import { dbOptimizer } from "./db-optimizer";
+import { count } from "drizzle-orm";
 
 const PostgresSessionStore = connectPg(session);
 
@@ -147,13 +149,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async listServices(page = 1, limit = 10): Promise<{ services: Service[], total: number }> {
-    const offset = (page - 1) * limit;
-    const result = await db.select().from(services).limit(limit).offset(offset).orderBy(asc(services.title));
-    const [{ count }] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(services);
-    
-    return { services: result, total: count };
+    return dbOptimizer.executeQuery(async () => {
+      const offset = (page - 1) * limit;
+      const result = await db.select().from(services).limit(limit).offset(offset).orderBy(asc(services.title));
+      const [{ count }] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(services);
+      
+      return { services: result, total: count };
+    }, "listServices");
   }
 
   // Subscription methods
@@ -182,20 +186,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async listSubscriptions(userId?: number, page = 1, limit = 10): Promise<{ subscriptions: Subscription[], total: number }> {
-    const offset = (page - 1) * limit;
-    
-    let query = db.select().from(subscriptions);
-    let countQuery = db.select({ count: sql<number>`count(*)` }).from(subscriptions);
-    
-    if (userId) {
-      query = query.where(eq(subscriptions.userId, userId));
-      countQuery = countQuery.where(eq(subscriptions.userId, userId));
-    }
-    
-    const result = await query.limit(limit).offset(offset).orderBy(desc(subscriptions.createdAt));
-    const [{ count }] = await countQuery;
-    
-    return { subscriptions: result, total: count };
+    return dbOptimizer.executeQuery(async () => {
+      const offset = (page - 1) * limit;
+      
+      let query = db.select().from(subscriptions);
+      let countQuery = db.select({ count: sql<number>`count(*)` }).from(subscriptions);
+      
+      if (userId) {
+        query = query.where(eq(subscriptions.userId, userId));
+        countQuery = countQuery.where(eq(subscriptions.userId, userId));
+      }
+      
+      const result = await query.limit(limit).offset(offset).orderBy(desc(subscriptions.createdAt));
+      const [{ count }] = await countQuery;
+      
+      return { subscriptions: result, total: count };
+    }, "listSubscriptions");
   }
 
   // Custom fields methods
@@ -262,27 +268,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserStats(): Promise<any> {
-    const totalUsers = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(users);
-    
-    const activeUsers = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(users)
-      .where(eq(users.isActive, true));
-    
-    const newUsersLastMonth = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(users)
-      .where(
-        sql`created_at > current_date - interval '1 month'`
-      );
-    
-    return {
-      total: totalUsers[0].count,
-      active: activeUsers[0].count,
-      newLastMonth: newUsersLastMonth[0].count
-    };
+    return dbOptimizer.executeQuery(async () => {
+      const totalUsers = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(users);
+      
+      const activeUsers = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(users)
+        .where(eq(users.isActive, true));
+      
+      const newUsersLastMonth = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(users)
+        .where(
+          sql`created_at > current_date - interval '1 month'`
+        );
+      
+      return {
+        total: totalUsers[0].count,
+        active: activeUsers[0].count,
+        newLastMonth: newUsersLastMonth[0].count
+      };
+    }, "getUserStats");
   }
 
   async getServicePopularity(): Promise<any> {
