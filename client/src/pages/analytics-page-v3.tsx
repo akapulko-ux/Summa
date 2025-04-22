@@ -42,7 +42,7 @@ import { AnimatedLoader } from "@/components/ui/animated-loader";
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export default function AnalyticsPage() {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const [period, setPeriod] = useState("month");
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [animatedData, setAnimatedData] = useState<any[]>([]);
@@ -712,12 +712,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Cashback Summary</CardTitle>
-                    <CardDescription>Total cashback statistics</CardDescription>
+                    <CardTitle>{t.analytics.cashbackSummary}</CardTitle>
+                    <CardDescription>{t.analytics.totalCashback}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingCashback ? (
-                      <AnimatedLoader text="Загрузка статистики кэшбэка..." />
+                      <AnimatedLoader text={t.analytics.loadingCashback} />
                     ) : (
                       <div className="flex flex-col h-full justify-center items-center">
                         <div className="grid grid-cols-1 gap-6 w-full">
@@ -725,7 +725,7 @@ export default function AnalyticsPage() {
                             <div className="text-3xl font-bold mb-2">
                               ${cashbackStats.reduce((sum, item) => sum + parseFloat(item.amount), 0).toFixed(2)}
                             </div>
-                            <div className="text-muted-foreground">Total Cashback</div>
+                            <div className="text-muted-foreground">{t.analytics.totalCashback}</div>
                           </div>
                           
                           <div className="flex flex-col items-center justify-center p-6 bg-muted rounded-xl">
@@ -734,7 +734,7 @@ export default function AnalyticsPage() {
                                 `$${cashbackStats[cashbackStats.length - 1].amount}` : 
                                 '$0.00'}
                             </div>
-                            <div className="text-muted-foreground">Latest Cashback</div>
+                            <div className="text-muted-foreground">{t.analytics.latestCashback}</div>
                           </div>
                         </div>
                       </div>
@@ -754,12 +754,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Client Activity</CardTitle>
-                    <CardDescription>Active vs Inactive clients</CardDescription>
+                    <CardTitle>{t.analytics.clientActivity}</CardTitle>
+                    <CardDescription>{t.analytics.activeVsInactive}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingClientsActivity ? (
-                      <AnimatedLoader text="Загрузка данных об активности..." />
+                      <AnimatedLoader text={t.analytics.loadingActivity} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -774,8 +774,8 @@ export default function AnalyticsPage() {
                             <PieChart>
                               <Pie
                                 data={[
-                                  { name: 'Active', value: clientsActivityStats.active || 0 },
-                                  { name: 'Inactive', value: clientsActivityStats.inactive || 0 }
+                                  { name: t.language === 'ru' ? 'Активные' : 'Active', value: clientsActivityStats.active || 0 },
+                                  { name: t.language === 'ru' ? 'Неактивные' : 'Inactive', value: clientsActivityStats.inactive || 0 }
                                 ]}
                                 cx="50%"
                                 cy="50%"
@@ -812,12 +812,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Subscription Costs</CardTitle>
-                    <CardDescription>Average, min and max subscription prices</CardDescription>
+                    <CardTitle>{t.analytics.subscriptionCosts}</CardTitle>
+                    <CardDescription>{t.analytics.avgMinMaxPrices}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptionCosts ? (
-                      <AnimatedLoader text="Загрузка данных о стоимости подписок..." />
+                      <AnimatedLoader text={t.analytics.loadingSubscriptionCosts} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -850,19 +850,19 @@ export default function AnalyticsPage() {
                                 dataKey="avgPrice" 
                                 fill="#8884d8" 
                                 stroke="#8884d8" 
-                                name="Average Price"
+                                name={t.language === 'ru' ? "Средняя цена" : "Average Price"}
                               />
                               <Line 
                                 type="monotone" 
                                 dataKey="maxPrice" 
                                 stroke="#ff7300" 
-                                name="Maximum Price" 
+                                name={t.language === 'ru' ? "Максимальная цена" : "Maximum Price"}
                               />
                               <Line 
                                 type="monotone" 
                                 dataKey="minPrice" 
                                 stroke="#4CAF50" 
-                                name="Minimum Price" 
+                                name={t.language === 'ru' ? "Минимальная цена" : "Minimum Price"}
                               />
                             </ComposedChart>
                           </ResponsiveContainer>
