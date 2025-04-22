@@ -4,6 +4,7 @@
 import { sql, SQL } from 'drizzle-orm';
 import { db, pool } from './db';
 import { log } from './vite';
+import { QueryResult } from '@neondatabase/serverless';
 
 /**
  * Класс для оптимизации и мониторинга запросов к базе данных
@@ -112,10 +113,11 @@ export class DBOptimizer {
    */
   async countRows(query: SQL): Promise<number> {
     const countQuery = sql`SELECT COUNT(*) as total FROM (${query}) as subquery`;
-    const result = await db.execute(countQuery);
+    const result = await db.execute(countQuery) as QueryResult<{total: string}>;
+    
     // Безопасный доступ к результату запроса
-    if (Array.isArray(result) && result.length > 0 && result[0] && 'total' in result[0]) {
-      return parseInt(String(result[0].total), 10);
+    if (result && result.rows && result.rows.length > 0) {
+      return parseInt(result.rows[0].total, 10);
     }
     return 0;
   }

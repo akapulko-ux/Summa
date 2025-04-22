@@ -13,7 +13,15 @@ import { zValidationErrorToMessage } from "./utils";
 
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Расширяем интерфейс User для Express, чтобы включить роль и ID пользователя
+    interface User {
+      id: number;
+      role: string;
+      email: string;
+      username: string;
+      telegramChatId?: string | null;
+      phone?: string | null;
+    }
   }
 }
 
