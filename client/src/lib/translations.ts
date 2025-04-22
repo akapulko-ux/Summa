@@ -29,6 +29,8 @@ export type Translation = {
     restore: string;
     information: string;
     refresh: string;
+    no_data: string;
+    refresh: string;
     yes: string;
     no: string;
     deleteAll: string;
@@ -123,6 +125,7 @@ export type Translation = {
     help: string;
     reports: string;
     backups: string;
+    monitoring: string;
   };
   
   // Аналитика и графики

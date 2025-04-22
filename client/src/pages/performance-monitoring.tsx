@@ -39,7 +39,7 @@ interface DBStats {
 }
 
 export default function PerformanceMonitoring() {
-  const { t } = useTranslation();
+  const { t } = useTranslations();
   const { toast } = useToast();
   const [monitoringEnabled, setMonitoringEnabled] = useState(false);
 
