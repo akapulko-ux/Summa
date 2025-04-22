@@ -303,7 +303,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </aside>
         
         {/* Основное содержимое */}
-        <main className="flex-1 overflow-auto bg-muted/20">
+        <main className="flex-1 overflow-auto bg-muted/20 pb-16 md:pb-0">
           {children}
         </main>
       </div>

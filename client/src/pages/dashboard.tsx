@@ -4,7 +4,7 @@ import { RecentSubscriptions } from "@/components/dashboard/recent-subscriptions
 import { PopularServices } from "@/components/dashboard/popular-services";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { SubscriptionForm } from "@/components/subscriptions/subscription-form";
 import { ServiceForm } from "@/components/services/service-form";
 import { useAuth } from "@/hooks/use-auth";
@@ -52,6 +52,7 @@ export default function Dashboard() {
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                   <DialogTitle>{t.services.addService}</DialogTitle>
+                  <DialogDescription id="dialog-description">{t.services.serviceDescription}</DialogDescription>
                 </DialogHeader>
                 <ServiceForm 
                   onSuccess={() => setIsServiceDialogOpen(false)} 
