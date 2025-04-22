@@ -63,6 +63,13 @@ export const customFields = pgTable('custom_fields', {
   fieldType: fieldTypeEnum('field_type').notNull(),
   fieldValue: text('field_value'),
   isVisibleForUser: boolean('is_visible_for_user').default(true),
+  isRequired: boolean('is_required').default(false),
+  minValue: doublePrecision('min_value'),
+  maxValue: doublePrecision('max_value'),
+  minLength: integer('min_length'),
+  maxLength: integer('max_length'),
+  pattern: text('pattern'),
+  options: text('options'), // для полей типа select: список опций, разделенных запятой
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -109,6 +116,13 @@ export const insertCustomFieldSchema = createInsertSchema(customFields, {
   fieldType: z.enum(['text', 'number', 'boolean', 'date', 'select']),
   fieldValue: z.string().optional(),
   isVisibleForUser: z.boolean().default(true),
+  isRequired: z.boolean().default(false),
+  minValue: z.number().optional(),
+  maxValue: z.number().optional(),
+  minLength: z.number().optional(),
+  maxLength: z.number().optional(),
+  pattern: z.string().optional(),
+  options: z.string().optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Types
