@@ -21,7 +21,7 @@ import { SearchIcon, Pencil, Trash, Eye, ChevronLeft, ChevronRight } from "lucid
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { ServiceForm } from "./service-form";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
@@ -122,6 +122,7 @@ export function ServiceList() {
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
                     <DialogTitle>{t.services.addService}</DialogTitle>
+                    <DialogDescription id="dialog-description">{t.services.serviceDescription}</DialogDescription>
                   </DialogHeader>
                   <ServiceForm 
                     onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/services"] })} 
@@ -264,6 +265,7 @@ export function ServiceList() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{t.services.editService}</DialogTitle>
+            <DialogDescription id="dialog-description">{t.services.serviceDescription}</DialogDescription>
           </DialogHeader>
           {selectedServiceId && (
             <ServiceForm 
@@ -282,6 +284,7 @@ export function ServiceList() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{t.services.serviceDetails}</DialogTitle>
+            <DialogDescription id="dialog-description">{t.common.information}</DialogDescription>
           </DialogHeader>
           {selectedServiceId && (
             <ServiceDetails serviceId={selectedServiceId} />

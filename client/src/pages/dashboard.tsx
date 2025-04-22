@@ -34,6 +34,7 @@ export default function Dashboard() {
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
                 <DialogTitle>{t.subscriptions.addSubscription}</DialogTitle>
+                <DialogDescription id="dialog-description">{t.subscriptions.manageSubscriptions}</DialogDescription>
               </DialogHeader>
               <SubscriptionForm 
                 onSuccess={() => setIsSubscriptionDialogOpen(false)} 
