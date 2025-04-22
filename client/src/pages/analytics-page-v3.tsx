@@ -204,7 +204,7 @@ export default function AnalyticsPage() {
               value="revenue" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Revenue</span>
+              <span>Доходы</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -218,7 +218,7 @@ export default function AnalyticsPage() {
               value="users" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Users</span>
+              <span>Пользователи</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -232,7 +232,7 @@ export default function AnalyticsPage() {
               value="services" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Services</span>
+              <span>Сервисы</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -246,7 +246,7 @@ export default function AnalyticsPage() {
               value="cashback" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Cashback</span>
+              <span>Кэшбэк</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -260,7 +260,7 @@ export default function AnalyticsPage() {
               value="activity" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Activity</span>
+              <span>Активность</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -876,33 +876,7 @@ export default function AnalyticsPage() {
           </TabsContent>
         </Tabs>
         
-        {/* Дополнительная навигация с анимацией */}
-        <motion.div 
-          className="mt-8 flex justify-center space-x-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          {["revenue", "users", "services", "cashback", "activity"].map((tab) => (
-            <motion.button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full ${
-                activeTab === tab 
-                  ? "bg-primary text-primary-foreground" 
-                  : "bg-muted hover:bg-primary/10"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {tab === "revenue" && "Доходы"}
-              {tab === "users" && "Пользователи"}
-              {tab === "services" && "Сервисы"}
-              {tab === "cashback" && "Кэшбэк"}
-              {tab === "activity" && "Активность"}
-            </motion.button>
-          ))}
-        </motion.div>
+        {/* Нижние кнопки были удалены, чтобы избежать дублирования */}
       </div>
     </Layout>
   );
