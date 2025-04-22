@@ -243,28 +243,35 @@ export class DatabaseStorage implements IStorage {
 
   // Stats and analytics
   async getSubscriptionStats(): Promise<any> {
-    const activeSubscriptions = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(subscriptions)
-      .where(eq(subscriptions.status, 'active'));
-    
-    const totalRevenue = await db
-      .select({ sum: sql<number>`sum(payment_amount)` })
-      .from(subscriptions);
-    
-    const subscriptionsByPeriod = await db
-      .select({
-        period: subscriptions.paymentPeriod,
-        count: sql<number>`count(*)`
-      })
-      .from(subscriptions)
-      .groupBy(subscriptions.paymentPeriod);
-    
-    return {
-      activeCount: activeSubscriptions[0].count,
-      totalRevenue: totalRevenue[0].sum || 0,
-      byPeriod: subscriptionsByPeriod
-    };
+    return dbOptimizer.executeQueryWithCache(
+      async () => {
+        const activeSubscriptions = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(subscriptions)
+          .where(eq(subscriptions.status, 'active'));
+        
+        const totalRevenue = await db
+          .select({ sum: sql<number>`sum(payment_amount)` })
+          .from(subscriptions);
+        
+        const subscriptionsByPeriod = await db
+          .select({
+            period: subscriptions.paymentPeriod,
+            count: sql<number>`count(*)`
+          })
+          .from(subscriptions)
+          .groupBy(subscriptions.paymentPeriod);
+        
+        return {
+          activeCount: activeSubscriptions[0].count,
+          totalRevenue: totalRevenue[0].sum || 0,
+          byPeriod: subscriptionsByPeriod
+        };
+      },
+      'subscription_stats',
+      300, // кэшируем на 5 минут
+      'getSubscriptionStats'
+    );
   }
 
   async getUserStats(): Promise<any> {
@@ -294,17 +301,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getServicePopularity(): Promise<any> {
-    return db
-      .select({
-        serviceId: subscriptions.serviceId,
-        serviceTitle: services.title,
-        count: sql<number>`count(*)`
-      })
-      .from(subscriptions)
-      .leftJoin(services, eq(subscriptions.serviceId, services.id))
-      .groupBy(subscriptions.serviceId, services.title)
-      .orderBy(desc(sql<number>`count(*)`))
-      .limit(5);
+    // Используем кэширование для этого отчета, так как он не меняется часто
+    return dbOptimizer.executeQueryWithCache(
+      () => db
+        .select({
+          serviceId: subscriptions.serviceId,
+          serviceTitle: services.title,
+          count: sql<number>`count(*)`
+        })
+        .from(subscriptions)
+        .leftJoin(services, eq(subscriptions.serviceId, services.id))
+        .groupBy(subscriptions.serviceId, services.title)
+        .orderBy(desc(sql<number>`count(*)`))
+        .limit(5),
+      'service_popularity',
+      600, // кэшируем на 10 минут
+      'getServicePopularity'
+    );
   }
 
   // Новые методы для расширенной аналитики

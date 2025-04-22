@@ -5,6 +5,7 @@ import { sql, SQL } from 'drizzle-orm';
 import { db, pool } from './db';
 import { log } from './vite';
 import { QueryResult } from '@neondatabase/serverless';
+import { cacheManager } from './cache';
 
 /**
  * Класс для оптимизации и мониторинга запросов к базе данных
@@ -73,13 +74,21 @@ export class DBOptimizer {
    */
   async executeQuery<T>(queryFn: () => Promise<T>, queryName: string): Promise<T> {
     const startTime = Date.now();
+    let result: T;
+    
     try {
-      return await queryFn();
+      result = await queryFn();
+    } catch (error) {
+      log(`Error in query ${queryName}: ${(error as Error).message}`, 'db-optimizer');
+      throw error;
     } finally {
       const endTime = Date.now();
       const executionTime = endTime - startTime;
       
-      // Логируем медленные запросы
+      // Логируем все запросы для отладки
+      log(`Query executed: ${queryName} (${executionTime}ms)`, 'db-optimizer');
+      
+      // Логируем медленные запросы отдельно
       if (executionTime > this.longQueryThreshold) {
         log(`Slow query detected: ${queryName} (${executionTime}ms)`, 'db-optimizer');
       }
@@ -92,6 +101,8 @@ export class DBOptimizer {
         this.queryStatistics.set(queryName, stats);
       }
     }
+    
+    return result!;
   }
   
   /**
@@ -131,12 +142,22 @@ export class DBOptimizer {
     idleConnections: number;
     waitingClients: number;
   } {
-    const poolStatus = pool as any;
-    return {
-      totalConnections: poolStatus.totalCount || 0,
-      idleConnections: poolStatus.idleCount || 0,
-      waitingClients: poolStatus.waitingCount || 0
-    };
+    // Для Neondatabase используется другая структура пула
+    try {
+      const poolStatus = pool as any;
+      return {
+        totalConnections: poolStatus.options?.max || poolStatus._clients?.length || 0,
+        idleConnections: poolStatus._clients?.filter((c: any) => !c._connected)?.length || 0,
+        waitingClients: poolStatus._queue?.size || 0
+      };
+    } catch (error) {
+      log(`Error getting pool status: ${(error as Error).message}`, 'db-optimizer');
+      return {
+        totalConnections: 0,
+        idleConnections: 0,
+        waitingClients: 0
+      };
+    }
   }
   
   /**
@@ -149,6 +170,37 @@ export class DBOptimizer {
     const explainQuery = `EXPLAIN ANALYZE ${queryText}`;
     const result = await db.execute(sql.raw(explainQuery));
     return { plan: result };
+  }
+  
+  /**
+   * Выполнить запрос с кэшированием результатов
+   * @param queryFn Функция, выполняющая запрос
+   * @param cacheKey Ключ для кэширования результатов
+   * @param ttl Время жизни кэша в секундах
+   * @param queryName Название запроса для логирования
+   * @returns Результат запроса (из кэша или прямого выполнения)
+   */
+  async executeQueryWithCache<T>(
+    queryFn: () => Promise<T>, 
+    cacheKey: string, 
+    ttl: number = 60,
+    queryName: string = "cachedQuery"
+  ): Promise<T> {
+    // Проверяем, есть ли результат в кэше
+    const cachedResult = cacheManager.get<T>(cacheKey);
+    if (cachedResult !== undefined) {
+      log(`Cache hit for query ${queryName}: ${cacheKey}`, 'db-optimizer');
+      return cachedResult;
+    }
+    
+    // Если нет в кэше, выполняем запрос с мониторингом
+    const result = await this.executeQuery(queryFn, queryName);
+    
+    // Сохраняем результат в кэш
+    cacheManager.set(cacheKey, result, { ttl });
+    log(`Cached result for query ${queryName}: ${cacheKey}, TTL: ${ttl}s`, 'db-optimizer');
+    
+    return result;
   }
 }
 
