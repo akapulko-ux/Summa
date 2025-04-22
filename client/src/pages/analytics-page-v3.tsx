@@ -204,7 +204,7 @@ export default function AnalyticsPage() {
               value="revenue" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Доходы</span>
+              <span>{t.analytics.revenue}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -218,7 +218,7 @@ export default function AnalyticsPage() {
               value="users" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Пользователи</span>
+              <span>{t.analytics.users}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -232,7 +232,7 @@ export default function AnalyticsPage() {
               value="services" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Сервисы</span>
+              <span>{t.analytics.services}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -246,7 +246,7 @@ export default function AnalyticsPage() {
               value="cashback" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Кэшбэк</span>
+              <span>{t.analytics.cashback}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -260,7 +260,7 @@ export default function AnalyticsPage() {
               value="activity" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>Активность</span>
+              <span>{t.analytics.activity}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}

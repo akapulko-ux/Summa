@@ -124,6 +124,38 @@ export type Translation = {
     reports: string;
     backups: string;
   };
+  
+  // Аналитика и графики
+  analytics: {
+    revenue: string;
+    users: string;
+    services: string;
+    cashback: string;
+    activity: string;
+    userGrowth: string;
+    serviceRevenue: string;
+    totalRevenue: string;
+    revenueDistribution: string;
+    clientActivity: string;
+    activeVsInactive: string;
+    subscriptionCosts: string;
+    loadingData: string;
+    loadingRevenue: string;
+    loadingDistribution: string;
+    loadingUserGrowth: string;
+    loadingActivity: string;
+    loadingCashback: string;
+    loadingServices: string;
+    period: string;
+    selectPeriod: string;
+    daily: string;
+    weekly: string;
+    monthly: string;
+    quarterly: string;
+    yearly: string;
+    pickDate: string;
+    newUsers: string;
+  };
 
   // Дашборд
   dashboard: {
@@ -371,6 +403,36 @@ export type Translation = {
 };
 
 export const en: Translation = {
+  analytics: {
+    revenue: "Revenue",
+    users: "Users",
+    services: "Services",
+    cashback: "Cashback",
+    activity: "Activity",
+    userGrowth: "User Growth",
+    serviceRevenue: "Service Revenue",
+    totalRevenue: "Total Revenue",
+    revenueDistribution: "Revenue Distribution",
+    clientActivity: "Client Activity",
+    activeVsInactive: "Active vs Inactive",
+    subscriptionCosts: "Subscription Costs",
+    loadingData: "Loading data...",
+    loadingRevenue: "Loading revenue data...",
+    loadingDistribution: "Loading distribution data...",
+    loadingUserGrowth: "Loading user growth data...",
+    loadingActivity: "Loading activity data...",
+    loadingCashback: "Loading cashback data...",
+    loadingServices: "Loading services data...",
+    period: "Period",
+    selectPeriod: "Select period",
+    daily: "Daily",
+    weekly: "Weekly",
+    monthly: "Monthly",
+    quarterly: "Quarterly",
+    yearly: "Yearly",
+    pickDate: "Pick a date",
+    newUsers: "New Users",
+  },
   common: {
     loading: "Loading...",
     error: "An error occurred",
@@ -726,6 +788,36 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  analytics: {
+    revenue: "Доходы",
+    users: "Пользователи",
+    services: "Сервисы",
+    cashback: "Кэшбэк",
+    activity: "Активность",
+    userGrowth: "Рост пользователей",
+    serviceRevenue: "Доход по сервисам",
+    totalRevenue: "Общий доход",
+    revenueDistribution: "Распределение доходов",
+    clientActivity: "Активность клиентов",
+    activeVsInactive: "Активные и неактивные",
+    subscriptionCosts: "Стоимость подписок",
+    loadingData: "Загрузка данных...",
+    loadingRevenue: "Загрузка данных о доходах...",
+    loadingDistribution: "Загрузка распределения доходов...",
+    loadingUserGrowth: "Загрузка данных о росте пользователей...",
+    loadingActivity: "Загрузка данных об активности...",
+    loadingCashback: "Загрузка данных о кэшбэке...",
+    loadingServices: "Загрузка данных о сервисах...",
+    period: "Период",
+    selectPeriod: "Выберите период",
+    daily: "Ежедневно",
+    weekly: "Еженедельно",
+    monthly: "Ежемесячно",
+    quarterly: "Ежеквартально",
+    yearly: "Ежегодно",
+    pickDate: "Выберите дату",
+    newUsers: "Новые пользователи",
+  },
   common: {
     loading: "Загрузка...",
     error: "Произошла ошибка",
