@@ -558,7 +558,8 @@ export const en: Translation = {
     refresh: "Refresh",
     yes: "Yes",
     no: "No",
-    deleteAll: "Delete All"
+    deleteAll: "Delete All",
+    no_data: "No data available"
   },
   layout: {
     adminPanel: "Admin Panel",
@@ -998,7 +999,8 @@ export const ru: Translation = {
     refresh: "Обновить",
     yes: "Да",
     no: "Нет",
-    deleteAll: "Удалить всё"
+    deleteAll: "Удалить всё",
+    no_data: "Нет данных"
   },
   layout: {
     adminPanel: "Панель администратора",
@@ -1122,6 +1124,7 @@ export const ru: Translation = {
     help: "Помощь и поддержка",
     reports: "Отчеты",
     backups: "Резервные копии",
+    monitoring: "Мониторинг производительности",
   },
 
   dashboard: {
