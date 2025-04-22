@@ -11,7 +11,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useTranslation } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/use-translations';
 
 interface QueryStat {
   query: string;
