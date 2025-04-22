@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Loader2, PlusCircle, Trash2, Save } from "lucide-react";
+import { Loader2, PlusCircle, Trash2, Save, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +29,8 @@ import { Separator } from "@/components/ui/separator";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useTranslations } from "@/hooks/use-translations";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 // Типы для кастомных полей
 interface CustomField {
@@ -48,12 +50,31 @@ interface CustomField {
   options?: string; // Для полей типа select: список опций
 }
 
-// Схема для валидации
+// Расширенная схема для валидации
 const customFieldSchema = z.object({
   fieldName: z.string().min(1, { message: "Field name is required" }),
   fieldType: z.enum(['text', 'number', 'boolean', 'date', 'select']),
   fieldValue: z.string().optional(),
   isVisibleForUser: z.boolean().default(true),
+  isRequired: z.boolean().default(false),
+  minValue: z.preprocess(
+    (val) => (val === '' || val === undefined || val === null) ? undefined : Number(val),
+    z.number().optional()
+  ),
+  maxValue: z.preprocess(
+    (val) => (val === '' || val === undefined || val === null) ? undefined : Number(val),
+    z.number().optional()
+  ),
+  minLength: z.preprocess(
+    (val) => (val === '' || val === undefined || val === null) ? undefined : Number(val),
+    z.number().optional()
+  ),
+  maxLength: z.preprocess(
+    (val) => (val === '' || val === undefined || val === null) ? undefined : Number(val),
+    z.number().optional()
+  ),
+  pattern: z.string().optional(),
+  options: z.string().optional(),
 });
 
 // Схема для всей формы
@@ -104,7 +125,14 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
         fieldName: field.fieldName,
         fieldType: field.fieldType,
         fieldValue: field.fieldValue,
-        isVisibleForUser: field.isVisibleForUser
+        isVisibleForUser: field.isVisibleForUser,
+        isRequired: field.isRequired || false,
+        minValue: field.minValue,
+        maxValue: field.maxValue,
+        minLength: field.minLength,
+        maxLength: field.maxLength,
+        pattern: field.pattern,
+        options: field.options
       }))
     });
   }
@@ -115,7 +143,8 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
       fieldName: '',
       fieldType: 'text',
       fieldValue: '',
-      isVisibleForUser: true
+      isVisibleForUser: true,
+      isRequired: false
     });
   };
 
@@ -146,7 +175,14 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
           return apiRequest('PATCH', `/api/custom-fields/${existingField.id}`, {
             fieldType: field.fieldType,
             fieldValue: field.fieldValue,
-            isVisibleForUser: field.isVisibleForUser
+            isVisibleForUser: field.isVisibleForUser,
+            isRequired: field.isRequired,
+            minValue: field.minValue,
+            maxValue: field.maxValue,
+            minLength: field.minLength,
+            maxLength: field.maxLength,
+            pattern: field.pattern,
+            options: field.options
           });
         } else {
           // Создаем новое поле
@@ -156,7 +192,14 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
             fieldName: field.fieldName,
             fieldType: field.fieldType,
             fieldValue: field.fieldValue,
-            isVisibleForUser: field.isVisibleForUser
+            isVisibleForUser: field.isVisibleForUser,
+            isRequired: field.isRequired,
+            minValue: field.minValue,
+            maxValue: field.maxValue,
+            minLength: field.minLength,
+            maxLength: field.maxLength,
+            pattern: field.pattern,
+            options: field.options
           });
         }
       });
@@ -419,6 +462,141 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                           </FormItem>
                         )}
                       />
+                      
+                      <FormField
+                        control={form.control}
+                        name={`fields.${index}.isRequired`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-3">
+                            <div className="space-y-0.5">
+                              <FormLabel className="text-base">
+                                {t.services.requiredField}
+                              </FormLabel>
+                              <FormDescription>
+                                {t.services.requiredFieldDesc}
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <Collapsible className="w-full col-span-2 space-y-2 mt-2">
+                        <CollapsibleTrigger asChild>
+                          <Button variant="outline" type="button" className="w-full flex justify-between">
+                            <span>{t.services.advancedOptions}</span>
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-4 mt-2">
+                          {/* Специфичные поля для типа text */}
+                          {form.watch(`fields.${index}.fieldType`) === 'text' && (
+                            <>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField
+                                  control={form.control}
+                                  name={`fields.${index}.minLength`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>{t.services.minLength}</FormLabel>
+                                      <FormControl>
+                                        <Input type="number" {...field} value={field.value || ''} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name={`fields.${index}.maxLength`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>{t.services.maxLength}</FormLabel>
+                                      <FormControl>
+                                        <Input type="number" {...field} value={field.value || ''} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                              <FormField
+                                control={form.control}
+                                name={`fields.${index}.pattern`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>{t.services.pattern}</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder={t.services.patternPlaceholder} {...field} value={field.value || ''} />
+                                    </FormControl>
+                                    <FormDescription>
+                                      {t.services.patternDesc}
+                                    </FormDescription>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </>
+                          )}
+                          
+                          {/* Специфичные поля для типа number */}
+                          {form.watch(`fields.${index}.fieldType`) === 'number' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <FormField
+                                control={form.control}
+                                name={`fields.${index}.minValue`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>{t.services.minValue}</FormLabel>
+                                    <FormControl>
+                                      <Input type="number" {...field} value={field.value || ''} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name={`fields.${index}.maxValue`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>{t.services.maxValue}</FormLabel>
+                                    <FormControl>
+                                      <Input type="number" {...field} value={field.value || ''} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Специфичные поля для типа select */}
+                          {form.watch(`fields.${index}.fieldType`) === 'select' && (
+                            <FormField
+                              control={form.control}
+                              name={`fields.${index}.options`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>{t.services.fieldOptions}</FormLabel>
+                                  <FormControl>
+                                    <Textarea placeholder={t.services.optionsHint} {...field} value={field.value || ''} />
+                                  </FormControl>
+                                  <FormDescription>
+                                    {t.services.selectOptionsHint}
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          )}
+                        </CollapsibleContent>
+                      </Collapsible>
                     </div>
                   </div>
                 ))}
