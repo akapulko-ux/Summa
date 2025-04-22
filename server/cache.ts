@@ -1,6 +1,7 @@
 /**
  * Модуль кэширования для повышения производительности API
  */
+import { log } from './vite';
 
 interface CacheItem<T> {
   data: T;
@@ -22,14 +23,19 @@ class CacheManager {
    */
   get<T>(key: string): T | undefined {
     const item = this.cache.get(key);
-    if (!item) return undefined;
+    if (!item) {
+      log(`Cache miss: ${key}`, 'cache');
+      return undefined;
+    }
 
     // Проверяем, не истек ли кэш
     if (Date.now() > item.expiry) {
+      log(`Cache expired: ${key}`, 'cache');
       this.cache.delete(key);
       return undefined;
     }
 
+    log(`Cache hit: ${key}`, 'cache');
     return item.data as T;
   }
 
@@ -45,6 +51,7 @@ class CacheManager {
       data,
       expiry: Date.now() + ttl * 1000
     });
+    log(`Cache set: ${key}, TTL: ${ttl}s`, 'cache');
   }
 
   /**
@@ -61,6 +68,7 @@ class CacheManager {
    */
   clear(prefix?: string): void {
     if (!prefix) {
+      log(`Clearing all cache`, 'cache');
       this.cache.clear();
       return;
     }
@@ -68,11 +76,14 @@ class CacheManager {
     // Удаляем только ключи с указанным префиксом
     // Копируем ключи в массив перед итерацией для избежания ошибок в более старых версиях JS
     const keys = Array.from(this.cache.keys());
+    let cleared = 0;
     for (const key of keys) {
       if (key.startsWith(prefix)) {
         this.cache.delete(key);
+        cleared++;
       }
     }
+    log(`Cleared ${cleared} cache entries with prefix: ${prefix}`, 'cache');
   }
 
   /**

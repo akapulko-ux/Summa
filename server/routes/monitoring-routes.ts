@@ -55,9 +55,25 @@ export function setupMonitoringRoutes(app: Express) {
     const poolStatus = dbOptimizer.getPoolStatus();
     const queryStats = dbOptimizer.getQueryStatistics();
     
+    // Рассчитываем метрики эффективности кэширования
+    const totalQueries = queryStats.reduce((acc, stat) => acc + stat.count, 0);
+    const totalTime = queryStats.reduce((acc, stat) => acc + (stat.avgTime * stat.count), 0);
+    const avgResponseTime = totalQueries > 0 ? totalTime / totalQueries : 0;
+    
+    // Оцениваем соотношение запросов, которые потенциально обрабатываются из кэша
+    // (если запрос выполнялся больше 1 раза, то последующие обращения могли идти из кэша)
+    const cachedQueriesCount = queryStats.filter(s => s.count > 1).length;
+    const cacheUsageRatio = queryStats.length > 0 ? cachedQueriesCount / queryStats.length : 0;
+    
     res.json({
       poolStatus,
-      queryStats
+      queryStats,
+      performanceMetrics: {
+        totalQueries,
+        avgResponseTime: Math.round(avgResponseTime * 100) / 100,
+        cacheUsageRatio: Math.round(cacheUsageRatio * 100) / 100,
+        potentialCacheHits: totalQueries - queryStats.length
+      }
     });
   });
   
