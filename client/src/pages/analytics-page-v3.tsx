@@ -163,14 +163,14 @@ export default function AnalyticsPage() {
             onValueChange={(value) => setPeriod(value)}
           >
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select period" />
+              <SelectValue placeholder={t.analytics.selectPeriod} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="day">Daily</SelectItem>
-              <SelectItem value="week">Weekly</SelectItem>
-              <SelectItem value="month">Monthly</SelectItem>
-              <SelectItem value="quarter">Quarterly</SelectItem>
-              <SelectItem value="year">Yearly</SelectItem>
+              <SelectItem value="day">{t.analytics.daily}</SelectItem>
+              <SelectItem value="week">{t.analytics.weekly}</SelectItem>
+              <SelectItem value="month">{t.analytics.monthly}</SelectItem>
+              <SelectItem value="quarter">{t.analytics.quarterly}</SelectItem>
+              <SelectItem value="year">{t.analytics.yearly}</SelectItem>
             </SelectContent>
           </Select>
           
@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                {date ? format(date, "PPP") : <span>{t.analytics.pickDate}</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -281,12 +281,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Revenue Overview</CardTitle>
-                    <CardDescription>Total revenue by {period}</CardDescription>
+                    <CardTitle>{t.analytics.totalRevenue}</CardTitle>
+                    <CardDescription>{t.analytics.revenueDistribution} {period}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <AnimatedLoader text="Загрузка данных о доходах..." />
+                      <AnimatedLoader text={t.analytics.loadingRevenue} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -338,12 +338,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Revenue Distribution</CardTitle>
-                    <CardDescription>Revenue by service type</CardDescription>
+                    <CardTitle>{t.analytics.revenueDistribution}</CardTitle>
+                    <CardDescription>{t.analytics.serviceRevenue}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <AnimatedLoader text="Загрузка распределения доходов..." />
+                      <AnimatedLoader text={t.analytics.loadingDistribution} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -400,12 +400,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>User Growth</CardTitle>
-                    <CardDescription>New users by {period}</CardDescription>
+                    <CardTitle>{t.analytics.userGrowth}</CardTitle>
+                    <CardDescription>{t.analytics.newUsers} {period}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingUsers ? (
-                      <AnimatedLoader text="Загрузка данных о росте пользователей..." />
+                      <AnimatedLoader text={t.analytics.loadingUserGrowth} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -464,12 +464,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>User Activity</CardTitle>
-                    <CardDescription>Active vs inactive users</CardDescription>
+                    <CardTitle>{t.analytics.clientActivity}</CardTitle>
+                    <CardDescription>{t.analytics.activeVsInactive}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingUsers ? (
-                      <AnimatedLoader text="Загрузка данных об активности..." />
+                      <AnimatedLoader text={t.analytics.loadingActivity} />
                     ) : userStats ? (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -527,12 +527,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Popular Services</CardTitle>
-                    <CardDescription>Services by subscription count</CardDescription>
+                    <CardTitle>{t.analytics.popularServices}</CardTitle>
+                    <CardDescription>{t.analytics.servicesByCount}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingServices ? (
-                      <AnimatedLoader text="Загрузка популярных сервисов..." />
+                      <AnimatedLoader text={t.analytics.loadingPopularServices} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -584,12 +584,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>Service Revenue</CardTitle>
-                    <CardDescription>Revenue by service</CardDescription>
+                    <CardTitle>{t.analytics.serviceRevenue}</CardTitle>
+                    <CardDescription>{t.analytics.revenueByService}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <AnimatedLoader text="Загрузка данных о доходах сервисов..." />
+                      <AnimatedLoader text={t.analytics.loadingServiceRevenue} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
