@@ -30,10 +30,38 @@ export type Translation = {
     information: string;
     refresh: string;
     no_data: string;
-    refresh: string;
     yes: string;
     no: string;
     deleteAll: string;
+  };
+  
+  // Мониторинг производительности
+  monitoring: {
+    title: string;
+    description: string;
+    totalQueries: string;
+    avgResponseTime: string;
+    cacheUsageRatio: string;
+    potentialCacheHits: string;
+    queryStats: string;
+    poolStatus: string;
+    totalConnections: string;
+    idleConnections: string;
+    waitingClients: string;
+    query: string;
+    count: string;
+    avgTime: string;
+    ms: string;
+    percent: string;
+    refreshStats: string;
+    analyzeQuery: string;
+    queryText: string;
+    optimizationTips: string;
+    noStats: string;
+    databasePerformance: string;
+    cachePerformance: string;
+    queryPerformance: string;
+    connectionStatus: string;
   };
   
   // Layout
@@ -432,6 +460,33 @@ export type Translation = {
 };
 
 export const en: Translation = {
+  monitoring: {
+    title: "Performance Monitoring",
+    description: "Monitor and optimize your database performance",
+    totalQueries: "Total Queries",
+    avgResponseTime: "Average Response Time",
+    cacheUsageRatio: "Cache Usage Ratio",
+    potentialCacheHits: "Potential Cache Hits",
+    queryStats: "Query Statistics",
+    poolStatus: "Pool Status",
+    totalConnections: "Total Connections",
+    idleConnections: "Idle Connections",
+    waitingClients: "Waiting Clients",
+    query: "Query",
+    count: "Count",
+    avgTime: "Average Time",
+    ms: "ms",
+    percent: "%",
+    refreshStats: "Refresh Statistics",
+    analyzeQuery: "Analyze Query",
+    queryText: "Query Text",
+    optimizationTips: "Optimization Tips",
+    noStats: "No statistics available",
+    databasePerformance: "Database Performance",
+    cachePerformance: "Cache Performance",
+    queryPerformance: "Query Performance",
+    connectionStatus: "Connection Status"
+  },
   analytics: {
     revenue: "Revenue",
     users: "Users",
@@ -627,6 +682,7 @@ export const en: Translation = {
     help: "Help & Support",
     reports: "Reports",
     backups: "Backups",
+    monitoring: "Performance Monitoring",
   },
 
   dashboard: {
@@ -843,6 +899,33 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  monitoring: {
+    title: "Мониторинг производительности",
+    description: "Мониторинг и оптимизация производительности базы данных",
+    totalQueries: "Всего запросов",
+    avgResponseTime: "Среднее время ответа",
+    cacheUsageRatio: "Коэффициент использования кэша",
+    potentialCacheHits: "Потенциальные попадания в кэш",
+    queryStats: "Статистика запросов",
+    poolStatus: "Состояние пула соединений",
+    totalConnections: "Всего соединений",
+    idleConnections: "Свободные соединения",
+    waitingClients: "Ожидающие клиенты",
+    query: "Запрос",
+    count: "Количество",
+    avgTime: "Среднее время",
+    ms: "мс",
+    percent: "%",
+    refreshStats: "Обновить статистику",
+    analyzeQuery: "Анализировать запрос",
+    queryText: "Текст запроса",
+    optimizationTips: "Советы по оптимизации",
+    noStats: "Статистика недоступна",
+    databasePerformance: "Производительность базы данных",
+    cachePerformance: "Производительность кэша",
+    queryPerformance: "Производительность запросов",
+    connectionStatus: "Состояние соединений"
+  },
   analytics: {
     revenue: "Доходы",
     users: "Пользователи",
