@@ -315,6 +315,8 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
     return <div className="p-4 text-muted-foreground">{t.services.noServices}</div>;
   }
 
+  const customFields = service.customFields as Record<string, unknown> | null;
+    
   return (
     <div className="space-y-4 p-2">
       <div className="flex items-center gap-3 mb-4">
@@ -358,12 +360,12 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
         </p>
       </div>
 
-      {service.customFields && typeof service.customFields === 'object' && Object.keys(service.customFields).length > 0 && (
+      {customFields && Object.keys(customFields).length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.customFields}</h4>
           <div className="space-y-2">
-            {Object.entries(service.customFields as Record<string, any>).map(([key, value]) => (
-              <div key={key} className="flex">
+            {Object.entries(customFields).map(([key, value]) => (
+              <div key={key} className="flex flex-wrap">
                 <span className="text-sm font-medium mr-2">{key}:</span>
                 <span className="text-sm">{String(value)}</span>
               </div>
@@ -372,7 +374,7 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
         </div>
       )}
 
-      <div className="flex justify-between text-sm text-muted-foreground pt-4 border-t">
+      <div className="flex flex-col sm:flex-row justify-between text-sm text-muted-foreground pt-4 border-t gap-2">
         <div>{t.common.date} {language === 'ru' ? 'создания' : 'created'}: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
         <div>{t.common.date} {language === 'ru' ? 'обновления' : 'updated'}: {new Date(service.updatedAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
       </div>

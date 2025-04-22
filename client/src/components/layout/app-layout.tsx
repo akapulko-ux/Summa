@@ -17,8 +17,8 @@ export function AppLayout({ children, title, backUrl, actions }: AppLayoutProps)
   
   return (
     <Layout>
-      <div className="container py-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
+      <div className="container py-4 md:py-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6">
           <div className="flex items-center">
             {backUrl && (
               <Button
@@ -33,10 +33,10 @@ export function AppLayout({ children, title, backUrl, actions }: AppLayoutProps)
                 </Link>
               </Button>
             )}
-            <h1 className="text-3xl font-bold">{title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
           </div>
           {actions && (
-            <div className="mt-4 md:mt-0 space-x-2">
+            <div className="mt-3 md:mt-0 space-x-2 flex flex-wrap gap-2">
               {actions}
             </div>
           )}
