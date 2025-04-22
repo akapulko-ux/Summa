@@ -774,8 +774,8 @@ export default function AnalyticsPage() {
                             <PieChart>
                               <Pie
                                 data={[
-                                  { name: t.language === 'ru' ? 'Активные' : 'Active', value: clientsActivityStats.active || 0 },
-                                  { name: t.language === 'ru' ? 'Неактивные' : 'Inactive', value: clientsActivityStats.inactive || 0 }
+                                  { name: language === 'ru' ? 'Активные' : 'Active', value: clientsActivityStats.active || 0 },
+                                  { name: language === 'ru' ? 'Неактивные' : 'Inactive', value: clientsActivityStats.inactive || 0 }
                                 ]}
                                 cx="50%"
                                 cy="50%"
@@ -850,19 +850,19 @@ export default function AnalyticsPage() {
                                 dataKey="avgPrice" 
                                 fill="#8884d8" 
                                 stroke="#8884d8" 
-                                name={t.language === 'ru' ? "Средняя цена" : "Average Price"}
+                                name={language === 'ru' ? "Средняя цена" : "Average Price"}
                               />
                               <Line 
                                 type="monotone" 
                                 dataKey="maxPrice" 
                                 stroke="#ff7300" 
-                                name={t.language === 'ru' ? "Максимальная цена" : "Maximum Price"}
+                                name={language === 'ru' ? "Максимальная цена" : "Maximum Price"}
                               />
                               <Line 
                                 type="monotone" 
                                 dataKey="minPrice" 
                                 stroke="#4CAF50" 
-                                name={t.language === 'ru' ? "Минимальная цена" : "Minimum Price"}
+                                name={language === 'ru' ? "Минимальная цена" : "Minimum Price"}
                               />
                             </ComposedChart>
                           </ResponsiveContainer>
