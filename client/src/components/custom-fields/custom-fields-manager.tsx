@@ -39,6 +39,13 @@ interface CustomField {
   fieldType: 'text' | 'number' | 'boolean' | 'date' | 'select';
   fieldValue: string;
   isVisibleForUser: boolean;
+  isRequired?: boolean;
+  minValue?: number;
+  maxValue?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  options?: string; // Для полей типа select: список опций
 }
 
 // Схема для валидации
