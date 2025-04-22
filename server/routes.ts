@@ -7,6 +7,11 @@ import { ZodError } from "zod";
 import { zValidationErrorToMessage } from "./utils";
 import backupRoutes from "./backup/backup-routes";
 import { setupTelegramRoutes } from "./telegram/telegram-routes";
+import { cacheManager } from "./cache";
+import { cacheMiddleware, clearCacheMiddleware } from "./middleware/cache-middleware";
+import { dbOptimizer } from "./db-optimizer";
+import { scalingManager } from "./scaling";
+import { setupMonitoringRoutes } from "./routes/monitoring-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -489,11 +494,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Настройка кэширования для часто запрашиваемых данных
+  // Кэшируем списки сервисов на 2 минуты
+  app.get("/api/services", cacheMiddleware({ ttl: 120, keyPrefix: 'services:' }));
+  
+  // Кэширование статистики на 5 минут
+  app.get("/api/stats/*", cacheMiddleware({ ttl: 300, keyPrefix: 'stats:' }));
+  
+  // Подключаем маршруты для мониторинга производительности
+  setupMonitoringRoutes(app);
+  
+  // Настраиваем очистку кэша при изменении данных
+  app.post("/api/services", clearCacheMiddleware('services:'));
+  app.patch("/api/services/:id", clearCacheMiddleware('services:'));
+  app.delete("/api/services/:id", clearCacheMiddleware('services:'));
+  
   // Подключаем маршруты для резервного копирования базы данных
   app.use("/api/backups", backupRoutes);
 
   // Подключаем маршруты для Telegram бота
   setupTelegramRoutes(app);
+  
+  // Включаем мониторинг запросов в режиме production
+  if (process.env.NODE_ENV === 'production') {
+    dbOptimizer.enableQueryMonitoring();
+    dbOptimizer.setLongQueryThreshold(300); // 300мс
+    
+    // Проверяем возможность масштабирования
+    const workerCount = scalingManager.getOptimalWorkerCount(70);
+    if (workerCount > 1) {
+      scalingManager.enableClusterMode(workerCount);
+    }
+  }
 
   const httpServer = createServer(app);
 

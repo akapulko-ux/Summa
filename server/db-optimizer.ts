@@ -48,9 +48,11 @@ export class DBOptimizer {
    * @returns Статистика по запросам
    */
   getQueryStatistics(): { query: string; count: number; avgTime: number }[] {
-    const stats = [];
+    const stats: { query: string; count: number; avgTime: number }[] = [];
     
-    for (const [query, { count, totalTime }] of this.queryStatistics.entries()) {
+    // Преобразуем Map в массив перед итерацией для поддержки старых версий JS
+    const entries = Array.from(this.queryStatistics.entries());
+    for (const [query, { count, totalTime }] of entries) {
       stats.push({
         query,
         count,
@@ -111,7 +113,11 @@ export class DBOptimizer {
   async countRows(query: SQL): Promise<number> {
     const countQuery = sql`SELECT COUNT(*) as total FROM (${query}) as subquery`;
     const result = await db.execute(countQuery);
-    return parseInt(result[0]?.total || '0', 10);
+    // Безопасный доступ к результату запроса
+    if (Array.isArray(result) && result.length > 0 && result[0] && 'total' in result[0]) {
+      return parseInt(String(result[0].total), 10);
+    }
+    return 0;
   }
   
   /**

@@ -66,7 +66,9 @@ class CacheManager {
     }
 
     // Удаляем только ключи с указанным префиксом
-    for (const key of this.cache.keys()) {
+    // Копируем ключи в массив перед итерацией для избежания ошибок в более старых версиях JS
+    const keys = Array.from(this.cache.keys());
+    for (const key of keys) {
       if (key.startsWith(prefix)) {
         this.cache.delete(key);
       }

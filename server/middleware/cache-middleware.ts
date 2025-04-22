@@ -18,7 +18,7 @@ interface CacheMiddlewareOptions {
  */
 export function cacheMiddleware(options: CacheMiddlewareOptions = {}) {
   const {
-    ttl,
+    ttl = 60, // По умолчанию 60 секунд, если не указано
     keyPrefix = '', 
     getKey = req => `${req.method}:${req.originalUrl}`
   } = options;
