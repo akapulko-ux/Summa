@@ -20,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 // Form schema
 const userFormSchema = z.object({
@@ -86,7 +87,7 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
   });
 
   // Update form values when user data is loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (userData) {
       form.reset({
         email: userData.email,
