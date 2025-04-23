@@ -54,7 +54,7 @@ export function TelegramConnect() {
     },
     onError: (error: Error) => {
       toast({
-        title: t.common.error,
+        title: t('common.error'),
         description: error.message,
         variant: 'destructive',
       });
@@ -69,13 +69,13 @@ export function TelegramConnect() {
     },
     onSuccess: (data) => {
       toast({
-        title: t.telegram.testNotificationSent,
+        title: t('telegram.testNotificationSent'),
         description: data.message,
       });
     },
     onError: (error: Error) => {
       toast({
-        title: t.common.error,
+        title: t('common.error'),
         description: error.message,
         variant: 'destructive',
       });
@@ -90,14 +90,14 @@ export function TelegramConnect() {
     },
     onSuccess: (data) => {
       toast({
-        title: t.telegram.disconnected,
+        title: t('telegram.disconnected'),
         description: data.message,
       });
       queryClient.invalidateQueries({ queryKey: ['/api/telegram/status'] });
     },
     onError: (error: Error) => {
       toast({
-        title: t.common.error,
+        title: t('common.error'),
         description: error.message,
         variant: 'destructive',
       });
@@ -130,11 +130,11 @@ export function TelegramConnect() {
 
     return (
       <Alert className="mt-4">
-        <AlertTitle className="font-semibold">{t.telegram.linkInstructions}</AlertTitle>
+        <AlertTitle className="font-semibold">{t('telegram.linkInstructions')}</AlertTitle>
         <AlertDescription className="mt-2">
-          <p className="mb-2">1. {t.telegram.openBot}: <a href="https://t.me/SaaSlyServiceBot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@SaaSlyServiceBot</a></p>
-          <p className="mb-2">2. {t.telegram.sendCommand}: <code className="bg-muted px-2 py-1 rounded">/link {linkCode}</code></p>
-          <p>{t.telegram.afterLink}</p>
+          <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/SaaSlyServiceBot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@SaaSlyServiceBot</a></p>
+          <p className="mb-2">2. {t('telegram.sendCommand')}: <code className="bg-muted px-2 py-1 rounded">/link {linkCode}</code></p>
+          <p>{t('telegram.afterLink')}</p>
         </AlertDescription>
       </Alert>
     );
@@ -155,26 +155,26 @@ export function TelegramConnect() {
             ) : (
               <LogOut className="mr-2 h-4 w-4" />
             )}
-            {t.telegram.disconnect}
+            {t('telegram.disconnect')}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-destructive" />
-              {t.telegram.confirmDisconnect}
+              {t('telegram.confirmDisconnect')}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t.telegram.disconnectWarning}
+              {t('telegram.disconnectWarning')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDisconnect}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {t.telegram.disconnect}
+              {t('telegram.disconnect')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -187,8 +187,8 @@ export function TelegramConnect() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{t.telegram.title}</CardTitle>
-          <CardDescription>{t.telegram.description}</CardDescription>
+          <CardTitle>{t('telegram.title')}</CardTitle>
+          <CardDescription>{t('telegram.description')}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center py-6">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -202,20 +202,20 @@ export function TelegramConnect() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
-          {t.telegram.title}
+          {t('telegram.title')}
         </CardTitle>
-        <CardDescription>{t.telegram.description}</CardDescription>
+        <CardDescription>{t('telegram.description')}</CardDescription>
       </CardHeader>
       <CardContent>
         {telegramStatus?.connected ? (
           <div className="flex flex-col items-center space-y-4">
             <div className="flex items-center gap-2 text-green-600">
               <CheckCircle className="h-6 w-6" />
-              <span className="text-lg font-medium">{t.telegram.connected}</span>
+              <span className="text-lg font-medium">{t('telegram.connected')}</span>
             </div>
             
             <p className="text-center text-muted-foreground mb-2">
-              {t.telegram.receiveNotifications}
+              {t('telegram.receiveNotifications')}
             </p>
             
             {/* Кнопка отправки тестового уведомления */}
@@ -230,7 +230,7 @@ export function TelegramConnect() {
               ) : (
                 <BellRing className="mr-2 h-4 w-4" />
               )}
-              {t.telegram.sendTestNotification}
+              {t('telegram.sendTestNotification')}
             </Button>
             
             {/* Кнопка отключения с диалогом подтверждения */}
@@ -241,7 +241,7 @@ export function TelegramConnect() {
         ) : (
           <div className="flex flex-col space-y-4">
             <p className="text-center text-muted-foreground mb-2">
-              {t.telegram.notConnected}
+              {t('telegram.notConnected')}
             </p>
             <Button 
               onClick={handleGenerateLink} 
@@ -253,7 +253,7 @@ export function TelegramConnect() {
               ) : (
                 <LinkIcon className="mr-2 h-4 w-4" />
               )}
-              {t.telegram.generateLink}
+              {t('telegram.generateLink')}
             </Button>
             
             {renderLinkInstructions()}
@@ -266,7 +266,7 @@ export function TelegramConnect() {
                 disabled={generateLinkMutation.isPending}
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
-                {t.common.refresh || "Refresh"}
+                {t('common.refresh') || "Refresh"}
               </Button>
             </div>
           </div>

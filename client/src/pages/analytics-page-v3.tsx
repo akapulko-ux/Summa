@@ -149,7 +149,7 @@ export default function AnalyticsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {t.nav.analytics}
+          {t('nav.analytics')}
         </motion.h1>
         
         <motion.div 
@@ -163,14 +163,14 @@ export default function AnalyticsPage() {
             onValueChange={(value) => setPeriod(value)}
           >
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder={t.analytics.selectPeriod} />
+              <SelectValue placeholder={t('analytics.selectPeriod')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="day">{t.analytics.daily}</SelectItem>
-              <SelectItem value="week">{t.analytics.weekly}</SelectItem>
-              <SelectItem value="month">{t.analytics.monthly}</SelectItem>
-              <SelectItem value="quarter">{t.analytics.quarterly}</SelectItem>
-              <SelectItem value="year">{t.analytics.yearly}</SelectItem>
+              <SelectItem value="day">{t('analytics.daily')}</SelectItem>
+              <SelectItem value="week">{t('analytics.weekly')}</SelectItem>
+              <SelectItem value="month">{t('analytics.monthly')}</SelectItem>
+              <SelectItem value="quarter">{t('analytics.quarterly')}</SelectItem>
+              <SelectItem value="year">{t('analytics.yearly')}</SelectItem>
             </SelectContent>
           </Select>
           
@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>{t.analytics.pickDate}</span>}
+                {date ? format(date, "PPP") : <span>{t('analytics.pickDate')}</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -204,7 +204,7 @@ export default function AnalyticsPage() {
               value="revenue" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>{t.analytics.revenue}</span>
+              <span>{t('analytics.revenue')}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -218,7 +218,7 @@ export default function AnalyticsPage() {
               value="users" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>{t.analytics.users}</span>
+              <span>{t('analytics.users')}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -232,7 +232,7 @@ export default function AnalyticsPage() {
               value="services" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>{t.analytics.services}</span>
+              <span>{t('analytics.services')}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -246,7 +246,7 @@ export default function AnalyticsPage() {
               value="cashback" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>{t.analytics.cashback}</span>
+              <span>{t('analytics.cashback')}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -260,7 +260,7 @@ export default function AnalyticsPage() {
               value="activity" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative"
             >
-              <span>{t.analytics.activity}</span>
+              <span>{t('analytics.activity')}</span>
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 initial={{ scaleX: 0 }}
@@ -281,12 +281,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.totalRevenue}</CardTitle>
-                    <CardDescription>{t.analytics.revenueDistribution} {period}</CardDescription>
+                    <CardTitle>{t('analytics.totalRevenue')}</CardTitle>
+                    <CardDescription>{t('analytics.revenueDistribution')} {period}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <AnimatedLoader text={t.analytics.loadingRevenue} />
+                      <AnimatedLoader text={t('analytics.loadingRevenue')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -338,12 +338,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.revenueDistribution}</CardTitle>
-                    <CardDescription>{t.analytics.serviceRevenue}</CardDescription>
+                    <CardTitle>{t('analytics.revenueDistribution')}</CardTitle>
+                    <CardDescription>{t('analytics.serviceRevenue')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <AnimatedLoader text={t.analytics.loadingDistribution} />
+                      <AnimatedLoader text={t('analytics.loadingDistribution')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -400,12 +400,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.userGrowth}</CardTitle>
-                    <CardDescription>{t.analytics.newUsers} {period}</CardDescription>
+                    <CardTitle>{t('analytics.userGrowth')}</CardTitle>
+                    <CardDescription>{t('analytics.newUsers')} {period}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingUsers ? (
-                      <AnimatedLoader text={t.analytics.loadingUserGrowth} />
+                      <AnimatedLoader text={t('analytics.loadingUserGrowth')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -464,12 +464,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.clientActivity}</CardTitle>
-                    <CardDescription>{t.analytics.activeVsInactive}</CardDescription>
+                    <CardTitle>{t('analytics.clientActivity')}</CardTitle>
+                    <CardDescription>{t('analytics.activeVsInactive')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingUsers ? (
-                      <AnimatedLoader text={t.analytics.loadingActivity} />
+                      <AnimatedLoader text={t('analytics.loadingActivity')} />
                     ) : userStats ? (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -527,12 +527,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.popularServices}</CardTitle>
-                    <CardDescription>{t.analytics.servicesByCount}</CardDescription>
+                    <CardTitle>{t('analytics.popularServices')}</CardTitle>
+                    <CardDescription>{t('analytics.servicesByCount')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingServices ? (
-                      <AnimatedLoader text={t.analytics.loadingPopularServices} />
+                      <AnimatedLoader text={t('analytics.loadingPopularServices')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -584,12 +584,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.serviceRevenue}</CardTitle>
-                    <CardDescription>{t.analytics.revenueByService}</CardDescription>
+                    <CardTitle>{t('analytics.serviceRevenue')}</CardTitle>
+                    <CardDescription>{t('analytics.revenueByService')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptions ? (
-                      <AnimatedLoader text={t.analytics.loadingServiceRevenue} />
+                      <AnimatedLoader text={t('analytics.loadingServiceRevenue')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -654,12 +654,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.cashbackAnalytics}</CardTitle>
-                    <CardDescription>{t.analytics.cashbackAmount}</CardDescription>
+                    <CardTitle>{t('analytics.cashbackAnalytics')}</CardTitle>
+                    <CardDescription>{t('analytics.cashbackAmount')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingCashback ? (
-                      <AnimatedLoader text={t.analytics.loadingCashback} />
+                      <AnimatedLoader text={t('analytics.loadingCashback')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -712,12 +712,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.cashbackSummary}</CardTitle>
-                    <CardDescription>{t.analytics.totalCashback}</CardDescription>
+                    <CardTitle>{t('analytics.cashbackSummary')}</CardTitle>
+                    <CardDescription>{t('analytics.totalCashback')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingCashback ? (
-                      <AnimatedLoader text={t.analytics.loadingCashback} />
+                      <AnimatedLoader text={t('analytics.loadingCashback')} />
                     ) : (
                       <div className="flex flex-col h-full justify-center items-center">
                         <div className="grid grid-cols-1 gap-6 w-full">
@@ -725,7 +725,7 @@ export default function AnalyticsPage() {
                             <div className="text-3xl font-bold mb-2">
                               ${cashbackStats.reduce((sum, item) => sum + parseFloat(item.amount), 0).toFixed(2)}
                             </div>
-                            <div className="text-muted-foreground">{t.analytics.totalCashback}</div>
+                            <div className="text-muted-foreground">{t('analytics.totalCashback')}</div>
                           </div>
                           
                           <div className="flex flex-col items-center justify-center p-6 bg-muted rounded-xl">
@@ -734,7 +734,7 @@ export default function AnalyticsPage() {
                                 `$${cashbackStats[cashbackStats.length - 1].amount}` : 
                                 '$0.00'}
                             </div>
-                            <div className="text-muted-foreground">{t.analytics.latestCashback}</div>
+                            <div className="text-muted-foreground">{t('analytics.latestCashback')}</div>
                           </div>
                         </div>
                       </div>
@@ -754,12 +754,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.clientActivity}</CardTitle>
-                    <CardDescription>{t.analytics.activeVsInactive}</CardDescription>
+                    <CardTitle>{t('analytics.clientActivity')}</CardTitle>
+                    <CardDescription>{t('analytics.activeVsInactive')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingClientsActivity ? (
-                      <AnimatedLoader text={t.analytics.loadingActivity} />
+                      <AnimatedLoader text={t('analytics.loadingActivity')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -812,12 +812,12 @@ export default function AnalyticsPage() {
               >
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t.analytics.subscriptionCosts}</CardTitle>
-                    <CardDescription>{t.analytics.avgMinMaxPrices}</CardDescription>
+                    <CardTitle>{t('analytics.subscriptionCosts')}</CardTitle>
+                    <CardDescription>{t('analytics.avgMinMaxPrices')}</CardDescription>
                   </CardHeader>
                   <CardContent className="h-80">
                     {isLoadingSubscriptionCosts ? (
-                      <AnimatedLoader text={t.analytics.loadingSubscriptionCosts} />
+                      <AnimatedLoader text={t('analytics.loadingSubscriptionCosts')} />
                     ) : (
                       <AnimatePresence mode="wait">
                         <motion.div

@@ -80,14 +80,14 @@ export default function ProfilePage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
-        title: t.profile.profileUpdated,
-        description: t.messages.welcomeBack,
+        title: t('profile.profileUpdated'),
+        description: t('messages.welcomeBack'),
       });
     },
     onError: (error) => {
       toast({
-        title: t.messages.somethingWentWrong,
-        description: error.message || t.messages.serverError,
+        title: t('messages.somethingWentWrong'),
+        description: error.message || t('messages.serverError'),
         variant: "destructive",
       });
     },
@@ -110,14 +110,14 @@ export default function ProfilePage() {
         confirmPassword: "",
       });
       toast({
-        title: t.profile.passwordUpdated,
-        description: t.messages.welcomeBack,
+        title: t('profile.passwordUpdated'),
+        description: t('messages.welcomeBack'),
       });
     },
     onError: (error) => {
       toast({
-        title: t.messages.somethingWentWrong,
-        description: error.message || t.messages.serverError,
+        title: t('messages.somethingWentWrong'),
+        description: error.message || t('messages.serverError'),
         variant: "destructive",
       });
     },
@@ -133,14 +133,14 @@ export default function ProfilePage() {
   };
 
   return (
-    <AppLayout title={t.profile.title}>
+    <AppLayout title={t('profile.title')}>
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <Card className="mb-4">
             <CardHeader>
-              <CardTitle>{t.profile.personalInfo}</CardTitle>
+              <CardTitle>{t('profile.personalInfo')}</CardTitle>
               <CardDescription>
-                {t.profile.accountSettings}
+                {t('profile.accountSettings')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                   <h3 className="text-lg font-medium">{user?.name || "User"}</h3>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {t.profile.role}: {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : t.users.roleClient}
+                    {t('profile.role')}: {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : t('users.roleClient')}
                   </p>
                 </div>
               </div>
@@ -166,16 +166,16 @@ export default function ProfilePage() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>{t.profile.accountSettings}</CardTitle>
+              <CardTitle>{t('profile.accountSettings')}</CardTitle>
               <CardDescription>
-                {t.profile.updateProfile}
+                {t('profile.updateProfile')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="profile">{t.profile.personalInfo}</TabsTrigger>
-                  <TabsTrigger value="password">{t.profile.changePassword}</TabsTrigger>
+                  <TabsTrigger value="profile">{t('profile.personalInfo')}</TabsTrigger>
+                  <TabsTrigger value="password">{t('profile.changePassword')}</TabsTrigger>
                 </TabsList>
                 
                 {/* Profile Form */}
@@ -187,12 +187,12 @@ export default function ProfilePage() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.auth.email}</FormLabel>
+                            <FormLabel>{t('auth.email')}</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
                             <FormDescription>
-                              {t.auth.emailPlaceholder}
+                              {t('auth.emailPlaceholder')}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -204,9 +204,9 @@ export default function ProfilePage() {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.auth.name}</FormLabel>
+                            <FormLabel>{t('auth.name')}</FormLabel>
                             <FormControl>
-                              <Input placeholder={t.auth.namePlaceholder} {...field} />
+                              <Input placeholder={t('auth.namePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -218,9 +218,9 @@ export default function ProfilePage() {
                         name="companyName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.auth.company}</FormLabel>
+                            <FormLabel>{t('auth.company')}</FormLabel>
                             <FormControl>
-                              <Input placeholder={t.auth.companyPlaceholder} {...field} />
+                              <Input placeholder={t('auth.companyPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -232,9 +232,9 @@ export default function ProfilePage() {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.auth.phone}</FormLabel>
+                            <FormLabel>{t('auth.phone')}</FormLabel>
                             <FormControl>
-                              <Input placeholder={t.auth.phonePlaceholder} {...field} />
+                              <Input placeholder={t('auth.phonePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                         {updateProfileMutation.isPending && (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        {t.common.save}
+                        {t('common.save')}
                       </Button>
                     </form>
                   </Form>
@@ -264,7 +264,7 @@ export default function ProfilePage() {
                         name="currentPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.profile.currentPassword}</FormLabel>
+                            <FormLabel>{t('profile.currentPassword')}</FormLabel>
                             <FormControl>
                               <Input type="password" {...field} />
                             </FormControl>
@@ -278,7 +278,7 @@ export default function ProfilePage() {
                         name="newPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.profile.newPassword}</FormLabel>
+                            <FormLabel>{t('profile.newPassword')}</FormLabel>
                             <FormControl>
                               <Input type="password" {...field} />
                             </FormControl>
@@ -292,7 +292,7 @@ export default function ProfilePage() {
                         name="confirmPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.profile.confirmNewPassword}</FormLabel>
+                            <FormLabel>{t('profile.confirmNewPassword')}</FormLabel>
                             <FormControl>
                               <Input type="password" {...field} />
                             </FormControl>
@@ -309,7 +309,7 @@ export default function ProfilePage() {
                         {updatePasswordMutation.isPending && (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        {t.profile.changePassword}
+                        {t('profile.changePassword')}
                       </Button>
                     </form>
                   </Form>

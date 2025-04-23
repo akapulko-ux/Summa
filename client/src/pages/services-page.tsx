@@ -9,12 +9,12 @@ export default function ServicesPage() {
   const isAdmin = user?.role === "admin";
 
   return (
-    <AppLayout title={t.services.title}>
+    <AppLayout title={t('services.title')}>
       <div className="mb-6">
         <p className="text-muted-foreground">
           {isAdmin
-            ? t.services.manageServices
-            : t.services.browseServices}
+            ? t('services.manageServices')
+            : t('services.browseServices')}
         </p>
       </div>
 

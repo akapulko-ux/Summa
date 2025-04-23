@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
   return (
     <Layout>
       <div className="container py-6">
-        <h1 className="text-3xl font-bold mb-6">{t.nav.analytics}</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('nav.analytics')}</h1>
         
         <div className="flex items-center mb-6 space-x-2">
           <Select

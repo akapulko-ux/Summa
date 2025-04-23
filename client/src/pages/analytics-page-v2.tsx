@@ -126,7 +126,7 @@ export default function AnalyticsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {t.nav.analytics}
+          {t('nav.analytics')}
         </motion.h1>
         
         <motion.div 

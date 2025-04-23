@@ -169,10 +169,10 @@ export default function BackupsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {t.backups.title}
+              {t('backups.title')}
             </h1>
             <p className="text-muted-foreground">
-              {t.backups.manageBackups}
+              {t('backups.manageBackups')}
             </p>
           </div>
           
@@ -189,7 +189,7 @@ export default function BackupsPage() {
                     ) : (
                       <DownloadCloud className="mr-2 h-4 w-4" />
                     )}
-                    {t.backups.createBackup}
+                    {t('backups.createBackup')}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -213,7 +213,7 @@ export default function BackupsPage() {
                     ) : (
                       <Clock className="mr-2 h-4 w-4" />
                     )}
-                    {t.backups.cleanOldBackups}
+                    {t('backups.cleanOldBackups')}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -254,9 +254,9 @@ export default function BackupsPage() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{t.backups.title}</CardTitle>
+            <CardTitle>{t('backups.title')}</CardTitle>
             <CardDescription>
-              {t.backups.manageBackups}
+              {t('backups.manageBackups')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -266,21 +266,21 @@ export default function BackupsPage() {
               </div>
             ) : isError ? (
               <div className="text-center py-8 text-muted-foreground">
-                {t.common.error}
+                {t('common.error')}
               </div>
             ) : !backups || backups.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                {t.backups.noBackups}
+                {t('backups.noBackups')}
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t.backups.backupName}</TableHead>
+                      <TableHead>{t('backups.backupName')}</TableHead>
                       <TableHead>{language === 'ru' ? "Тип" : "Type"}</TableHead>
-                      <TableHead>{t.backups.backupSize}</TableHead>
-                      <TableHead>{t.backups.backupDate}</TableHead>
+                      <TableHead>{t('backups.backupSize')}</TableHead>
+                      <TableHead>{t('backups.backupDate')}</TableHead>
                       <TableHead className="text-right">{language === 'ru' ? "Действия" : "Actions"}</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -329,21 +329,21 @@ export default function BackupsPage() {
                                     onClick={() => setSelectedBackup(backup.name)}
                                   >
                                     <Upload className="h-4 w-4 mr-1" />
-                                    {t.common.restore}
+                                    {t('common.restore')}
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>
-                                      {t.backups.restoreBackup}
+                                      {t('backups.restoreBackup')}
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      {t.backups.confirmRestore}
+                                      {t('backups.confirmRestore')}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>
-                                      {t.common.cancel}
+                                      {t('common.cancel')}
                                     </AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => {
@@ -356,7 +356,7 @@ export default function BackupsPage() {
                                       {restoreBackupMutation.isPending && (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                       )}
-                                      {t.common.restore}
+                                      {t('common.restore')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -372,22 +372,22 @@ export default function BackupsPage() {
                                   >
                                     <Trash2 className="h-4 w-4" />
                                     <span className="sr-only">
-                                      {t.common.delete}
+                                      {t('common.delete')}
                                     </span>
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>
-                                      {t.backups.deleteBackup}
+                                      {t('backups.deleteBackup')}
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      {t.backups.confirmDelete}
+                                      {t('backups.confirmDelete')}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>
-                                      {t.common.cancel}
+                                      {t('common.cancel')}
                                     </AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => {
@@ -401,7 +401,7 @@ export default function BackupsPage() {
                                       {deleteBackupMutation.isPending && (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                       )}
-                                      {t.common.delete}
+                                      {t('common.delete')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -420,7 +420,7 @@ export default function BackupsPage() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{t.common.information}</CardTitle>
+            <CardTitle>{t('common.information')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>

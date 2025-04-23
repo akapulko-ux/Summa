@@ -211,14 +211,14 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
       queryClient.invalidateQueries({ queryKey: ['/api/custom-fields', entityType, entityId] });
       setIsEditing(false);
       toast({
-        title: t.services.customFieldsUpdated,
-        description: t.services.customFieldsUpdatedDesc,
+        title: t('services.customFieldsUpdated'),
+        description: t('services.customFieldsUpdatedDesc'),
         duration: 3000
       });
     },
     onError: (error: Error) => {
       toast({
-        title: t.common.error,
+        title: t('common.error'),
         description: error.message,
         variant: "destructive",
         duration: 3000
@@ -241,14 +241,14 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
       queryClient.invalidateQueries({ queryKey: ['/api/custom-fields', entityType, entityId] });
       form.reset({ fields: [] });
       toast({
-        title: t.services.customFieldsDeleted,
-        description: t.services.customFieldsDeletedDesc,
+        title: t('services.customFieldsDeleted'),
+        description: t('services.customFieldsDeletedDesc'),
         duration: 3000
       });
     },
     onError: (error: Error) => {
       toast({
-        title: t.common.error,
+        title: t('common.error'),
         description: error.message,
         variant: "destructive",
         duration: 3000
@@ -266,8 +266,8 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{t.services.customFields}</CardTitle>
-          <CardDescription>{t.services.customFieldsDesc}</CardDescription>
+          <CardTitle>{t('services.customFields')}</CardTitle>
+          <CardDescription>{t('services.customFieldsDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -282,12 +282,12 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
           <div>
-            <CardTitle>{t.services.customFields}</CardTitle>
-            <CardDescription>{t.services.customFieldsDesc}</CardDescription>
+            <CardTitle>{t('services.customFields')}</CardTitle>
+            <CardDescription>{t('services.customFieldsDesc')}</CardDescription>
           </div>
           {isAdmin && (
             <Button onClick={() => setIsEditing(true)} size="sm" variant="outline">
-              {t.common.edit}
+              {t('common.edit')}
             </Button>
           )}
         </CardHeader>
@@ -299,12 +299,12 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                   <div className="font-medium">{field.fieldName}</div>
                   <div className="text-sm text-muted-foreground">
                     {field.fieldType === 'boolean' 
-                      ? field.fieldValue === 'true' ? t.common.yes : t.common.no
+                      ? field.fieldValue === 'true' ? t('common.yes') : t('common.no')
                       : field.fieldValue || '-'}
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    {t.services.fieldType}: {field.fieldType}
-                    {!field.isVisibleForUser && ` (${t.services.adminOnly})`}
+                    {t('services.fieldType')}: {field.fieldType}
+                    {!field.isVisibleForUser && ` (${t('services.adminOnly')})`}
                   </div>
                 </div>
               ))}
@@ -312,8 +312,8 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               {isAdmin 
-                ? t.services.noCustomFieldsAdmin
-                : t.services.noCustomFields}
+                ? t('services.noCustomFieldsAdmin')
+                : t('services.noCustomFields')}
             </div>
           )}
         </CardContent>
@@ -326,35 +326,35 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <div>
-          <CardTitle>{t.services.editCustomFields}</CardTitle>
-          <CardDescription>{t.services.editCustomFieldsDesc}</CardDescription>
+          <CardTitle>{t('services.editCustomFields')}</CardTitle>
+          <CardDescription>{t('services.editCustomFieldsDesc')}</CardDescription>
         </div>
         <div className="flex space-x-2">
           <Button onClick={() => setIsEditing(false)} size="sm" variant="outline">
-            {t.common.cancel}
+            {t('common.cancel')}
           </Button>
           {data && data.length > 0 && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button size="sm" variant="destructive">
                   <Trash2 className="h-4 w-4 mr-2" />
-                  {t.common.deleteAll}
+                  {t('common.deleteAll')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{t.services.confirmDeleteAllFields}</AlertDialogTitle>
+                  <AlertDialogTitle>{t('services.confirmDeleteAllFields')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    {t.services.confirmDeleteAllFieldsDesc}
+                    {t('services.confirmDeleteAllFieldsDesc')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t.common.cancel}</AlertDialogCancel>
+                  <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={() => deleteAllFieldsMutation.mutate()}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    {t.common.delete}
+                    {t('common.delete')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -371,7 +371,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                   <div key={field.id} className="border rounded-md p-4">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium">
-                        {t.services.fieldNumber.replace('{number}', String(index + 1))}
+                        {t('services.fieldNumber').replace('{number}', String(index + 1))}
                       </h4>
                       <Button
                         type="button"
@@ -388,9 +388,9 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                         name={`fields.${index}.fieldName`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.services.fieldName}</FormLabel>
+                            <FormLabel>{t('services.fieldName')}</FormLabel>
                             <FormControl>
-                              <Input placeholder={t.services.fieldNamePlaceholder} {...field} />
+                              <Input placeholder={t('services.fieldNamePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -401,22 +401,22 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                         name={`fields.${index}.fieldType`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.services.fieldType}</FormLabel>
+                            <FormLabel>{t('services.fieldType')}</FormLabel>
                             <Select
                               value={field.value}
                               onValueChange={field.onChange}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={t.services.selectFieldType} />
+                                  <SelectValue placeholder={t('services.selectFieldType')} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="text">{t.services.fieldTypeText}</SelectItem>
-                                <SelectItem value="number">{t.services.fieldTypeNumber}</SelectItem>
-                                <SelectItem value="boolean">{t.services.fieldTypeBoolean}</SelectItem>
-                                <SelectItem value="date">{t.services.fieldTypeDate}</SelectItem>
-                                <SelectItem value="select">{t.services.fieldTypeSelect}</SelectItem>
+                                <SelectItem value="text">{t('services.fieldTypeText')}</SelectItem>
+                                <SelectItem value="number">{t('services.fieldTypeNumber')}</SelectItem>
+                                <SelectItem value="boolean">{t('services.fieldTypeBoolean')}</SelectItem>
+                                <SelectItem value="date">{t('services.fieldTypeDate')}</SelectItem>
+                                <SelectItem value="select">{t('services.fieldTypeSelect')}</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -428,13 +428,13 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                         name={`fields.${index}.fieldValue`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t.services.defaultValue}</FormLabel>
+                            <FormLabel>{t('services.defaultValue')}</FormLabel>
                             <FormControl>
-                              <Input placeholder={t.services.defaultValuePlaceholder} {...field} />
+                              <Input placeholder={t('services.defaultValuePlaceholder')} {...field} />
                             </FormControl>
                             <FormDescription>
                               {form.watch(`fields.${index}.fieldType`) === 'select' && 
-                                t.services.selectOptionsHint}
+                                t('services.selectOptionsHint')}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -447,10 +447,10 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                           <FormItem className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-3">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">
-                                {t.services.visibleToUsers}
+                                {t('services.visibleToUsers')}
                               </FormLabel>
                               <FormDescription>
-                                {t.services.visibleToUsersDesc}
+                                {t('services.visibleToUsersDesc')}
                               </FormDescription>
                             </div>
                             <FormControl>
@@ -470,10 +470,10 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                           <FormItem className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-3">
                             <div className="space-y-0.5">
                               <FormLabel className="text-base">
-                                {t.services.requiredField}
+                                {t('services.requiredField')}
                               </FormLabel>
                               <FormDescription>
-                                {t.services.requiredFieldDesc}
+                                {t('services.requiredFieldDesc')}
                               </FormDescription>
                             </div>
                             <FormControl>
@@ -489,7 +489,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                       <Collapsible className="w-full col-span-2 space-y-2 mt-2">
                         <CollapsibleTrigger asChild>
                           <Button variant="outline" type="button" className="w-full flex justify-between">
-                            <span>{t.services.advancedOptions}</span>
+                            <span>{t('services.advancedOptions')}</span>
                             <ChevronDown className="h-4 w-4" />
                           </Button>
                         </CollapsibleTrigger>
@@ -503,7 +503,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                                   name={`fields.${index}.minLength`}
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>{t.services.minLength}</FormLabel>
+                                      <FormLabel>{t('services.minLength')}</FormLabel>
                                       <FormControl>
                                         <Input type="number" {...field} value={field.value || ''} />
                                       </FormControl>
@@ -516,7 +516,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                                   name={`fields.${index}.maxLength`}
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>{t.services.maxLength}</FormLabel>
+                                      <FormLabel>{t('services.maxLength')}</FormLabel>
                                       <FormControl>
                                         <Input type="number" {...field} value={field.value || ''} />
                                       </FormControl>
@@ -530,12 +530,12 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                                 name={`fields.${index}.pattern`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>{t.services.pattern}</FormLabel>
+                                    <FormLabel>{t('services.pattern')}</FormLabel>
                                     <FormControl>
-                                      <Input placeholder={t.services.patternPlaceholder} {...field} value={field.value || ''} />
+                                      <Input placeholder={t('services.patternPlaceholder')} {...field} value={field.value || ''} />
                                     </FormControl>
                                     <FormDescription>
-                                      {t.services.patternDesc}
+                                      {t('services.patternDesc')}
                                     </FormDescription>
                                     <FormMessage />
                                   </FormItem>
@@ -552,7 +552,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                                 name={`fields.${index}.minValue`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>{t.services.minValue}</FormLabel>
+                                    <FormLabel>{t('services.minValue')}</FormLabel>
                                     <FormControl>
                                       <Input type="number" {...field} value={field.value || ''} />
                                     </FormControl>
@@ -565,7 +565,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                                 name={`fields.${index}.maxValue`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>{t.services.maxValue}</FormLabel>
+                                    <FormLabel>{t('services.maxValue')}</FormLabel>
                                     <FormControl>
                                       <Input type="number" {...field} value={field.value || ''} />
                                     </FormControl>
@@ -583,12 +583,12 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                               name={`fields.${index}.options`}
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>{t.services.fieldOptions}</FormLabel>
+                                  <FormLabel>{t('services.fieldOptions')}</FormLabel>
                                   <FormControl>
-                                    <Textarea placeholder={t.services.optionsHint} {...field} value={field.value || ''} />
+                                    <Textarea placeholder={t('services.optionsHint')} {...field} value={field.value || ''} />
                                   </FormControl>
                                   <FormDescription>
-                                    {t.services.selectOptionsHint}
+                                    {t('services.selectOptionsHint')}
                                   </FormDescription>
                                   <FormMessage />
                                 </FormItem>
@@ -603,7 +603,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                {t.services.addCustomFieldsPrompt}
+                {t('services.addCustomFieldsPrompt')}
               </div>
             )}
 
@@ -615,7 +615,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                 className="w-full"
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
-                {t.services.addCustomField}
+                {t('services.addCustomField')}
               </Button>
 
               <Separator />
@@ -630,7 +630,7 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
                 ) : (
                   <Save className="h-4 w-4 mr-2" />
                 )}
-                {t.common.save}
+                {t('common.save')}
               </Button>
             </div>
           </form>

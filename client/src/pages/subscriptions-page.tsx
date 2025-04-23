@@ -12,11 +12,11 @@ export default function SubscriptionsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
-    <AppLayout title={t.subscriptions.title}>
+    <AppLayout title={t('subscriptions.title')}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-muted-foreground">
-            {t.subscriptions.manageSubscriptions}
+            {t('subscriptions.manageSubscriptions')}
           </p>
         </div>
 
@@ -24,12 +24,12 @@ export default function SubscriptionsPage() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              {t.subscriptions.addSubscription}
+              {t('subscriptions.addSubscription')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>{t.subscriptions.addSubscription}</DialogTitle>
+              <DialogTitle>{t('subscriptions.addSubscription')}</DialogTitle>
             </DialogHeader>
             <SubscriptionForm 
               onSuccess={() => setIsFormOpen(false)} 

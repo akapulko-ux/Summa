@@ -105,8 +105,8 @@ export default function BroadcastPage() {
     },
     onSuccess: (data) => {
       toast({
-        title: t.broadcast.broadcastSent,
-        description: t.broadcast.broadcastSentDesc
+        title: t('broadcast.broadcastSent'),
+        description: t('broadcast.broadcastSentDesc')
           .replace('{success}', data.success)
           .replace('{failed}', data.failed),
         duration: 5000
@@ -116,7 +116,7 @@ export default function BroadcastPage() {
     },
     onError: (error: Error) => {
       toast({
-        title: t.broadcast.broadcastFailed,
+        title: t('broadcast.broadcastFailed'),
         description: error.message,
         variant: "destructive",
         duration: 5000
@@ -131,19 +131,19 @@ export default function BroadcastPage() {
 
   return (
     <div className="container max-w-4xl py-8">
-      <h1 className="text-3xl font-bold mb-6">{t.broadcast.title}</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('broadcast.title')}</h1>
       
       <Tabs defaultValue="broadcast">
         <TabsList className="mb-4">
-          <TabsTrigger value="broadcast">{t.broadcast.sendBroadcast}</TabsTrigger>
-          <TabsTrigger value="connected">{t.broadcast.connectedUsers}</TabsTrigger>
+          <TabsTrigger value="broadcast">{t('broadcast.sendBroadcast')}</TabsTrigger>
+          <TabsTrigger value="connected">{t('broadcast.connectedUsers')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="broadcast" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t.broadcast.newBroadcast}</CardTitle>
-              <CardDescription>{t.broadcast.newBroadcastDesc}</CardDescription>
+              <CardTitle>{t('broadcast.newBroadcast')}</CardTitle>
+              <CardDescription>{t('broadcast.newBroadcastDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...form}>
@@ -153,23 +153,23 @@ export default function BroadcastPage() {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t.broadcast.recipientFilter}</FormLabel>
+                        <FormLabel>{t('broadcast.recipientFilter')}</FormLabel>
                         <Select
                           value={field.value}
                           onValueChange={field.onChange}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t.broadcast.selectRecipients} />
+                              <SelectValue placeholder={t('broadcast.selectRecipients')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="all">{t.broadcast.allUsers}</SelectItem>
-                            <SelectItem value="admin">{t.broadcast.adminUsers}</SelectItem>
-                            <SelectItem value="client">{t.broadcast.clientUsers}</SelectItem>
+                            <SelectItem value="all">{t('broadcast.allUsers')}</SelectItem>
+                            <SelectItem value="admin">{t('broadcast.adminUsers')}</SelectItem>
+                            <SelectItem value="client">{t('broadcast.clientUsers')}</SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormDescription>{t.broadcast.recipientFilterDesc}</FormDescription>
+                        <FormDescription>{t('broadcast.recipientFilterDesc')}</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -180,15 +180,15 @@ export default function BroadcastPage() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t.broadcast.messageContent}</FormLabel>
+                        <FormLabel>{t('broadcast.messageContent')}</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder={t.broadcast.messageContentPlaceholder}
+                            placeholder={t('broadcast.messageContentPlaceholder')}
                             className="min-h-[150px]"
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>{t.broadcast.messageContentDesc}</FormDescription>
+                        <FormDescription>{t('broadcast.messageContentDesc')}</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -204,7 +204,7 @@ export default function BroadcastPage() {
                     ) : (
                       <Send className="mr-2 h-4 w-4" />
                     )}
-                    {t.broadcast.sendNow}
+                    {t('broadcast.sendNow')}
                   </Button>
                 </form>
               </Form>
@@ -214,22 +214,22 @@ export default function BroadcastPage() {
               <CardFooter className="border-t bg-muted/50 pt-6">
                 <Alert className="w-full">
                   <CheckCircle className="h-4 w-4 text-green-500" />
-                  <AlertTitle>{t.broadcast.broadcastSent}</AlertTitle>
+                  <AlertTitle>{t('broadcast.broadcastSent')}</AlertTitle>
                   <AlertDescription>
-                    {t.broadcast.lastBroadcastResult}
+                    {t('broadcast.lastBroadcastResult')}
                     <div className="mt-2 flex space-x-4">
                       <div className="flex items-center">
                         <Badge variant="outline" className="mr-2 bg-green-100 text-green-700 hover:bg-green-200">
                           {lastBroadcastResult.success}
                         </Badge>
-                        <span>{t.broadcast.deliveredCount}</span>
+                        <span>{t('broadcast.deliveredCount')}</span>
                       </div>
                       {lastBroadcastResult.failed > 0 && (
                         <div className="flex items-center">
                           <Badge variant="destructive" className="mr-2">
                             {lastBroadcastResult.failed}
                           </Badge>
-                          <span>{t.broadcast.failedCount}</span>
+                          <span>{t('broadcast.failedCount')}</span>
                         </div>
                       )}
                     </div>
@@ -241,14 +241,14 @@ export default function BroadcastPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t.broadcast.tips}</CardTitle>
+              <CardTitle>{t('broadcast.tips')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 space-y-2">
-                <li>{t.broadcast.tip1}</li>
-                <li>{t.broadcast.tip2}</li>
-                <li>{t.broadcast.tip3}</li>
-                <li>{t.broadcast.tip4}</li>
+                <li>{t('broadcast.tip1')}</li>
+                <li>{t('broadcast.tip2')}</li>
+                <li>{t('broadcast.tip3')}</li>
+                <li>{t('broadcast.tip4')}</li>
               </ul>
             </CardContent>
           </Card>
@@ -258,12 +258,12 @@ export default function BroadcastPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <div>
-                <CardTitle>{t.broadcast.connectedUsers}</CardTitle>
-                <CardDescription>{t.broadcast.connectedUsersDesc}</CardDescription>
+                <CardTitle>{t('broadcast.connectedUsers')}</CardTitle>
+                <CardDescription>{t('broadcast.connectedUsersDesc')}</CardDescription>
               </div>
               <Button variant="outline" size="sm" onClick={() => refetchUsers()}>
                 <RefreshCw className="h-4 w-4 mr-2" />
-                {t.common.refresh}
+                {t('common.refresh')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -276,7 +276,7 @@ export default function BroadcastPage() {
                   <div className="flex items-center mb-4">
                     <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
                     <span className="text-sm font-medium text-muted-foreground">
-                      {t.broadcast.totalConnected}: {linkedUsers.length}
+                      {t('broadcast.totalConnected')}: {linkedUsers.length}
                     </span>
                   </div>
                   <Separator className="mb-4" />
@@ -287,13 +287,13 @@ export default function BroadcastPage() {
                           <div className="flex justify-between items-center">
                             <div>
                               <div className="font-medium">
-                                {t.broadcast.userId}: {user.userId}
+                                {t('broadcast.userId')}: {user.userId}
                               </div>
                               <div className="text-sm text-muted-foreground">
-                                {t.broadcast.telegramChatId}: {user.telegramChatId}
+                                {t('broadcast.telegramChatId')}: {user.telegramChatId}
                               </div>
                               <div className="text-xs text-muted-foreground mt-1">
-                                {t.broadcast.linkedOn}: {new Date(user.linkDate).toLocaleString()}
+                                {t('broadcast.linkedOn')}: {new Date(user.linkDate).toLocaleString()}
                               </div>
                             </div>
                             <Button 
@@ -301,12 +301,12 @@ export default function BroadcastPage() {
                               variant="outline"
                               onClick={() => {
                                 form.setValue("message", 
-                                  t.broadcast.testMessageToUser.replace('{userId}', String(user.userId)));
+                                  t('broadcast.testMessageToUser').replace('{userId}', String(user.userId)));
                                 form.setFocus("message");
                               }}
                             >
                               <Send className="h-4 w-4 mr-1" />
-                              {t.broadcast.messageThis}
+                              {t('broadcast.messageThis')}
                             </Button>
                           </div>
                         </div>
@@ -317,9 +317,9 @@ export default function BroadcastPage() {
               ) : (
                 <Alert variant="destructive">
                   <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>{t.broadcast.noConnectedUsers}</AlertTitle>
+                  <AlertTitle>{t('broadcast.noConnectedUsers')}</AlertTitle>
                   <AlertDescription>
-                    {t.broadcast.noConnectedUsersDesc}
+                    {t('broadcast.noConnectedUsersDesc')}
                   </AlertDescription>
                 </Alert>
               )}
