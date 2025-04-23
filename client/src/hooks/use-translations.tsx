@@ -4,7 +4,7 @@ import { en, ru, Translation } from '@/lib/translations';
 type LanguageCode = 'en' | 'ru';
 
 type TranslationContextType = {
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string>) => string;
   language: LanguageCode;
   setLanguage: (language: LanguageCode) => void;
   translations: Translation;
@@ -41,8 +41,8 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = lang;
   };
 
-  // Функция для получения перевода по ключу
-  const t = (key: string): string => {
+  // Функция для получения перевода по ключу с поддержкой параметров
+  const t = (key: string, params?: Record<string, string>): string => {
     // Разбиваем ключ на части (например, "common.loading" -> ["common", "loading"])
     const keys = key.split('.');
     if (keys.length === 0) return key;
@@ -54,7 +54,17 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
         if (result[k] === undefined) return key;
         result = result[k];
       }
-      return typeof result === 'string' ? result : key;
+      
+      if (typeof result !== 'string') return key;
+      
+      // Если есть параметры, заменяем {paramName} на значение параметра
+      if (params) {
+        return Object.entries(params).reduce((text, [paramName, paramValue]) => {
+          return text.replace(new RegExp(`{${paramName}}`, 'g'), paramValue);
+        }, result);
+      }
+      
+      return result;
     } catch (error) {
       console.error('Translation error for key:', key, error);
       return key;

@@ -928,6 +928,18 @@ export const en: Translation = {
     userCreated: "User created successfully",
     userUpdated: "User updated successfully",
     userDeleted: "User deleted successfully",
+    showing: "Showing {current} of {total} users",
+    searchPlaceholder: "Search users...",
+    errorLoading: "Error loading users. Please try again.",
+    noUsersFound: "No users found.",
+    columns: {
+      name: "Name",
+      email: "Email",
+      company: "Company",
+      status: "Status",
+      subscriptions: "Subscriptions",
+      actions: "Actions"
+    }
   },
 
   profile: {
@@ -1407,6 +1419,18 @@ export const ru: Translation = {
     userCreated: "Пользователь успешно создан",
     userUpdated: "Пользователь успешно обновлен",
     userDeleted: "Пользователь успешно удален",
+    showing: "Показано {current} из {total} пользователей",
+    searchPlaceholder: "Поиск пользователей...",
+    errorLoading: "Ошибка загрузки пользователей. Пожалуйста, попробуйте снова.",
+    noUsersFound: "Пользователи не найдены.",
+    columns: {
+      name: "Имя",
+      email: "Email",
+      company: "Компания",
+      status: "Статус",
+      subscriptions: "Подписки",
+      actions: "Действия"
+    }
   },
 
   profile: {
