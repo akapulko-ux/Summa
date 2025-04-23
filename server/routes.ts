@@ -109,6 +109,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to update user" });
     }
   });
+  
+  // Delete user route (admin only)
+  app.delete("/api/users/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Prevent admin from deleting themselves
+      if (req.user.id === id) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+      
+      const success = await storage.deleteUser(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
 
   // Service routes
   app.get("/api/services", async (req, res) => {
