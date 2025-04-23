@@ -261,7 +261,7 @@ export function UserManagementTable() {
                 disabled={page === 1}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                {t('common.previous')}
+                {t('common.prev')}
               </Button>
               <Button
                 variant="outline"
