@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "@/hooks/use-translations";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -168,96 +168,96 @@ export default function BackupsPage() {
       </Helmet>
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <p className="text-muted-foreground">
-              {t('backups.manageBackups')}
-            </p>
+            <div>
+              <p className="text-muted-foreground">
+                {t('backups.manageBackups')}
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      onClick={() => createBackupMutation.mutate()}
+                      disabled={createBackupMutation.isPending}
+                    >
+                      {createBackupMutation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <DownloadCloud className="mr-2 h-4 w-4" />
+                      )}
+                      {t('backups.createBackup')}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {language === 'ru' 
+                      ? "Создать новую резервную копию базы данных"
+                      : "Create a new database backup"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="outline"
+                      onClick={() => cleanBackupsMutation.mutate(5)}
+                      disabled={cleanBackupsMutation.isPending}
+                    >
+                      {cleanBackupsMutation.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Clock className="mr-2 h-4 w-4" />
+                      )}
+                      {t('backups.cleanOldBackups')}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {language === 'ru' 
+                      ? "Оставить только 5 последних резервных копий"
+                      : "Keep only the last 5 backup files"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost"
+                      onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/backups/list"] })}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4" />
+                      )}
+                      <span className="sr-only">
+                        {language === 'ru' ? "Обновить список" : "Refresh"}
+                      </span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {language === 'ru' ? "Обновить список" : "Refresh list"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
           
-          <div className="flex flex-wrap gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    onClick={() => createBackupMutation.mutate()}
-                    disabled={createBackupMutation.isPending}
-                  >
-                    {createBackupMutation.isPending ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <DownloadCloud className="mr-2 h-4 w-4" />
-                    )}
-                    {t('backups.createBackup')}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {language === 'ru' 
-                    ? "Создать новую резервную копию базы данных"
-                    : "Create a new database backup"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline"
-                    onClick={() => cleanBackupsMutation.mutate(5)}
-                    disabled={cleanBackupsMutation.isPending}
-                  >
-                    {cleanBackupsMutation.isPending ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Clock className="mr-2 h-4 w-4" />
-                    )}
-                    {t('backups.cleanOldBackups')}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {language === 'ru' 
-                    ? "Оставить только 5 последних резервных копий"
-                    : "Keep only the last 5 backup files"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost"
-                    onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/backups/list"] })}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="h-4 w-4" />
-                    )}
-                    <span className="sr-only">
-                      {language === 'ru' ? "Обновить список" : "Refresh"}
-                    </span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {language === 'ru' ? "Обновить список" : "Refresh list"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-        
-        <Separator />
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('backups.title')}</CardTitle>
-            <CardDescription>
-              {t('backups.manageBackups')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+          <Separator />
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('backups.title')}</CardTitle>
+              <CardDescription>
+                {t('backups.manageBackups')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
             {isLoading ? (
               <div className="flex justify-center items-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -413,40 +413,45 @@ export default function BackupsPage() {
                 </Table>
               </div>
             )}
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('common.information')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="font-medium mb-1">
+                {language === 'ru' ? "Автоматическое резервное копирование" : "Automatic Backup"}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {language === 'ru'
+                  ? "Система автоматически создает резервные копии базы данных каждые 24 часа в производственной среде."
+                  : "The system automatically creates database backups every 24 hours in production environment."}
+              </p>
+            </div>
             
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <h3 className="font-medium mb-1">
-                  {language === 'ru' ? "О резервном копировании" : "About Backups"}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {language === 'ru'
-                    ? "Резервные копии создаются автоматически раз в день, но вы также можете создавать их вручную."
-                    : "Backups are created automatically once a day, but you can also create them manually."}
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-1">
-                  {language === 'ru' ? "Хранение резервных копий" : "Backup Storage"}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {language === 'ru'
-                    ? "Резервные копии хранятся в директории на сервере. Рекомендуется периодически скачивать важные резервные копии для внешнего хранения."
-                    : "Backup files are stored in a directory on the server. It is recommended to periodically download important backups for external storage."}
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-1">
-                  {language === 'ru' ? "Очистка старых копий" : "Cleaning Old Backups"}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {language === 'ru'
-                    ? "Функция очистки оставляет только 5 последних резервных копий для экономии места на диске."
-                    : "The cleaning function keeps only the last 5 backup files to save disk space."}
-                </p>
-              </div>
+            <div>
+              <h3 className="font-medium mb-1">
+                {language === 'ru' ? "Хранение резервных копий" : "Backup Storage"}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {language === 'ru'
+                  ? "Резервные копии хранятся в директории на сервере. Рекомендуется периодически скачивать важные резервные копии для внешнего хранения."
+                  : "Backup files are stored in a directory on the server. It is recommended to periodically download important backups for external storage."}
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-medium mb-1">
+                {language === 'ru' ? "Очистка старых копий" : "Cleaning Old Backups"}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {language === 'ru'
+                  ? "Функция очистки оставляет только 5 последних резервных копий для экономии места на диске."
+                  : "The cleaning function keeps only the last 5 backup files to save disk space."}
+              </p>
             </div>
           </CardContent>
         </Card>
