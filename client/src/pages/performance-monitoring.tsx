@@ -188,7 +188,7 @@ export default function PerformanceMonitoring() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart className="h-5 w-5" />
-                {t('monitoring.query_stats')}
+                {t('monitoring.queryStats')}
               </CardTitle>
               <CardDescription>{t('monitoring.query_desc')}</CardDescription>
             </CardHeader>

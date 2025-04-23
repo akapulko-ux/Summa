@@ -82,6 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
                     <X className="h-5 w-5" />
+                    <span className="sr-only">{t('layout.toggleSidebar')}</span>
                   </Button>
                 </div>
                 <nav className="flex-1 overflow-auto p-4">
