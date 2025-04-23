@@ -29,7 +29,7 @@ export function AppLayout({ children, title, backUrl, actions }: AppLayoutProps)
               >
                 <Link href={backUrl}>
                   <ArrowLeft className="h-5 w-5" />
-                  <span className="sr-only">{t.common.back}</span>
+                  <span className="sr-only">{t('common.back')}</span>
                 </Link>
               </Button>
             )}

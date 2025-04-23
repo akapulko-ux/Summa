@@ -66,7 +66,7 @@ export function ServiceList() {
   };
 
   const handleDelete = (serviceId: number) => {
-    if (window.confirm(t.services.confirmDelete)) {
+    if (window.confirm(t('services.confirmDelete'))) {
       deleteServiceMutation.mutate(serviceId);
     }
   };
@@ -100,13 +100,13 @@ export function ServiceList() {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>{t.services.title}</CardTitle>
+          <CardTitle>{t('services.title')}</CardTitle>
           <div className="flex items-center gap-2">
             <div className="relative">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder={t.common.search}
+                placeholder={t('common.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -116,13 +116,13 @@ export function ServiceList() {
               <Dialog>
                 <DialogTrigger asChild>
                   <Button>
-                    {t.services.addService}
+                    {t('services.addService')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
-                    <DialogTitle>{t.services.addService}</DialogTitle>
-                    <DialogDescription id="dialog-description">{t.services.serviceDescription}</DialogDescription>
+                    <DialogTitle>{t('services.addService')}</DialogTitle>
+                    <DialogDescription id="dialog-description">{t('services.serviceDescription')}</DialogDescription>
                   </DialogHeader>
                   <ServiceForm 
                     onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/services"] })} 
@@ -138,10 +138,10 @@ export function ServiceList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t.services.serviceTitle}</TableHead>
-                <TableHead>{t.services.serviceDescription}</TableHead>
-                <TableHead>{t.services.cashback}</TableHead>
-                <TableHead>{t.common.edit}</TableHead>
+                <TableHead>{t('services.serviceTitle')}</TableHead>
+                <TableHead>{t('services.serviceDescription')}</TableHead>
+                <TableHead>{t('services.cashback')}</TableHead>
+                <TableHead>{t('common.edit')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -163,13 +163,13 @@ export function ServiceList() {
               ) : isError ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                    {t.messages.serverError}
+                    {t('messages.serverError')}
                   </TableCell>
                 </TableRow>
               ) : data?.services.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                    {t.services.noServices}
+                    {t('services.noServices')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -244,7 +244,7 @@ export function ServiceList() {
                 disabled={page === 1}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                {t.common.prev}
+                {t('common.prev')}
               </Button>
               <Button
                 variant="outline"
@@ -252,7 +252,7 @@ export function ServiceList() {
                 onClick={handleNextPage}
                 disabled={page >= Math.ceil(data.total / limit)}
               >
-                {t.common.next}
+                {t('common.next')}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -264,8 +264,8 @@ export function ServiceList() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>{t.services.editService}</DialogTitle>
-            <DialogDescription id="dialog-description">{t.services.serviceDescription}</DialogDescription>
+            <DialogTitle>{t('services.editService')}</DialogTitle>
+            <DialogDescription id="dialog-description">{t('services.serviceDescription')}</DialogDescription>
           </DialogHeader>
           {selectedServiceId && (
             <ServiceForm 
@@ -283,8 +283,8 @@ export function ServiceList() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>{t.services.serviceDetails}</DialogTitle>
-            <DialogDescription id="dialog-description">{t.common.information}</DialogDescription>
+            <DialogTitle>{t('services.serviceDetails')}</DialogTitle>
+            <DialogDescription id="dialog-description">{t('common.information')}</DialogDescription>
           </DialogHeader>
           {selectedServiceId && (
             <ServiceDetails serviceId={selectedServiceId} />
@@ -312,7 +312,7 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
   }
 
   if (!service) {
-    return <div className="p-4 text-muted-foreground">{t.services.noServices}</div>;
+    return <div className="p-4 text-muted-foreground">{t('services.noServices')}</div>;
   }
 
   const customFields = service.customFields as Record<string, unknown> | null;
@@ -340,13 +340,13 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
 
       {service.description && (
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.serviceDescription}</h4>
+          <h4 className="text-sm font-medium text-muted-foreground mb-1">{t('services.serviceDescription')}</h4>
           <p className="text-sm">{service.description}</p>
         </div>
       )}
 
       <div>
-        <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.cashback}</h4>
+        <h4 className="text-sm font-medium text-muted-foreground mb-1">{t('services.cashback')}</h4>
         <p className="text-sm">
           {service.cashback ? (
             service.cashback.endsWith("%") ? (
@@ -362,7 +362,7 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
 
       {customFields && Object.keys(customFields).length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">{t.services.customFields}</h4>
+          <h4 className="text-sm font-medium text-muted-foreground mb-1">{t('services.customFields')}</h4>
           <div className="space-y-2">
             {Object.entries(customFields).map(([key, value]) => (
               <div key={key} className="flex flex-wrap">
@@ -375,8 +375,8 @@ function ServiceDetails({ serviceId }: { serviceId: number }) {
       )}
 
       <div className="flex flex-col sm:flex-row justify-between text-sm text-muted-foreground pt-4 border-t gap-2">
-        <div>{t.common.date} {language === 'ru' ? 'создания' : 'created'}: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
-        <div>{t.common.date} {language === 'ru' ? 'обновления' : 'updated'}: {new Date(service.updatedAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
+        <div>{t('common.date')} {language === 'ru' ? 'создания' : 'created'}: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
+        <div>{t('common.date')} {language === 'ru' ? 'обновления' : 'updated'}: {new Date(service.updatedAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}</div>
       </div>
     </div>
   );

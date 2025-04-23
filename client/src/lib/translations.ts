@@ -485,7 +485,46 @@ export const en: Translation = {
     databasePerformance: "Database Performance",
     cachePerformance: "Cache Performance",
     queryPerformance: "Query Performance",
-    connectionStatus: "Connection Status"
+    connectionStatus: "Connection Status",
+    
+    // Added new translations
+    db_status: "Database Status",
+    db_desc: "Current database connection and performance information",
+    connections: "Active connections",
+    performance: "Performance metrics",
+    avg_time: "Average query time",
+    avg_response: "Average response time",
+    cache_ratio: "Cache usage ratio",
+    query_desc: "Information about executed database queries",
+    no_queries: "No query statistics available. Enable monitoring to collect data.",
+    system_info: "System Information",
+    system_desc: "Metrics about system performance and resource usage",
+    metrics: "Metrics",
+    response_times: "Response Times",
+    good_performance: "Good performance, response times below 100ms",
+    consider_optimizing: "Consider optimizing slow queries",
+    total_stats: "Total Statistics",
+    queries_executed: "Queries executed",
+    unique_queries: "Unique queries",
+    toggle: "Enable query monitoring",
+    enabled: "Monitoring Enabled",
+    disabled: "Monitoring Disabled",
+    monitoring_on: "Performance monitoring is now active",
+    monitoring_off: "Performance monitoring has been turned off",
+    no_data_desc: "No database statistics available",
+    enable_monitoring: "Enable monitoring to start collecting metrics"
+  },
+  
+  cache: {
+    title: "Cache Status",
+    total_hits: "Cache Hits",
+    hits_desc: "Number of requests served from cache",
+    efficiency: "Cache Efficiency",
+    efficiency_desc: "Percentage of requests served from cache",
+    clear: "Clear Cache",
+    cleared: "Cache Cleared",
+    cleared_desc: "The cache has been successfully cleared",
+    no_data: "No cache data available"
   },
   analytics: {
     revenue: "Revenue",

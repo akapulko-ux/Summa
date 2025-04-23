@@ -41,8 +41,8 @@ export function PopularServices() {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle>{t.dashboard.popularServices}</CardTitle>
-        <CardDescription>{t.services.servicesByCount}</CardDescription>
+        <CardTitle>{t('dashboard.popularServices')}</CardTitle>
+        <CardDescription>{t('services.servicesByCount')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -97,7 +97,7 @@ export function PopularServices() {
             })
           ) : (
             <div className="text-center text-muted-foreground py-4">
-              {t.services.noServices}
+              {t('services.noServices')}
             </div>
           )}
         </div>

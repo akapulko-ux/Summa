@@ -57,21 +57,21 @@ export function Header({ onMenuToggle }: HeaderProps) {
             >
               <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
             </svg>
-            <span className="ml-2 text-xl font-bold">{t.common.appName}</span>
+            <span className="ml-2 text-xl font-bold">{t('common.appName')}</span>
           </Link>
         </div>
         <nav className="mx-6 flex items-center space-x-4 lg:space-x-6 hidden md:flex">
           <Link href="/" className="text-sm font-medium transition-colors hover:text-primary">
-            {t.nav.dashboard}
+            {t('nav.dashboard')}
           </Link>
           <Link href="/subscriptions" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            {t.nav.subscriptions}
+            {t('nav.subscriptions')}
           </Link>
           <Link href="/services" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            {t.nav.services}
+            {t('nav.services')}
           </Link>
           <Link href="/users" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            {t.nav.users}
+            {t('nav.users')}
           </Link>
         </nav>
         <div className="ml-auto flex items-center space-x-4">
@@ -102,14 +102,14 @@ export function Header({ onMenuToggle }: HeaderProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => navigate("/profile")}>
-                {t.nav.profile}
+                {t('nav.profile')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/subscriptions")}>
-                {t.nav.subscriptions}
+                {t('nav.subscriptions')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
-                {t.common.logout}
+                {t('common.logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

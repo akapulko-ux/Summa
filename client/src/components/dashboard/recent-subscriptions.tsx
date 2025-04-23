@@ -42,9 +42,9 @@ export function RecentSubscriptions() {
     <Card className="h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>{t.dashboard.recentSubscriptions}</CardTitle>
+          <CardTitle>{t('dashboard.recentSubscriptions')}</CardTitle>
           <Button variant="ghost" asChild>
-            <Link href="/subscriptions">{t.dashboard.viewSubscriptions}</Link>
+            <Link href="/subscriptions">{t('dashboard.viewSubscriptions')}</Link>
           </Button>
         </div>
       </CardHeader>
@@ -54,16 +54,16 @@ export function RecentSubscriptions() {
             <thead className="[&_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  {t.subscriptions.service}
+                  {t('subscriptions.service')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  {t.users.title}
+                  {t('users.title')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  {t.common.date}
+                  {t('common.date')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  {t.subscriptions.status}
+                  {t('subscriptions.status')}
                 </th>
               </tr>
             </thead>
@@ -95,7 +95,7 @@ export function RecentSubscriptions() {
                   >
                     <td className="p-4 align-middle">{sub.title}</td>
                     <td className="p-4 align-middle">
-                      {sub.userName || `${t.users.title} #${sub.userId}`}
+                      {sub.userName || `${t('users.title')} #${sub.userId}`}
                     </td>
                     <td className="p-4 align-middle">
                       {formatDistanceToNow(new Date(sub.createdAt), {
@@ -105,10 +105,10 @@ export function RecentSubscriptions() {
                     </td>
                     <td className="p-4 align-middle">
                       <Badge variant={getBadgeVariant(sub.status)}>
-                        {sub.status === "active" ? t.subscriptions.statusActive :
-                         sub.status === "pending" ? t.subscriptions.statusPending :
-                         sub.status === "expired" ? t.subscriptions.statusExpired :
-                         sub.status === "canceled" ? t.subscriptions.statusCanceled :
+                        {sub.status === "active" ? t('subscriptions.statusActive') :
+                         sub.status === "pending" ? t('subscriptions.statusPending') :
+                         sub.status === "expired" ? t('subscriptions.statusExpired') :
+                         sub.status === "canceled" ? t('subscriptions.statusCanceled') :
                          sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}
                       </Badge>
                     </td>
@@ -117,7 +117,7 @@ export function RecentSubscriptions() {
               ) : (
                 <tr>
                   <td colSpan={4} className="p-4 text-center text-muted-foreground">
-                    {t.subscriptions.noSubscriptions}
+                    {t('subscriptions.noSubscriptions')}
                   </td>
                 </tr>
               )}

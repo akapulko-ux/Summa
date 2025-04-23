@@ -43,7 +43,7 @@ export function StatsCards() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t.users.title}</h3>
+                <h3 className="tracking-tight text-sm font-medium">{t('users.title')}</h3>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
               {isAdminLoading ? (
@@ -53,8 +53,8 @@ export function StatsCards() {
                   <div className="text-2xl font-bold">{userStats?.total || 0}</div>
                   <p className="text-xs text-muted-foreground">
                     {userStats?.newLastMonth
-                      ? `+${userStats.newLastMonth} ${t.dashboard.total}`
-                      : t.users.noUsers}
+                      ? `+${userStats.newLastMonth} ${t('dashboard.total')}`
+                      : t('users.noUsers')}
                   </p>
                 </>
               )}
@@ -65,7 +65,7 @@ export function StatsCards() {
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight text-sm font-medium">
-                  {t.dashboard.subscriptionStats}
+                  {t('dashboard.subscriptionStats')}
                 </h3>
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -77,7 +77,7 @@ export function StatsCards() {
                     {subStats?.activeCount || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t.subscriptions.statusActive}
+                    {t('subscriptions.statusActive')}
                   </p>
                 </>
               )}
@@ -88,7 +88,7 @@ export function StatsCards() {
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight text-sm font-medium">
-                  {t.subscriptions.paymentAmount}
+                  {t('subscriptions.paymentAmount')}
                 </h3>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -100,7 +100,7 @@ export function StatsCards() {
                     ${subStats?.totalRevenue?.toFixed(2) || "0.00"}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t.subscriptions.title}
+                    {t('subscriptions.title')}
                   </p>
                 </>
               )}
@@ -111,7 +111,7 @@ export function StatsCards() {
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight text-sm font-medium">
-                  {t.services.title}
+                  {t('services.title')}
                 </h3>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -123,7 +123,7 @@ export function StatsCards() {
                     {serviceStats?.length || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t.dashboard.activeServices}
+                    {t('dashboard.activeServices')}
                   </p>
                 </>
               )}
@@ -136,7 +136,7 @@ export function StatsCards() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t.subscriptions.mySubscriptions}</h3>
+                <h3 className="tracking-tight text-sm font-medium">{t('subscriptions.mySubscriptions')}</h3>
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
@@ -147,7 +147,7 @@ export function StatsCards() {
                     {userSubscriptions?.subscriptions?.length || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t.subscriptions.active}
+                    {t('subscriptions.active')}
                   </p>
                 </>
               )}
@@ -157,7 +157,7 @@ export function StatsCards() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t.subscriptions.activeUntil}</h3>
+                <h3 className="tracking-tight text-sm font-medium">{t('subscriptions.activeUntil')}</h3>
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
@@ -170,7 +170,7 @@ export function StatsCards() {
                       : "-"}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t.subscriptions.nextPayment}
+                    {t('subscriptions.nextPayment')}
                   </p>
                 </>
               )}
@@ -180,7 +180,7 @@ export function StatsCards() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t.services.availableServices}</h3>
+                <h3 className="tracking-tight text-sm font-medium">{t('services.availableServices')}</h3>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
@@ -191,7 +191,7 @@ export function StatsCards() {
                     {userSubscriptions?.total || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t.services.availableToSubscribe}
+                    {t('services.availableToSubscribe')}
                   </p>
                 </>
               )}
@@ -201,7 +201,7 @@ export function StatsCards() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t.profile.accountStatus}</h3>
+                <h3 className="tracking-tight text-sm font-medium">{t('profile.accountStatus')}</h3>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
@@ -209,10 +209,10 @@ export function StatsCards() {
               ) : (
                 <>
                   <div className="text-2xl font-bold text-green-500">
-                    {t.profile.active}
+                    {t('profile.active')}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t.profile.memberSince} {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
+                    {t('profile.memberSince')} {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
                   </p>
                 </>
               )}

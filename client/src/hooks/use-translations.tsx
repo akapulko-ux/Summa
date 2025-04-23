@@ -4,9 +4,10 @@ import { en, ru, Translation } from '@/lib/translations';
 type LanguageCode = 'en' | 'ru';
 
 type TranslationContextType = {
-  t: Translation;
+  t: (key: string) => string;
   language: LanguageCode;
   setLanguage: (language: LanguageCode) => void;
+  translations: Translation;
 };
 
 export const TranslationContext = createContext<TranslationContextType | null>(null);
@@ -40,13 +41,33 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = lang;
   };
 
+  // Функция для получения перевода по ключу
+  const t = (key: string): string => {
+    // Разбиваем ключ на части (например, "common.loading" -> ["common", "loading"])
+    const keys = key.split('.');
+    if (keys.length === 0) return key;
+
+    try {
+      // Перебираем вложенные объекты, следуя по пути ключа
+      let result: any = translations;
+      for (const k of keys) {
+        if (result[k] === undefined) return key;
+        result = result[k];
+      }
+      return typeof result === 'string' ? result : key;
+    } catch (error) {
+      console.error('Translation error for key:', key, error);
+      return key;
+    }
+  };
+
   // Установка языка при монтировании компонента
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
 
   return (
-    <TranslationContext.Provider value={{ t: translations, language, setLanguage }}>
+    <TranslationContext.Provider value={{ t, language, setLanguage, translations }}>
       {children}
     </TranslationContext.Provider>
   );

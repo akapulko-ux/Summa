@@ -18,8 +18,8 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      aria-label={t.layout.toggleTheme}
-      title={t.layout.toggleTheme}
+      aria-label={t('layout.toggleTheme')}
+      title={t('layout.toggleTheme')}
       className="relative overflow-hidden"
     >
       <div className="relative z-10">
