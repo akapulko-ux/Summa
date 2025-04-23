@@ -76,14 +76,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </SheetTrigger>
             <SheetContent side="left" className="p-0">
               <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between border-b p-4">
+                <div className="flex items-center border-b p-4">
                   <div className="flex items-center">
                     <h2 className="text-lg font-semibold">SaaSly</h2>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
-                    <X className="h-5 w-5" />
-                    <span className="sr-only">{t('layout.toggleSidebar')}</span>
-                  </Button>
                 </div>
                 <nav className="flex-1 overflow-auto p-4">
                   <div className="space-y-1">
