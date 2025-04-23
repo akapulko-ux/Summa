@@ -119,7 +119,7 @@ export function UserManagementTable() {
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search users..."
+                placeholder={t('users.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -128,12 +128,12 @@ export function UserManagementTable() {
             <Dialog>
               <DialogTrigger asChild>
                 <Button>
-                  Add User
+                  {t('users.addUser')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                  <DialogTitle>Add New User</DialogTitle>
+                  <DialogTitle>{t('users.addUser')}</DialogTitle>
                 </DialogHeader>
                 <UserForm onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/users"] })} />
               </DialogContent>
@@ -153,12 +153,12 @@ export function UserManagementTable() {
                     aria-label="Select all"
                   />
                 </TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Subscriptions</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('users.columns.name')}</TableHead>
+                <TableHead>{t('users.columns.email')}</TableHead>
+                <TableHead>{t('users.columns.company')}</TableHead>
+                <TableHead>{t('users.columns.status')}</TableHead>
+                <TableHead>{t('users.columns.subscriptions')}</TableHead>
+                <TableHead>{t('users.columns.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -185,13 +185,13 @@ export function UserManagementTable() {
               ) : isError ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
-                    Error loading users. Please try again.
+                    {t('users.errorLoading')}
                   </TableCell>
                 </TableRow>
               ) : data?.users.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
-                    No users found.
+                    {t('users.noUsersFound')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -251,7 +251,7 @@ export function UserManagementTable() {
         <CardFooter className="border-t px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-sm text-muted-foreground">
-              Showing {data.users.length} of {data.total} users
+              {t('users.showing', { current: data.users.length, total: data.total })}
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -261,7 +261,7 @@ export function UserManagementTable() {
                 disabled={page === 1}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                Previous
+                {t('common.previous')}
               </Button>
               <Button
                 variant="outline"
