@@ -62,6 +62,33 @@ export type Translation = {
     cachePerformance: string;
     queryPerformance: string;
     connectionStatus: string;
+    
+    // Дополнительные поля для страницы мониторинга
+    db_status: string;
+    db_desc: string;
+    connections: string;
+    performance: string;
+    avg_time: string;
+    avg_response: string;
+    cache_ratio: string;
+    query_desc: string;
+    no_queries: string;
+    system_info: string;
+    system_desc: string;
+    metrics: string;
+    response_times: string;
+    good_performance: string;
+    consider_optimizing: string;
+    total_stats: string;
+    queries_executed: string;
+    unique_queries: string;
+    toggle: string;
+    enabled: string;
+    disabled: string;
+    monitoring_on: string;
+    monitoring_off: string;
+    no_data_desc: string;
+    enable_monitoring: string;
   };
   
   // Layout
@@ -487,7 +514,7 @@ export const en: Translation = {
     queryPerformance: "Query Performance",
     connectionStatus: "Connection Status",
     
-    // Added new translations
+    // Дополнительные поля для страницы мониторинга
     db_status: "Database Status",
     db_desc: "Current database connection and performance information",
     connections: "Active connections",
@@ -964,7 +991,34 @@ export const ru: Translation = {
     databasePerformance: "Производительность базы данных",
     cachePerformance: "Производительность кэша",
     queryPerformance: "Производительность запросов",
-    connectionStatus: "Состояние соединений"
+    connectionStatus: "Состояние соединений",
+    
+    // Дополнительные переводы
+    db_status: "Статус базы данных",
+    db_desc: "Текущее соединение с базой данных и информация о производительности",
+    connections: "Активные соединения",
+    performance: "Метрики производительности",
+    avg_time: "Среднее время запроса",
+    avg_response: "Среднее время ответа",
+    cache_ratio: "Коэффициент кэширования",
+    query_desc: "Информация о выполненных запросах к базе данных",
+    no_queries: "Статистика запросов недоступна. Включите мониторинг для сбора данных.",
+    system_info: "Информация о системе",
+    system_desc: "Метрики производительности системы и использования ресурсов",
+    metrics: "Метрики",
+    response_times: "Время отклика",
+    good_performance: "Хорошая производительность, время ответа менее 100мс",
+    consider_optimizing: "Рекомендуется оптимизировать медленные запросы",
+    total_stats: "Общая статистика",
+    queries_executed: "Выполнено запросов",
+    unique_queries: "Уникальных запросов",
+    toggle: "Включить мониторинг запросов",
+    enabled: "Мониторинг включен",
+    disabled: "Мониторинг отключен",
+    monitoring_on: "Мониторинг производительности теперь активен",
+    monitoring_off: "Мониторинг производительности был отключен",
+    no_data_desc: "Статистика базы данных недоступна",
+    enable_monitoring: "Включите мониторинг для начала сбора метрик"
   },
   analytics: {
     revenue: "Доходы",
