@@ -35,6 +35,19 @@ export type Translation = {
     deleteAll: string;
   };
   
+  // Кэш
+  cache: {
+    title: string;
+    total_hits: string;
+    hits_desc: string;
+    efficiency: string;
+    efficiency_desc: string;
+    clear: string;
+    cleared: string;
+    cleared_desc: string;
+    no_data: string;
+  };
+  
   // Мониторинг производительности
   monitoring: {
     title: string;
@@ -966,6 +979,17 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  cache: {
+    title: "Статус кэша",
+    total_hits: "Попадания в кэш",
+    hits_desc: "Количество запросов, обслуженных из кэша",
+    efficiency: "Эффективность кэша",
+    efficiency_desc: "Процент запросов, обслуженных из кэша",
+    clear: "Очистить кэш",
+    cleared: "Кэш очищен",
+    cleared_desc: "Кэш был успешно очищен",
+    no_data: "Данные о кэше недоступны"
+  },
   monitoring: {
     title: "Мониторинг производительности",
     description: "Мониторинг и оптимизация производительности базы данных",
