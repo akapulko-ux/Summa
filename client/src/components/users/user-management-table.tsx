@@ -251,7 +251,7 @@ export function UserManagementTable() {
         <CardFooter className="border-t px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-sm text-muted-foreground">
-              {t('users.showing', { current: data.users.length, total: data.total })}
+              {t('users.showing', { current: data.users.length.toString(), total: data.total.toString() })}
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -269,7 +269,7 @@ export function UserManagementTable() {
                 onClick={handleNextPage}
                 disabled={page >= Math.ceil(data.total / limit)}
               >
-                Next
+                {t('common.next')}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -280,7 +280,7 @@ export function UserManagementTable() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
+            <DialogTitle>{t('users.editUser')}</DialogTitle>
           </DialogHeader>
           {selectedUserId && (
             <UserForm 

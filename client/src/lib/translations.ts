@@ -395,6 +395,18 @@ export type Translation = {
     userCreated: string;
     userUpdated: string;
     userDeleted: string;
+    showing: string;
+    searchPlaceholder: string;
+    errorLoading: string;
+    noUsersFound: string;
+    columns: {
+      name: string;
+      email: string;
+      company: string;
+      status: string;
+      subscriptions: string;
+      actions: string;
+    };
   };
 
   // Профиль
