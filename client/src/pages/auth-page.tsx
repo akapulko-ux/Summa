@@ -103,8 +103,8 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Hero section */}
-      <div className="bg-secondary w-full md:w-1/2 p-8 md:p-12 flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center md:text-left">
+      <div className="bg-secondary w-full md:w-1/2 p-8 md:p-12 flex items-center justify-center relative overflow-hidden">
+        <div className="max-w-md mx-auto text-center md:text-left relative z-10">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('auth.welcomeTitle')}
           </h1>
