@@ -30,20 +30,11 @@ p, h1, h2, h3, h4, h5, h6, button, a, span {
   font-weight: 700;
 }
 
-/* Улучшенный фон для страницы авторизации */
+/* Стили для страницы авторизации */
 .bg-secondary {
   position: relative;
-}
-
-.bg-secondary::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%);
-  z-index: 1;
+  background-color: #1e293b !important; /* Темно-синий цвет фона */
+  background-image: none !important; /* Отключаем фоновое изображение полностью */
 }
 
 @layer base {
