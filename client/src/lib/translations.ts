@@ -1688,6 +1688,27 @@ export const ru: Translation = {
     searchService: "Поиск по сервису",
     searchUser: "Поиск по пользователю",
     searchDomain: "Поиск по домену",
+    addButton: "Добавить подписку",
+    addTitle: "Добавить подписку",
+    addDescription: "Создать новую подписку",
+    selectService: "Выберите сервис",
+    startDate: "Дата начала",
+    endDate: "Дата окончания",
+    optional: "Опционально",
+    selectPeriod: "Выберите период",
+    amount: "Сумма",
+    selectStatus: "Выберите статус",
+    periods: {
+      monthly: "Ежемесячно",
+      quarterly: "Ежеквартально",
+      yearly: "Ежегодно"
+    },
+    statuses: {
+      active: "Активна",
+      pending: "Ожидание",
+      expired: "Истекла",
+      canceled: "Отменена"
+    },
     noSubscriptionsFound: "Подписки не найдены",
     adjustFilters: "Попробуйте изменить параметры фильтрации",
     viewDetails: "Просмотр деталей",
