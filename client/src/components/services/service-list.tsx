@@ -26,10 +26,16 @@ import { ServiceForm } from "./service-form";
 import { ServiceDetailsView } from "./service-details";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
+import { ServiceFiltersComponent, type ServiceFilters, type ServiceSortOption } from "../filters/service-filters";
 import { ru } from "date-fns/locale";
 
 export function ServiceList() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<ServiceFilters>({
+    search: "",
+    status: "all",
+    sortBy: "title",
+    sortOrder: "asc"
+  });
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -38,13 +44,26 @@ export function ServiceList() {
   const { user } = useAuth();
   const { t, language } = useTranslations();
   const isAdmin = user?.role === "admin";
+  
+  // Check if any filters are applied (not default)
+  const filtersApplied = 
+    filters.search !== "" || 
+    filters.status !== "all" || 
+    filters.sortBy !== "title" || 
+    filters.sortOrder !== "asc";
+
+  const sortOptions: ServiceSortOption[] = [
+    { value: "title", label: t('services.serviceTitle') },
+    { value: "createdAt", label: t('common.createdAt') },
+    { value: "updatedAt", label: t('common.updatedAt') }
+  ];
 
   const {
     data,
     isLoading,
     isError,
   } = useQuery<{ services: Service[], total: number }>({
-    queryKey: ["/api/services", { page, limit, search: searchQuery }],
+    queryKey: ["/api/services", { page, limit, ...filters }],
   });
 
   const deleteServiceMutation = useMutation({
@@ -102,38 +121,47 @@ export function ServiceList() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{t('services.title')}</CardTitle>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder={t('common.search')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-            {isAdmin && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button>
-                    {t('services.addService')}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>{t('services.addService')}</DialogTitle>
-                    <DialogDescription id="dialog-description">{t('services.serviceDescription')}</DialogDescription>
-                  </DialogHeader>
-                  <ServiceForm 
-                    onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/services"] })} 
-                  />
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
+          {isAdmin && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>
+                  {t('services.addService')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>{t('services.addService')}</DialogTitle>
+                  <DialogDescription id="dialog-description">{t('services.serviceDescription')}</DialogDescription>
+                </DialogHeader>
+                <ServiceForm 
+                  onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/services"] })} 
+                />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </CardHeader>
+      <CardContent className="border-b pt-0">
+        <ServiceFiltersComponent
+          filters={filters}
+          sortOptions={sortOptions}
+          onFilterChange={(newFilters) => {
+            setFilters(newFilters);
+            // Reset to page 1 when filters change
+            setPage(1);
+          }}
+          onResetFilters={() => {
+            setFilters({
+              search: "",
+              status: "all",
+              sortBy: "title", 
+              sortOrder: "asc"
+            });
+            setPage(1);
+          }}
+          filtersApplied={filtersApplied}
+        />
+      </CardContent>
       <CardContent>
         <div className="relative w-full overflow-auto">
           <Table>
