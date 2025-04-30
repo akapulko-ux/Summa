@@ -37,6 +37,18 @@ export type Translation = {
     inactive: string;
     general: string;
     saveFirstToConfigureThis: string;
+    filter: string;
+    sortBy: string;
+    ascending: string;
+    descending: string;
+    clearFilters: string;
+    applyFilters: string;
+    filterOptions: string;
+    sortOptions: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    actions: string;
   };
   
   // Кэш
@@ -524,6 +536,54 @@ export type Translation = {
 };
 
 export const en: Translation = {
+  common: {
+    loading: "Loading...",
+    error: "Error",
+    save: "Save",
+    cancel: "Cancel",
+    delete: "Delete",
+    edit: "Edit",
+    search: "Search",
+    back: "Back",
+    submit: "Submit",
+    next: "Next",
+    prev: "Previous",
+    add: "Add",
+    remove: "Remove",
+    welcome: "Welcome",
+    logout: "Logout",
+    theme: "Theme",
+    language: "Language",
+    profile: "Profile",
+    settings: "Settings",
+    notification: "Notification",
+    appName: "SaaSly",
+    optional: "Optional",
+    date: "Date",
+    restore: "Restore",
+    information: "Information",
+    refresh: "Refresh",
+    no_data: "No data available",
+    yes: "Yes",
+    no: "No",
+    deleteAll: "Delete All",
+    active: "Active",
+    inactive: "Inactive",
+    general: "General",
+    saveFirstToConfigureThis: "Save changes first before configuring this section",
+    filter: "Filter",
+    sortBy: "Sort by",
+    ascending: "Ascending",
+    descending: "Descending",
+    clearFilters: "Clear filters",
+    applyFilters: "Apply filters",
+    filterOptions: "Filter options",
+    sortOptions: "Sort options",
+    status: "Status",
+    createdAt: "Created at",
+    updatedAt: "Updated at",
+    actions: "Actions",
+  },
   monitoring: {
     title: "Performance Monitoring",
     description: "Monitor and optimize your database performance",
@@ -632,42 +692,7 @@ export const en: Translation = {
     servicesByCount: "Services by subscription count",
     avgMinMaxPrices: "Average, min and max subscription prices",
   },
-  common: {
-    loading: "Loading...",
-    error: "An error occurred",
-    save: "Save",
-    cancel: "Cancel",
-    delete: "Delete",
-    edit: "Edit",
-    search: "Search",
-    back: "Back",
-    submit: "Submit",
-    next: "Next",
-    prev: "Previous",
-    add: "Add",
-    remove: "Remove",
-    welcome: "Welcome",
-    logout: "Logout",
-    theme: "Theme",
-    language: "Language",
-    profile: "Profile",
-    settings: "Settings",
-    notification: "Notification",
-    appName: "SaaSly",
-    optional: "Optional",
-    date: "Date",
-    restore: "Restore",
-    information: "Information",
-    refresh: "Refresh",
-    yes: "Yes",
-    no: "No",
-    deleteAll: "Delete All",
-    no_data: "No data available",
-    active: "Active",
-    inactive: "Inactive",
-    general: "General",
-    saveFirstToConfigureThis: "Save the service first to configure this section"
-  },
+
   layout: {
     adminPanel: "Admin Panel",
     notifications: "Notifications",
