@@ -1796,6 +1796,8 @@ export const ru: Translation = {
       quarterly: "Ежеквартально",
       yearly: "Ежегодно"
     },
+    unknownService: "Неизвестный сервис",
+    errorLoading: "Ошибка загрузки подписок",
   },
 
   users: {
