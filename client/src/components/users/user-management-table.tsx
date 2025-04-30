@@ -35,6 +35,8 @@ import { User } from "@shared/schema";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { UserForm } from "./user-form";
 import { UserFiltersComponent, type UserFilters, type UserSortOption } from "../filters/user-filters";
+import { UserSubscriptions } from "../subscriptions/user-subscriptions";
+import { UserCustomFields } from "../custom-fields/user-custom-fields";
 
 export function UserManagementTable() {
   const { t, language } = useTranslations();
@@ -258,14 +260,46 @@ export function UserManagementTable() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => handleEdit(user.id)}>
-                          <Pencil className="h-4 w-4" />
-                          <span className="sr-only">Edit</span>
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => handleDelete(user.id)}>
-                          <Trash className="h-4 w-4" />
-                          <span className="sr-only">Delete</span>
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <Settings className="h-4 w-4" />
+                              <span className="sr-only">{t('users.actions')}</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEdit(user.id)}>
+                              <Pencil className="h-4 w-4 mr-2" />
+                              {t('users.edit')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => {
+                                setSelectedUserId(user.id);
+                                setIsSubscriptionsDialogOpen(true);
+                              }}
+                            >
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              {t('users.manageSubscriptions')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => {
+                                setSelectedUserId(user.id);
+                                setIsCustomFieldsDialogOpen(true);
+                              }}
+                            >
+                              <UserIcon className="h-4 w-4 mr-2" />
+                              {t('users.manageCustomFields')}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                              onClick={() => handleDelete(user.id)}
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <Trash className="h-4 w-4 mr-2" />
+                              {t('users.delete')}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -318,6 +352,36 @@ export function UserManagementTable() {
                 setIsEditDialogOpen(false);
               }}
             />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Диалог для управления подписками */}
+      <Dialog open={isSubscriptionsDialogOpen} onOpenChange={setIsSubscriptionsDialogOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>{t('users.manageSubscriptions')}</DialogTitle>
+            <DialogDescription>
+              {t('users.manageSubscriptionsDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUserId && (
+            <UserSubscriptions userId={selectedUserId} />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Диалог для управления кастомными полями */}
+      <Dialog open={isCustomFieldsDialogOpen} onOpenChange={setIsCustomFieldsDialogOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>{t('users.manageCustomFields')}</DialogTitle>
+            <DialogDescription>
+              {t('users.manageCustomFieldsDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUserId && (
+            <UserCustomFields userId={selectedUserId} />
           )}
         </DialogContent>
       </Dialog>
