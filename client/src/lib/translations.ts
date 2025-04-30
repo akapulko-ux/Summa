@@ -33,6 +33,10 @@ export type Translation = {
     yes: string;
     no: string;
     deleteAll: string;
+    active: string;
+    inactive: string;
+    general: string;
+    saveFirstToConfigureThis: string;
   };
   
   // Кэш

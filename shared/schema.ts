@@ -32,6 +32,7 @@ export const services = pgTable('services', {
   description: text('description'),
   cashback: text('cashback'), // Can be either fixed amount or percentage like "5%" or "10.00"
   customFields: jsonb('custom_fields').default({}),
+  isActive: boolean('is_active').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -93,6 +94,7 @@ export const insertServiceSchema = createInsertSchema(services, {
   description: z.string().optional(),
   cashback: z.string().optional(),
   customFields: z.record(z.any()).optional(),
+  isActive: z.boolean().default(true),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
