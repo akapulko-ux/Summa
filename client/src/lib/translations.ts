@@ -365,6 +365,7 @@ export type Translation = {
   // Подписки
   subscriptions: {
     title: string;
+    description: string;
     manageSubscriptions: string;
     addSubscription: string;
     editSubscription: string;
@@ -397,14 +398,62 @@ export type Translation = {
     active: string;
     activeUntil: string;
     nextPayment: string;
+    
+    // Новые поля для функциональности управления подписками
+    addButton: string;
+    addTitle: string;
+    addDescription: string;
+    addSuccess: string;
+    addSuccessDescription: string;
+    addError: string;
+    deleteSuccess: string;
+    deleteSuccessDescription: string;
+    deleteError: string;
+    amount: string;
+    startDate: string;
+    endDate: string;
+    selectService: string;
+    selectPeriod: string;
+    selectStatus: string;
+    optional: string;
+    pickDate: string;
+    periods: {
+      monthly: string;
+      quarterly: string;
+      yearly: string;
+    };
+    statuses: {
+      active: string;
+      pending: string;
+      expired: string;
+      canceled: string;
+    };
+    columns: {
+      service: string;
+      startDate: string;
+      endDate: string;
+      amount: string;
+      period: string;
+      status: string;
+      actions: string;
+    };
+    unknownService: string;
+    errorLoading: string;
   };
 
+  // Кастомные поля
+  customFields: CustomFieldType;
+  
   // Пользователи
   users: {
     title: string;
     manageUsers: string;
     addUser: string;
     editUser: string;
+    manageSubscriptions: string;
+    manageSubscriptionsDescription: string;
+    manageCustomFields: string;
+    manageCustomFieldsDescription: string;
     userEmail: string;
     userName: string;
     userCompany: string;
@@ -427,6 +476,9 @@ export type Translation = {
     searchPlaceholder: string;
     errorLoading: string;
     noUsersFound: string;
+    edit: string;
+    delete: string;
+    actions: string;
     columns: {
       name: string;
       email: string;
@@ -536,6 +588,48 @@ export type Translation = {
     invalidLink: string;
     linkExpired: string;
     somethingWentWrong: string;
+  };
+};
+
+// Добавим кастомные поля и типы
+type CustomFieldType = {
+  title: string;
+  description: string;
+  name: string;
+  namePlaceholder: string;
+  type: string;
+  value: string;
+  valuePlaceholder: string;
+  options: string;
+  optionsPlaceholder: string;
+  optionsHelp: string;
+  selectOption: string;
+  selectType: string;
+  addButton: string;
+  addTitle: string;
+  addDescription: string;
+  addSuccess: string;
+  addSuccessDescription: string;
+  addError: string;
+  deleteSuccess: string;
+  deleteSuccessDescription: string;
+  deleteError: string;
+  confirmDelete: string;
+  noCustomFields: string;
+  createFirst: string;
+  errorLoading: string;
+  columns: {
+    name: string;
+    type: string;
+    value: string;
+    actions: string;
+  };
+  types: {
+    text: string;
+    number: string;
+    boolean: string;
+    date: string;
+    select: string;
   };
 };
 
