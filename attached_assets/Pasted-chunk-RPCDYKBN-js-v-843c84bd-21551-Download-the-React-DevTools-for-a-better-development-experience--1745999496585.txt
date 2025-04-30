@@ -1,0 +1,247 @@
+chunk-RPCDYKBN.js?v=843c84bd:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+use-translations.tsx:58 Missing translation for key: users.filters.sortName
+use-translations.tsx:58 Missing translation for key: users.filters.sortEmail
+use-translations.tsx:58 Missing translation for key: users.filters.sortCompany
+use-translations.tsx:58 Missing translation for key: users.filters.sortCreatedAt
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptionsDescription
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.manageCustomFieldsDescription
+use-translations.tsx:58 Missing translation for key: common.filters
+use-translations.tsx:58 Missing translation for key: common.apply
+use-translations.tsx:58 Missing translation for key: users.filters.sortName
+use-translations.tsx:58 Missing translation for key: users.filters.sortEmail
+use-translations.tsx:58 Missing translation for key: users.filters.sortCompany
+use-translations.tsx:58 Missing translation for key: users.filters.sortCreatedAt
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptionsDescription
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.manageCustomFieldsDescription
+use-translations.tsx:58 Missing translation for key: common.filters
+use-translations.tsx:58 Missing translation for key: common.apply
+use-translations.tsx:58 Missing translation for key: common.filters
+use-translations.tsx:58 Missing translation for key: common.apply
+use-translations.tsx:58 Missing translation for key: users.filters.status
+use-translations.tsx:58 Missing translation for key: users.filters.selectStatus
+use-translations.tsx:58 Missing translation for key: users.filters.statusAll
+use-translations.tsx:58 Missing translation for key: users.filters.statusActive
+use-translations.tsx:58 Missing translation for key: users.filters.statusInactive
+use-translations.tsx:58 Missing translation for key: users.filters.sortBy
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortField
+use-translations.tsx:58 Missing translation for key: users.filters.sortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.ascending
+use-translations.tsx:58 Missing translation for key: users.filters.descending
+use-translations.tsx:58 Missing translation for key: users.filters.company
+use-translations.tsx:58 Missing translation for key: users.filters.enterCompany
+use-translations.tsx:58 Missing translation for key: users.filters.sortName
+use-translations.tsx:58 Missing translation for key: users.filters.sortEmail
+use-translations.tsx:58 Missing translation for key: users.filters.sortCompany
+use-translations.tsx:58 Missing translation for key: users.filters.sortCreatedAt
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptionsDescription
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.manageCustomFieldsDescription
+use-translations.tsx:58 Missing translation for key: common.filters
+use-translations.tsx:58 Missing translation for key: common.apply
+use-translations.tsx:58 Missing translation for key: users.filters.status
+use-translations.tsx:58 Missing translation for key: users.filters.selectStatus
+use-translations.tsx:58 Missing translation for key: users.filters.statusAll
+use-translations.tsx:58 Missing translation for key: users.filters.statusActive
+use-translations.tsx:58 Missing translation for key: users.filters.statusInactive
+use-translations.tsx:58 Missing translation for key: users.filters.sortBy
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortField
+use-translations.tsx:58 Missing translation for key: users.filters.sortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.ascending
+use-translations.tsx:58 Missing translation for key: users.filters.descending
+use-translations.tsx:58 Missing translation for key: users.filters.company
+use-translations.tsx:58 Missing translation for key: users.filters.enterCompany
+use-translations.tsx:58 Missing translation for key: customFields.title
+use-translations.tsx:58 Missing translation for key: customFields.description
+use-translations.tsx:58 Missing translation for key: customFields.addButton
+use-translations.tsx:58 Missing translation for key: customFields.addTitle
+use-translations.tsx:58 Missing translation for key: customFields.addDescription
+@tanstack_react-query.js?v=843c84bd:889 Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ["/api/custom-fields","user",6]
+onSuccess @ @tanstack_react-query.js?v=843c84bd:889
+resolve @ @tanstack_react-query.js?v=843c84bd:456
+Promise.then
+run @ @tanstack_react-query.js?v=843c84bd:498
+start @ @tanstack_react-query.js?v=843c84bd:536
+fetch @ @tanstack_react-query.js?v=843c84bd:926
+executeFetch_fn @ @tanstack_react-query.js?v=843c84bd:2211
+onSubscribe @ @tanstack_react-query.js?v=843c84bd:1898
+subscribe @ @tanstack_react-query.js?v=843c84bd:24
+(анонимная) @ @tanstack_react-query.js?v=843c84bd:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=843c84bd:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=843c84bd:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=843c84bd:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=843c84bd:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=843c84bd:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=843c84bd:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=843c84bd:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=843c84bd:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=843c84bd:19416
+commitRoot @ chunk-RPCDYKBN.js?v=843c84bd:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=843c84bd:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=843c84bd:9119
+flushSync @ chunk-RPCDYKBN.js?v=843c84bd:18959
+flushSync$1 @ chunk-RPCDYKBN.js?v=843c84bd:21538
+dispatchDiscreteCustomEvent @ chunk-CPFL7ZFD.js?v=843c84bd:52
+handleSelect @ @radix-ui_react-dropdown-menu.js?v=843c84bd:427
+handleEvent @ chunk-ZL42RGMA.js?v=843c84bd:16
+callCallback2 @ chunk-RPCDYKBN.js?v=843c84bd:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=843c84bd:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=843c84bd:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=843c84bd:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=843c84bd:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=843c84bd:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=843c84bd:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=843c84bd:7051
+(анонимная) @ chunk-RPCDYKBN.js?v=843c84bd:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=843c84bd:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=843c84bd:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=843c84bd:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=843c84bd:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=843c84bd:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=843c84bd:5449
+use-translations.tsx:58 Missing translation for key: customFields.title
+use-translations.tsx:58 Missing translation for key: customFields.description
+use-translations.tsx:58 Missing translation for key: customFields.addButton
+use-translations.tsx:58 Missing translation for key: customFields.addTitle
+use-translations.tsx:58 Missing translation for key: customFields.addDescription
+use-translations.tsx:58 Missing translation for key: customFields.errorLoading
+use-translations.tsx:58 Missing translation for key: users.filters.sortName
+use-translations.tsx:58 Missing translation for key: users.filters.sortEmail
+use-translations.tsx:58 Missing translation for key: users.filters.sortCompany
+use-translations.tsx:58 Missing translation for key: users.filters.sortCreatedAt
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.actions
+use-translations.tsx:58 Missing translation for key: users.edit
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.delete
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptions
+use-translations.tsx:58 Missing translation for key: users.manageSubscriptionsDescription
+use-translations.tsx:58 Missing translation for key: users.manageCustomFields
+use-translations.tsx:58 Missing translation for key: users.manageCustomFieldsDescription
+use-translations.tsx:58 Missing translation for key: common.filters
+use-translations.tsx:58 Missing translation for key: common.apply
+use-translations.tsx:58 Missing translation for key: users.filters.status
+use-translations.tsx:58 Missing translation for key: users.filters.selectStatus
+use-translations.tsx:58 Missing translation for key: users.filters.statusAll
+use-translations.tsx:58 Missing translation for key: users.filters.statusActive
+use-translations.tsx:58 Missing translation for key: users.filters.statusInactive
+use-translations.tsx:58 Missing translation for key: users.filters.sortBy
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortField
+use-translations.tsx:58 Missing translation for key: users.filters.sortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.ascending
+use-translations.tsx:58 Missing translation for key: users.filters.descending
+use-translations.tsx:58 Missing translation for key: users.filters.company
+use-translations.tsx:58 Missing translation for key: users.filters.enterCompany
+use-translations.tsx:58 Missing translation for key: customFields.title
+use-translations.tsx:58 Missing translation for key: customFields.description
+use-translations.tsx:58 Missing translation for key: customFields.addButton
+use-translations.tsx:58 Missing translation for key: customFields.addTitle
+use-translations.tsx:58 Missing translation for key: customFields.addDescription
+use-translations.tsx:58 Missing translation for key: customFields.errorLoading
+use-translations.tsx:58 Missing translation for key: common.filters
+use-translations.tsx:58 Missing translation for key: common.apply
+use-translations.tsx:58 Missing translation for key: users.filters.status
+use-translations.tsx:58 Missing translation for key: users.filters.selectStatus
+use-translations.tsx:58 Missing translation for key: users.filters.statusAll
+use-translations.tsx:58 Missing translation for key: users.filters.statusActive
+use-translations.tsx:58 Missing translation for key: users.filters.statusInactive
+use-translations.tsx:58 Missing translation for key: users.filters.sortBy
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortField
+use-translations.tsx:58 Missing translation for key: users.filters.sortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.ascending
+use-translations.tsx:58 Missing translation for key: users.filters.descending
+use-translations.tsx:58 Missing translation for key: users.filters.company
+use-translations.tsx:58 Missing translation for key: users.filters.enterCompany
+use-translations.tsx:58 Missing translation for key: common.filters
+use-translations.tsx:58 Missing translation for key: common.apply
+use-translations.tsx:58 Missing translation for key: users.filters.status
+use-translations.tsx:58 Missing translation for key: users.filters.selectStatus
+use-translations.tsx:58 Missing translation for key: users.filters.statusAll
+use-translations.tsx:58 Missing translation for key: users.filters.statusActive
+use-translations.tsx:58 Missing translation for key: users.filters.statusInactive
+use-translations.tsx:58 Missing translation for key: users.filters.sortBy
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortField
+use-translations.tsx:58 Missing translation for key: users.filters.sortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.selectSortOrder
+use-translations.tsx:58 Missing translation for key: users.filters.ascending
+use-translations.tsx:58 Missing translation for key: users.filters.descending
+use-translations.tsx:58 Missing translation for key: users.filters.company
+use-translations.tsx:58 Missing translation for key: users.filters.enterCompany

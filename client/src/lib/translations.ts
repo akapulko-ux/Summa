@@ -398,6 +398,53 @@ export type Translation = {
     active: string;
     activeUntil: string;
     nextPayment: string;
+    allSubscriptions: string;
+    allSubscriptionsDescription: string;
+    searchPlaceholder: string;
+    searchService: string;
+    searchUser: string;
+    searchDomain: string;
+    noSubscriptionsFound: string;
+    adjustFilters: string;
+    viewDetails: string;
+    viewUser: string;
+    errorLoadingSubscriptions: string;
+    filters: {
+      selectStatus: string;
+      statusAll: string;
+      statusActive: string;
+      statusPending: string;
+      statusExpired: string;
+      statusCanceled: string;
+      selectSortField: string;
+      sortService: string;
+      sortUser: string;
+      sortStatus: string;
+      sortPrice: string;
+      sortCreatedAt: string;
+      sortOrder: string;
+      selectSortOrder: string;
+    };
+    columns: {
+      service: string;
+      user: string;
+      status: string;
+      price: string;
+      period: string;
+      createdAt: string;
+      actions: string;
+    };
+    status: {
+      active: string;
+      pending: string;
+      expired: string;
+      canceled: string;
+    };
+    period: {
+      monthly: string;
+      quarterly: string;
+      yearly: string;
+    };
     
     // Новые поля для функциональности управления подписками
     addButton: string;
@@ -454,6 +501,28 @@ export type Translation = {
     manageSubscriptionsDescription: string;
     manageCustomFields: string;
     manageCustomFieldsDescription: string;
+    actions: string;
+    edit: string;
+    delete: string;
+    filters: {
+      status: string;
+      selectStatus: string;
+      statusAll: string;
+      statusActive: string;
+      statusInactive: string;
+      sortBy: string;
+      selectSortField: string;
+      sortOrder: string;
+      selectSortOrder: string;
+      ascending: string;
+      descending: string;
+      company: string;
+      enterCompany: string;
+      sortName: string;
+      sortEmail: string;
+      sortCompany: string;
+      sortCreatedAt: string;
+    };
     userEmail: string;
     userName: string;
     userCompany: string;
@@ -476,9 +545,6 @@ export type Translation = {
     searchPlaceholder: string;
     errorLoading: string;
     noUsersFound: string;
-    edit: string;
-    delete: string;
-    actions: string;
     columns: {
       name: string;
       email: string;
@@ -710,6 +776,8 @@ export const en: Translation = {
     general: "General",
     saveFirstToConfigureThis: "Save changes first before configuring this section",
     filter: "Filter",
+    filters: "Filters",
+    apply: "Apply",
     sortBy: "Sort by",
     ascending: "Ascending",
     descending: "Descending",
