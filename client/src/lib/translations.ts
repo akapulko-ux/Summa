@@ -634,6 +634,46 @@ type CustomFieldType = {
 };
 
 export const en: Translation = {
+  customFields: {
+    title: "Custom Fields",
+    description: "Manage custom fields for this entity",
+    name: "Name",
+    namePlaceholder: "Enter field name",
+    type: "Type",
+    value: "Value",
+    valuePlaceholder: "Enter default value",
+    options: "Options",
+    optionsPlaceholder: "Option 1, Option 2, Option 3",
+    optionsHelp: "Enter comma-separated list of options",
+    selectOption: "Select an option",
+    selectType: "Select field type",
+    addButton: "Add Field",
+    addTitle: "Add Custom Field",
+    addDescription: "Create a new custom field for this entity",
+    addSuccess: "Custom field added",
+    addSuccessDescription: "The custom field has been successfully added",
+    addError: "Error adding custom field",
+    deleteSuccess: "Custom field deleted",
+    deleteSuccessDescription: "The custom field has been successfully deleted",
+    deleteError: "Error deleting custom field",
+    confirmDelete: "Are you sure you want to delete this custom field?",
+    noCustomFields: "No custom fields",
+    createFirst: "Create your first custom field",
+    errorLoading: "Error loading custom fields",
+    columns: {
+      name: "Name",
+      type: "Type",
+      value: "Value",
+      actions: "Actions"
+    },
+    types: {
+      text: "Text",
+      number: "Number",
+      boolean: "Boolean",
+      date: "Date",
+      select: "Select"
+    }
+  },
   common: {
     loading: "Loading...",
     error: "Error",
