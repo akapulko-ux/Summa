@@ -99,7 +99,8 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
     queryFn: async () => {
       const res = await apiRequest('GET', `/api/custom-fields?entityType=${entityType}&entityId=${entityId}`);
       if (!res.ok) throw new Error('Failed to fetch custom fields');
-      return res.json();
+      const jsonData = await res.json();
+      return jsonData || []; // Возвращаем пустой массив, если данные не определены
     },
     enabled: !!entityId
   });
@@ -153,7 +154,8 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
   // Сохранение кастомных полей
   const saveFieldsMutation = useMutation({
     mutationFn: async (data: any) => {
-      const existingFields = await apiRequest('GET', `/api/custom-fields?entityType=${entityType}&entityId=${entityId}`).then(res => res.json());
+      const res = await apiRequest('GET', `/api/custom-fields?entityType=${entityType}&entityId=${entityId}`);
+      const existingFields = await res.json() || [];
       
       // Удаляем поля, которых нет в обновленном списке
       const deletePromises = existingFields.map(async (existingField: CustomField) => {
@@ -231,7 +233,8 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
   // Удаление всех кастомных полей
   const deleteAllFieldsMutation = useMutation({
     mutationFn: async () => {
-      const existingFields = await apiRequest('GET', `/api/custom-fields?entityType=${entityType}&entityId=${entityId}`).then(res => res.json());
+      const res = await apiRequest('GET', `/api/custom-fields?entityType=${entityType}&entityId=${entityId}`);
+      const existingFields = await res.json() || [];
       
       const deletePromises = existingFields.map((field: CustomField) => 
         apiRequest('DELETE', `/api/custom-fields/${field.id}`));
