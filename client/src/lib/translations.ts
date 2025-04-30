@@ -1262,6 +1262,46 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  customFields: {
+    title: "Пользовательские поля",
+    description: "Управление пользовательскими полями для этого объекта",
+    name: "Название",
+    namePlaceholder: "Введите название поля",
+    type: "Тип",
+    value: "Значение",
+    valuePlaceholder: "Введите значение по умолчанию",
+    options: "Варианты",
+    optionsPlaceholder: "Вариант 1, Вариант 2, Вариант 3",
+    optionsHelp: "Введите список вариантов через запятую",
+    selectOption: "Выберите вариант",
+    selectType: "Выберите тип поля",
+    addButton: "Добавить поле",
+    addTitle: "Добавить пользовательское поле",
+    addDescription: "Создать новое пользовательское поле для этого объекта",
+    addSuccess: "Пользовательское поле добавлено",
+    addSuccessDescription: "Пользовательское поле было успешно добавлено",
+    addError: "Ошибка при добавлении поля",
+    deleteSuccess: "Пользовательское поле удалено",
+    deleteSuccessDescription: "Пользовательское поле было успешно удалено",
+    deleteError: "Ошибка при удалении поля",
+    confirmDelete: "Вы уверены, что хотите удалить это пользовательское поле?",
+    noCustomFields: "Нет пользовательских полей",
+    createFirst: "Создайте ваше первое пользовательское поле",
+    errorLoading: "Ошибка загрузки пользовательских полей",
+    columns: {
+      name: "Название",
+      type: "Тип",
+      value: "Значение",
+      actions: "Действия"
+    },
+    types: {
+      text: "Текст",
+      number: "Число",
+      boolean: "Да/Нет",
+      date: "Дата",
+      select: "Выпадающий список"
+    }
+  },
   common: {
     loading: "Загрузка...",
     error: "Произошла ошибка",
@@ -1300,6 +1340,7 @@ export const ru: Translation = {
     filter: "Фильтр",
     filters: "Фильтры",
     apply: "Применить",
+    reset: "Сбросить",
     sortBy: "Сортировать по",
     ascending: "По возрастанию",
     descending: "По убыванию",
