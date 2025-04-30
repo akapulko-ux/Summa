@@ -87,7 +87,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                       <Button
                         key={item.path}
                         variant={location === item.path ? "secondary" : "ghost"}
-                        className="w-full justify-start"
+                        className={cn(
+                          "w-full justify-start",
+                          location === item.path && "bg-accent text-accent-foreground font-medium dark:bg-primary/10 dark:text-primary-foreground"
+                        )}
                         onClick={() => setSidebarOpen(false)}
                         asChild
                       >
@@ -106,7 +109,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                           <Button
                             key={item.path}
                             variant={location === item.path ? "secondary" : "ghost"}
-                            className="w-full justify-start"
+                            className={cn(
+                              "w-full justify-start",
+                              location === item.path && "bg-accent text-accent-foreground font-medium dark:bg-primary/10 dark:text-primary-foreground"
+                            )}
                             onClick={() => setSidebarOpen(false)}
                             asChild
                           >
@@ -263,7 +269,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 variant={location === item.path ? "secondary" : "ghost"}
                 className={cn(
                   "w-full justify-start text-left",
-                  location === item.path && "dark:bg-primary/10 dark:text-primary-foreground dark:font-medium"
+                  location === item.path && "bg-accent text-accent-foreground font-medium dark:bg-primary/10 dark:text-primary-foreground"
                 )}
                 asChild
               >
@@ -285,7 +291,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     variant={location === item.path ? "secondary" : "ghost"}
                     className={cn(
                       "w-full justify-start text-left",
-                      location === item.path && "dark:bg-primary/10 dark:text-primary-foreground dark:font-medium"
+                      location === item.path && "bg-accent text-accent-foreground font-medium dark:bg-primary/10 dark:text-primary-foreground"
                     )}
                     asChild
                   >
