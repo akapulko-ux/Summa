@@ -35,7 +35,16 @@ export interface IStorage {
   createService(service: InsertService): Promise<Service>;
   updateService(id: number, service: Partial<InsertService>): Promise<Service | undefined>;
   deleteService(id: number): Promise<boolean>;
-  listServices(page?: number, limit?: number): Promise<{ services: Service[], total: number }>;
+  listServices(
+    page?: number, 
+    limit?: number,
+    filters?: { 
+      search?: string; 
+      status?: 'all' | 'active' | 'inactive'; 
+      sortBy?: string; 
+      sortOrder?: 'asc' | 'desc' 
+    }
+  ): Promise<{ services: Service[], total: number }>;
   getServiceClients(serviceId: number): Promise<User[]>;
   
   // Subscription operations
@@ -150,13 +159,94 @@ export class DatabaseStorage implements IStorage {
     return result.count > 0;
   }
 
-  async listServices(page = 1, limit = 10): Promise<{ services: Service[], total: number }> {
+  async listServices(
+    page = 1, 
+    limit = 10, 
+    filters?: { 
+      search?: string; 
+      status?: 'all' | 'active' | 'inactive'; 
+      sortBy?: string; 
+      sortOrder?: 'asc' | 'desc' 
+    }
+  ): Promise<{ services: Service[], total: number }> {
     return dbOptimizer.executeQuery(async () => {
       const offset = (page - 1) * limit;
-      const result = await db.select().from(services).limit(limit).offset(offset).orderBy(asc(services.title));
-      const [{ count }] = await db
+      
+      // Build the query
+      let query = db.select().from(services);
+      
+      // Apply filters
+      if (filters) {
+        // Search filter
+        if (filters.search) {
+          query = query.where(
+            or(
+              sql`LOWER(${services.title}) LIKE LOWER(${'%' + filters.search + '%'})`,
+              sql`LOWER(${services.description}) LIKE LOWER(${'%' + filters.search + '%'})`
+            )
+          );
+        }
+        
+        // Status filter
+        if (filters.status === 'active') {
+          query = query.where(eq(services.isActive, true));
+        } else if (filters.status === 'inactive') {
+          query = query.where(eq(services.isActive, false));
+        }
+      }
+      
+      // Count total (before applying limit/offset)
+      const countQuery = db
         .select({ count: sql<number>`count(*)` })
         .from(services);
+      
+      // Apply the same filters to the count query
+      if (filters) {
+        if (filters.search) {
+          countQuery.where(
+            or(
+              sql`LOWER(${services.title}) LIKE LOWER(${'%' + filters.search + '%'})`,
+              sql`LOWER(${services.description}) LIKE LOWER(${'%' + filters.search + '%'})`
+            )
+          );
+        }
+        
+        if (filters.status === 'active') {
+          countQuery.where(eq(services.isActive, true));
+        } else if (filters.status === 'inactive') {
+          countQuery.where(eq(services.isActive, false));
+        }
+      }
+      
+      // Apply sorting
+      if (filters?.sortBy) {
+        const order = filters.sortOrder === 'desc' ? desc : asc;
+        
+        // Handle different sort fields
+        switch (filters.sortBy) {
+          case 'title':
+            query = query.orderBy(order(services.title));
+            break;
+          case 'createdAt':
+            query = query.orderBy(order(services.createdAt));
+            break;
+          case 'updatedAt':
+            query = query.orderBy(order(services.updatedAt));
+            break;
+          default:
+            query = query.orderBy(asc(services.title)); // Default sorting
+        }
+      } else {
+        // Default sorting
+        query = query.orderBy(asc(services.title));
+      }
+      
+      // Apply pagination
+      query = query.limit(limit).offset(offset);
+      
+      // Execute both queries
+      const result = await query;
+      const [{ count }] = await countQuery;
       
       return { services: result, total: count };
     }, "listServices");

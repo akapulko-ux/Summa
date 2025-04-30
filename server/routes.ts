@@ -139,7 +139,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       
-      const result = await storage.listServices(page, limit);
+      // Extract filter params
+      const search = req.query.search as string;
+      const status = req.query.status as 'all' | 'active' | 'inactive';
+      const sortBy = req.query.sortBy as string;
+      const sortOrder = req.query.sortOrder as 'asc' | 'desc';
+      
+      // Build filter object (only include non-empty values)
+      const filters: any = {};
+      if (search) filters.search = search;
+      if (status && status !== 'all') filters.status = status;
+      if (sortBy) filters.sortBy = sortBy;
+      if (sortOrder) filters.sortOrder = sortOrder;
+      
+      // Get filtered services
+      const result = await storage.listServices(page, limit, 
+        Object.keys(filters).length > 0 ? filters : undefined
+      );
       
       res.json({ services: result.services, total: result.total });
     } catch (error) {
