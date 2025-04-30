@@ -209,6 +209,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete service" });
     }
   });
+  
+  // Get clients using a specific service
+  app.get("/api/services/:id/clients", isAuthenticated, async (req, res) => {
+    try {
+      const serviceId = parseInt(req.params.id);
+      const service = await storage.getService(serviceId);
+      
+      if (!service) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+      
+      const clients = await storage.getServiceClients(serviceId);
+      
+      // Remove sensitive information for non-admin users
+      const sanitizedClients = clients.map(client => {
+        const { passwordHash, ...userData } = client;
+        return userData;
+      });
+      
+      res.json(sanitizedClients);
+    } catch (error) {
+      console.error("Error fetching service clients:", error);
+      res.status(500).json({ message: "Failed to fetch service clients" });
+    }
+  });
 
   // Subscription routes
   app.get("/api/subscriptions", isAuthenticated, async (req, res) => {

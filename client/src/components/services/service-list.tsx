@@ -281,13 +281,13 @@ export function ServiceList() {
 
       {/* View Service Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
             <DialogTitle>{t('services.serviceDetails')}</DialogTitle>
             <DialogDescription id="dialog-description">{t('common.information')}</DialogDescription>
           </DialogHeader>
           {selectedServiceId && (
-            <ServiceDetails serviceId={selectedServiceId} />
+            <ServiceDetailsView serviceId={selectedServiceId} />
           )}
         </DialogContent>
       </Dialog>

@@ -36,6 +36,7 @@ export interface IStorage {
   updateService(id: number, service: Partial<InsertService>): Promise<Service | undefined>;
   deleteService(id: number): Promise<boolean>;
   listServices(page?: number, limit?: number): Promise<{ services: Service[], total: number }>;
+  getServiceClients(serviceId: number): Promise<User[]>;
   
   // Subscription operations
   getSubscription(id: number): Promise<Subscription | undefined>;
@@ -159,6 +160,37 @@ export class DatabaseStorage implements IStorage {
       
       return { services: result, total: count };
     }, "listServices");
+  }
+  
+  async getServiceClients(serviceId: number): Promise<User[]> {
+    return dbOptimizer.executeQuery(async () => {
+      // Get distinct users who have subscriptions to this service
+      const result = await db
+        .select({
+          id: users.id,
+          email: users.email,
+          name: users.name,
+          companyName: users.companyName,
+          phone: users.phone,
+          isActive: users.isActive,
+          role: users.role,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
+          telegramChatId: users.telegramChatId,
+          passwordHash: users.passwordHash
+        })
+        .from(users)
+        .innerJoin(
+          subscriptions,
+          and(
+            eq(users.id, subscriptions.userId),
+            eq(subscriptions.serviceId, serviceId)
+          )
+        )
+        .groupBy(users.id);
+      
+      return result;
+    }, "getServiceClients");
   }
 
   // Subscription methods
