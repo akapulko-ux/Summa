@@ -297,6 +297,10 @@ export type Translation = {
     customFieldsDesc: string;
     editCustomFields: string;
     editCustomFieldsDesc: string;
+    search: string;
+    filterDesc: string;
+    statusAll: string;
+    sortOrder: string;
     fieldName: string;
     fieldNamePlaceholder: string;
     fieldType: string;
@@ -857,6 +861,10 @@ export const en: Translation = {
     customFieldsDesc: "Additional fields for this service",
     editCustomFields: "Edit Custom Fields",
     editCustomFieldsDesc: "Add or modify additional fields for this service",
+    search: "Search services...",
+    filterDesc: "Filter and sort services",
+    statusAll: "All statuses",
+    sortOrder: "Sort order",
     fieldName: "Field Name",
     fieldNamePlaceholder: "Enter field name",
     fieldType: "Field Type",
@@ -1052,6 +1060,54 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  common: {
+    loading: "Загрузка...",
+    error: "Произошла ошибка",
+    save: "Сохранить",
+    cancel: "Отмена",
+    delete: "Удалить",
+    edit: "Редактировать",
+    search: "Поиск",
+    back: "Назад",
+    submit: "Отправить",
+    next: "Далее",
+    prev: "Назад",
+    add: "Добавить",
+    remove: "Удалить",
+    welcome: "Добро пожаловать",
+    logout: "Выйти",
+    theme: "Тема",
+    language: "Язык",
+    profile: "Профиль",
+    settings: "Настройки",
+    notification: "Уведомление",
+    appName: "SaaSly",
+    optional: "Необязательно",
+    date: "Дата",
+    restore: "Восстановить",
+    information: "Информация",
+    refresh: "Обновить",
+    yes: "Да",
+    no: "Нет",
+    deleteAll: "Удалить всё",
+    no_data: "Нет данных",
+    active: "Активно",
+    inactive: "Неактивно",
+    general: "Общие",
+    saveFirstToConfigureThis: "Сохраните сервис, чтобы настроить этот раздел",
+    filter: "Фильтр",
+    sortBy: "Сортировать по",
+    ascending: "По возрастанию",
+    descending: "По убыванию",
+    clearFilters: "Очистить фильтры",
+    applyFilters: "Применить фильтры",
+    filterOptions: "Параметры фильтра",
+    sortOptions: "Параметры сортировки",
+    status: "Статус",
+    createdAt: "Дата создания",
+    updatedAt: "Дата обновления",
+    actions: "Действия"
+  },
   cache: {
     title: "Статус кэша",
     total_hits: "Попадания в кэш",
