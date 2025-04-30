@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Loader2, PlusCircle, Trash2, Save, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -118,24 +118,26 @@ export function CustomFieldsManager({ entityType, entityId, isAdmin = false }: C
     name: "fields"
   });
 
-  // Установка начальных значений при загрузке данных
-  if (data && !fields.length && !isLoading) {
-    form.reset({
-      fields: data.map((field: CustomField) => ({
-        fieldName: field.fieldName,
-        fieldType: field.fieldType,
-        fieldValue: field.fieldValue,
-        isVisibleForUser: field.isVisibleForUser,
-        isRequired: field.isRequired || false,
-        minValue: field.minValue,
-        maxValue: field.maxValue,
-        minLength: field.minLength,
-        maxLength: field.maxLength,
-        pattern: field.pattern,
-        options: field.options
-      }))
-    });
-  }
+  // Установка начальных значений при загрузке данных с использованием useEffect
+  useEffect(() => {
+    if (data && !isLoading && fields.length === 0) {
+      form.reset({
+        fields: data.map((field: CustomField) => ({
+          fieldName: field.fieldName,
+          fieldType: field.fieldType,
+          fieldValue: field.fieldValue,
+          isVisibleForUser: field.isVisibleForUser,
+          isRequired: field.isRequired || false,
+          minValue: field.minValue,
+          maxValue: field.maxValue,
+          minLength: field.minLength,
+          maxLength: field.maxLength,
+          pattern: field.pattern,
+          options: field.options
+        }))
+      });
+    }
+  }, [data, isLoading, fields.length, form]);
 
   // Добавление кастомного поля
   const handleAddField = () => {
