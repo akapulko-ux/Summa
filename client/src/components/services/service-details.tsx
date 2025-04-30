@@ -88,7 +88,7 @@ export function ServiceDetailsView({ serviceId, isFullPage = false }: ServiceDet
               </h3>
               <p className="text-muted-foreground">
                 <CalendarIcon className="inline-block w-4 h-4 mr-1" />
-                {t('common.createdAt')}: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}
+                {language === 'ru' ? 'Создано' : 'Created'}: {new Date(service.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US')}
               </p>
             </div>
           </div>
@@ -163,10 +163,10 @@ export function ServiceDetailsView({ serviceId, isFullPage = false }: ServiceDet
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t('users.nameField')}</TableHead>
-                      <TableHead>{t('users.contactInfo')}</TableHead>
-                      <TableHead>{t('users.company')}</TableHead>
-                      <TableHead>{t('common.status')}</TableHead>
+                      <TableHead>{t('users.userName')}</TableHead>
+                      <TableHead>{t('users.userEmail')}</TableHead>
+                      <TableHead>{t('users.userCompany')}</TableHead>
+                      <TableHead>{t('users.status')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

@@ -883,6 +883,14 @@ export const en: Translation = {
     servicesByCount: "Top services by subscription count",
     availableServices: "Available Services",
     availableToSubscribe: "Available to subscribe",
+    // New fields for service details view
+    details: "Details",
+    clients: "Clients",
+    serviceClients: "Service Clients",
+    clientsDescription: "List of clients using this service",
+    noClients: "No clients are using this service",
+    active: "Active",
+    inactive: "Inactive",
   },
 
   subscriptions: {
@@ -1378,6 +1386,14 @@ export const ru: Translation = {
     servicesByCount: "Лучшие сервисы по количеству подписок",
     availableServices: "Доступные сервисы",
     availableToSubscribe: "Доступно для подписки",
+    // New fields for service details view
+    details: "Детали",
+    clients: "Клиенты",
+    serviceClients: "Клиенты сервиса",
+    clientsDescription: "Список клиентов, использующих этот сервис",
+    noClients: "Нет клиентов, использующих этот сервис",
+    active: "Активный",
+    inactive: "Неактивный",
   },
 
   subscriptions: {
