@@ -109,8 +109,8 @@ export function Sidebar({ className }: SidebarProps) {
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
         location === item.href 
-          ? "bg-accent text-accent-foreground" 
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          ? "bg-primary/10 font-medium text-primary dark:bg-accent dark:text-accent-foreground" 
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
     >
       {item.icon}
