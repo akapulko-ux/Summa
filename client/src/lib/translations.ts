@@ -654,7 +654,11 @@ export const en: Translation = {
     yes: "Yes",
     no: "No",
     deleteAll: "Delete All",
-    no_data: "No data available"
+    no_data: "No data available",
+    active: "Active",
+    inactive: "Inactive",
+    general: "General",
+    saveFirstToConfigureThis: "Save the service first to configure this section"
   },
   layout: {
     adminPanel: "Admin Panel",
@@ -1145,7 +1149,11 @@ export const ru: Translation = {
     yes: "Да",
     no: "Нет",
     deleteAll: "Удалить всё",
-    no_data: "Нет данных"
+    no_data: "Нет данных",
+    active: "Активно",
+    inactive: "Неактивно",
+    general: "Общие",
+    saveFirstToConfigureThis: "Сохраните сервис, чтобы настроить этот раздел"
   },
   layout: {
     adminPanel: "Панель администратора",
