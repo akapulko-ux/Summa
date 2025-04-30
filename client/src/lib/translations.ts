@@ -1298,6 +1298,8 @@ export const ru: Translation = {
     general: "Общие",
     saveFirstToConfigureThis: "Сохраните сервис, чтобы настроить этот раздел",
     filter: "Фильтр",
+    filters: "Фильтры",
+    apply: "Применить",
     sortBy: "Сортировать по",
     ascending: "По возрастанию",
     descending: "По убыванию",
