@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/card";
 import { useTranslations } from "@/hooks/use-translations";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { 
   Table,
   TableBody,
@@ -23,32 +23,42 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
+import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight, User as UserIcon, Settings, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@shared/schema";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { UserForm } from "./user-form";
+import { UserFiltersComponent, type UserFilters, type UserSortOption } from "../filters/user-filters";
 
 export function UserManagementTable() {
-  const { t } = useTranslations();
-  const [searchQuery, setSearchQuery] = useState("");
+  const { t, language } = useTranslations();
+  const [filters, setFilters] = useState<UserFilters>({
+    search: "",
+    status: "all",
+    sortBy: "name",
+    sortOrder: "asc",
+    company: ""
+  });
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [isSubscriptionsDialogOpen, setIsSubscriptionsDialogOpen] = useState(false);
+  const [isCustomFieldsDialogOpen, setIsCustomFieldsDialogOpen] = useState(false);
 
   const {
     data,
     isLoading,
     isError,
   } = useQuery<{ users: User[], total: number }>({
-    queryKey: ["/api/users", { page, limit, search: searchQuery }],
+    queryKey: ["/api/users", { page, limit, search: filters.search, status: filters.status, company: filters.company, sortBy: filters.sortBy, sortOrder: filters.sortOrder }],
   });
 
   const deleteUserMutation = useMutation({
@@ -114,34 +124,52 @@ export function UserManagementTable() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{t('users.title')}</CardTitle>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder={t('users.searchPlaceholder')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>
-                  {t('users.addUser')}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>{t('users.addUser')}</DialogTitle>
-                </DialogHeader>
-                <UserForm onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/users"] })} />
-              </DialogContent>
-            </Dialog>
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                {t('users.addUser')}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>{t('users.addUser')}</DialogTitle>
+              </DialogHeader>
+              <UserForm onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/users"] })} />
+            </DialogContent>
+          </Dialog>
         </div>
       </CardHeader>
       <CardContent>
+        <UserFiltersComponent
+          filters={filters}
+          onFilterChange={(newFilters) => {
+            setFilters(newFilters);
+            setPage(1); // Сбрасываем страницу при изменении фильтров
+          }}
+          onResetFilters={() => {
+            setFilters({
+              search: "",
+              status: "all",
+              sortBy: "name",
+              sortOrder: "asc",
+              company: ""
+            });
+            setPage(1);
+          }}
+          sortOptions={[
+            { value: "name", label: t('users.filters.sortName') },
+            { value: "email", label: t('users.filters.sortEmail') },
+            { value: "companyName", label: t('users.filters.sortCompany') },
+            { value: "createdAt", label: t('users.filters.sortCreatedAt') },
+          ]}
+          filtersApplied={
+            filters.search !== "" || 
+            filters.status !== "all" || 
+            filters.company !== "" || 
+            filters.sortBy !== "name" || 
+            filters.sortOrder !== "asc"
+          }
+        />
         <div className="relative w-full overflow-auto">
           <Table>
             <TableHeader>
