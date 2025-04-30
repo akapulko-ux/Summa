@@ -287,7 +287,7 @@ export default function AllSubscriptionsPage() {
                         <div className="font-medium">${subscription.price.toFixed(2)}</div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">{t(`subscriptions.period.${subscription.paymentPeriod}`)}</div>
+                        <div className="font-medium">{t(`subscriptions.periodValues.${subscription.paymentPeriod}`)}</div>
                       </TableCell>
                       <TableCell>
                         {format(new Date(subscription.createdAt), 'dd.MM.yyyy')}
@@ -420,7 +420,7 @@ function StatusBadge({ status }: { status: string }) {
   
   return (
     <Badge variant={variant}>
-      {t(`subscriptions.status.${status}`)}
+      {t(`subscriptions.statusValues.${status}`)}
     </Badge>
   );
 }
