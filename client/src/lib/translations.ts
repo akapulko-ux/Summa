@@ -336,6 +336,14 @@ export type Translation = {
     servicesByCount: string;
     availableServices: string;
     availableToSubscribe: string;
+    // New fields for service details view
+    details: string;
+    clients: string;
+    serviceClients: string;
+    clientsDescription: string;
+    noClients: string;
+    active: string;
+    inactive: string;
   };
 
   // Подписки
