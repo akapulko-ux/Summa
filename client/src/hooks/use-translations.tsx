@@ -43,6 +43,9 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 
   // Функция для получения перевода по ключу с поддержкой параметров
   const t = (key: string, params?: Record<string, string>): string => {
+    // Если ключ пустой, возвращаем пустую строку
+    if (!key) return "";
+    
     // Разбиваем ключ на части (например, "common.loading" -> ["common", "loading"])
     const keys = key.split('.');
     if (keys.length === 0) return key;
@@ -51,16 +54,22 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
       // Перебираем вложенные объекты, следуя по пути ключа
       let result: any = translations;
       for (const k of keys) {
-        if (result[k] === undefined) return key;
+        if (result === undefined || result[k] === undefined) {
+          console.log(`Missing translation for key: ${key}`);
+          return key; // Ключ не найден
+        }
         result = result[k];
       }
       
-      if (typeof result !== 'string') return key;
+      if (typeof result !== 'string') {
+        console.log(`Translation result for key ${key} is not a string:`, result);
+        return key;
+      }
       
       // Если есть параметры, заменяем {paramName} на значение параметра
       if (params) {
         return Object.entries(params).reduce((text, [paramName, paramValue]) => {
-          return text.replace(new RegExp(`{${paramName}}`, 'g'), paramValue);
+          return text.replace(new RegExp(`{${paramName}}`, 'g'), paramValue || '');
         }, result);
       }
       
