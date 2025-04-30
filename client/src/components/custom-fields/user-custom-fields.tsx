@@ -74,7 +74,7 @@ export function UserCustomFields({ userId }: UserCustomFieldsProps) {
       const res = await apiRequest("GET", `/api/custom-fields?entityType=user&entityId=${userId}`);
       if (!res.ok) throw new Error("Failed to fetch custom fields");
       const data = await res.json();
-      return data.customFields;
+      return data.customFields || []; // Возвращаем пустой массив, если данные не определены
     },
     enabled: Boolean(userId),
   });
