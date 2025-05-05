@@ -1177,6 +1177,9 @@ export const en: Translation = {
     active: "Active",
     activeUntil: "Active until",
     nextPayment: "Next payment",
+    otherService: "Other service",
+    customServiceTitle: "Custom service name",
+    enterServiceName: "Enter your custom service name",
   },
 
   users: {
@@ -1820,6 +1823,9 @@ export const ru: Translation = {
     },
     unknownService: "Неизвестный сервис",
     errorLoading: "Ошибка загрузки подписок",
+    otherService: "Другой сервис",
+    customServiceTitle: "Название кастомного сервиса",
+    enterServiceName: "Введите название вашего сервиса",
   },
 
   users: {
