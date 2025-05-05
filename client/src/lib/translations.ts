@@ -1756,6 +1756,8 @@ export const ru: Translation = {
     addTitle: "Добавить подписку",
     addDescription: "Создать новую подписку",
     selectService: "Выберите сервис",
+    serviceTitle: "Название сервиса",
+    enterServiceTitle: "Введите название сервиса",
     startDate: "Дата начала",
     endDate: "Дата окончания",
     optional: "Опционально",
