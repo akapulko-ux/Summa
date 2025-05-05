@@ -35,7 +35,7 @@ import { User } from "@shared/schema";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { UserForm } from "./user-form";
 import { UserFiltersComponent, type UserFilters, type UserSortOption } from "../filters/user-filters";
-import { UserSubscriptions } from "../subscriptions";
+import { UserSubscriptions } from "../subscriptions/user-subscriptions";
 import { UserCustomFields } from "../custom-fields/user-custom-fields";
 
 export function UserManagementTable() {
