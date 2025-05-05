@@ -1700,6 +1700,12 @@ export const ru: Translation = {
     noClients: "Нет клиентов, использующих этот сервис",
     active: "Активный",
     inactive: "Неактивный",
+    // Custom services
+    customService: "Кастомный сервис",
+    createCustomService: "Создать кастомный сервис",
+    myCustomServices: "Мои кастомные сервисы",
+    allServices: "Все сервисы",
+    ownedBy: "Владелец",
   },
 
   subscriptions: {
