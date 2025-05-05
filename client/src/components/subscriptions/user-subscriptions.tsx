@@ -113,6 +113,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     defaultValues: {
       userId,
       serviceId: undefined,
+      title: "", // Добавляем поле для названия сервиса
       startDate: new Date(),
       endDate: undefined,
       status: "active",
@@ -271,6 +272,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
       form.reset({
         userId,
         serviceId: undefined,
+        title: "", // Добавляем поле для названия сервиса
         startDate: new Date(),
         endDate: undefined,
         status: "active",
