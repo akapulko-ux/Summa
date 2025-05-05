@@ -33,6 +33,8 @@ export const services = pgTable('services', {
   cashback: text('cashback'), // Can be either fixed amount or percentage like "5%" or "10.00"
   customFields: jsonb('custom_fields').default({}),
   isActive: boolean('is_active').default(true).notNull(),
+  isCustom: boolean('is_custom').default(false), // Флаг для определения кастомных сервисов клиентов
+  ownerId: integer('owner_id').references(() => users.id), // ID владельца кастомного сервиса (null для публичных сервисов)
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -95,6 +97,8 @@ export const insertServiceSchema = createInsertSchema(services, {
   cashback: z.string().optional(),
   customFields: z.record(z.any()).optional(),
   isActive: z.boolean().default(true),
+  isCustom: z.boolean().default(false),
+  ownerId: z.number().optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
