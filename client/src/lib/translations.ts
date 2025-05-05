@@ -1706,6 +1706,7 @@ export const ru: Translation = {
     myCustomServices: "Мои кастомные сервисы",
     allServices: "Все сервисы",
     ownedBy: "Владелец",
+    showCustomServices: "Показать кастомные сервисы",
   },
 
   subscriptions: {
