@@ -35,7 +35,8 @@ export function ServiceList() {
     search: "",
     status: "all",
     sortBy: "title",
-    sortOrder: "asc"
+    sortOrder: "asc",
+    showCustom: false
   });
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -47,6 +48,7 @@ export function ServiceList() {
   const isAdmin = user?.role === "admin";
   
   // Check if any filters are applied (not default)
+  // showCustom не учитывается в filtersApplied - это отдельный переключатель
   const filtersApplied = 
     filters.search !== "" || 
     filters.status !== "all" || 
@@ -180,7 +182,8 @@ export function ServiceList() {
               search: "",
               status: "all",
               sortBy: "title", 
-              sortOrder: "asc"
+              sortOrder: "asc",
+              showCustom: filters.showCustom // Сохраняем текущее значение showCustom
             });
             setPage(1);
           }}
