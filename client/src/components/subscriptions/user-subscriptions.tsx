@@ -195,8 +195,9 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   const handleServiceChange = (serviceId: string) => {
     console.log("Service selected:", serviceId, typeof serviceId);
     
-    if (serviceId === 'other') {
-      console.log("Custom service selected");
+    // Используем строгое сравнение и учитываем, что строка может прийти в разных форматах
+    if (serviceId === 'other' || serviceId === "other") {
+      console.log("Custom service selected ✓");
       // Для опции "Другой сервис" разблокируем поле ввода названия сервиса
       setIsCustomService(true);
       // Очищаем название сервиса, чтобы пользователь ввел свое
@@ -288,12 +289,15 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
       form.reset({
         userId,
         serviceId: undefined,
+        serviceName: "", // Добавляем пустое поле serviceName при инициализации
         startDate: new Date(),
         endDate: undefined,
         status: "active",
         paymentPeriod: "monthly",
         amount: 0
       });
+      // Сбрасываем флаг кастомного сервиса при открытии диалога
+      setIsCustomService(false);
     }
   }, [isAddDialogOpen, form, userId]);
   
