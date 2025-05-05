@@ -25,6 +25,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -60,7 +61,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 // Расширим схему валидации для формы подписки
 const createSubscriptionSchema = insertSubscriptionSchema.extend({
-  serviceId: z.union([z.coerce.number(), z.literal('other')]),
+  serviceId: z.union([z.coerce.number(), z.literal('other')]).refine(
+    val => val !== undefined, 
+    { message: "Необходимо выбрать сервис" }
+  ),
+  title: z.string().min(1, "Название сервиса обязательно"),
   startDate: z.date(),
   endDate: z.date().optional(),
   amount: z.number().default(0), // Добавляем поле amount для хранения стоимости
@@ -124,19 +129,39 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   // Мутация для создания новой подписки
   const createSubscriptionMutation = useMutation({
     mutationFn: async (data: SubscriptionFormValues) => {
-      const res = await apiRequest("POST", "/api/subscriptions", data);
+      // Преобразуем данные для API: если serviceId='other', устанавливаем его в null
+      const apiData = {
+        ...data,
+        // Если serviceId это строка 'other', установим null для сервиса
+        serviceId: data.serviceId === 'other' ? null : Number(data.serviceId),
+        // Преобразуем amount к paymentAmount для соответствия API
+        paymentAmount: data.amount
+      };
+      
+      // Для отладки
+      console.log("Creating subscription with data:", data);
+      console.log("Transformed data for API:", apiData);
+      
+      // Отправляем запрос
+      const res = await apiRequest("POST", "/api/subscriptions", apiData);
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Failed to create subscription");
       }
-      return res.json();
+      const response = await res.json();
+      console.log("Subscription created successfully:", response);
+      return response;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Mutation onSuccess triggered with data:", data);
       toast({
         title: t('subscriptions.addSuccess'),
         description: t('subscriptions.addSuccessDescription'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions", userId] });
+      
+      // Сбрасываем состояние кастомного сервиса
+      setIsCustomService(false);
       setIsAddDialogOpen(false);
       form.reset();
     },
@@ -187,13 +212,21 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     }
   };
   
+  // Состояние для отображения поля ввода названия кастомного сервиса
+  const [isCustomService, setIsCustomService] = useState(false);
+
   // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
     if (serviceId === 'other') {
-      // Для опции "Другой сервис" не меняем стоимость
-      form.setValue("title", t('subscriptions.otherService'));
+      // Для опции "Другой сервис" показываем поле ввода названия
+      setIsCustomService(true);
+      // Сбрасываем название сервиса, чтобы пользователь сам ввел его
+      form.setValue("title", "");
       return;
     }
+    
+    // Скрываем поле ввода названия кастомного сервиса
+    setIsCustomService(false);
     
     if (!Array.isArray(services)) return;
     
@@ -321,21 +354,46 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {Array.isArray(services) ? (
-                            services.map((service) => (
-                              <SelectItem key={service.id} value={service.id.toString()}>
-                                {service.title}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
+                          {/* Общие сервисы */}
+                          {Array.isArray(services) && services.map((service) => (
+                            <SelectItem key={service.id} value={service.id.toString()}>
+                              {service.title}
+                            </SelectItem>
+                          ))}
+                          
+                          {/* Разделитель */}
+                          {Array.isArray(services) && services.length > 0 && (
+                            <SelectSeparator />
                           )}
+                          
+                          {/* Опция "Другой сервис" всегда доступна */}
+                          <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                
+                {/* Поле для ввода названия сервиса, если выбран "другой сервис" */}
+                {isCustomService && (
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('subscriptions.customServiceTitle')}</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder={t('subscriptions.enterServiceName')} 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 
                 <FormField
                   control={form.control}
