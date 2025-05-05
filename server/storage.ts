@@ -166,7 +166,12 @@ export class DatabaseStorage implements IStorage {
       search?: string; 
       status?: 'all' | 'active' | 'inactive'; 
       sortBy?: string; 
-      sortOrder?: 'asc' | 'desc' 
+      sortOrder?: 'asc' | 'desc';
+      customFilter?: {
+        showPublic?: boolean;
+        hideCustom?: boolean;
+        ownerId?: number;
+      }
     }
   ): Promise<{ services: Service[], total: number }> {
     return dbOptimizer.executeQuery(async () => {
@@ -193,17 +198,49 @@ export class DatabaseStorage implements IStorage {
         } else if (filters.status === 'inactive') {
           query = query.where(eq(services.isActive, false));
         }
+        
+        // Custom services filters
+        if (filters.customFilter) {
+          const customFilter = filters.customFilter;
+          
+          // Условия для фильтрации
+          const conditions: SQL[] = [];
+          
+          // Показывать общедоступные сервисы (isCustom = false)
+          if (customFilter.showPublic) {
+            conditions.push(eq(services.isCustom, false));
+          }
+          
+          // Показывать кастомные сервисы конкретного пользователя
+          if (customFilter.ownerId) {
+            conditions.push(
+              and(
+                eq(services.isCustom, true),
+                eq(services.ownerId, customFilter.ownerId)
+              )
+            );
+          }
+          
+          // Скрывать все кастомные сервисы
+          if (customFilter.hideCustom) {
+            query = query.where(eq(services.isCustom, false));
+          } 
+          // Если указаны условия для отображения и они не включают hideCustom
+          else if (conditions.length > 0) {
+            query = query.where(or(...conditions));
+          }
+        }
       }
       
       // Count total (before applying limit/offset)
-      const countQuery = db
+      let countQuery = db
         .select({ count: sql<number>`count(*)` })
         .from(services);
       
       // Apply the same filters to the count query
       if (filters) {
         if (filters.search) {
-          countQuery.where(
+          countQuery = countQuery.where(
             or(
               sql`LOWER(${services.title}) LIKE LOWER(${'%' + filters.search + '%'})`,
               sql`LOWER(${services.description}) LIKE LOWER(${'%' + filters.search + '%'})`
@@ -212,9 +249,41 @@ export class DatabaseStorage implements IStorage {
         }
         
         if (filters.status === 'active') {
-          countQuery.where(eq(services.isActive, true));
+          countQuery = countQuery.where(eq(services.isActive, true));
         } else if (filters.status === 'inactive') {
-          countQuery.where(eq(services.isActive, false));
+          countQuery = countQuery.where(eq(services.isActive, false));
+        }
+        
+        // Custom services filters (для подсчета)
+        if (filters.customFilter) {
+          const customFilter = filters.customFilter;
+          
+          // Условия для фильтрации
+          const conditions: SQL[] = [];
+          
+          // Показывать общедоступные сервисы (isCustom = false)
+          if (customFilter.showPublic) {
+            conditions.push(eq(services.isCustom, false));
+          }
+          
+          // Показывать кастомные сервисы конкретного пользователя
+          if (customFilter.ownerId) {
+            conditions.push(
+              and(
+                eq(services.isCustom, true),
+                eq(services.ownerId, customFilter.ownerId)
+              )
+            );
+          }
+          
+          // Скрывать все кастомные сервисы
+          if (customFilter.hideCustom) {
+            countQuery = countQuery.where(eq(services.isCustom, false));
+          } 
+          // Если указаны условия для отображения и они не включают hideCustom
+          else if (conditions.length > 0) {
+            countQuery = countQuery.where(or(...conditions));
+          }
         }
       }
       

@@ -144,6 +144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const status = req.query.status as 'all' | 'active' | 'inactive';
       const sortBy = req.query.sortBy as string;
       const sortOrder = req.query.sortOrder as 'asc' | 'desc';
+      const showCustom = req.query.showCustom === 'true';
       
       // Build filter object (only include non-empty values)
       const filters: any = {};
@@ -151,6 +152,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (status && status !== 'all') filters.status = status;
       if (sortBy) filters.sortBy = sortBy;
       if (sortOrder) filters.sortOrder = sortOrder;
+      
+      // Определяем параметры фильтрации для кастомных сервисов
+      if (req.isAuthenticated()) {
+        // Для аутентифицированных пользователей
+        if (req.user.role !== 'admin') {
+          // Для обычных пользователей показываем только публичные сервисы и их кастомные сервисы
+          filters.customFilter = {
+            ownerId: req.user.id,
+            showPublic: true // Будет использоваться в storage.listServices для показа публичных сервисов
+          };
+        } else if (!showCustom) {
+          // Для админов по умолчанию показываем только публичные сервисы, 
+          // если специально не запрошены кастомные через параметр showCustom
+          filters.customFilter = {
+            showPublic: true,
+            hideCustom: true
+          };
+        }
+      } else {
+        // Для неаутентифицированных пользователей показываем только публичные сервисы
+        filters.customFilter = {
+          showPublic: true,
+          hideCustom: true
+        };
+      }
       
       // Get filtered services
       const result = await storage.listServices(page, limit, 
@@ -180,9 +206,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/services", isAdmin, async (req, res) => {
+  app.post("/api/services", isAuthenticated, async (req, res) => {
     try {
-      const validatedData = insertServiceSchema.parse(req.body);
+      let validatedData = insertServiceSchema.parse(req.body);
+      
+      // Регулярные пользователи могут создавать только собственные кастомные сервисы
+      if (req.user.role !== "admin") {
+        validatedData.isCustom = true;
+        validatedData.ownerId = req.user.id;
+      }
+      
       const service = await storage.createService(validatedData);
       res.status(201).json(service);
     } catch (error) {
@@ -194,14 +227,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/services/:id", isAdmin, async (req, res) => {
+  app.patch("/api/services/:id", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const service = await storage.updateService(id, req.body);
       
-      if (!service) {
+      // Получаем сервис перед обновлением для проверки прав доступа
+      const existingService = await storage.getService(id);
+      
+      if (!existingService) {
         return res.status(404).json({ message: "Service not found" });
       }
+      
+      // Обычные пользователи могут редактировать только свои кастомные сервисы
+      if (req.user.role !== 'admin' && 
+          (!existingService.isCustom || existingService.ownerId !== req.user.id)) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const service = await storage.updateService(id, req.body);
       
       res.json(service);
     } catch (error) {
@@ -210,9 +253,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/services/:id", isAdmin, async (req, res) => {
+  app.delete("/api/services/:id", isAuthenticated, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      
+      // Получаем сервис перед удалением для проверки прав доступа
+      const existingService = await storage.getService(id);
+      
+      if (!existingService) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+      
+      // Обычные пользователи могут удалять только свои кастомные сервисы
+      if (req.user.role !== 'admin' && 
+          (!existingService.isCustom || existingService.ownerId !== req.user.id)) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
       const success = await storage.deleteService(id);
       
       if (!success) {
