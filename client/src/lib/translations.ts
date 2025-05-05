@@ -492,6 +492,9 @@ export type Translation = {
     };
     unknownService: string;
     errorLoading: string;
+    otherService: string;
+    customServiceTitle: string;
+    enterServiceName: string;
   };
 
   // Кастомные поля

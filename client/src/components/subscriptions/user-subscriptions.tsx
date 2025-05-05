@@ -25,7 +25,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -363,7 +362,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           
                           {/* Разделитель */}
                           {Array.isArray(services) && services.length > 0 && (
-                            <SelectSeparator />
+                            <div className="h-px bg-muted my-1" />
                           )}
                           
                           {/* Опция "Другой сервис" всегда доступна */}
