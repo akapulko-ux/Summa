@@ -188,8 +188,10 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   
   // При выборе сервиса устанавливаем стоимость по умолчанию из сервиса
   const handleServiceChange = (serviceId: string) => {
-    const selectedService = services?.find(s => s.id === parseInt(serviceId));
-    if (selectedService) {
+    if (!Array.isArray(services)) return;
+    
+    const selectedService = services.find(s => s.id === parseInt(serviceId));
+    if (selectedService && selectedService.price) {
       form.setValue("amount", selectedService.price);
     }
   };
@@ -243,9 +245,11 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   };
   
   // Получение названия сервиса по ID
-  const getServiceName = (serviceId: number) => {
-    const service = services?.find(s => s.id === serviceId);
-    return service ? service.name : t('subscriptions.unknownService');
+  const getServiceName = (serviceId: number | null) => {
+    if (!serviceId) return t('subscriptions.unknownService');
+    if (!Array.isArray(services)) return t('subscriptions.unknownService');
+    const service = services.find(s => s.id === serviceId);
+    return service ? service.title : t('subscriptions.unknownService');
   };
   
   // Сброс формы при открытии диалога
@@ -305,11 +309,15 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {services?.map((service) => (
-                            <SelectItem key={service.id} value={service.id.toString()}>
-                              {service.name}
-                            </SelectItem>
-                          ))}
+                          {Array.isArray(services) ? (
+                            services.map((service) => (
+                              <SelectItem key={service.id} value={service.id.toString()}>
+                                {service.title}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                       <FormMessage />
