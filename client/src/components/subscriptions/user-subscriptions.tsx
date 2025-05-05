@@ -50,7 +50,7 @@ import {
 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { insertSubscriptionSchema } from "@shared/schema";
 import { z } from "zod";
@@ -61,6 +61,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 // Расширим схему валидации для формы подписки
 const createSubscriptionSchema = insertSubscriptionSchema.extend({
   serviceId: z.union([z.coerce.number(), z.literal('other')]),
+  serviceName: z.string().min(1, "Необходимо указать название сервиса").optional(), // Название кастомного сервиса
   startDate: z.date(),
   endDate: z.date().optional(),
   amount: z.number().default(0), // Добавляем поле amount для хранения стоимости
@@ -187,23 +188,31 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     }
   };
   
+  // Отслеживание выбранного сервиса для контроля доступности поля названия сервиса
+  const [isCustomService, setIsCustomService] = useState(false);
+  
   // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
     if (serviceId === 'other') {
-      // Для опции "Другой сервис" не меняем стоимость
+      // Для опции "Другой сервис" разблокируем поле ввода названия сервиса
+      setIsCustomService(true);
+      // Очищаем название сервиса, чтобы пользователь ввел свое
+      form.setValue("serviceName", "");
       form.setValue("title", t('subscriptions.otherService'));
       return;
     }
+    
+    setIsCustomService(false);
     
     if (!Array.isArray(services)) return;
     
     const selectedService = services.find(s => s.id === parseInt(serviceId));
     if (selectedService) {
-      // Устанавливаем название сервиса
+      // Устанавливаем название подписки и название сервиса
       form.setValue("title", selectedService.title);
+      form.setValue("serviceName", selectedService.title);
       
-      // Здесь можно было бы устанавливать стоимость по умолчанию,
-      // если бы у сервиса была стоимость, но сейчас просто оставляем нулевую
+      // Устанавливаем нулевую стоимость по умолчанию
       form.setValue("amount", 0);
     }
   };
@@ -321,17 +330,38 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {Array.isArray(services) ? (
-                            services.map((service) => (
-                              <SelectItem key={service.id} value={service.id.toString()}>
-                                {service.title}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
-                          )}
+                          {Array.isArray(services) && services.map((service) => (
+                            <SelectItem key={service.id} value={service.id.toString()}>
+                              {service.title}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {/* Новое поле для названия сервиса */}
+                <FormField
+                  control={form.control}
+                  name="serviceName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('subscriptions.serviceName')}</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          disabled={!isCustomService}
+                          placeholder={isCustomService ? t('subscriptions.enterServiceName') : ""} 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {isCustomService 
+                          ? t('subscriptions.customServiceNameDescription')
+                          : t('subscriptions.predefinedServiceNameDescription')}
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
