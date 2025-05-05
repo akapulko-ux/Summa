@@ -291,7 +291,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                 />
                 
                 {/* Поле для ввода названия сервиса, если выбран "другой сервис" */}
-                {isCustomService && (
+                {(serviceIdWatch === "other") && (
                   <FormField
                     control={form.control}
                     name="title"
