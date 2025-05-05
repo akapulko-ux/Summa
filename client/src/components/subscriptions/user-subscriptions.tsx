@@ -211,12 +211,20 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     }
   };
   
-  // Состояние для отображения поля ввода названия кастомного сервиса
+  // Отслеживаем, выбран ли "другой сервис"
   const [isCustomService, setIsCustomService] = useState(false);
+
+  useEffect(() => {
+    // Это эффект для отладки состояния isCustomService
+    console.log("isCustomService state changed:", isCustomService);
+  }, [isCustomService]);
 
   // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
+    console.log("handleServiceChange called with serviceId:", serviceId);
+    
     if (serviceId === 'other') {
+      console.log("'other' option selected, showing custom service field");
       // Для опции "Другой сервис" показываем поле ввода названия
       setIsCustomService(true);
       // Сбрасываем название сервиса, чтобы пользователь сам ввел его
@@ -224,6 +232,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
       return;
     }
     
+    console.log("Regular service selected, hiding custom service field");
     // Скрываем поле ввода названия кастомного сервиса
     setIsCustomService(false);
     
@@ -296,9 +305,10 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     return service ? service.title : t('subscriptions.unknownService');
   };
   
-  // Сброс формы при открытии диалога
+  // Сброс формы при открытии/закрытии диалога
   useEffect(() => {
     if (isAddDialogOpen) {
+      // Сбрасываем форму при открытии диалога
       form.reset({
         userId,
         serviceId: undefined,
@@ -308,6 +318,10 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
         paymentPeriod: "monthly",
         amount: 0
       });
+    } else {
+      // При закрытии диалога сбрасываем флаг кастомного сервиса
+      setIsCustomService(false);
+      console.log("Dialog closed, resetting isCustomService to false");
     }
   }, [isAddDialogOpen, form, userId]);
   
@@ -342,6 +356,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                       <FormLabel>{t('subscriptions.service')}</FormLabel>
                       <Select 
                         onValueChange={(value) => {
+                          console.log("Select value changed to:", value);
                           field.onChange(value);
                           handleServiceChange(value);
                         }}
