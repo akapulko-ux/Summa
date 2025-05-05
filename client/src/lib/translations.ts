@@ -360,6 +360,12 @@ export type Translation = {
     noClients: string;
     active: string;
     inactive: string;
+    // Custom services
+    customService: string;
+    createCustomService: string;
+    myCustomServices: string;
+    allServices: string;
+    ownedBy: string;
   };
 
   // Подписки
@@ -1126,6 +1132,12 @@ export const en: Translation = {
     noClients: "No clients are using this service",
     active: "Active",
     inactive: "Inactive",
+    // Custom services
+    customService: "Custom Service",
+    createCustomService: "Create Custom Service",
+    myCustomServices: "My Custom Services",
+    allServices: "All Services",
+    ownedBy: "Owned by",
   },
 
   subscriptions: {
