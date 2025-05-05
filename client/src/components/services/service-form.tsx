@@ -20,6 +20,7 @@ import { Service } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslations } from "@/hooks/use-translations";
+import { useAuth } from "@/hooks/use-auth";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomFieldsManager } from "@/components/custom-fields/custom-fields-manager";
@@ -38,13 +39,15 @@ type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 
 interface ServiceFormProps {
   serviceId?: number;
+  isCustom?: boolean;
   onSuccess?: () => void;
 }
 
-export function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) {
+export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceFormProps) {
   const { t } = useTranslations();
   const [activeTab, setActiveTab] = useState("general");
   const [isActive, setIsActive] = useState(true);
+  const { user } = useAuth();
 
   // Fetch service data if editing
   const { data: serviceData, isLoading: isLoadingService } = useQuery<Service>({
@@ -61,6 +64,8 @@ export function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) {
         iconUrl: data.iconUrl || undefined,
         cashback: data.cashback || undefined,
         isActive: isActive,
+        isCustom: isCustom,
+        ownerId: isCustom ? user?.id : undefined,
       };
       
       const res = await apiRequest("POST", "/api/services", processedData);

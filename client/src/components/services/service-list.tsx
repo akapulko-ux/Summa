@@ -121,24 +121,48 @@ export function ServiceList() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{t('services.title')}</CardTitle>
-          {isAdmin && (
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Button 
+                variant="outline" 
+                onClick={() => setFilters(prev => ({
+                  ...prev,
+                  showCustom: !prev.showCustom
+                }))}
+              >
+                {filters.showCustom 
+                  ? t('services.hideCustomServices') 
+                  : t('services.showCustomServices')}
+              </Button>
+            )}
             <Dialog>
               <DialogTrigger asChild>
                 <Button>
-                  {t('services.addService')}
+                  {isAdmin 
+                    ? t('services.addService')
+                    : t('services.addCustomService')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                  <DialogTitle>{t('services.addService')}</DialogTitle>
-                  <DialogDescription id="dialog-description">{t('services.serviceDescription')}</DialogDescription>
+                  <DialogTitle>
+                    {isAdmin 
+                      ? t('services.addService')
+                      : t('services.addCustomService')}
+                  </DialogTitle>
+                  <DialogDescription id="dialog-description">
+                    {isAdmin 
+                      ? t('services.serviceDescription')
+                      : t('services.customServiceDescription')}
+                  </DialogDescription>
                 </DialogHeader>
                 <ServiceForm 
+                  isCustom={!isAdmin}
                   onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/services"] })} 
                 />
               </DialogContent>
             </Dialog>
-          )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="border-b pt-0">
@@ -221,7 +245,14 @@ export function ServiceList() {
                             </span>
                           </div>
                         )}
-                        <span className="font-medium">{service.title}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{service.title}</span>
+                          {service.isCustom && (
+                            <Badge variant="outline" className="text-xs">
+                              {t('services.customService')}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell className="max-w-md">
@@ -236,7 +267,8 @@ export function ServiceList() {
                           <Eye className="h-4 w-4" />
                           <span className="sr-only">{language === 'ru' ? 'Просмотр' : 'View'}</span>
                         </Button>
-                        {isAdmin && (
+                        {/* Показываем кнопки редактирования для админов или если это кастомный сервис пользователя */}
+                        {(isAdmin || (service.isCustom && service.ownerId === user?.id)) && (
                           <>
                             <Button variant="ghost" size="sm" onClick={() => handleEdit(service.id)}>
                               <Pencil className="h-4 w-4" />

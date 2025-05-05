@@ -29,6 +29,7 @@ export type ServiceFilters = {
   status: "all" | "active" | "inactive";
   sortBy: string;
   sortOrder: "asc" | "desc";
+  showCustom?: boolean;  // Показывать ли кастомные сервисы (для админа)
 };
 
 export type ServiceSortOption = {
