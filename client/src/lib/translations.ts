@@ -1178,6 +1178,7 @@ export const en: Translation = {
     active: "Active",
     activeUntil: "Active until",
     nextPayment: "Next payment",
+    otherService: "Other service",
   },
 
   users: {
