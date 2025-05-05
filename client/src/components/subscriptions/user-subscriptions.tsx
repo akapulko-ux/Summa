@@ -60,9 +60,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 // Расширим схему валидации для формы подписки
 const createSubscriptionSchema = insertSubscriptionSchema.extend({
-  serviceId: z.coerce.number().min(1, "Необходимо выбрать сервис"),
+  serviceId: z.union([z.coerce.number(), z.literal('other')]),
   startDate: z.date(),
   endDate: z.date().optional(),
+  amount: z.number().default(0), // Добавляем поле amount для хранения стоимости
 });
 
 // Тип данных формы
@@ -186,13 +187,24 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     }
   };
   
-  // При выборе сервиса устанавливаем стоимость по умолчанию из сервиса
+  // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
+    if (serviceId === 'other') {
+      // Для опции "Другой сервис" не меняем стоимость
+      form.setValue("title", t('subscriptions.otherService'));
+      return;
+    }
+    
     if (!Array.isArray(services)) return;
     
     const selectedService = services.find(s => s.id === parseInt(serviceId));
-    if (selectedService && selectedService.price) {
-      form.setValue("amount", selectedService.price);
+    if (selectedService) {
+      // Устанавливаем название сервиса
+      form.setValue("title", selectedService.title);
+      
+      // Здесь можно было бы устанавливать стоимость по умолчанию,
+      // если бы у сервиса была стоимость, но сейчас просто оставляем нулевую
+      form.setValue("amount", 0);
     }
   };
   
@@ -527,11 +539,11 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                     <TableCell className="font-medium">
                       {getServiceName(subscription.serviceId)}
                     </TableCell>
-                    <TableCell>{formatDate(subscription.startDate)}</TableCell>
-                    <TableCell>{subscription.endDate ? formatDate(subscription.endDate) : "-"}</TableCell>
-                    <TableCell>{subscription.amount?.toFixed(2)}</TableCell>
-                    <TableCell>{renderPaymentPeriod(subscription.paymentPeriod)}</TableCell>
-                    <TableCell>{renderStatus(subscription.status)}</TableCell>
+                    <TableCell>{formatDate(subscription.createdAt)}</TableCell>
+                    <TableCell>{subscription.paidUntil ? formatDate(subscription.paidUntil) : "-"}</TableCell>
+                    <TableCell>{subscription.paymentAmount?.toFixed(2) || "0.00"}</TableCell>
+                    <TableCell>{renderPaymentPeriod(subscription.paymentPeriod || "monthly")}</TableCell>
+                    <TableCell>{renderStatus(subscription.status || "active")}</TableCell>
                     <TableCell className="text-right">
                       <Button 
                         variant="ghost" 
