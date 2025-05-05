@@ -1721,6 +1721,10 @@ export const ru: Translation = {
     editSubscription: "Редактировать подписку",
     subscriptionTitle: "Название подписки",
     service: "Сервис",
+    serviceName: "Название сервиса",
+    enterServiceName: "Введите название сервиса",
+    customServiceNameDescription: "Введите название для вашего кастомного сервиса",
+    predefinedServiceNameDescription: "Это поле заполняется автоматически для предустановленных сервисов",
     domain: "Домен",
     loginId: "Логин",
     paymentPeriod: "Период оплаты",
@@ -1820,6 +1824,7 @@ export const ru: Translation = {
       yearly: "Ежегодно"
     },
     unknownService: "Неизвестный сервис",
+    otherService: "Другой сервис",
     errorLoading: "Ошибка загрузки подписок",
   },
 
