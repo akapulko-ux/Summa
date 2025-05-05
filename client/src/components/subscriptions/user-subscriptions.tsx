@@ -1,54 +1,118 @@
 import { useState, useEffect } from "react";
+import { useTranslations } from "@/hooks/use-translations";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Check, Plus, Trash, RefreshCw, AlertCircle, CalendarIcon, CreditCard, CheckCircle2 } from "lucide-react";
-import { format } from "date-fns";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Subscription, Service } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  Calendar as CalendarIcon, 
+  Plus, 
+  CreditCard, 
+  RefreshCw, 
+  Trash, 
+  AlertCircle,
+  CheckCircle2
+} from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import { useTranslations } from "@/hooks/use-translations";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { insertSubscriptionSchema } from "@shared/schema";
+import { z } from "zod";
+import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Subscription, Service } from "@shared/schema";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-// Схема для создания подписки
-const createSubscriptionSchema = z.object({
-  userId: z.number(),
-  serviceId: z.string().optional().transform(val => val === "other" ? null : val ? parseInt(val) : null),
-  title: z.string().min(1, "Название сервиса обязательно"),
+// Расширим схему валидации для формы подписки
+const createSubscriptionSchema = insertSubscriptionSchema.extend({
+  serviceId: z.union([z.coerce.number(), z.literal('other')]),
   startDate: z.date(),
-  endDate: z.date().optional().nullable(),
-  paymentPeriod: z.enum(["monthly", "quarterly", "yearly"]),
-  amount: z.number().min(0),
-  status: z.enum(["active", "pending", "expired", "canceled"]),
+  endDate: z.date().optional(),
+  amount: z.number().default(0), // Добавляем поле amount для хранения стоимости
 });
 
-type CreateSubscriptionValues = z.infer<typeof createSubscriptionSchema>;
+// Тип данных формы
+type SubscriptionFormValues = z.infer<typeof createSubscriptionSchema>;
 
 interface UserSubscriptionsProps {
   userId: number;
 }
 
 export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
+  const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
-  // Форма для добавления подписки
-  const form = useForm<CreateSubscriptionValues>({
+  
+  // Получение списка подписок пользователя
+  const { 
+    data: subscriptions, 
+    isLoading, 
+    isError 
+  } = useQuery<Subscription[]>({
+    queryKey: ["/api/subscriptions", userId],
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/subscriptions?userId=${userId}`);
+      if (!res.ok) throw new Error("Failed to fetch subscriptions");
+      const data = await res.json();
+      return data.subscriptions;
+    },
+    enabled: Boolean(userId),
+  });
+  
+  // Получение списка доступных сервисов для подписки
+  const { 
+    data: services,
+  } = useQuery<Service[]>({
+    queryKey: ["/api/services"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/services?status=active");
+      if (!res.ok) throw new Error("Failed to fetch services");
+      const data = await res.json();
+      return data.services;
+    },
+  });
+  
+  // Форма для создания новой подписки
+  const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(createSubscriptionSchema),
     defaultValues: {
       userId,
       serviceId: undefined,
-      title: "",
       startDate: new Date(),
       endDate: undefined,
       status: "active",
@@ -56,106 +120,93 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
       amount: 0
     },
   });
-
-  // Загрузка списка подписок пользователя
-  const { data: subscriptions, isLoading, isError } = useQuery<Subscription[]>({
-    queryKey: ["/api/subscriptions", userId],
-    queryFn: async () => {
-      const res = await fetch(`/api/subscriptions?userId=${userId}`);
-      if (!res.ok) throw new Error("Failed to fetch subscriptions");
-      const data = await res.json();
-      return data.subscriptions;
-    }
-  });
-
-  // Загрузка списка сервисов
-  const { data: services } = useQuery<Service[]>({
-    queryKey: ["/api/services"],
-    queryFn: async () => {
-      const res = await fetch("/api/services");
-      if (!res.ok) throw new Error("Failed to fetch services");
-      const data = await res.json();
-      return data.services;
-    }
-  });
-
-  // Мутация для создания подписки
+  
+  // Мутация для создания новой подписки
   const createSubscriptionMutation = useMutation({
-    mutationFn: async (data: CreateSubscriptionValues) => {
+    mutationFn: async (data: SubscriptionFormValues) => {
       const res = await apiRequest("POST", "/api/subscriptions", data);
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Не удалось создать подписку");
+        throw new Error(errorData.message || "Failed to create subscription");
       }
       return res.json();
     },
     onSuccess: () => {
+      toast({
+        title: t('subscriptions.addSuccess'),
+        description: t('subscriptions.addSuccessDescription'),
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions", userId] });
       setIsAddDialogOpen(false);
       form.reset();
     },
     onError: (error: Error) => {
-      console.error("Error creating subscription:", error);
-      // Можно показать тост с ошибкой
-    }
+      toast({
+        title: t('subscriptions.addError'),
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
-
+  
   // Мутация для удаления подписки
   const deleteSubscriptionMutation = useMutation({
     mutationFn: async (subscriptionId: number) => {
       const res = await apiRequest("DELETE", `/api/subscriptions/${subscriptionId}`);
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Не удалось удалить подписку");
+        throw new Error(errorData.message || "Failed to delete subscription");
       }
       return res.json();
     },
     onSuccess: () => {
+      toast({
+        title: t('subscriptions.deleteSuccess'),
+        description: t('subscriptions.deleteSuccessDescription'),
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions", userId] });
     },
     onError: (error: Error) => {
-      console.error("Error deleting subscription:", error);
-      // Можно показать тост с ошибкой
-    }
+      toast({
+        title: t('subscriptions.deleteError'),
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
-
-  // Обработка отправки формы
-  const onSubmit = (data: CreateSubscriptionValues) => {
+  
+  // Обработчик отправки формы
+  const onSubmit = (data: SubscriptionFormValues) => {
     createSubscriptionMutation.mutate(data);
   };
-
-  // Обработка удаления подписки
+  
+  // Обработчик удаления подписки
   const handleDelete = (subscriptionId: number) => {
-    if (confirm(t('subscriptions.confirmDelete'))) {
+    if (window.confirm(t('subscriptions.confirmDelete'))) {
       deleteSubscriptionMutation.mutate(subscriptionId);
     }
   };
   
-  // Значение serviceId из формы для отслеживания
-  const serviceIdWatch = form.watch("serviceId");
-  
-  // Вычисляем, выбран ли "другой сервис"
-  const isCustomService = serviceIdWatch === "other";
-  
-  // При изменении serviceId
-  useEffect(() => {
-    console.log("serviceIdWatch изменился:", serviceIdWatch);
-    console.log("isCustomService теперь:", isCustomService);
-    
-    if (serviceIdWatch === "other") {
-      // Для опции "Другой сервис" сбрасываем название сервиса
-      form.setValue("title", "");
-    } else if (serviceIdWatch) {
-      // Для обычного сервиса устанавливаем название из выбранного
-      if (Array.isArray(services)) {
-        const selectedService = services.find(s => s.id === parseInt(serviceIdWatch));
-        if (selectedService) {
-          form.setValue("title", selectedService.title);
-          form.setValue("amount", 0);
-        }
-      }
+  // При выборе сервиса
+  const handleServiceChange = (serviceId: string) => {
+    if (serviceId === 'other') {
+      // Для опции "Другой сервис" не меняем стоимость
+      form.setValue("title", t('subscriptions.otherService'));
+      return;
     }
-  }, [serviceIdWatch, services, form]);
+    
+    if (!Array.isArray(services)) return;
+    
+    const selectedService = services.find(s => s.id === parseInt(serviceId));
+    if (selectedService) {
+      // Устанавливаем название сервиса
+      form.setValue("title", selectedService.title);
+      
+      // Здесь можно было бы устанавливать стоимость по умолчанию,
+      // если бы у сервиса была стоимость, но сейчас просто оставляем нулевую
+      form.setValue("amount", 0);
+    }
+  };
   
   // Функция для отображения статуса подписки с соответствующим стилем
   const renderStatus = (status: string) => {
@@ -213,14 +264,12 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     return service ? service.title : t('subscriptions.unknownService');
   };
   
-  // Сброс формы при открытии/закрытии диалога
+  // Сброс формы при открытии диалога
   useEffect(() => {
     if (isAddDialogOpen) {
-      // Сбрасываем форму при открытии диалога
       form.reset({
         userId,
         serviceId: undefined,
-        title: "",
         startDate: new Date(),
         endDate: undefined,
         status: "active",
@@ -260,7 +309,10 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                     <FormItem>
                       <FormLabel>{t('subscriptions.service')}</FormLabel>
                       <Select 
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          handleServiceChange(value);
+                        }}
                         defaultValue={field.value?.toString()}
                       >
                         <FormControl>
@@ -269,46 +321,21 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {/* Общие сервисы */}
-                          {Array.isArray(services) && services.map((service) => (
-                            <SelectItem key={service.id} value={service.id.toString()}>
-                              {service.title}
-                            </SelectItem>
-                          ))}
-                          
-                          {/* Разделитель */}
-                          {Array.isArray(services) && services.length > 0 && (
-                            <div className="h-px bg-muted my-1" />
+                          {Array.isArray(services) ? (
+                            services.map((service) => (
+                              <SelectItem key={service.id} value={service.id.toString()}>
+                                {service.title}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
                           )}
-                          
-                          {/* Опция "Другой сервис" всегда доступна - используем строковое значение 'other' */}
-                          <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
-                {/* Поле для ввода названия сервиса, если выбран "другой сервис" */}
-                {(serviceIdWatch === "other") && (
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('subscriptions.customServiceTitle')}</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder={t('subscriptions.enterServiceName')} 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
                 
                 <FormField
                   control={form.control}
