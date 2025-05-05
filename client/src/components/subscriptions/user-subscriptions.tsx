@@ -189,9 +189,10 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   
   // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
+    // Обработка кастомного сервиса
     if (serviceId === 'other') {
-      // Для опции "Другой сервис" не меняем стоимость
-      form.setValue("title", t('subscriptions.otherService'));
+      // Очищаем поле title для кастомного сервиса и делаем его редактируемым
+      form.setValue("title", "");
       return;
     }
     
@@ -199,7 +200,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     
     const selectedService = services.find(s => s.id === parseInt(serviceId));
     if (selectedService) {
-      // Устанавливаем название сервиса
+      // Устанавливаем название сервиса из выбранного предустановленного сервиса
       form.setValue("title", selectedService.title);
       
       // Здесь можно было бы устанавливать стоимость по умолчанию,
@@ -321,17 +322,32 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {Array.isArray(services) ? (
-                            services.map((service) => (
-                              <SelectItem key={service.id} value={service.id.toString()}>
-                                {service.title}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
-                          )}
+                          {Array.isArray(services) && services.map((service) => (
+                            <SelectItem key={service.id} value={service.id.toString()}>
+                              {service.title}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('subscriptions.serviceTitle')}</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          disabled={form.getValues('serviceId') !== 'other' && form.getValues('serviceId') !== undefined} 
+                          placeholder={t('subscriptions.enterServiceTitle')}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

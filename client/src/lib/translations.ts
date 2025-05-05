@@ -1147,6 +1147,8 @@ export const en: Translation = {
     editSubscription: "Edit Subscription",
     subscriptionTitle: "Subscription Title",
     service: "Service",
+    serviceTitle: "Service Name",
+    enterServiceTitle: "Enter service name",
     domain: "Domain",
     loginId: "Login ID",
     paymentPeriod: "Payment Period",
