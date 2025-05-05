@@ -193,7 +193,10 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   
   // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
+    console.log("Service selected:", serviceId, typeof serviceId);
+    
     if (serviceId === 'other') {
+      console.log("Custom service selected");
       // Для опции "Другой сервис" разблокируем поле ввода названия сервиса
       setIsCustomService(true);
       // Очищаем название сервиса, чтобы пользователь ввел свое
@@ -202,11 +205,17 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
       return;
     }
     
+    console.log("Standard service selected:", serviceId);
     setIsCustomService(false);
     
-    if (!Array.isArray(services)) return;
+    if (!Array.isArray(services)) {
+      console.log("Services is not array:", services);
+      return;
+    }
     
     const selectedService = services.find(s => s.id === parseInt(serviceId));
+    console.log("Selected service:", selectedService);
+    
     if (selectedService) {
       // Устанавливаем название подписки и название сервиса
       form.setValue("title", selectedService.title);
