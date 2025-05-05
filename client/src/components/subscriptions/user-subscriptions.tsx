@@ -190,23 +190,32 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   
   // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
+    console.log("Service changed to:", serviceId);
+    
     // Обработка кастомного сервиса
     if (serviceId === 'other') {
+      console.log("Custom service selected, clearing title field");
       // Очищаем поле title для кастомного сервиса и делаем его редактируемым
       form.setValue("title", "");
       return;
     }
     
-    if (!Array.isArray(services)) return;
+    if (!Array.isArray(services)) {
+      console.log("Services not available");
+      return;
+    }
     
     const selectedService = services.find(s => s.id === parseInt(serviceId));
     if (selectedService) {
+      console.log("Service found, setting title to:", selectedService.title);
       // Устанавливаем название сервиса из выбранного предустановленного сервиса
       form.setValue("title", selectedService.title);
       
       // Здесь можно было бы устанавливать стоимость по умолчанию,
       // если бы у сервиса была стоимость, но сейчас просто оставляем нулевую
       form.setValue("amount", 0);
+    } else {
+      console.log("Service not found in services array");
     }
   };
   
