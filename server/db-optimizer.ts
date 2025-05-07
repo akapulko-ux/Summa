@@ -14,16 +14,62 @@ export class DBOptimizer {
   private longQueryThreshold: number = 500; // порог для логирования медленных запросов (мс)
   private queryStatistics: Map<string, { count: number, totalTime: number }> = new Map();
   private isMonitoringEnabled: boolean = false;
+  
+  constructor() {
+    // Инициализация состояния мониторинга из БД при запуске приложения
+    this.loadMonitoringStatusFromDB().catch(error => {
+      log(`Error loading monitoring status: ${error.message}`, 'db-optimizer');
+    });
+  }
+  
+  /**
+   * Загрузить статус мониторинга из базы данных
+   */
+  private async loadMonitoringStatusFromDB(): Promise<void> {
+    try {
+      const result = await db.execute<{ value: string }>(sql`
+        SELECT value FROM system_settings WHERE key = 'db_monitoring_enabled' LIMIT 1
+      `);
+      
+      if (result && result.rows && result.rows.length > 0) {
+        const value = result.rows[0].value;
+        this.isMonitoringEnabled = value === 'true';
+        log(`Loaded monitoring status from DB: ${this.isMonitoringEnabled}`, 'db-optimizer');
+      }
+    } catch (error) {
+      log(`Failed to load monitoring status: ${(error as Error).message}`, 'db-optimizer');
+    }
+  }
+  
+  /**
+   * Сохранить статус мониторинга в базе данных
+   */
+  private async saveMonitoringStatusToDB(enabled: boolean): Promise<void> {
+    try {
+      await db.execute(sql`
+        UPDATE system_settings 
+        SET value = ${enabled ? 'true' : 'false'}, 
+            updated_at = NOW()
+        WHERE key = 'db_monitoring_enabled'
+      `);
+      log(`Saved monitoring status to DB: ${enabled}`, 'db-optimizer');
+    } catch (error) {
+      log(`Failed to save monitoring status: ${(error as Error).message}`, 'db-optimizer');
+    }
+  }
 
   /**
    * Включить мониторинг запросов к БД
    */
-  enableQueryMonitoring(): void {
+  async enableQueryMonitoring(): Promise<void> {
     if (this.isMonitoringEnabled) return;
     this.isMonitoringEnabled = true;
     
     // Очищаем статистику при включении мониторинга
     this.queryStatistics.clear();
+    
+    // Сохраняем статус в базу данных
+    await this.saveMonitoringStatusToDB(true);
     
     // Логируем включение мониторинга
     log('DB query monitoring enabled', 'db-optimizer');
@@ -32,8 +78,12 @@ export class DBOptimizer {
   /**
    * Отключить мониторинг запросов к БД
    */
-  disableQueryMonitoring(): void {
+  async disableQueryMonitoring(): Promise<void> {
     this.isMonitoringEnabled = false;
+    
+    // Сохраняем статус в базу данных
+    await this.saveMonitoringStatusToDB(false);
+    
     log('DB query monitoring disabled', 'db-optimizer');
   }
   

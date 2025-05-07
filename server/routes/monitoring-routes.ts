@@ -98,15 +98,19 @@ export function setupMonitoringRoutes(app: Express) {
     }
   });
   
-  app.post('/api/monitoring/db/monitoring', isAdmin, (req: Request, res: Response) => {
+  app.post('/api/monitoring/db/monitoring', isAdmin, async (req: Request, res: Response) => {
     const { enabled } = req.body;
     
-    if (enabled) {
-      dbOptimizer.enableQueryMonitoring();
-      res.json({ message: 'DB query monitoring enabled' });
-    } else {
-      dbOptimizer.disableQueryMonitoring();
-      res.json({ message: 'DB query monitoring disabled' });
+    try {
+      if (enabled) {
+        await dbOptimizer.enableQueryMonitoring();
+        res.json({ message: 'DB query monitoring enabled' });
+      } else {
+        await dbOptimizer.disableQueryMonitoring();
+        res.json({ message: 'DB query monitoring disabled' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: `Failed to update monitoring status: ${(error as Error).message}` });
     }
   });
   

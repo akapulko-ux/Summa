@@ -133,6 +133,20 @@ export const insertCustomFieldSchema = createInsertSchema(customFields, {
   options: z.string().optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
+// Системные настройки
+export const systemSettings = pgTable('system_settings', {
+  id: serial('id').primaryKey(),
+  key: text('key').notNull().unique(),
+  value: text('value'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const insertSystemSettingSchema = createInsertSchema(systemSettings, {
+  key: z.string().min(1),
+  value: z.string().optional(),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -145,6 +159,9 @@ export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 
 export type CustomField = typeof customFields.$inferSelect;
 export type InsertCustomField = z.infer<typeof insertCustomFieldSchema>;
+
+export type SystemSetting = typeof systemSettings.$inferSelect;
+export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
 
 // Auth related schemas for client side validation
 export const loginSchema = z.object({
