@@ -1523,6 +1523,44 @@ export const ru: Translation = {
     avgMinMaxPrices: "Средняя, минимальная и максимальная цены подписок",
 
   },
+  reports: {
+    title: "Отчеты",
+    generateReport: "Сформировать отчет",
+    generateReportDesc: "Создание настраиваемых отчетов на основе ваших данных",
+    recentReports: "Недавние отчеты",
+    recentReportsDesc: "Ваши недавно сформированные отчеты",
+    reportType: "Тип отчета",
+    format: "Формат",
+    startDate: "Дата начала",
+    endDate: "Дата окончания",
+    generating: "Формирование отчета...",
+    selectReportType: "Выберите тип отчета",
+    selectFormat: "Выберите формат",
+    viewAllReports: "Просмотреть все отчеты",
+    pickDate: "Выберите дату",
+    
+    // Report types
+    subscriptionReport: "Отчет по подпискам",
+    subscriptionReportDesc: "Подробная информация о подписках и доходах",
+    userReport: "Отчет по пользователям",
+    userReportDesc: "Статистика роста и активности пользователей",
+    servicesReport: "Отчет по сервисам",
+    servicesReportDesc: "Использование и популярность сервисов",
+    financialReport: "Финансовый отчет",
+    financialReportDesc: "Информация о доходах, расходах и прибыли",
+    trendsReport: "Отчет по трендам",
+    trendsReportDesc: "Тренды и прогнозы на основе исторических данных",
+    
+    // Report formats
+    pdfDocument: "PDF документ",
+    excelSpreadsheet: "Excel таблица",
+    csvFile: "CSV файл",
+    
+    // Sample reports
+    subscriptionReportSample: "Отчет по подпискам",
+    userGrowthReportSample: "Отчет по росту пользователей",
+    financialReportQ1Sample: "Финансовый отчет Q1",
+  },
   layout: {
     adminPanel: "Панель администратора",
     notifications: "Уведомления",

@@ -125,14 +125,14 @@ export default function ReportsPage() {
   return (
     <Layout>
       <div className="container py-6">
-        <h1 className="text-3xl font-bold mb-6">Reports</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('reports.title')}</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Generate Report</CardTitle>
-                <CardDescription>Create customized reports based on your data</CardDescription>
+                <CardTitle>{t('reports.generateReport')}</CardTitle>
+                <CardDescription>{t('reports.generateReportDesc')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
@@ -142,14 +142,14 @@ export default function ReportsPage() {
                       name="reportType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Report Type</FormLabel>
+                          <FormLabel>{t('reports.reportType')}</FormLabel>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a report type" />
+                                <SelectValue placeholder={t('reports.selectReportType')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -174,7 +174,7 @@ export default function ReportsPage() {
                         name="startDate"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
-                            <FormLabel>Start Date</FormLabel>
+                            <FormLabel>{t('reports.startDate')}</FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <FormControl>
@@ -188,7 +188,7 @@ export default function ReportsPage() {
                                     {field.value ? (
                                       format(field.value, "PPP")
                                     ) : (
-                                      <span>Pick a date</span>
+                                      <span>{t('reports.pickDate')}</span>
                                     )}
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                   </Button>
@@ -213,7 +213,7 @@ export default function ReportsPage() {
                         name="endDate"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
-                            <FormLabel>End Date</FormLabel>
+                            <FormLabel>{t('reports.endDate')}</FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <FormControl>
@@ -227,7 +227,7 @@ export default function ReportsPage() {
                                     {field.value ? (
                                       format(field.value, "PPP")
                                     ) : (
-                                      <span>Pick a date</span>
+                                      <span>{t('reports.pickDate')}</span>
                                     )}
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                   </Button>
@@ -253,14 +253,14 @@ export default function ReportsPage() {
                       name="format"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Format</FormLabel>
+                          <FormLabel>{t('reports.format')}</FormLabel>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a format" />
+                                <SelectValue placeholder={t('reports.selectFormat')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -281,11 +281,11 @@ export default function ReportsPage() {
                     
                     <Button type="submit" className="w-full md:w-auto" disabled={generatingReport}>
                       {generatingReport ? (
-                        <>Generating Report...</>
+                        <>{t('reports.generating')}</>
                       ) : (
                         <>
                           <Download className="mr-2 h-4 w-4" />
-                          Generate Report
+                          {t('reports.generateReport')}
                         </>
                       )}
                     </Button>
@@ -298,8 +298,8 @@ export default function ReportsPage() {
           <div>
             <Card>
               <CardHeader>
-                <CardTitle>Recent Reports</CardTitle>
-                <CardDescription>Your recently generated reports</CardDescription>
+                <CardTitle>{t('reports.recentReports')}</CardTitle>
+                <CardDescription>{t('reports.recentReportsDesc')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
