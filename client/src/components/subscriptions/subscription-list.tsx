@@ -29,7 +29,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Subscription, Service } from "@shared/schema";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { SubscriptionForm } from "./subscription-form";
+import { SubscriptionForm } from "./subscription-form-fixed";
 import { useAuth } from "@/hooks/use-auth";
 
 export function SubscriptionList() {

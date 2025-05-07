@@ -1,6 +1,6 @@
 import { AppLayout } from "@/components/layout/app-layout";
 import { SubscriptionList } from "@/components/subscriptions/subscription-list";
-import { SubscriptionForm } from "@/components/subscriptions/subscription-form";
+import { SubscriptionForm } from "@/components/subscriptions/subscription-form-fixed";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
