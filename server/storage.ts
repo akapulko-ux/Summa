@@ -518,19 +518,19 @@ export class DatabaseStorage implements IStorage {
     return dbOptimizer.executeQueryWithCache(
       async () => {
         let timeFormat: string;
-        let interval: string;
+        let intervalDuration: string;
         
         // Установка форматов в зависимости от выбранного периода
         if (period === 'year') {
           timeFormat = 'YYYY';
-          interval = '1 year';
+          intervalDuration = '1 year';
         } else if (period === 'quarter') {
           timeFormat = 'YYYY-"Q"Q';
-          interval = '3 month';
+          intervalDuration = '3 months';
         } else {
           // По умолчанию месячный период
           timeFormat = 'YYYY-MM';
-          interval = '1 month';
+          intervalDuration = '1 month';
         }
         
         const result = await db.execute(sql`
@@ -539,14 +539,14 @@ export class DatabaseStorage implements IStorage {
               to_char(date_series, ${timeFormat}) as date,
               date_series
             FROM generate_series(
-              date_trunc(${interval}, current_date - interval '1 year'),
+              date_trunc('month', current_date - interval '1 year'),
               current_date,
-              ${interval}::interval
+              (${intervalDuration})::interval
             ) as date_series
           ),
           user_counts AS (
             SELECT 
-              to_char(date_trunc(${interval}, created_at), ${timeFormat}) as date,
+              to_char(date_trunc('month', created_at), ${timeFormat}) as date,
               count(*) as count
             FROM users
             WHERE created_at >= current_date - interval '1 year'
@@ -575,36 +575,38 @@ export class DatabaseStorage implements IStorage {
     return dbOptimizer.executeQueryWithCache(
       async () => {
         let timeFormat: string;
-        let interval: string;
+        let intervalDuration: string;
         
         // Установка форматов в зависимости от выбранного периода
         if (period === 'year') {
           timeFormat = 'YYYY';
-          interval = '1 year';
+          intervalDuration = '1 year';
         } else if (period === 'quarter') {
           timeFormat = 'YYYY-"Q"Q';
-          interval = '3 month';
+          intervalDuration = '3 months';
         } else {
           // По умолчанию месячный период
           timeFormat = 'YYYY-MM';
-          interval = '1 month';
+          intervalDuration = '1 month';
         }
         
-        // Базовый запрос для получения данных о кэшбэке
-        let query = sql`
+        // Базовый запрос с фильтром по пользователю, если он указан
+        const userFilter = userId ? `AND s.user_id = ${userId}` : '';
+        
+        const query = sql`
           WITH periods AS (
             SELECT 
               to_char(date_series, ${timeFormat}) as period,
               date_series
             FROM generate_series(
-              date_trunc(${interval}, current_date - interval '1 year'),
+              date_trunc('month', current_date - interval '1 year'),
               current_date,
-              ${interval}::interval
+              (${intervalDuration})::interval
             ) as date_series
           ),
           cashback_data AS (
             SELECT 
-              to_char(date_trunc(${interval}, s.created_at), ${timeFormat}) as period,
+              to_char(date_trunc('month', s.created_at), ${timeFormat}) as period,
               SUM(
                 CASE 
                   WHEN sv.cashback LIKE '%\\%' THEN 
@@ -615,16 +617,7 @@ export class DatabaseStorage implements IStorage {
               ) as amount
             FROM subscriptions s
             JOIN services sv ON s.service_id = sv.id
-            WHERE sv.cashback IS NOT NULL AND sv.cashback != ''
-        `;
-        
-        // Добавляем фильтр по пользователю, если указан userId
-        if (userId) {
-          query = sql.append(query, sql` AND s.user_id = ${userId}`);
-        }
-        
-        // Завершаем запрос
-        query = sql.append(query, sql`
+            WHERE sv.cashback IS NOT NULL AND sv.cashback != '' ${sql.raw(userFilter)}
             GROUP BY period
           )
           SELECT 
@@ -633,7 +626,7 @@ export class DatabaseStorage implements IStorage {
           FROM periods p
           LEFT JOIN cashback_data cd ON p.period = cd.period
           ORDER BY p.date_series
-        `);
+        `;
         
         const result = await db.execute(query);
         
@@ -705,19 +698,19 @@ export class DatabaseStorage implements IStorage {
     return dbOptimizer.executeQueryWithCache(
       async () => {
         let timeFormat: string;
-        let interval: string;
+        let intervalDuration: string;
         
         // Установка форматов в зависимости от выбранного периода
         if (period === 'year') {
           timeFormat = 'YYYY';
-          interval = '1 year';
+          intervalDuration = '1 year';
         } else if (period === 'quarter') {
           timeFormat = 'YYYY-"Q"Q';
-          interval = '3 month';
+          intervalDuration = '3 months';
         } else {
           // По умолчанию месячный период
           timeFormat = 'YYYY-MM';
-          interval = '1 month';
+          intervalDuration = '1 month';
         }
         
         const result = await db.execute(sql`
@@ -726,14 +719,14 @@ export class DatabaseStorage implements IStorage {
               to_char(date_series, ${timeFormat}) as period,
               date_series
             FROM generate_series(
-              date_trunc(${interval}, current_date - interval '1 year'),
+              date_trunc('month', current_date - interval '1 year'),
               current_date,
-              ${interval}::interval
+              (${intervalDuration})::interval
             ) as date_series
           ),
           subscription_costs AS (
             SELECT 
-              to_char(date_trunc(${interval}, created_at), ${timeFormat}) as period,
+              to_char(date_trunc('month', created_at), ${timeFormat}) as period,
               AVG(payment_amount) as avg_price,
               MIN(payment_amount) as min_price,
               MAX(payment_amount) as max_price,
