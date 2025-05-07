@@ -152,6 +152,40 @@ export type Translation = {
     cleanOldBackups: string;
     keepCount: string;
     scheduleInterval: string;
+    
+    // Новые поля для расширенных функций
+    uploadBackup: string;
+    downloadBackup: string;
+    backupTypes: string;
+    backupFormats: string;
+    advancedRestore: string;
+    metadataInfo: string;
+    
+    // Типы бэкапов
+    typeManual: string;
+    typeAuto: string;
+    typePreRestore: string;
+    typeImported: string;
+    typeUnknown: string;
+    
+    // Поля для загрузки файлов
+    selectBackupFile: string;
+    supportedFormats: string;
+    namePrefix: string;
+    uploadButton: string;
+    uploading: string;
+    
+    // Поля для расширенного восстановления
+    createBackupFirst: string;
+    onlyStructure: string;
+    onlyData: string;
+    selectSchemas: string;
+    selectTables: string;
+    restoreFilters: string;
+    restoreType: string;
+    schemas: string;
+    tables: string;
+    advancedOptions: string;
   };
 
   // Аутентификация
@@ -1020,6 +1054,40 @@ export const en: Translation = {
     cleanOldBackups: "Clean Old Backups",
     keepCount: "Keep Count",
     scheduleInterval: "Schedule Interval (hours)",
+    
+    // New fields for advanced features
+    uploadBackup: "Upload Backup",
+    downloadBackup: "Download Backup",
+    backupTypes: "Backup Types",
+    backupFormats: "Backup Formats",
+    advancedRestore: "Advanced Restore",
+    metadataInfo: "Backup Information",
+    
+    // Backup types
+    typeManual: "Manual",
+    typeAuto: "Auto",
+    typePreRestore: "Pre-restore",
+    typeImported: "Imported",
+    typeUnknown: "Unknown",
+    
+    // Upload file fields
+    selectBackupFile: "Backup File",
+    supportedFormats: "Supported formats: .sql, .dump, .dir, .tar, .zip",
+    namePrefix: "Name Prefix",
+    uploadButton: "Upload",
+    uploading: "Uploading...",
+    
+    // Advanced restore fields
+    createBackupFirst: "Create backup before restoring",
+    onlyStructure: "Restore structure only (no data)",
+    onlyData: "Restore data only (keep structure unchanged)",
+    selectSchemas: "Schemas (comma-separated)",
+    selectTables: "Tables (comma-separated)",
+    restoreFilters: "Restore Filters",
+    restoreType: "Restore Type",
+    schemas: "Schemas",
+    tables: "Tables",
+    advancedOptions: "Advanced Options",
   },
 
   auth: {
@@ -1638,6 +1706,40 @@ export const ru: Translation = {
     cleanOldBackups: "Очистить старые резервные копии",
     keepCount: "Количество для сохранения",
     scheduleInterval: "Интервал расписания (часы)",
+    
+    // Новые поля для расширенных функций
+    uploadBackup: "Загрузить резервную копию",
+    downloadBackup: "Скачать резервную копию",
+    backupTypes: "Типы резервных копий",
+    backupFormats: "Форматы резервных копий",
+    advancedRestore: "Расширенное восстановление",
+    metadataInfo: "Информация о резервной копии",
+    
+    // Типы бэкапов
+    typeManual: "Ручной",
+    typeAuto: "Авто",
+    typePreRestore: "Пред-восстановление",
+    typeImported: "Импортированный",
+    typeUnknown: "Неизвестный",
+    
+    // Поля для загрузки файлов
+    selectBackupFile: "Файл резервной копии",
+    supportedFormats: "Поддерживаемые форматы: .sql, .dump, .dir, .tar, .zip",
+    namePrefix: "Префикс имени",
+    uploadButton: "Загрузить",
+    uploading: "Загрузка...",
+    
+    // Поля для расширенного восстановления
+    createBackupFirst: "Создать резервную копию перед восстановлением",
+    onlyStructure: "Восстановить только структуру (без данных)",
+    onlyData: "Восстановить только данные (не меняя структуру)",
+    selectSchemas: "Схемы (через запятую)",
+    selectTables: "Таблицы (через запятую)",
+    restoreFilters: "Фильтры восстановления",
+    restoreType: "Тип восстановления",
+    schemas: "Схемы",
+    tables: "Таблицы",
+    advancedOptions: "Расширенные опции",
   },
 
   auth: {
