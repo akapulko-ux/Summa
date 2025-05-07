@@ -311,6 +311,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public endpoint for clients to browse available services
+  app.get("/api/services/public", isAuthenticated, async (req, res) => {
+    try {
+      // Get only active services that are not custom (or are custom but owned by the current user)
+      const publicServices = await db.select()
+        .from(services)
+        .where(
+          and(
+            eq(services.isActive, true),
+            // Either not a custom service or owned by the current user
+            db.or(
+              eq(services.isCustom, false),
+              eq(services.isCustom, null),
+              req.user && req.user.id ? eq(services.ownerId, req.user.id) : false
+            )
+          )
+        )
+        .orderBy(services.title);
+      
+      res.json(publicServices);
+    } catch (error) {
+      console.error("Error fetching public services:", error);
+      res.status(500).json({ message: "Failed to fetch services" });
+    }
+  });
+
   // Subscription routes
   app.get("/api/subscriptions", isAuthenticated, async (req, res) => {
     try {
