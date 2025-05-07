@@ -353,6 +353,8 @@ export type Translation = {
     servicesByCount: string;
     availableServices: string;
     availableToSubscribe: string;
+    totalCashback: string;
+    totalCashbackDescription: string;
     // New fields for service details view
     details: string;
     clients: string;
@@ -1169,6 +1171,8 @@ export const en: Translation = {
     servicesByCount: "Top services by subscription count",
     availableServices: "Available Services",
     availableToSubscribe: "Available to subscribe",
+    totalCashback: "Total Cashback",
+    totalCashbackDescription: "Sum of all cashbacks from your subscriptions",
     // New fields for service details view
     details: "Details",
     clients: "Clients",
@@ -1783,6 +1787,8 @@ export const ru: Translation = {
     servicesByCount: "Лучшие сервисы по количеству подписок",
     availableServices: "Доступные сервисы",
     availableToSubscribe: "Доступно для подписки",
+    totalCashback: "Общий кэшбэк",
+    totalCashbackDescription: "Сумма всех кэшбэков из ваших подписок",
     // New fields for service details view
     details: "Детали",
     clients: "Клиенты",
