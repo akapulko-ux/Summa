@@ -69,6 +69,15 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
   const { data: servicesData, isLoading: isLoadingServices } = useQuery({
     queryKey: ["/api/services"],
   });
+  
+  // Фильтруем сервисы, чтобы отображать только стандартные сервисы
+  // и кастомные сервисы текущего пользователя
+  const filteredServices = servicesData?.services 
+    ? servicesData.services.filter(service => 
+        !service.isCustom || // стандартные сервисы
+        (service.isCustom && service.ownerId === user?.id) // кастомные сервисы текущего пользователя
+      )
+    : [];
 
   // Create mutation for new subscriptions
   const createMutation = useMutation({
