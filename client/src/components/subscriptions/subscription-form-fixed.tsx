@@ -331,10 +331,15 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
       
       // Устанавливаем имя сервиса при загрузке данных подписки
       if (subscriptionData.serviceId && servicesData?.services) {
+        // Ищем сервис среди всех сервисов, не только фильтрованных,
+        // так как это может быть кастомный сервис другого пользователя или админа
         const service = servicesData.services.find((s: Service) => s.id === subscriptionData.serviceId);
         if (service) {
           setSelectedServiceName(service.title);
-          setIsCustomService(false);
+          // Проверяем сервис - если это не кастомный сервис или это кастомный сервис
+          // текущего пользователя, то устанавливаем поле как нередактируемое (isCustomService = false)
+          // В противном случае (кастомный сервис другого пользователя) - делаем поле редактируемым
+          setIsCustomService(service.isCustom && service.ownerId !== user?.id);
         } else {
           setSelectedServiceName("");
           setIsCustomService(true);
@@ -406,9 +411,9 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
                     <SelectItem value="loading" disabled>
                       {t("common.loading") + "..."}
                     </SelectItem>
-                  ) : servicesData?.services && servicesData.services.length > 0 ? (
+                  ) : filteredServices && filteredServices.length > 0 ? (
                     <>
-                      {servicesData.services.map((service: Service) => (
+                      {filteredServices.map((service: Service) => (
                         <SelectItem key={service.id} value={service.id.toString()}>
                           {service.title}
                         </SelectItem>
