@@ -136,7 +136,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
         title: t('subscriptions.addSuccess'),
         description: t('subscriptions.addSuccessDescription'),
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions", userId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/user", userId] });
       setIsAddDialogOpen(false);
       form.reset();
     },
@@ -164,7 +164,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
         title: t('subscriptions.deleteSuccess'),
         description: t('subscriptions.deleteSuccessDescription'),
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions", userId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/user", userId] });
     },
     onError: (error: Error) => {
       toast({
