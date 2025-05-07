@@ -126,19 +126,6 @@ export function UserManagementTable() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{t('users.title')}</CardTitle>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                {t('users.addUser')}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>{t('users.addUser')}</DialogTitle>
-              </DialogHeader>
-              <UserForm onSuccess={() => queryClient.invalidateQueries({ queryKey: ["/api/users"] })} />
-            </DialogContent>
-          </Dialog>
         </div>
       </CardHeader>
       <CardContent>
