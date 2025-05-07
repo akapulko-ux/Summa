@@ -314,11 +314,10 @@ export class ReportService implements IReportService {
     const fileName = `report_${reportType}${dateRange}_${timestamp}.pdf`;
     const filePath = path.join(REPORTS_DIR, fileName);
     
-    // Создаем PDF документ с пддержкой Unicode для кириллицы
+    // Создаем PDF документ с поддержкой Unicode для кириллицы
     const doc = new PDFDocument({ 
       margin: 50,
-      lang: 'ru',
-      autoFirstPage: true,
+      size: 'A4',
       info: {
         Title: data.title,
         Author: 'Subscription Management System',
@@ -328,48 +327,87 @@ export class ReportService implements IReportService {
       }
     });
     
-    // Устанавливаем стандартный шрифт Courier с поддержкой кириллицы
-    doc.font('Courier');
+    // Регистрируем стандартный шрифт для документа с поддержкой кириллицы
+    // Используем стандартный шрифт Helvetica, который поддерживает базовые символы ASCII
     
     const writeStream = fs.createWriteStream(filePath);
     doc.pipe(writeStream);
     
+    // Простой способ обеспечить поддержку кириллицы - все строки переводим в простой ASCII
+    // Это не идеально, но обеспечит читаемость
+    const transliterateRu = (text: string): string => {
+      const ruToLat: Record<string, string> = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh',
+        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+        'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
+        'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu',
+        'я': 'ya',
+        'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'ZH',
+        'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
+        'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'KH', 'Ц': 'TS',
+        'Ч': 'CH', 'Ш': 'SH', 'Щ': 'SCH', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'YU',
+        'Я': 'YA'
+      };
+      
+      return text.split('').map(char => ruToLat[char] || char).join('');
+    };
+    
+    // Вспомогательная функция для добавления текста с транслитерацией, если необходимо
+    const addText = (text: string, options?: any) => {
+      if (language === 'ru') {
+        doc.text(transliterateRu(text), options);
+      } else {
+        doc.text(text, options);
+      }
+    };
+    
     // Добавляем заголовок
-    doc.fontSize(20).text(data.title, { align: 'center' });
+    doc.fontSize(20);
+    addText(data.title, { align: 'center' });
     doc.moveDown();
     
     // Добавляем информацию о параметрах отчета
     const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
     const dateOptions = language === 'ru' ? { locale: ru } : undefined;
     
-    doc.fontSize(12).text(`${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`);
+    doc.fontSize(12);
+    addText(`${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`);
     
     if (startDate) {
-      doc.text(`${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(startDate, dateFormat, dateOptions)}`);
+      addText(`${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(startDate, dateFormat, dateOptions)}`);
     }
     
     if (endDate) {
-      doc.text(`${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(endDate, dateFormat, dateOptions)}`);
+      addText(`${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(endDate, dateFormat, dateOptions)}`);
     }
     
     doc.moveDown(2);
     
+    // Создаем новый объект данных, который включает функцию транслитерации для 
+    // использования в методах генерации контента
+    const extendedData = {
+      ...data,
+      _helpers: {
+        addText
+      }
+    };
+    
     // Генерируем содержимое отчета в зависимости от типа
     switch (reportType) {
       case 'subscriptions':
-        this.generateSubscriptionsPdfContent(doc, data, language);
+        this.generateSubscriptionsPdfContent(doc, extendedData, language);
         break;
       case 'users':
-        this.generateUsersPdfContent(doc, data, language);
+        this.generateUsersPdfContent(doc, extendedData, language);
         break;
       case 'services':
-        this.generateServicesPdfContent(doc, data, language);
+        this.generateServicesPdfContent(doc, extendedData, language);
         break;
       case 'financial':
-        this.generateFinancialPdfContent(doc, data, language);
+        this.generateFinancialPdfContent(doc, extendedData, language);
         break;
       case 'trends':
-        this.generateTrendsPdfContent(doc, data, language);
+        this.generateTrendsPdfContent(doc, extendedData, language);
         break;
     }
     
@@ -558,22 +596,25 @@ export class ReportService implements IReportService {
   }
   
   private generateSubscriptionsPdfContent(doc: any, data: any, language: string) {
-    const { subscriptions } = data;
+    const { subscriptions, _helpers } = data;
+    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
     
     // Добавляем общую информацию
-    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
-    doc.fontSize(12).text(
-      `${language === 'ru' ? 'Всего подписок' : 'Total subscriptions'}: ${subscriptions.length}`
-    );
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    
+    doc.fontSize(12);
+    addText(`${language === 'ru' ? 'Всего подписок' : 'Total subscriptions'}: ${subscriptions.length}`);
     
     // Вычисляем общую сумму подписок
     const totalRevenue = subscriptions.reduce((sum, sub) => sum + (sub.paymentAmount || 0), 0);
-    doc.text(`${language === 'ru' ? 'Общая сумма платежей' : 'Total payment amount'}: ${totalRevenue.toFixed(2)}`);
+    addText(`${language === 'ru' ? 'Общая сумма платежей' : 'Total payment amount'}: ${totalRevenue.toFixed(2)}`);
     
     doc.moveDown(2);
     
     // Добавляем таблицу с подписками
-    doc.fontSize(14).text(language === 'ru' ? 'Список подписок' : 'Subscriptions List', { underline: true });
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Список подписок' : 'Subscriptions List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -585,40 +626,68 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 200, 300, 400, 450, 500];
     
     // Рисуем заголовки 
-    doc.fontSize(10).font('Courier');
+    doc.fontSize(10);
     headers.forEach((header, i) => {
-      doc.text(header, columnPositions[i], y, { continued: false });
+      addText(header, { continued: false, lineBreak: false });
+      
+      // Вручную позиционируем текст в колонках
+      if (i < headers.length - 1) {
+        doc.moveUp();
+        doc.x = columnPositions[i + 1];
+      }
     });
     
     doc.moveDown();
     y = doc.y;
     
     // Рисуем содержимое таблицы
-    doc.font('Courier');
     subscriptions.slice(0, 20).forEach((sub) => {
-      doc.text(String(sub.id), columnPositions[0], y, { continued: false });
-      doc.text(sub.title?.substring(0, 15) || '-', columnPositions[1], y, { continued: false });
-      doc.text(sub.serviceName?.substring(0, 15) || '-', columnPositions[2], y, { continued: false });
-      doc.text(sub.userEmail?.substring(0, 15) || '-', columnPositions[3], y, { continued: false });
-      doc.text(String(sub.paymentAmount || '-'), columnPositions[4], y, { continued: false });
-      doc.text(String(sub.status || '-'), columnPositions[5], y, { continued: false });
+      // Первая колонка - ID
+      doc.x = columnPositions[0];
+      addText(String(sub.id), { continued: false, lineBreak: false });
       
+      // Вторая колонка - Название
+      doc.moveUp();
+      doc.x = columnPositions[1];
+      addText(sub.title?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      
+      // Третья колонка - Сервис
+      doc.moveUp();
+      doc.x = columnPositions[2];
+      addText(sub.serviceName?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      
+      // Четвертая колонка - Пользователь
+      doc.moveUp();
+      doc.x = columnPositions[3];
+      addText(sub.userEmail?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      
+      // Пятая колонка - Сумма
+      doc.moveUp();
+      doc.x = columnPositions[4];
+      addText(String(sub.paymentAmount || '-'), { continued: false, lineBreak: false });
+      
+      // Шестая колонка - Статус
+      doc.moveUp();
+      doc.x = columnPositions[5];
+      addText(String(sub.status || '-'), { continued: false, lineBreak: false });
+      
+      // Седьмая колонка - Дата создания
+      doc.moveUp();
+      doc.x = columnPositions[6];
       const createdAt = sub.createdAt ? format(sub.createdAt, 'yyyy-MM-dd') : '-';
-      doc.text(createdAt, columnPositions[6], y, { continued: false });
-      
-      y += 20;
+      addText(createdAt, { continued: false });
       
       // Если достигли конца страницы, переходим на новую
-      if (y > 700) {
+      if (doc.y > 700) {
         doc.addPage();
-        y = 50;
+        doc.y = 50;
       }
     });
     
     // Если больше 20 подписок, указываем общее количество
     if (subscriptions.length > 20) {
       doc.moveDown();
-      doc.text(language === 'ru' 
+      addText(language === 'ru' 
         ? `... и еще ${subscriptions.length - 20} подписок` 
         : `... and ${subscriptions.length - 20} more subscriptions`
       );
@@ -626,18 +695,23 @@ export class ReportService implements IReportService {
   }
   
   private generateUsersPdfContent(doc: any, data: any, language: string) {
-    const { users, stats } = data;
+    const { users, stats, _helpers } = data;
+    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
     
     // Добавляем общую информацию
-    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
-    doc.fontSize(12).text(`${language === 'ru' ? 'Всего пользователей' : 'Total users'}: ${stats.total}`);
-    doc.text(`${language === 'ru' ? 'Активных пользователей' : 'Active users'}: ${stats.active}`);
-    doc.text(`${language === 'ru' ? 'Новых пользователей' : 'New users'}: ${stats.new}`);
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    
+    doc.fontSize(12);
+    addText(`${language === 'ru' ? 'Всего пользователей' : 'Total users'}: ${stats.total}`);
+    addText(`${language === 'ru' ? 'Активных пользователей' : 'Active users'}: ${stats.active}`);
+    addText(`${language === 'ru' ? 'Новых пользователей' : 'New users'}: ${stats.new}`);
     
     doc.moveDown(2);
     
     // Добавляем таблицу с пользователями
-    doc.fontSize(14).text(language === 'ru' ? 'Список пользователей' : 'Users List', { underline: true });
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Список пользователей' : 'Users List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -645,43 +719,65 @@ export class ReportService implements IReportService {
       ? ['ID', 'Email', 'Имя', 'Компания', 'Роль', 'Дата регистрации']
       : ['ID', 'Email', 'Name', 'Company', 'Role', 'Registration Date'];
     
-    let y = doc.y;
     const columnPositions = [50, 100, 250, 350, 450, 500];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Courier');
+    doc.fontSize(10);
     headers.forEach((header, i) => {
-      doc.text(header, columnPositions[i], y, { continued: false });
+      addText(header, { continued: false, lineBreak: false });
+      
+      // Вручную позиционируем текст в колонках
+      if (i < headers.length - 1) {
+        doc.moveUp();
+        doc.x = columnPositions[i + 1];
+      }
     });
     
     doc.moveDown();
-    y = doc.y;
     
     // Рисуем содержимое таблицы
-    doc.font('Courier');
     users.slice(0, 20).forEach((user) => {
-      doc.text(String(user.id), columnPositions[0], y, { continued: false });
-      doc.text(user.email?.substring(0, 25) || '-', columnPositions[1], y, { continued: false });
-      doc.text(user.name?.substring(0, 15) || '-', columnPositions[2], y, { continued: false });
-      doc.text(user.companyName?.substring(0, 15) || '-', columnPositions[3], y, { continued: false });
-      doc.text(String(user.role || '-'), columnPositions[4], y, { continued: false });
+      // Первая колонка - ID
+      doc.x = columnPositions[0];
+      addText(String(user.id), { continued: false, lineBreak: false });
       
+      // Вторая колонка - Email
+      doc.moveUp();
+      doc.x = columnPositions[1];
+      addText(user.email?.substring(0, 25) || '-', { continued: false, lineBreak: false });
+      
+      // Третья колонка - Имя
+      doc.moveUp();
+      doc.x = columnPositions[2];
+      addText(user.name?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      
+      // Четвертая колонка - Компания
+      doc.moveUp();
+      doc.x = columnPositions[3];
+      addText(user.companyName?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      
+      // Пятая колонка - Роль
+      doc.moveUp();
+      doc.x = columnPositions[4];
+      addText(String(user.role || '-'), { continued: false, lineBreak: false });
+      
+      // Шестая колонка - Дата регистрации
+      doc.moveUp();
+      doc.x = columnPositions[5];
       const createdAt = user.createdAt ? format(user.createdAt, 'yyyy-MM-dd') : '-';
-      doc.text(createdAt, columnPositions[5], y, { continued: false });
-      
-      y += 20;
+      addText(createdAt, { continued: false });
       
       // Если достигли конца страницы, переходим на новую
-      if (y > 700) {
+      if (doc.y > 700) {
         doc.addPage();
-        y = 50;
+        doc.y = 50;
       }
     });
     
     // Если больше 20 пользователей, указываем общее количество
     if (users.length > 20) {
       doc.moveDown();
-      doc.text(language === 'ru' 
+      addText(language === 'ru' 
         ? `... и еще ${users.length - 20} пользователей` 
         : `... and ${users.length - 20} more users`
       );
@@ -689,11 +785,15 @@ export class ReportService implements IReportService {
   }
   
   private generateServicesPdfContent(doc: any, data: any, language: string) {
-    const { services, usage } = data;
+    const { services, usage, _helpers } = data;
+    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
     
     // Добавляем общую информацию
-    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
-    doc.fontSize(12).text(`${language === 'ru' ? 'Всего сервисов' : 'Total services'}: ${services.length}`);
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    
+    doc.fontSize(12);
+    addText(`${language === 'ru' ? 'Всего сервисов' : 'Total services'}: ${services.length}`);
     
     // Находим самый популярный сервис
     let popularService = { serviceName: '-', count: 0 };
@@ -702,12 +802,13 @@ export class ReportService implements IReportService {
         (current.count > prev.count) ? current : prev, usage[0]);
     }
     
-    doc.text(`${language === 'ru' ? 'Самый популярный сервис' : 'Most popular service'}: ${popularService.serviceName} (${popularService.count} ${language === 'ru' ? 'подписок' : 'subscriptions'})`);
+    addText(`${language === 'ru' ? 'Самый популярный сервис' : 'Most popular service'}: ${popularService.serviceName} (${popularService.count} ${language === 'ru' ? 'подписок' : 'subscriptions'})`);
     
     doc.moveDown(2);
     
     // Добавляем таблицу с сервисами
-    doc.fontSize(14).text(language === 'ru' ? 'Список сервисов' : 'Services List', { underline: true });
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Список сервисов' : 'Services List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -715,17 +816,21 @@ export class ReportService implements IReportService {
       ? ['ID', 'Название', 'Кэшбэк', 'Комиссия', 'Подписок', 'Доход']
       : ['ID', 'Title', 'Cashback', 'Commission', 'Subscriptions', 'Revenue'];
     
-    let y = doc.y;
     const columnPositions = [50, 100, 300, 380, 460, 520];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Courier');
+    doc.fontSize(10);
     headers.forEach((header, i) => {
-      doc.text(header, columnPositions[i], y, { continued: false });
+      addText(header, { continued: false, lineBreak: false });
+      
+      // Вручную позиционируем текст в колонках
+      if (i < headers.length - 1) {
+        doc.moveUp();
+        doc.x = columnPositions[i + 1];
+      }
     });
     
     doc.moveDown();
-    y = doc.y;
     
     // Создаем карту использования сервисов для быстрого доступа
     const usageMap = new Map();
@@ -734,45 +839,67 @@ export class ReportService implements IReportService {
     });
     
     // Рисуем содержимое таблицы
-    doc.font('Courier');
     services.forEach((service) => {
       const serviceUsage = usageMap.get(service.id) || { count: 0, totalRevenue: 0 };
       
-      doc.text(String(service.id), columnPositions[0], y, { continued: false });
-      doc.text(service.title?.substring(0, 30) || '-', columnPositions[1], y, { continued: false });
-      doc.text(service.cashback || '-', columnPositions[2], y, { continued: false });
-      doc.text(service.commission || '-', columnPositions[3], y, { continued: false });
-      doc.text(String(serviceUsage.count || 0), columnPositions[4], y, { continued: false });
-      doc.text(String((serviceUsage.totalRevenue || 0).toFixed(2)), columnPositions[5], y, { continued: false });
+      // Первая колонка - ID
+      doc.x = columnPositions[0];
+      addText(String(service.id), { continued: false, lineBreak: false });
       
-      y += 20;
+      // Вторая колонка - Название
+      doc.moveUp();
+      doc.x = columnPositions[1];
+      addText(service.title?.substring(0, 30) || '-', { continued: false, lineBreak: false });
+      
+      // Третья колонка - Кэшбэк
+      doc.moveUp();
+      doc.x = columnPositions[2];
+      addText(service.cashback || '-', { continued: false, lineBreak: false });
+      
+      // Четвертая колонка - Комиссия
+      doc.moveUp();
+      doc.x = columnPositions[3];
+      addText(service.commission || '-', { continued: false, lineBreak: false });
+      
+      // Пятая колонка - Подписок
+      doc.moveUp();
+      doc.x = columnPositions[4];
+      addText(String(serviceUsage.count || 0), { continued: false, lineBreak: false });
+      
+      // Шестая колонка - Доход
+      doc.moveUp();
+      doc.x = columnPositions[5];
+      addText(String((serviceUsage.totalRevenue || 0).toFixed(2)), { continued: false });
       
       // Если достигли конца страницы, переходим на новую
-      if (y > 700) {
+      if (doc.y > 700) {
         doc.addPage();
-        y = 50;
+        doc.y = 50;
       }
     });
   }
   
   private generateFinancialPdfContent(doc: any, data: any, language: string) {
-    const { transactions, summary } = data;
+    const { transactions, summary, _helpers } = data;
+    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
     
     // Добавляем финансовую сводку
-    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Финансовая сводка' : 'Financial Summary', { underline: true });
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Финансовая сводка' : 'Financial Summary', { underline: true });
     doc.moveDown();
     
     // Показываем финансовый отчет
     doc.fontSize(12);
-    doc.text(`${language === 'ru' ? 'Общий доход' : 'Total Revenue'}: ${summary.totalRevenue.toFixed(2)}`);
-    doc.text(`${language === 'ru' ? 'Общий кэшбэк' : 'Total Cashback'}: ${summary.totalCashback.toFixed(2)}`);
-    doc.text(`${language === 'ru' ? 'Общая комиссия' : 'Total Commission'}: ${summary.totalCommission.toFixed(2)}`);
-    doc.text(`${language === 'ru' ? 'Чистый доход' : 'Net Income'}: ${summary.netIncome.toFixed(2)}`);
+    addText(`${language === 'ru' ? 'Общий доход' : 'Total Revenue'}: ${summary.totalRevenue.toFixed(2)}`);
+    addText(`${language === 'ru' ? 'Общий кэшбэк' : 'Total Cashback'}: ${summary.totalCashback.toFixed(2)}`);
+    addText(`${language === 'ru' ? 'Общая комиссия' : 'Total Commission'}: ${summary.totalCommission.toFixed(2)}`);
+    addText(`${language === 'ru' ? 'Чистый доход' : 'Net Income'}: ${summary.netIncome.toFixed(2)}`);
     
     doc.moveDown(2);
     
     // Добавляем список транзакций
-    doc.fontSize(14).text(language === 'ru' ? 'Список транзакций' : 'Transactions List', { underline: true });
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Список транзакций' : 'Transactions List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -780,20 +907,23 @@ export class ReportService implements IReportService {
       ? ['ID', 'Подписка', 'Сервис', 'Сумма', 'Кэшбэк', 'Комиссия', 'Дата']
       : ['ID', 'Subscription', 'Service', 'Amount', 'Cashback', 'Commission', 'Date'];
     
-    let y = doc.y;
     const columnPositions = [50, 100, 180, 260, 320, 380, 460];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Courier');
+    doc.fontSize(10);
     headers.forEach((header, i) => {
-      doc.text(header, columnPositions[i], y, { continued: false });
+      addText(header, { continued: false, lineBreak: false });
+      
+      // Вручную позиционируем текст в колонках
+      if (i < headers.length - 1) {
+        doc.moveUp();
+        doc.x = columnPositions[i + 1];
+      }
     });
     
     doc.moveDown();
-    y = doc.y;
     
     // Рисуем содержимое таблицы
-    doc.font('Courier');
     transactions.slice(0, 20).forEach((tr) => {
       const createdAt = tr.createdAt ? format(tr.createdAt, 'yyyy-MM-dd') : '-';
       
@@ -818,27 +948,51 @@ export class ReportService implements IReportService {
         }
       }
       
-      doc.text(String(tr.id), columnPositions[0], y, { continued: false });
-      doc.text(tr.title?.substring(0, 15) || '-', columnPositions[1], y, { continued: false });
-      doc.text(tr.serviceName?.substring(0, 15) || '-', columnPositions[2], y, { continued: false });
-      doc.text(String(tr.paymentAmount || '-'), columnPositions[3], y, { continued: false });
-      doc.text(cashbackAmount, columnPositions[4], y, { continued: false });
-      doc.text(commissionAmount, columnPositions[5], y, { continued: false });
-      doc.text(createdAt, columnPositions[6], y, { continued: false });
+      // Первая колонка - ID
+      doc.x = columnPositions[0];
+      addText(String(tr.id), { continued: false, lineBreak: false });
       
-      y += 20;
+      // Вторая колонка - Подписка
+      doc.moveUp();
+      doc.x = columnPositions[1];
+      addText(tr.title?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      
+      // Третья колонка - Сервис
+      doc.moveUp();
+      doc.x = columnPositions[2];
+      addText(tr.serviceName?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      
+      // Четвертая колонка - Сумма
+      doc.moveUp();
+      doc.x = columnPositions[3];
+      addText(String(tr.paymentAmount || '-'), { continued: false, lineBreak: false });
+      
+      // Пятая колонка - Кэшбэк
+      doc.moveUp();
+      doc.x = columnPositions[4];
+      addText(cashbackAmount, { continued: false, lineBreak: false });
+      
+      // Шестая колонка - Комиссия
+      doc.moveUp();
+      doc.x = columnPositions[5];
+      addText(commissionAmount, { continued: false, lineBreak: false });
+      
+      // Седьмая колонка - Дата
+      doc.moveUp();
+      doc.x = columnPositions[6];
+      addText(createdAt, { continued: false });
       
       // Если достигли конца страницы, переходим на новую
-      if (y > 700) {
+      if (doc.y > 700) {
         doc.addPage();
-        y = 50;
+        doc.y = 50;
       }
     });
     
     // Если больше 20 транзакций, указываем общее количество
     if (transactions.length > 20) {
       doc.moveDown();
-      doc.text(language === 'ru' 
+      addText(language === 'ru' 
         ? `... и еще ${transactions.length - 20} транзакций` 
         : `... and ${transactions.length - 20} more transactions`
       );
@@ -846,10 +1000,12 @@ export class ReportService implements IReportService {
   }
   
   private generateTrendsPdfContent(doc: any, data: any, language: string) {
-    const { subscriptionTrends, userTrends } = data;
+    const { subscriptionTrends, userTrends, _helpers } = data;
+    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
     
     // Добавляем тренды подписок
-    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Тренды подписок' : 'Subscription Trends', { underline: true });
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Тренды подписок' : 'Subscription Trends', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки для подписок
@@ -857,38 +1013,50 @@ export class ReportService implements IReportService {
       ? ['Месяц', 'Количество', 'Сумма']
       : ['Month', 'Count', 'Revenue'];
     
-    let y = doc.y;
     const subsColumnPositions = [50, 200, 350];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Courier');
+    doc.fontSize(10);
     subsHeaders.forEach((header, i) => {
-      doc.text(header, subsColumnPositions[i], y, { continued: false });
+      addText(header, { continued: false, lineBreak: false });
+      
+      // Вручную позиционируем текст в колонках
+      if (i < subsHeaders.length - 1) {
+        doc.moveUp();
+        doc.x = subsColumnPositions[i + 1];
+      }
     });
     
     doc.moveDown();
-    y = doc.y;
     
     // Рисуем содержимое таблицы подписок
-    doc.font('Courier');
     subscriptionTrends.forEach((trend) => {
-      doc.text(trend.month, subsColumnPositions[0], y, { continued: false });
-      doc.text(String(trend.count), subsColumnPositions[1], y, { continued: false });
-      doc.text(String((trend.revenue || 0).toFixed(2)), subsColumnPositions[2], y, { continued: false });
+      // Первая колонка - Месяц
+      doc.x = subsColumnPositions[0];
+      addText(trend.month, { continued: false, lineBreak: false });
       
-      y += 20;
+      // Вторая колонка - Количество
+      doc.moveUp();
+      doc.x = subsColumnPositions[1];
+      addText(String(trend.count), { continued: false, lineBreak: false });
+      
+      // Третья колонка - Сумма
+      doc.moveUp();
+      doc.x = subsColumnPositions[2];
+      addText(String((trend.revenue || 0).toFixed(2)), { continued: false });
       
       // Если достигли конца страницы, переходим на новую
-      if (y > 700) {
+      if (doc.y > 700) {
         doc.addPage();
-        y = 50;
+        doc.y = 50;
       }
     });
     
     doc.moveDown(2);
     
     // Добавляем тренды пользователей
-    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Тренды пользователей' : 'User Trends', { underline: true });
+    doc.fontSize(14);
+    addText(language === 'ru' ? 'Тренды пользователей' : 'User Trends', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки для пользователей
@@ -896,30 +1064,37 @@ export class ReportService implements IReportService {
       ? ['Месяц', 'Количество новых пользователей']
       : ['Month', 'New Users Count'];
     
-    y = doc.y;
     const usersColumnPositions = [50, 200];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Courier');
+    doc.fontSize(10);
     usersHeaders.forEach((header, i) => {
-      doc.text(header, usersColumnPositions[i], y, { continued: false });
+      addText(header, { continued: false, lineBreak: false });
+      
+      // Вручную позиционируем текст в колонках
+      if (i < usersHeaders.length - 1) {
+        doc.moveUp();
+        doc.x = usersColumnPositions[i + 1];
+      }
     });
     
     doc.moveDown();
-    y = doc.y;
     
     // Рисуем содержимое таблицы пользователей
-    doc.font('Courier');
     userTrends.forEach((trend) => {
-      doc.text(trend.month, usersColumnPositions[0], y, { continued: false });
-      doc.text(String(trend.count), usersColumnPositions[1], y, { continued: false });
+      // Первая колонка - Месяц
+      doc.x = usersColumnPositions[0];
+      addText(trend.month, { continued: false, lineBreak: false });
       
-      y += 20;
+      // Вторая колонка - Количество
+      doc.moveUp();
+      doc.x = usersColumnPositions[1];
+      addText(String(trend.count), { continued: false });
       
       // Если достигли конца страницы, переходим на новую
-      if (y > 700) {
+      if (doc.y > 700) {
         doc.addPage();
-        y = 50;
+        doc.y = 50;
       }
     });
   }
