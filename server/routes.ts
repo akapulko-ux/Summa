@@ -312,7 +312,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Public endpoint for clients to browse available services
-  app.get("/api/services/public", isAuthenticated, async (req, res) => {
+  app.get("/api/services/public", async (req, res) => {
     try {
       // Фильтрация сервисов в зависимости от роли пользователя
       let publicServices = [];
@@ -321,10 +321,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activeServices = await db.select().from(services).where(eq(services.isActive, true));
       
       // Фильтруем результаты в памяти (избегаем сложных SQL-запросов)
-      if (req.user && req.user.role === 'admin') {
+      if (req.isAuthenticated() && req.user.role === 'admin') {
         // Для админов показываем все активные сервисы
         publicServices = activeServices;
-      } else if (req.user) {
+      } else if (req.isAuthenticated()) {
         // Для обычных пользователей показываем публичные сервисы и их кастомные сервисы
         publicServices = activeServices.filter(service => 
           !service.isCustom || 
