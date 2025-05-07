@@ -908,6 +908,45 @@ export const en: Translation = {
     servicesByCount: "Services by subscription count",
     avgMinMaxPrices: "Average, min and max subscription prices",
   },
+  
+  reports: {
+    title: "Reports",
+    generateReport: "Generate Report",
+    generateReportDesc: "Create customized reports based on your data",
+    recentReports: "Recent Reports",
+    recentReportsDesc: "Your recently generated reports",
+    reportType: "Report Type",
+    format: "Format",
+    startDate: "Start Date",
+    endDate: "End Date",
+    generating: "Generating Report...",
+    selectReportType: "Select a report type",
+    selectFormat: "Select a format",
+    viewAllReports: "View All Reports",
+    pickDate: "Pick a date",
+    
+    // Report types
+    subscriptionReport: "Subscription Report",
+    subscriptionReportDesc: "Detailed information about subscriptions and revenue",
+    userReport: "User Report",
+    userReportDesc: "User growth and activity statistics",
+    servicesReport: "Services Report",
+    servicesReportDesc: "Service usage and popularity",
+    financialReport: "Financial Report",
+    financialReportDesc: "Revenue, expenses and profit information",
+    trendsReport: "Trends Report",
+    trendsReportDesc: "Trends and forecasts based on historical data",
+    
+    // Report formats
+    pdfDocument: "PDF Document",
+    excelSpreadsheet: "Excel Spreadsheet",
+    csvFile: "CSV File",
+    
+    // Sample reports
+    subscriptionReportSample: "Subscription Report",
+    userGrowthReportSample: "User Growth Report",
+    financialReportQ1Sample: "Financial Report Q1",
+  },
 
   layout: {
     adminPanel: "Admin Panel",
