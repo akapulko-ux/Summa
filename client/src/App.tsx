@@ -11,7 +11,6 @@ import AuthPage from "@/pages/auth-page";
 import Dashboard from "@/pages/dashboard";
 import ProfilePage from "@/pages/profile-page";
 import ServicesPage from "@/pages/services-page";
-import ClientServicesPage from "@/pages/client-services-page";
 import SubscriptionsPage from "@/pages/subscriptions-page";
 import AllSubscriptionsPage from "@/pages/all-subscriptions-page";
 import UserManagement from "@/pages/user-management";
@@ -29,7 +28,6 @@ function Router() {
       <ProtectedRoute path="/" component={Dashboard} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/subscriptions" component={SubscriptionsPage} />
-      <ProtectedRoute path="/services" component={ClientServicesPage} />
       
       {/* Административные маршруты (доступны только для администраторов) */}
       <AdminRoute path="/admin/subscriptions" component={AllSubscriptionsPage} />
