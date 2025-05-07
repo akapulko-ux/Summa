@@ -51,12 +51,14 @@ export default function PerformanceMonitoring() {
     queryKey: ['/api/monitoring/db/status'],
     enabled: true,
     refetchInterval: 10000, // Проверяем статус каждые 10 секунд
-    onSuccess: (data) => {
-      if (data) {
-        setMonitoringEnabled(data.enabled);
-      }
-    }
   });
+  
+  // Обновляем состояние мониторинга при получении данных с сервера
+  useEffect(() => {
+    if (monitoringStatus && typeof monitoringStatus.enabled === 'boolean') {
+      setMonitoringEnabled(monitoringStatus.enabled);
+    }
+  }, [monitoringStatus]);
 
   // Получаем статистику БД
   const { 
@@ -77,12 +79,14 @@ export default function PerformanceMonitoring() {
       });
       return await result.json();
     },
-    onSuccess: () => {
-      setMonitoringEnabled((prev) => !prev);
+    onSuccess: (_, newValue) => {
+      // Устанавливаем точное значение, полученное при вызове мутации
+      setMonitoringEnabled(newValue);
       toast({
-        title: monitoringEnabled ? t('monitoring.disabled') : t('monitoring.enabled'),
-        description: monitoringEnabled ? t('monitoring.monitoring_off') : t('monitoring.monitoring_on'),
+        title: newValue ? t('monitoring.enabled') : t('monitoring.disabled'),
+        description: newValue ? t('monitoring.monitoring_on') : t('monitoring.monitoring_off'),
       });
+      // Обновляем статистику и запрашиваем обновленный статус
       refetchDbStats();
     },
     onError: (error: Error) => {
