@@ -55,6 +55,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
+  const [isCustomService, setIsCustomService] = useState<boolean>(false);
 
   // Fetch subscription data if editing
   const { data: subscriptionData, isLoading: isLoadingSubscription } = useQuery({
@@ -236,9 +237,15 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         const service = servicesData.services.find((s: Service) => s.id === subscriptionData.serviceId);
         if (service) {
           setSelectedServiceName(service.title);
+          setIsCustomService(false);
         } else {
           setSelectedServiceName("Other (Custom)");
+          setIsCustomService(true);
         }
+      } else if (subscriptionData.serviceId === null || subscriptionData.serviceId === undefined) {
+        // Если serviceId не указан, это, вероятно, "other"
+        setSelectedServiceName("Other (Custom)");
+        setIsCustomService(true);
       }
     }
   }, [subscriptionData, form, servicesData]);
@@ -280,10 +287,12 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
                   field.onChange(value);
                   if (value === "other") {
                     setSelectedServiceName("Other (Custom)");
+                    setIsCustomService(true);
                   } else if (servicesData?.services) {
                     const service = servicesData.services.find((s: Service) => s.id.toString() === value);
                     if (service) {
                       setSelectedServiceName(service.title);
+                      setIsCustomService(false);
                     }
                   }
                 }}
@@ -322,9 +331,20 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         {/* Отображение выбранного сервиса */}
         <div className="space-y-2">
           <div className="text-sm font-medium">Selected Service</div>
-          <div className="border rounded-md p-3 bg-muted/30">
-            {selectedServiceName || "No service selected"}
-          </div>
+          {isCustomService ? (
+            <div className="border rounded-md p-0 bg-muted/30">
+              <Input 
+                value={selectedServiceName || ""}
+                onChange={(e) => setSelectedServiceName(e.target.value)}
+                placeholder="Enter custom service name"
+                className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+              />
+            </div>
+          ) : (
+            <div className="border rounded-md p-3 bg-muted/30">
+              {selectedServiceName || "No service selected"}
+            </div>
+          )}
         </div>
 
         <FormField
