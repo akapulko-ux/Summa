@@ -11,7 +11,7 @@ import { Grid, List, Search } from "lucide-react";
 import { Service } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 
-export default function ServicesPage() {
+export default function ClientServicesPage() {
   const { t, language } = useTranslations();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,7 +97,7 @@ export default function ServicesPage() {
             )}
             <div className="flex space-x-2">
               {service.cashback && (
-                <Badge variant="secondary" className="flex-shrink-0">
+                <Badge variant="secondary" className="flex-shrink-0 text-white">
                   {language === 'ru' ? 'Кэшбэк' : 'Cashback'}: {service.cashback}
                 </Badge>
               )}
@@ -151,7 +151,7 @@ export default function ServicesPage() {
             )}
             <div className="flex space-x-2">
               {service.cashback && (
-                <Badge variant="secondary" className="flex-shrink-0">
+                <Badge variant="secondary" className="flex-shrink-0 text-white">
                   {language === 'ru' ? 'Кэшбэк' : 'Cashback'}: {service.cashback}
                 </Badge>
               )}
