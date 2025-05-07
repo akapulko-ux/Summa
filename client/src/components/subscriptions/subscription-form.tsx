@@ -202,7 +202,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         transformedData.serviceId = parseInt(data.serviceId);
       }
       // Если выбран "other" и указано кастомное название сервиса
-      else if (data.serviceId === "other" && selectedServiceName && selectedServiceName !== "Other (Custom)") {
+      else if (data.serviceId === "other" && selectedServiceName && selectedServiceName.trim() !== "") {
         // Сначала проверим, существует ли уже кастомный сервис с таким именем
         let existingCustomService = null;
         if (servicesData?.services) {
