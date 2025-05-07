@@ -11,9 +11,11 @@ import { LayoutGrid, List, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function ClientServicesPage() {
   const { t, language } = useTranslations();
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
@@ -23,7 +25,14 @@ export default function ClientServicesPage() {
   });
 
   // Получаем массив сервисов из ответа API
-  const services = data?.services || [];
+  const allServices = data?.services || [];
+  
+  // Фильтруем сервисы, чтобы отображать только стандартные сервисы
+  // и кастомные сервисы текущего пользователя
+  const services = allServices.filter(service => 
+    !service.isCustom || // стандартные сервисы
+    (service.isCustom && service.ownerId === user?.id) // кастомные сервисы текущего пользователя
+  );
 
   // Функция фильтрации сервисов по поисковому запросу
   const filteredServices = services.filter(
