@@ -93,7 +93,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         transformedData.serviceId = parseInt(data.serviceId);
       }
       // Если выбран "other" и указано кастомное название сервиса
-      else if (data.serviceId === "other" && selectedServiceName && selectedServiceName !== "Other (Custom)") {
+      else if (data.serviceId === "other" && selectedServiceName && selectedServiceName.trim() !== "") {
         // Сначала проверим, существует ли уже кастомный сервис с таким именем
         let existingCustomService = null;
         if (servicesData?.services) {
@@ -329,12 +329,12 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
           setSelectedServiceName(service.title);
           setIsCustomService(false);
         } else {
-          setSelectedServiceName("Other (Custom)");
+          setSelectedServiceName("");
           setIsCustomService(true);
         }
       } else if (subscriptionData.serviceId === null || subscriptionData.serviceId === undefined) {
         // Если serviceId не указан, это, вероятно, "other"
-        setSelectedServiceName("Other (Custom)");
+        setSelectedServiceName("");
         setIsCustomService(true);
       }
     }
