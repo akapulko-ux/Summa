@@ -1,9 +1,11 @@
-import { pool } from "../db";
+import { pool, db } from "../db";
 import fs from "fs";
 import path from "path";
 import { promisify } from "util";
 import { exec } from "child_process";
 import { log } from "../vite";
+import { backupMetadata, type InsertBackupMetadata } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 const execAsync = promisify(exec);
 
@@ -127,14 +129,52 @@ export class PostgresBackupManager implements IBackupManager {
       log(`Backup created successfully: ${backupFileName}`, "backup");
       
       // Если формат - директория, архивируем её для удобства хранения
+      let finalBackupFileName = backupFileName;
       if (format === 'directory') {
         const zipFileName = `${backupPath}.zip`;
         await execAsync(`zip -r ${zipFileName} ${backupPath}`);
         await execAsync(`rm -rf ${backupPath}`);
-        return `${backupFileName}.zip`;
+        finalBackupFileName = `${backupFileName}.zip`;
       }
       
-      return backupFileName;
+      // Сохраняем метаданные о резервной копии в базу данных
+      const finalBackupPath = path.join(BACKUP_DIR, finalBackupFileName);
+      const fileStats = fs.statSync(finalBackupPath);
+      
+      // Определяем тип резервной копии
+      let backupType = 'unknown';
+      if (finalBackupFileName.startsWith('manual')) backupType = 'manual';
+      else if (finalBackupFileName.startsWith('auto')) backupType = 'auto';
+      else if (finalBackupFileName.startsWith('pre-restore')) backupType = 'pre-restore';
+      else if (finalBackupFileName.startsWith('imported')) backupType = 'imported';
+      
+      // Определяем формат резервной копии
+      let backupFormat = 'unknown';
+      if (finalBackupFileName.endsWith('.sql')) backupFormat = 'plain';
+      else if (finalBackupFileName.endsWith('.dump')) backupFormat = 'custom';
+      else if (finalBackupFileName.endsWith('.dir')) backupFormat = 'directory';
+      else if (finalBackupFileName.endsWith('.tar')) backupFormat = 'tar';
+      else if (finalBackupFileName.endsWith('.zip')) backupFormat = 'compressed';
+      
+      // Сохраняем метаданные в таблицу backup_metadata
+      const metadataToInsert: InsertBackupMetadata = {
+        fileName: finalBackupFileName,
+        size: fileStats.size,
+        type: backupType as any,
+        format: backupFormat as any,
+        schemas: options.schema || [],
+        tables: options.table || [],
+      };
+      
+      try {
+        await db.insert(backupMetadata).values(metadataToInsert);
+        log(`Saved backup metadata for ${finalBackupFileName}`, "backup");
+      } catch (error) {
+        log(`Warning: Failed to save backup metadata: ${error}`, "backup");
+        // Не прерываем процесс, если сохранение метаданных не удалось
+      }
+      
+      return finalBackupFileName;
     } catch (error) {
       log(`Backup creation failed: ${error}`, "backup");
       throw new Error(`Failed to create backup: ${error}`);
@@ -253,8 +293,8 @@ export class PostgresBackupManager implements IBackupManager {
    * @returns Массив информации о резервных копиях
    */
   async listBackups(filter?: { 
-    type?: 'manual' | 'auto' | 'pre-restore'; 
-    format?: 'plain' | 'custom' | 'directory' | 'tar';
+    type?: 'manual' | 'auto' | 'pre-restore' | 'imported'; 
+    format?: 'plain' | 'custom' | 'directory' | 'tar' | 'compressed';
     fromDate?: Date;
     toDate?: Date; 
   }): Promise<{ 
@@ -265,6 +305,7 @@ export class PostgresBackupManager implements IBackupManager {
     format: string;
     tables?: string[];
     schemas?: string[];
+    comment?: string;
   }[]> {
     try {
       // Все возможные расширения для резервных копий
@@ -275,40 +316,78 @@ export class PostgresBackupManager implements IBackupManager {
         return validExtensions.some(ext => file.endsWith(ext));
       });
       
+      // Получаем метаданные из базы данных
+      const metadataRecords = await db.select().from(backupMetadata);
+      
+      // Создаем карту метаданных для быстрого доступа
+      const metadataMap = new Map();
+      for (const record of metadataRecords) {
+        metadataMap.set(record.fileName, record);
+      }
+      
       // Преобразуем список файлов в объекты с метаданными
-      let backups = files.map(file => {
+      let backups = await Promise.all(files.map(async (file) => {
         const filePath = path.join(BACKUP_DIR, file);
         const stats = fs.statSync(filePath);
         
-        // Определяем тип резервной копии по имени файла
-        let type = 'unknown';
-        if (file.startsWith('manual-')) type = 'manual';
-        else if (file.startsWith('auto-')) type = 'auto';
-        else if (file.startsWith('pre-restore-')) type = 'pre-restore';
+        // Проверяем, есть ли метаданные в базе данных
+        const metadata = metadataMap.get(file);
         
-        // Определяем формат резервной копии по расширению
-        let format = 'unknown';
-        if (file.endsWith('.sql')) format = 'plain';
-        else if (file.endsWith('.dump')) format = 'custom';
-        else if (file.endsWith('.dir') || file.endsWith('.dir.zip')) format = 'directory';
-        else if (file.endsWith('.tar')) format = 'tar';
-        
-        // Базовая информация о резервной копии
-        const backup = {
-          name: file,
-          size: stats.size,
-          date: stats.mtime,
-          type,
-          format,
-          tables: [] as string[],
-          schemas: [] as string[]
-        };
-        
-        // TODO: для более детального анализа можно добавить инспекцию содержимого бэкапа
-        // чтобы извлечь информацию о таблицах и схемах
-        
-        return backup;
-      });
+        if (metadata) {
+          // Если есть запись в базе данных, используем её
+          return {
+            name: file,
+            size: stats.size,
+            date: stats.mtime,
+            type: metadata.type,
+            format: metadata.format,
+            tables: metadata.tables as string[],
+            schemas: metadata.schemas as string[],
+            comment: metadata.comment
+          };
+        } else {
+          // Если нет записи, определяем тип и формат из имени файла
+          let type = 'unknown';
+          if (file.startsWith('manual-')) type = 'manual';
+          else if (file.startsWith('auto-')) type = 'auto';
+          else if (file.startsWith('pre-restore-')) type = 'pre-restore';
+          else if (file.startsWith('imported-')) type = 'imported';
+          
+          let format = 'unknown';
+          if (file.endsWith('.sql')) format = 'plain';
+          else if (file.endsWith('.dump')) format = 'custom';
+          else if (file.endsWith('.dir') || file.endsWith('.dir.zip')) format = 'directory';
+          else if (file.endsWith('.tar')) format = 'tar';
+          else if (file.endsWith('.zip')) format = 'compressed';
+          
+          // Создаем запись в базе данных для этого файла
+          try {
+            const newMetadata: InsertBackupMetadata = {
+              fileName: file,
+              size: stats.size,
+              type: type as any,
+              format: format as any,
+              schemas: [],
+              tables: []
+            };
+            
+            await db.insert(backupMetadata).values(newMetadata);
+            log(`Created missing metadata record for ${file}`, "backup");
+          } catch (err) {
+            log(`Warning: Failed to create metadata record: ${err}`, "backup");
+          }
+          
+          return {
+            name: file,
+            size: stats.size,
+            date: stats.mtime,
+            type,
+            format,
+            tables: [],
+            schemas: []
+          };
+        }
+      }));
       
       // Применяем фильтры, если они указаны
       if (filter) {

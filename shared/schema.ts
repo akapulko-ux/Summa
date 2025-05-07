@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, foreignKey, jsonb, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, foreignKey, jsonb, doublePrecision, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -147,6 +147,34 @@ export const insertSystemSettingSchema = createInsertSchema(systemSettings, {
   value: z.string().optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
+// Backup metadata table
+export const backupTypeEnum = pgEnum('backup_type', ['manual', 'auto', 'pre-restore', 'imported', 'unknown']);
+export const backupFormatEnum = pgEnum('backup_format', ['plain', 'custom', 'directory', 'tar', 'compressed', 'unknown']);
+
+export const backupMetadata = pgTable('backup_metadata', {
+  id: serial('id').primaryKey(),
+  fileName: text('file_name').notNull().unique(),
+  size: integer('size').notNull(),
+  type: backupTypeEnum('type').default('unknown'),
+  format: backupFormatEnum('format').default('unknown'),
+  schemas: jsonb('schemas').default([]),
+  tables: jsonb('tables').default([]),
+  comment: text('comment'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  createdBy: integer('created_by').references(() => users.id),
+});
+
+export const insertBackupMetadataSchema = createInsertSchema(backupMetadata, {
+  fileName: z.string().min(1),
+  size: z.number(),
+  type: z.enum(['manual', 'auto', 'pre-restore', 'imported', 'unknown']).default('unknown'),
+  format: z.enum(['plain', 'custom', 'directory', 'tar', 'compressed', 'unknown']).default('unknown'),
+  schemas: z.array(z.string()).default([]),
+  tables: z.array(z.string()).default([]),
+  comment: z.string().optional(),
+  createdBy: z.number().optional(),
+}).omit({ id: true, createdAt: true });
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -162,6 +190,9 @@ export type InsertCustomField = z.infer<typeof insertCustomFieldSchema>;
 
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
+
+export type BackupMetadata = typeof backupMetadata.$inferSelect;
+export type InsertBackupMetadata = z.infer<typeof insertBackupMetadataSchema>;
 
 // Auth related schemas for client side validation
 export const loginSchema = z.object({
