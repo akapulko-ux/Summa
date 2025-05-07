@@ -90,9 +90,12 @@ const formSchema = z.object({
 });
 
 export default function ReportsPage() {
-  const { t, userLanguage } = useTranslations();
+  const { t } = useTranslations();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Получаем текущий язык из localStorage
+  const currentLanguage = localStorage.getItem('app-language') || 'en';
   
   // Состояния компонента
   const [generatingReport, setGeneratingReport] = useState(false);
@@ -155,7 +158,7 @@ export default function ReportsPage() {
     defaultValues: {
       reportType: "subscriptions",
       format: "pdf",
-      language: userLanguage as 'en' | 'ru',
+      language: currentLanguage as 'en' | 'ru',
     },
   });
 

@@ -1,4 +1,4 @@
-import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 export interface Report {
   name: string;
@@ -28,29 +28,54 @@ export interface GenerateReportResponse {
  * Get all reports
  */
 export async function getReports(): Promise<Report[]> {
-  return apiRequest<Report[]>('/api/reports');
+  const response = await fetch('/api/reports', {
+    credentials: 'include'
+  });
+  
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`${response.status}: ${text || response.statusText}`);
+  }
+  
+  return response.json();
 }
 
 /**
  * Generate a new report
  */
 export async function generateReport(params: ReportParams): Promise<GenerateReportResponse> {
-  return apiRequest<GenerateReportResponse>('/api/reports/generate', {
+  const response = await fetch('/api/reports/generate', {
     method: 'POST',
-    body: JSON.stringify(params),
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-  } as RequestInit);
+    body: JSON.stringify(params),
+    credentials: 'include'
+  });
+  
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`${response.status}: ${text || response.statusText}`);
+  }
+  
+  return response.json();
 }
 
 /**
  * Delete a report
  */
 export async function deleteReport(fileName: string): Promise<{ success: boolean; message: string }> {
-  return apiRequest<{ success: boolean; message: string }>(`/api/reports/${fileName}`, {
+  const response = await fetch(`/api/reports/${fileName}`, {
     method: 'DELETE',
-  } as RequestInit);
+    credentials: 'include'
+  });
+  
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`${response.status}: ${text || response.statusText}`);
+  }
+  
+  return response.json();
 }
 
 /**
