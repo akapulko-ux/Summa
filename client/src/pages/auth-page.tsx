@@ -185,7 +185,7 @@ export default function AuthPage() {
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
                 <TabsTrigger value="register">{t('auth.register')}</TabsTrigger>
-                <TabsTrigger value="magic-link">{t('auth.magicLink')}</TabsTrigger>
+                <TabsTrigger value="magic-link" className="text-xs sm:text-sm px-0 sm:px-2">{t('auth.magicLink')}</TabsTrigger>
               </TabsList>
               
               {/* Login Form */}
@@ -332,16 +332,20 @@ export default function AuthPage() {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="w-full" disabled={magicLinkMutation.isPending}>
+                    <Button 
+                      type="submit" 
+                      className="w-full h-auto py-2 whitespace-normal" 
+                      disabled={magicLinkMutation.isPending}
+                    >
                       {magicLinkMutation.isPending ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('auth.sendingLink')}
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin shrink-0" />
+                          <span className="text-sm">{t('auth.sendingLink')}</span>
                         </>
                       ) : (
                         <>
-                          <Mail className="mr-2 h-4 w-4" />
-                          {t('auth.sendMagicLink')}
+                          <Mail className="mr-2 h-4 w-4 shrink-0" />
+                          <span className="text-sm">{t('auth.sendMagicLink')}</span>
                         </>
                       )}
                     </Button>
