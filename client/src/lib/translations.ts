@@ -1559,7 +1559,7 @@ export const ru: Translation = {
     // Sample reports
     subscriptionReportSample: "Отчет по подпискам",
     userGrowthReportSample: "Отчет по росту пользователей",
-    financialReportQ1Sample: "Финансовый отчет Q1",
+    financialReportSample: "Финансовый отчет Q1",
   },
   layout: {
     adminPanel: "Панель администратора",
