@@ -371,7 +371,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
           name="serviceId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Service</FormLabel>
+              <FormLabel>{t("subscriptions.service")}</FormLabel>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -391,13 +391,13 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a service" />
+                    <SelectValue placeholder={t("subscriptions.selectService")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {isLoadingServices ? (
                     <SelectItem value="loading" disabled>
-                      Loading services...
+                      {t("common.loading") + "..."}
                     </SelectItem>
                   ) : servicesData?.services && servicesData.services.length > 0 ? (
                     <>
@@ -406,10 +406,10 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
                           {service.title}
                         </SelectItem>
                       ))}
-                      <SelectItem value="other">Other (Custom)</SelectItem>
+                      <SelectItem value="other">{t("subscriptions.customServiceName")}</SelectItem>
                     </>
                   ) : (
-                    <SelectItem value="other">Other (Custom)</SelectItem>
+                    <SelectItem value="other">{t("subscriptions.customServiceName")}</SelectItem>
                   )}
                 </SelectContent>
               </Select>
@@ -443,7 +443,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subscription Title</FormLabel>
+              <FormLabel>{t("subscriptions.subscriptionTitle")}</FormLabel>
               <FormControl>
                 <Input placeholder="Google Workspace Business" {...field} />
               </FormControl>
@@ -458,7 +458,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             name="domain"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Domain</FormLabel>
+                <FormLabel>{t("subscriptions.domain")}</FormLabel>
                 <FormControl>
                   <Input placeholder="example.com" {...field} />
                 </FormControl>
@@ -472,7 +472,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             name="loginId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Login ID / Username</FormLabel>
+                <FormLabel>{t("subscriptions.loginId")}</FormLabel>
                 <FormControl>
                   <Input placeholder="admin@example.com" {...field} />
                 </FormControl>
@@ -488,20 +488,20 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             name="paymentPeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Payment Period</FormLabel>
+                <FormLabel>{t("subscriptions.paymentPeriod")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select payment period" />
+                      <SelectValue placeholder={t("subscriptions.paymentPeriod")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="quarterly">Quarterly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
+                    <SelectItem value="monthly">{t("subscriptions.monthly")}</SelectItem>
+                    <SelectItem value="quarterly">{t("subscriptions.quarterly")}</SelectItem>
+                    <SelectItem value="yearly">{t("subscriptions.yearly")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -514,7 +514,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             name="paidUntil"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Paid Until</FormLabel>
+                <FormLabel>{t("subscriptions.paidUntil")}</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -530,7 +530,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             name="paymentAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Payment Amount</FormLabel>
+                <FormLabel>{t("subscriptions.paymentAmount")}</FormLabel>
                 <FormControl>
                   <Input type="number" step="0.01" placeholder="0.00" {...field} />
                 </FormControl>
