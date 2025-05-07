@@ -169,24 +169,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
             {isAdmin && (
               <>
-                <button 
-                  onClick={() => window.location.href = "/admin/services"} 
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold border-0 bg-transparent cursor-pointer p-0",
+                <Link href="/admin/services">
+                  <span className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
                     location === "/admin/services" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  {t('nav.services')}
-                </button>
-                <button 
-                  onClick={() => window.location.href = "/admin/users"} 
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold border-0 bg-transparent cursor-pointer p-0",
+                  )}>
+                    {t('nav.services')}
+                  </span>
+                </Link>
+                <Link href="/admin/users">
+                  <span className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
                     location === "/admin/users" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  {t('nav.users')}
-                </button>
+                  )}>
+                    {t('nav.users')}
+                  </span>
+                </Link>
               </>
             )}
           </nav>
