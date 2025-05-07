@@ -12,6 +12,7 @@ import { cacheMiddleware, clearCacheMiddleware } from "./middleware/cache-middle
 import { dbOptimizer } from "./db-optimizer";
 import { scalingManager } from "./scaling";
 import { setupMonitoringRoutes } from "./routes/monitoring-routes";
+import { registerReportsRoutes } from "./reports/reports-routes";
 import { db } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 import { users, services, subscriptions } from "@shared/schema";
@@ -733,6 +734,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Подключаем маршруты для резервного копирования базы данных
   app.use("/api/backups", backupRoutes);
+  
+  // Подключаем маршруты для отчетов
+  registerReportsRoutes(app);
 
   // Подключаем маршруты для Telegram бота
   setupTelegramRoutes(app);
