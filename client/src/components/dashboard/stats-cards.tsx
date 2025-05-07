@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, CreditCard, CircleRuble, Activity, Clock, Calendar } from "lucide-react";
+import { Users, CreditCard, DollarSign, Activity, Clock, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslations } from "@/hooks/use-translations";
@@ -90,14 +90,14 @@ export function StatsCards() {
                 <h3 className="tracking-tight text-sm font-medium">
                   {t('subscriptions.paymentAmount')}
                 </h3>
-                <CircleRuble className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
               </div>
               {isAdminLoading ? (
                 <Skeleton className="h-8 w-24 my-1" />
               ) : (
                 <>
                   <div className="text-2xl font-bold">
-                    {subStats?.totalRevenue?.toFixed(2) || "0.00"}
+                    ${subStats?.totalRevenue?.toFixed(2) || "0.00"}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('subscriptions.title')}
@@ -158,7 +158,7 @@ export function StatsCards() {
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight text-sm font-medium">{t('services.totalCashbackAmount')}</h3>
-                <CircleRuble className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
                 <Skeleton className="h-8 w-24 my-1" />
@@ -170,7 +170,7 @@ export function StatsCards() {
                       const subscriptions = userSubscriptions?.subscriptions || [];
                       // Суммируем денежные суммы кешбека из всех сервисов
                       let totalCashbackAmount = 0;
-
+                      
                       subscriptions.forEach(subscription => {
                         // Рассчитываем кешбек в денежном эквиваленте
                         if (subscription.serviceData?.cashbackPercent && subscription.paymentAmount) {
@@ -180,7 +180,7 @@ export function StatsCards() {
                           totalCashbackAmount += cashbackAmount;
                         }
                       });
-
+                      
                       // Форматируем как денежную сумму
                       return `$${totalCashbackAmount.toFixed(2)}`;
                     })()}
@@ -192,12 +192,12 @@ export function StatsCards() {
               )}
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight text-sm font-medium">{t('services.totalCashback')}</h3>
-                <CircleRuble className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
                 <Skeleton className="h-8 w-24 my-1" />
@@ -209,14 +209,14 @@ export function StatsCards() {
                       const subscriptions = userSubscriptions?.subscriptions || [];
                       // Суммируем проценты кешбека из всех сервисов
                       let totalCashbackPercent = 0;
-
+                      
                       subscriptions.forEach(subscription => {
                         // Добавляем проценты кешбека из каждой подписки
                         if (subscription.serviceData?.cashbackPercent) {
                           totalCashbackPercent += Number(subscription.serviceData.cashbackPercent);
                         }
                       });
-
+                      
                       // Форматируем как процент
                       return `${totalCashbackPercent.toFixed(2)}%`;
                     })()}
