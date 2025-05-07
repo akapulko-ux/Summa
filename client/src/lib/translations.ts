@@ -379,6 +379,7 @@ export type Translation = {
     service: string;
     selectedService: string;
     noServiceSelected: string;
+    enterServiceName: string;
     customServiceName: string;
     domain: string;
     loginId: string;
@@ -1729,6 +1730,7 @@ export const ru: Translation = {
     service: "Сервис",
     selectedService: "Выбранный сервис",
     noServiceSelected: "Сервис не выбран",
+    enterServiceName: "Введите название сервиса",
     customServiceName: "Название сервиса",
     domain: "Домен",
     loginId: "Логин",
