@@ -1154,6 +1154,7 @@ export const en: Translation = {
     service: "Service",
     selectedService: "Selected Service",
     noServiceSelected: "No service selected",
+    enterServiceName: "Enter service name",
     customServiceName: "Custom Service Name",
     domain: "Domain",
     loginId: "Login ID",

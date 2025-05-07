@@ -190,9 +190,9 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   // При выборе сервиса
   const handleServiceChange = (serviceId: string) => {
     if (serviceId === 'other') {
-      // Для опции "Другой сервис" не меняем стоимость
-      form.setValue("title", t('subscriptions.otherService'));
-      setSelectedServiceName(t('subscriptions.otherService'));
+      // Для опции "Другой сервис" оставляем поле пустым
+      form.setValue("title", "");
+      setSelectedServiceName(""); // Оставляем поле пустым
       return;
     }
     
@@ -344,12 +344,30 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                 />
                 
                 {/* Отображение выбранного сервиса */}
-                <div className="space-y-2">
-                  <div className="text-sm font-medium">{t('subscriptions.selectedService')}</div>
-                  <div className="border rounded-md p-3 bg-muted/30">
-                    {selectedServiceName || t('subscriptions.noServiceSelected')}
-                  </div>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="title"
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('subscriptions.selectedService')}</FormLabel>
+                      <FormControl>
+                        {form.getValues('serviceId') === 'other' ? (
+                          <Input
+                            {...field}
+                            placeholder={t('subscriptions.enterServiceName')}
+                            required
+                          />
+                        ) : (
+                          <div className="border rounded-md p-3 bg-muted/30">
+                            {selectedServiceName || t('subscriptions.noServiceSelected')}
+                          </div>
+                        )}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 
                 <FormField
                   control={form.control}
