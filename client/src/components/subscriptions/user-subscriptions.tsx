@@ -79,18 +79,17 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
   
-  // Получение списка подписок пользователя
+  // Получение списка подписок пользователя с названиями сервисов
   const { 
     data: subscriptions, 
     isLoading, 
     isError 
-  } = useQuery<Subscription[]>({
-    queryKey: ["/api/subscriptions", userId],
+  } = useQuery<(Subscription & { serviceName?: string })[]>({
+    queryKey: ["/api/subscriptions/user", userId],
     queryFn: async () => {
-      const res = await apiRequest("GET", `/api/subscriptions?userId=${userId}`);
+      const res = await apiRequest("GET", `/api/subscriptions/user/${userId}`);
       if (!res.ok) throw new Error("Failed to fetch subscriptions");
-      const data = await res.json();
-      return data.subscriptions;
+      return res.json();
     },
     enabled: Boolean(userId),
   });
@@ -549,7 +548,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                 {subscriptions?.map((subscription) => (
                   <TableRow key={subscription.id}>
                     <TableCell className="font-medium">
-                      {getServiceName(subscription.serviceId)}
+                      {subscription.serviceName || getServiceName(subscription.serviceId)}
                     </TableCell>
                     <TableCell>{formatDate(subscription.createdAt)}</TableCell>
                     <TableCell>{subscription.paidUntil ? formatDate(subscription.paidUntil) : "-"}</TableCell>

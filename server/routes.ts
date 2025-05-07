@@ -379,6 +379,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch all subscriptions" });
     }
   });
+  
+  // Get user subscriptions with service details
+  app.get("/api/subscriptions/user/:userId", isAuthenticated, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Check if user is authenticated
+      if (!req.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      // Regular users can only view their own subscriptions
+      if (req.user.role !== "admin" && req.user.id !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      // Fetch user subscriptions with joined service data
+      const userSubscriptions = await db.select({
+        id: subscriptions.id,
+        userId: subscriptions.userId,
+        serviceId: subscriptions.serviceId,
+        title: subscriptions.title,
+        status: subscriptions.status,
+        paymentPeriod: subscriptions.paymentPeriod,
+        paymentAmount: subscriptions.paymentAmount,
+        domain: subscriptions.domain,
+        createdAt: subscriptions.createdAt,
+        paidUntil: subscriptions.paidUntil,
+        // Add service name from services table
+        serviceName: services.title
+      })
+      .from(subscriptions)
+      .where(eq(subscriptions.userId, userId))
+      .leftJoin(services, eq(subscriptions.serviceId, services.id))
+      .orderBy(desc(subscriptions.createdAt));
+      
+      // Process results to handle custom services (same logic as in /subscriptions/all)
+      const processedSubscriptions = userSubscriptions.map(sub => {
+        if (!sub.serviceName && sub.title) {
+          return {
+            ...sub,
+            serviceName: sub.title
+          };
+        }
+        return sub;
+      });
+      
+      res.json(processedSubscriptions);
+    } catch (error) {
+      console.error("Error fetching user subscriptions:", error);
+      res.status(500).json({ message: "Failed to fetch user subscriptions" });
+    }
+  });
 
   app.get("/api/subscriptions/:id", isAuthenticated, async (req, res) => {
     try {
