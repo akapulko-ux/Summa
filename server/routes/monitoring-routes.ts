@@ -51,6 +51,12 @@ export function setupMonitoringRoutes(app: Express) {
   });
   
   // Мониторинг БД
+  // Эндпоинт для получения статуса мониторинга
+  app.get('/api/monitoring/db/status', isAdmin, (req: Request, res: Response) => {
+    const isEnabled = dbOptimizer.getMonitoringStatus();
+    res.json({ enabled: isEnabled });
+  });
+  
   app.get('/api/monitoring/db/stats', isAdmin, (req: Request, res: Response) => {
     const poolStatus = dbOptimizer.getPoolStatus();
     const queryStats = dbOptimizer.getQueryStatistics();

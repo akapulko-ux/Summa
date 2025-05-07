@@ -44,6 +44,20 @@ export default function PerformanceMonitoring() {
   const { toast } = useToast();
   const [monitoringEnabled, setMonitoringEnabled] = useState(false);
 
+  // Получаем статус мониторинга
+  const { 
+    data: monitoringStatus 
+  } = useQuery<{ enabled: boolean }>({
+    queryKey: ['/api/monitoring/db/status'],
+    enabled: true,
+    refetchInterval: 10000, // Проверяем статус каждые 10 секунд
+    onSuccess: (data) => {
+      if (data) {
+        setMonitoringEnabled(data.enabled);
+      }
+    }
+  });
+
   // Получаем статистику БД
   const { 
     data: dbStats,

@@ -38,6 +38,14 @@ export class DBOptimizer {
   }
   
   /**
+   * Получить текущий статус мониторинга
+   * @returns статус мониторинга (включен/выключен)
+   */
+  getMonitoringStatus(): boolean {
+    return this.isMonitoringEnabled;
+  }
+  
+  /**
    * Установить порог для логирования медленных запросов
    * @param threshold Порог в миллисекундах
    */
