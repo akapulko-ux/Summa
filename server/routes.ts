@@ -12,6 +12,9 @@ import { cacheMiddleware, clearCacheMiddleware } from "./middleware/cache-middle
 import { dbOptimizer } from "./db-optimizer";
 import { scalingManager } from "./scaling";
 import { setupMonitoringRoutes } from "./routes/monitoring-routes";
+import { db } from "./db";
+import { eq, and, desc } from "drizzle-orm";
+import { users, services, subscriptions } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -329,6 +332,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching subscriptions:", error);
       res.status(500).json({ message: "Failed to fetch subscriptions" });
+    }
+  });
+  
+  // Get all subscriptions with details for admin view
+  app.get("/api/subscriptions/all", isAdmin, async (req, res) => {
+    try {
+      // Fetch all subscriptions with joined service and user data
+      const allSubscriptions = await db.select({
+        id: subscriptions.id,
+        userId: subscriptions.userId,
+        serviceId: subscriptions.serviceId,
+        title: subscriptions.title,
+        status: subscriptions.status,
+        paymentPeriod: subscriptions.paymentPeriod,
+        price: subscriptions.paymentAmount,
+        domain: subscriptions.domain,
+        createdAt: subscriptions.createdAt,
+        // Add service name from services table
+        serviceName: services.title,
+        // Add user info from users table
+        userName: users.name, 
+        userEmail: users.email
+      })
+      .from(subscriptions)
+      .leftJoin(services, eq(subscriptions.serviceId, services.id))
+      .leftJoin(users, eq(subscriptions.userId, users.id))
+      .orderBy(desc(subscriptions.createdAt));
+      
+      // Process results to handle custom services
+      const processedSubscriptions = allSubscriptions.map(sub => {
+        // If subscription has title but no service name (custom service case),
+        // use the subscription title as the service name
+        if (!sub.serviceName && sub.title) {
+          return {
+            ...sub,
+            serviceName: sub.title
+          };
+        }
+        return sub;
+      });
+      
+      res.json(processedSubscriptions);
+    } catch (error) {
+      console.error("Error fetching all subscriptions:", error);
+      res.status(500).json({ message: "Failed to fetch all subscriptions" });
     }
   });
 

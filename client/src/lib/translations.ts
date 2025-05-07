@@ -377,6 +377,9 @@ export type Translation = {
     editSubscription: string;
     subscriptionTitle: string;
     service: string;
+    selectedService: string;
+    noServiceSelected: string;
+    customServiceName: string;
     domain: string;
     loginId: string;
     paymentPeriod: string;
