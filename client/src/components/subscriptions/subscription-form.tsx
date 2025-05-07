@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -54,6 +54,7 @@ interface SubscriptionFormProps {
 export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionFormProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
 
   // Fetch subscription data if editing
   const { data: subscriptionData, isLoading: isLoadingSubscription } = useQuery({
@@ -229,8 +230,18 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         usersCount: String(subscriptionData.usersCount),
         status: subscriptionData.status,
       });
+      
+      // Устанавливаем имя сервиса при загрузке данных подписки
+      if (subscriptionData.serviceId && servicesData?.services) {
+        const service = servicesData.services.find((s: Service) => s.id === subscriptionData.serviceId);
+        if (service) {
+          setSelectedServiceName(service.title);
+        } else {
+          setSelectedServiceName("Other (Custom)");
+        }
+      }
     }
-  }, [subscriptionData, form]);
+  }, [subscriptionData, form, servicesData]);
 
   // Form submission handler
   function onSubmit(data: SubscriptionFormValues) {
@@ -265,7 +276,17 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             <FormItem>
               <FormLabel>Service</FormLabel>
               <Select
-                onValueChange={field.onChange}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  if (value === "other") {
+                    setSelectedServiceName("Other (Custom)");
+                  } else if (servicesData?.services) {
+                    const service = servicesData.services.find((s: Service) => s.id.toString() === value);
+                    if (service) {
+                      setSelectedServiceName(service.title);
+                    }
+                  }
+                }}
                 defaultValue={field.value}
                 value={field.value}
               >
@@ -297,6 +318,14 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             </FormItem>
           )}
         />
+
+        {/* Отображение выбранного сервиса */}
+        <div className="space-y-2">
+          <div className="text-sm font-medium">Selected Service</div>
+          <div className="border rounded-md p-3 bg-muted/30">
+            {selectedServiceName || "No service selected"}
+          </div>
+        </div>
 
         <FormField
           control={form.control}
