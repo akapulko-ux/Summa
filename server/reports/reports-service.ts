@@ -1,4 +1,3 @@
-// Импортируем pdfkit для генерации PDF-отчетов
 import PDFDocument from 'pdfkit';
 import * as ExcelJS from 'exceljs';
 import { Stream } from 'stream';
@@ -92,7 +91,7 @@ export class ReportService implements IReportService {
     const { reportType, startDate, endDate } = params;
     
     // Применяем временные фильтры к запросам
-    const dateFilter: any = {};
+    const dateFilter = {};
     if (startDate) {
       dateFilter['gte'] = startDate;
     }
@@ -127,16 +126,15 @@ export class ReportService implements IReportService {
         .leftJoin(services, eq(subscriptions.serviceId, services.id));
         
         // Применяем фильтр по дате, если указан
-        let filteredQuery = subscriptionsQuery;
         if (startDate) {
-          filteredQuery = filteredQuery.where(gt(subscriptions.createdAt, startDate));
+          subscriptionsQuery = subscriptionsQuery.where(gt(subscriptions.createdAt, startDate));
         }
         if (endDate) {
-          filteredQuery = filteredQuery.where(lt(subscriptions.createdAt, endDate));
+          subscriptionsQuery = subscriptionsQuery.where(lt(subscriptions.createdAt, endDate));
         }
         
         return {
-          subscriptions: await filteredQuery.orderBy(desc(subscriptions.createdAt)),
+          subscriptions: await subscriptionsQuery.orderBy(desc(subscriptions.createdAt)),
           title: params.language === 'ru' ? 'Отчет по подпискам' : 'Subscriptions Report',
           generated: new Date(),
           params
@@ -144,15 +142,15 @@ export class ReportService implements IReportService {
         
       case 'users':
         // Получаем данные о пользователях
-        let usersQuery = db.select().from(users);
+        let usersQuery = db.select()
+          .from(users);
         
         // Применяем фильтр по дате, если указан
-        let filteredUsersQuery = usersQuery;
         if (startDate) {
-          filteredUsersQuery = filteredUsersQuery.where(gt(users.createdAt, startDate));
+          usersQuery = usersQuery.where(gt(users.createdAt, startDate));
         }
         if (endDate) {
-          filteredUsersQuery = filteredUsersQuery.where(lt(users.createdAt, endDate));
+          usersQuery = usersQuery.where(lt(users.createdAt, endDate));
         }
         
         // Дополнительно получаем статистику по пользователям
@@ -170,7 +168,7 @@ export class ReportService implements IReportService {
           );
         
         return {
-          users: await filteredUsersQuery.orderBy(desc(users.createdAt)),
+          users: await usersQuery.orderBy(desc(users.createdAt)),
           stats: {
             total: (await db.select({ count: sql<number>`count(*)` }).from(users))[0].count,
             active: activeUsers[0].count,
@@ -314,10 +312,12 @@ export class ReportService implements IReportService {
     const fileName = `report_${reportType}${dateRange}_${timestamp}.pdf`;
     const filePath = path.join(REPORTS_DIR, fileName);
     
+    // Путь к шрифту с поддержкой кириллицы
+    const fontPath = path.join(process.cwd(), 'server/assets/fonts/Roboto-Regular.ttf');
+    
     // Создаем PDF документ с поддержкой Unicode для кириллицы
     const doc = new PDFDocument({ 
       margin: 50,
-      size: 'A4',
       info: {
         Title: data.title,
         Author: 'Subscription Management System',
@@ -327,87 +327,52 @@ export class ReportService implements IReportService {
       }
     });
     
-    // Регистрируем стандартный шрифт для документа с поддержкой кириллицы
-    // Используем стандартный шрифт Helvetica, который поддерживает базовые символы ASCII
+    // Регистрируем шрифт для поддержки кириллицы
+    if (fs.existsSync(fontPath)) {
+      doc.registerFont('Roboto', fontPath);
+      doc.font('Roboto');
+    }
     
     const writeStream = fs.createWriteStream(filePath);
+    
     doc.pipe(writeStream);
     
-    // Простой способ обеспечить поддержку кириллицы - все строки переводим в простой ASCII
-    // Это не идеально, но обеспечит читаемость
-    const transliterateRu = (text: string): string => {
-      const ruToLat: Record<string, string> = {
-        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh',
-        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
-        'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
-        'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu',
-        'я': 'ya',
-        'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E', 'Ж': 'ZH',
-        'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
-        'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'KH', 'Ц': 'TS',
-        'Ч': 'CH', 'Ш': 'SH', 'Щ': 'SCH', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'YU',
-        'Я': 'YA'
-      };
-      
-      return text.split('').map(char => ruToLat[char] || char).join('');
-    };
-    
-    // Вспомогательная функция для добавления текста с транслитерацией, если необходимо
-    const addText = (text: string, options?: any) => {
-      if (language === 'ru') {
-        doc.text(transliterateRu(text), options);
-      } else {
-        doc.text(text, options);
-      }
-    };
-    
     // Добавляем заголовок
-    doc.fontSize(20);
-    addText(data.title, { align: 'center' });
+    doc.fontSize(20).text(data.title, { align: 'center' });
     doc.moveDown();
     
     // Добавляем информацию о параметрах отчета
     const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
     const dateOptions = language === 'ru' ? { locale: ru } : undefined;
     
-    doc.fontSize(12);
-    addText(`${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`);
+    doc.fontSize(12).text(`${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`);
     
     if (startDate) {
-      addText(`${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(startDate, dateFormat, dateOptions)}`);
+      doc.text(`${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(startDate, dateFormat, dateOptions)}`);
     }
     
     if (endDate) {
-      addText(`${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(endDate, dateFormat, dateOptions)}`);
+      doc.text(`${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(endDate, dateFormat, dateOptions)}`);
     }
     
     doc.moveDown(2);
     
-    // Создаем новый объект данных, который включает функцию транслитерации для 
-    // использования в методах генерации контента
-    const extendedData = {
-      ...data,
-      _helpers: {
-        addText
-      }
-    };
-    
     // Генерируем содержимое отчета в зависимости от типа
     switch (reportType) {
       case 'subscriptions':
-        this.generateSubscriptionsPdfContent(doc, extendedData, language);
+        this.generateSubscriptionsPdfContent(doc, data, language);
         break;
       case 'users':
-        this.generateUsersPdfContent(doc, extendedData, language);
+        this.generateUsersPdfContent(doc, data, language);
         break;
       case 'services':
-        this.generateServicesPdfContent(doc, extendedData, language);
+        this.generateServicesPdfContent(doc, data, language);
         break;
       case 'financial':
-        this.generateFinancialPdfContent(doc, extendedData, language);
+        this.generateFinancialPdfContent(doc, data, language);
         break;
       case 'trends':
-        this.generateTrendsPdfContent(doc, extendedData, language);
+        this.generateTrendsPdfContent(doc, data, language);
         break;
     }
     
@@ -426,195 +391,23 @@ export class ReportService implements IReportService {
     });
   }
   
-  private async generateExcelReport(data: any, params: ReportParams): Promise<{ fileName: string, filePath: string }> {
-    const { reportType, startDate, endDate, language = 'en' } = params;
-    
-    // Создаем имя файла
-    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
-    const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : '';
-    const endDateStr = endDate ? format(endDate, 'yyyy-MM-dd') : '';
-    
-    const dateRange = startDateStr && endDateStr 
-      ? `_${startDateStr}_${endDateStr}` 
-      : '';
-    
-    const fileName = `report_${reportType}${dateRange}_${timestamp}.xlsx`;
-    const filePath = path.join(REPORTS_DIR, fileName);
-    
-    // Создаем Excel документ
-    const workbook = new ExcelJS.Workbook();
-    workbook.creator = 'Subscription Management System';
-    workbook.created = new Date();
-    workbook.modified = new Date();
-    
-    // Наполняем документ данными в зависимости от типа отчета
-    switch (reportType) {
-      case 'subscriptions':
-        this.generateSubscriptionsExcel(workbook, data, language);
-        break;
-      case 'users':
-        this.generateUsersExcel(workbook, data, language);
-        break;
-      case 'services':
-        this.generateServicesExcel(workbook, data, language);
-        break;
-      case 'financial':
-        this.generateFinancialExcel(workbook, data, language);
-        break;
-      case 'trends':
-        this.generateTrendsExcel(workbook, data, language);
-        break;
-    }
-    
-    // Сохраняем документ
-    await workbook.xlsx.writeFile(filePath);
-    
-    return { fileName, filePath };
-  }
-  
-  private async generateCsvReport(data: any, params: ReportParams): Promise<{ fileName: string, filePath: string }> {
-    const { reportType, startDate, endDate } = params;
-    
-    // Создаем имя файла
-    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
-    const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : '';
-    const endDateStr = endDate ? format(endDate, 'yyyy-MM-dd') : '';
-    
-    const dateRange = startDateStr && endDateStr 
-      ? `_${startDateStr}_${endDateStr}` 
-      : '';
-    
-    const fileName = `report_${reportType}${dateRange}_${timestamp}.csv`;
-    const filePath = path.join(REPORTS_DIR, fileName);
-    
-    // Пока реализуем CSV как Excel и конвертируем его
-    const workbook = new ExcelJS.Workbook();
-    
-    // Наполняем документ данными в зависимости от типа отчета
-    switch (reportType) {
-      case 'subscriptions':
-        this.generateSubscriptionsExcel(workbook, data, params.language || 'en');
-        break;
-      case 'users':
-        this.generateUsersExcel(workbook, data, params.language || 'en');
-        break;
-      case 'services':
-        this.generateServicesExcel(workbook, data, params.language || 'en');
-        break;
-      case 'financial':
-        this.generateFinancialExcel(workbook, data, params.language || 'en');
-        break;
-      case 'trends':
-        this.generateTrendsExcel(workbook, data, params.language || 'en');
-        break;
-    }
-    
-    // Берем первый лист и сохраняем как CSV
-    const worksheet = workbook.getWorksheet(1);
-    
-    if (!worksheet) {
-      throw new Error('No worksheet found');
-    }
-    
-    // Получаем содержимое CSV
-    let csv = '';
-    
-    // Добавляем строки в CSV
-    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-      const rowValues: string[] = [];
-      row.eachCell({ includeEmpty: true }, (cell) => {
-        rowValues.push(String(cell.value !== null ? cell.value : ''));
-      });
-      csv += rowValues.join(',') + '\n';
-    });
-    
-    // Записываем CSV в файл
-    fs.writeFileSync(filePath, csv);
-    
-    return { fileName, filePath };
-  }
-  
-  private createPdfDocDefinition(data: any, params: ReportParams): any {
-    const { reportType, startDate, endDate, language = 'en' } = params;
-    const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
-    const dateOptions = language === 'ru' ? { locale: ru } : undefined;
-    
-    // Базовая структура документа
-    const docDefinition: any = {
-      content: [
-        { text: data.title, style: 'header', alignment: 'center' },
-        { text: `${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`, style: 'subheader' }
-      ],
-      styles: {
-        header: {
-          fontSize: 20,
-          bold: true,
-          margin: [0, 0, 0, 10]
-        },
-        subheader: {
-          fontSize: 14,
-          bold: true,
-          margin: [0, 10, 0, 5]
-        },
-        tableHeader: {
-          bold: true,
-          fontSize: 12,
-          color: 'black'
-        },
-        tableCell: {
-          fontSize: 10
-        },
-        summarySection: {
-          fontSize: 14,
-          bold: true,
-          decoration: 'underline',
-          margin: [0, 20, 0, 10]
-        }
-      },
-      defaultStyle: {
-        font: 'Roboto' // pdfmake имеет встроенный Roboto с поддержкой кириллицы
-      }
-    };
-    
-    // Добавляем даты диапазона, если они указаны
-    if (startDate) {
-      docDefinition.content.push({ 
-        text: `${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(startDate, dateFormat, dateOptions)}`,
-        style: 'subheader' 
-      });
-    }
-    
-    if (endDate) {
-      docDefinition.content.push({ 
-        text: `${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(endDate, dateFormat, dateOptions)}`,
-        style: 'subheader' 
-      });
-    }
-    
-    // Данный метод больше не используется, все генерации PDF делаются через прямые методы
-    return {};
-  }
-  
-  private generateSubscriptionsPdfContent(doc: any, data: any, language: string) {
-    const { subscriptions, _helpers } = data;
-    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
+  private generateSubscriptionsPdfContent(doc: PDFKit.PDFDocument, data: any, language: string) {
+    const { subscriptions } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
-    
-    doc.fontSize(12);
-    addText(`${language === 'ru' ? 'Всего подписок' : 'Total subscriptions'}: ${subscriptions.length}`);
+    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(12).text(
+      `${language === 'ru' ? 'Всего подписок' : 'Total subscriptions'}: ${subscriptions.length}`
+    );
     
     // Вычисляем общую сумму подписок
     const totalRevenue = subscriptions.reduce((sum, sub) => sum + (sub.paymentAmount || 0), 0);
-    addText(`${language === 'ru' ? 'Общая сумма платежей' : 'Total payment amount'}: ${totalRevenue.toFixed(2)}`);
+    doc.text(`${language === 'ru' ? 'Общая сумма платежей' : 'Total payment amount'}: ${totalRevenue.toFixed(2)}`);
     
     doc.moveDown(2);
     
     // Добавляем таблицу с подписками
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Список подписок' : 'Subscriptions List', { underline: true });
+    doc.fontSize(14).text(language === 'ru' ? 'Список подписок' : 'Subscriptions List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -626,92 +419,59 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 200, 300, 400, 450, 500];
     
     // Рисуем заголовки 
-    doc.fontSize(10);
+    doc.fontSize(10).font('Roboto');
     headers.forEach((header, i) => {
-      addText(header, { continued: false, lineBreak: false });
-      
-      // Вручную позиционируем текст в колонках
-      if (i < headers.length - 1) {
-        doc.moveUp();
-        doc.x = columnPositions[i + 1];
-      }
+      doc.text(header, columnPositions[i], y, { continued: false });
     });
     
     doc.moveDown();
     y = doc.y;
     
     // Рисуем содержимое таблицы
+    doc.font('Roboto');
     subscriptions.slice(0, 20).forEach((sub) => {
-      // Первая колонка - ID
-      doc.x = columnPositions[0];
-      addText(String(sub.id), { continued: false, lineBreak: false });
+      doc.text(String(sub.id), columnPositions[0], y, { continued: false });
+      doc.text(sub.title?.substring(0, 15) || '-', columnPositions[1], y, { continued: false });
+      doc.text(sub.serviceName?.substring(0, 15) || '-', columnPositions[2], y, { continued: false });
+      doc.text(sub.userEmail?.substring(0, 15) || '-', columnPositions[3], y, { continued: false });
+      doc.text(String(sub.paymentAmount || '-'), columnPositions[4], y, { continued: false });
+      doc.text(String(sub.status || '-'), columnPositions[5], y, { continued: false });
       
-      // Вторая колонка - Название
-      doc.moveUp();
-      doc.x = columnPositions[1];
-      addText(sub.title?.substring(0, 15) || '-', { continued: false, lineBreak: false });
-      
-      // Третья колонка - Сервис
-      doc.moveUp();
-      doc.x = columnPositions[2];
-      addText(sub.serviceName?.substring(0, 15) || '-', { continued: false, lineBreak: false });
-      
-      // Четвертая колонка - Пользователь
-      doc.moveUp();
-      doc.x = columnPositions[3];
-      addText(sub.userEmail?.substring(0, 15) || '-', { continued: false, lineBreak: false });
-      
-      // Пятая колонка - Сумма
-      doc.moveUp();
-      doc.x = columnPositions[4];
-      addText(String(sub.paymentAmount || '-'), { continued: false, lineBreak: false });
-      
-      // Шестая колонка - Статус
-      doc.moveUp();
-      doc.x = columnPositions[5];
-      addText(String(sub.status || '-'), { continued: false, lineBreak: false });
-      
-      // Седьмая колонка - Дата создания
-      doc.moveUp();
-      doc.x = columnPositions[6];
       const createdAt = sub.createdAt ? format(sub.createdAt, 'yyyy-MM-dd') : '-';
-      addText(createdAt, { continued: false });
+      doc.text(createdAt, columnPositions[6], y, { continued: false });
+      
+      y += 20;
       
       // Если достигли конца страницы, переходим на новую
-      if (doc.y > 700) {
+      if (y > 700) {
         doc.addPage();
-        doc.y = 50;
+        y = 50;
       }
     });
     
     // Если больше 20 подписок, указываем общее количество
     if (subscriptions.length > 20) {
       doc.moveDown();
-      addText(language === 'ru' 
+      doc.text(language === 'ru' 
         ? `... и еще ${subscriptions.length - 20} подписок` 
         : `... and ${subscriptions.length - 20} more subscriptions`
       );
     }
   }
   
-  private generateUsersPdfContent(doc: any, data: any, language: string) {
-    const { users, stats, _helpers } = data;
-    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
+  private generateUsersPdfContent(doc: PDFKit.PDFDocument, data: any, language: string) {
+    const { users, stats } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
-    
-    doc.fontSize(12);
-    addText(`${language === 'ru' ? 'Всего пользователей' : 'Total users'}: ${stats.total}`);
-    addText(`${language === 'ru' ? 'Активных пользователей' : 'Active users'}: ${stats.active}`);
-    addText(`${language === 'ru' ? 'Новых пользователей' : 'New users'}: ${stats.new}`);
+    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(12).text(`${language === 'ru' ? 'Всего пользователей' : 'Total users'}: ${stats.total}`);
+    doc.text(`${language === 'ru' ? 'Активных пользователей' : 'Active users'}: ${stats.active}`);
+    doc.text(`${language === 'ru' ? 'Новых пользователей' : 'New users'}: ${stats.new}`);
     
     doc.moveDown(2);
     
     // Добавляем таблицу с пользователями
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Список пользователей' : 'Users List', { underline: true });
+    doc.fontSize(14).text(language === 'ru' ? 'Список пользователей' : 'Users List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -719,81 +479,55 @@ export class ReportService implements IReportService {
       ? ['ID', 'Email', 'Имя', 'Компания', 'Роль', 'Дата регистрации']
       : ['ID', 'Email', 'Name', 'Company', 'Role', 'Registration Date'];
     
+    let y = doc.y;
     const columnPositions = [50, 100, 250, 350, 450, 500];
     
     // Рисуем заголовки
-    doc.fontSize(10);
+    doc.fontSize(10).font('Roboto');
     headers.forEach((header, i) => {
-      addText(header, { continued: false, lineBreak: false });
-      
-      // Вручную позиционируем текст в колонках
-      if (i < headers.length - 1) {
-        doc.moveUp();
-        doc.x = columnPositions[i + 1];
-      }
+      doc.text(header, columnPositions[i], y, { continued: false });
     });
     
     doc.moveDown();
+    y = doc.y;
     
     // Рисуем содержимое таблицы
+    doc.font('Roboto');
     users.slice(0, 20).forEach((user) => {
-      // Первая колонка - ID
-      doc.x = columnPositions[0];
-      addText(String(user.id), { continued: false, lineBreak: false });
+      doc.text(String(user.id), columnPositions[0], y, { continued: false });
+      doc.text(user.email?.substring(0, 25) || '-', columnPositions[1], y, { continued: false });
+      doc.text(user.name?.substring(0, 15) || '-', columnPositions[2], y, { continued: false });
+      doc.text(user.companyName?.substring(0, 15) || '-', columnPositions[3], y, { continued: false });
+      doc.text(String(user.role || '-'), columnPositions[4], y, { continued: false });
       
-      // Вторая колонка - Email
-      doc.moveUp();
-      doc.x = columnPositions[1];
-      addText(user.email?.substring(0, 25) || '-', { continued: false, lineBreak: false });
-      
-      // Третья колонка - Имя
-      doc.moveUp();
-      doc.x = columnPositions[2];
-      addText(user.name?.substring(0, 15) || '-', { continued: false, lineBreak: false });
-      
-      // Четвертая колонка - Компания
-      doc.moveUp();
-      doc.x = columnPositions[3];
-      addText(user.companyName?.substring(0, 15) || '-', { continued: false, lineBreak: false });
-      
-      // Пятая колонка - Роль
-      doc.moveUp();
-      doc.x = columnPositions[4];
-      addText(String(user.role || '-'), { continued: false, lineBreak: false });
-      
-      // Шестая колонка - Дата регистрации
-      doc.moveUp();
-      doc.x = columnPositions[5];
       const createdAt = user.createdAt ? format(user.createdAt, 'yyyy-MM-dd') : '-';
-      addText(createdAt, { continued: false });
+      doc.text(createdAt, columnPositions[5], y, { continued: false });
+      
+      y += 20;
       
       // Если достигли конца страницы, переходим на новую
-      if (doc.y > 700) {
+      if (y > 700) {
         doc.addPage();
-        doc.y = 50;
+        y = 50;
       }
     });
     
     // Если больше 20 пользователей, указываем общее количество
     if (users.length > 20) {
       doc.moveDown();
-      addText(language === 'ru' 
+      doc.text(language === 'ru' 
         ? `... и еще ${users.length - 20} пользователей` 
         : `... and ${users.length - 20} more users`
       );
     }
   }
   
-  private generateServicesPdfContent(doc: any, data: any, language: string) {
-    const { services, usage, _helpers } = data;
-    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
+  private generateServicesPdfContent(doc: PDFKit.PDFDocument, data: any, language: string) {
+    const { services, usage } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
-    
-    doc.fontSize(12);
-    addText(`${language === 'ru' ? 'Всего сервисов' : 'Total services'}: ${services.length}`);
+    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(12).text(`${language === 'ru' ? 'Всего сервисов' : 'Total services'}: ${services.length}`);
     
     // Находим самый популярный сервис
     let popularService = { serviceName: '-', count: 0 };
@@ -802,13 +536,12 @@ export class ReportService implements IReportService {
         (current.count > prev.count) ? current : prev, usage[0]);
     }
     
-    addText(`${language === 'ru' ? 'Самый популярный сервис' : 'Most popular service'}: ${popularService.serviceName} (${popularService.count} ${language === 'ru' ? 'подписок' : 'subscriptions'})`);
+    doc.text(`${language === 'ru' ? 'Самый популярный сервис' : 'Most popular service'}: ${popularService.serviceName} (${popularService.count} ${language === 'ru' ? 'подписок' : 'subscriptions'})`);
     
     doc.moveDown(2);
     
     // Добавляем таблицу с сервисами
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Список сервисов' : 'Services List', { underline: true });
+    doc.fontSize(14).text(language === 'ru' ? 'Список сервисов' : 'Services List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -816,21 +549,17 @@ export class ReportService implements IReportService {
       ? ['ID', 'Название', 'Кэшбэк', 'Комиссия', 'Подписок', 'Доход']
       : ['ID', 'Title', 'Cashback', 'Commission', 'Subscriptions', 'Revenue'];
     
+    let y = doc.y;
     const columnPositions = [50, 100, 300, 380, 460, 520];
     
     // Рисуем заголовки
-    doc.fontSize(10);
+    doc.fontSize(10).font('Roboto');
     headers.forEach((header, i) => {
-      addText(header, { continued: false, lineBreak: false });
-      
-      // Вручную позиционируем текст в колонках
-      if (i < headers.length - 1) {
-        doc.moveUp();
-        doc.x = columnPositions[i + 1];
-      }
+      doc.text(header, columnPositions[i], y, { continued: false });
     });
     
     doc.moveDown();
+    y = doc.y;
     
     // Создаем карту использования сервисов для быстрого доступа
     const usageMap = new Map();
@@ -839,67 +568,45 @@ export class ReportService implements IReportService {
     });
     
     // Рисуем содержимое таблицы
+    doc.font('Roboto');
     services.forEach((service) => {
       const serviceUsage = usageMap.get(service.id) || { count: 0, totalRevenue: 0 };
       
-      // Первая колонка - ID
-      doc.x = columnPositions[0];
-      addText(String(service.id), { continued: false, lineBreak: false });
+      doc.text(String(service.id), columnPositions[0], y, { continued: false });
+      doc.text(service.title?.substring(0, 30) || '-', columnPositions[1], y, { continued: false });
+      doc.text(service.cashback || '-', columnPositions[2], y, { continued: false });
+      doc.text(service.commission || '-', columnPositions[3], y, { continued: false });
+      doc.text(String(serviceUsage.count || 0), columnPositions[4], y, { continued: false });
+      doc.text(String((serviceUsage.totalRevenue || 0).toFixed(2)), columnPositions[5], y, { continued: false });
       
-      // Вторая колонка - Название
-      doc.moveUp();
-      doc.x = columnPositions[1];
-      addText(service.title?.substring(0, 30) || '-', { continued: false, lineBreak: false });
-      
-      // Третья колонка - Кэшбэк
-      doc.moveUp();
-      doc.x = columnPositions[2];
-      addText(service.cashback || '-', { continued: false, lineBreak: false });
-      
-      // Четвертая колонка - Комиссия
-      doc.moveUp();
-      doc.x = columnPositions[3];
-      addText(service.commission || '-', { continued: false, lineBreak: false });
-      
-      // Пятая колонка - Подписок
-      doc.moveUp();
-      doc.x = columnPositions[4];
-      addText(String(serviceUsage.count || 0), { continued: false, lineBreak: false });
-      
-      // Шестая колонка - Доход
-      doc.moveUp();
-      doc.x = columnPositions[5];
-      addText(String((serviceUsage.totalRevenue || 0).toFixed(2)), { continued: false });
+      y += 20;
       
       // Если достигли конца страницы, переходим на новую
-      if (doc.y > 700) {
+      if (y > 700) {
         doc.addPage();
-        doc.y = 50;
+        y = 50;
       }
     });
   }
   
-  private generateFinancialPdfContent(doc: any, data: any, language: string) {
-    const { transactions, summary, _helpers } = data;
-    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
+  private generateFinancialPdfContent(doc: PDFKit.PDFDocument, data: any, language: string) {
+    const { transactions, summary } = data;
     
-    // Добавляем финансовую сводку
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Финансовая сводка' : 'Financial Summary', { underline: true });
+    // Добавляем общую информацию
+    doc.fontSize(14).text(language === 'ru' ? 'Финансовая сводка' : 'Financial Summary', { underline: true });
     doc.moveDown();
     
     // Показываем финансовый отчет
     doc.fontSize(12);
-    addText(`${language === 'ru' ? 'Общий доход' : 'Total Revenue'}: ${summary.totalRevenue.toFixed(2)}`);
-    addText(`${language === 'ru' ? 'Общий кэшбэк' : 'Total Cashback'}: ${summary.totalCashback.toFixed(2)}`);
-    addText(`${language === 'ru' ? 'Общая комиссия' : 'Total Commission'}: ${summary.totalCommission.toFixed(2)}`);
-    addText(`${language === 'ru' ? 'Чистый доход' : 'Net Income'}: ${summary.netIncome.toFixed(2)}`);
+    doc.text(`${language === 'ru' ? 'Общий доход' : 'Total Revenue'}: ${summary.totalRevenue.toFixed(2)}`);
+    doc.text(`${language === 'ru' ? 'Общий кэшбэк' : 'Total Cashback'}: ${summary.totalCashback.toFixed(2)}`);
+    doc.text(`${language === 'ru' ? 'Общая комиссия' : 'Total Commission'}: ${summary.totalCommission.toFixed(2)}`);
+    doc.text(`${language === 'ru' ? 'Чистый доход' : 'Net Income'}: ${summary.netIncome.toFixed(2)}`);
     
     doc.moveDown(2);
     
-    // Добавляем список транзакций
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Список транзакций' : 'Transactions List', { underline: true });
+    // Добавляем таблицу с транзакциями
+    doc.fontSize(14).text(language === 'ru' ? 'Список транзакций' : 'Transactions List', { underline: true });
     doc.moveDown();
     
     // Определяем колонки и заголовки
@@ -907,26 +614,21 @@ export class ReportService implements IReportService {
       ? ['ID', 'Подписка', 'Сервис', 'Сумма', 'Кэшбэк', 'Комиссия', 'Дата']
       : ['ID', 'Subscription', 'Service', 'Amount', 'Cashback', 'Commission', 'Date'];
     
-    const columnPositions = [50, 100, 180, 260, 320, 380, 460];
+    let y = doc.y;
+    const columnPositions = [50, 100, 200, 320, 380, 440, 500];
     
     // Рисуем заголовки
-    doc.fontSize(10);
+    doc.fontSize(10).font('Helvetica-Bold');
     headers.forEach((header, i) => {
-      addText(header, { continued: false, lineBreak: false });
-      
-      // Вручную позиционируем текст в колонках
-      if (i < headers.length - 1) {
-        doc.moveUp();
-        doc.x = columnPositions[i + 1];
-      }
+      doc.text(header, columnPositions[i], y);
     });
     
     doc.moveDown();
+    y = doc.y;
     
     // Рисуем содержимое таблицы
-    transactions.slice(0, 20).forEach((tr) => {
-      const createdAt = tr.createdAt ? format(tr.createdAt, 'yyyy-MM-dd') : '-';
-      
+    doc.font('Helvetica');
+    transactions.slice(0, 20).forEach(tr => {
       // Рассчитываем кэшбэк и комиссию
       let cashbackAmount = '-';
       if (tr.cashback) {
@@ -948,483 +650,486 @@ export class ReportService implements IReportService {
         }
       }
       
-      // Первая колонка - ID
-      doc.x = columnPositions[0];
-      addText(String(tr.id), { continued: false, lineBreak: false });
+      doc.text(String(tr.id), columnPositions[0], y);
+      doc.text(tr.title?.substring(0, 15) || '-', columnPositions[1], y);
+      doc.text(tr.serviceName?.substring(0, 15) || '-', columnPositions[2], y);
+      doc.text(String(tr.paymentAmount || '-'), columnPositions[3], y);
+      doc.text(cashbackAmount, columnPositions[4], y);
+      doc.text(commissionAmount, columnPositions[5], y);
       
-      // Вторая колонка - Подписка
-      doc.moveUp();
-      doc.x = columnPositions[1];
-      addText(tr.title?.substring(0, 15) || '-', { continued: false, lineBreak: false });
+      const createdAt = tr.createdAt ? format(tr.createdAt, 'yyyy-MM-dd') : '-';
+      doc.text(createdAt, columnPositions[6], y);
       
-      // Третья колонка - Сервис
-      doc.moveUp();
-      doc.x = columnPositions[2];
-      addText(tr.serviceName?.substring(0, 15) || '-', { continued: false, lineBreak: false });
-      
-      // Четвертая колонка - Сумма
-      doc.moveUp();
-      doc.x = columnPositions[3];
-      addText(String(tr.paymentAmount || '-'), { continued: false, lineBreak: false });
-      
-      // Пятая колонка - Кэшбэк
-      doc.moveUp();
-      doc.x = columnPositions[4];
-      addText(cashbackAmount, { continued: false, lineBreak: false });
-      
-      // Шестая колонка - Комиссия
-      doc.moveUp();
-      doc.x = columnPositions[5];
-      addText(commissionAmount, { continued: false, lineBreak: false });
-      
-      // Седьмая колонка - Дата
-      doc.moveUp();
-      doc.x = columnPositions[6];
-      addText(createdAt, { continued: false });
+      y += 20;
       
       // Если достигли конца страницы, переходим на новую
-      if (doc.y > 700) {
+      if (y > 700) {
         doc.addPage();
-        doc.y = 50;
+        y = 50;
       }
     });
     
     // Если больше 20 транзакций, указываем общее количество
     if (transactions.length > 20) {
       doc.moveDown();
-      addText(language === 'ru' 
+      doc.text(language === 'ru' 
         ? `... и еще ${transactions.length - 20} транзакций` 
         : `... and ${transactions.length - 20} more transactions`
       );
     }
   }
   
-  private generateTrendsPdfContent(doc: any, data: any, language: string) {
-    const { subscriptionTrends, userTrends, _helpers } = data;
-    const addText = _helpers?.addText || ((text: string, options?: any) => doc.text(text, options));
+  private generateTrendsPdfContent(doc: PDFKit.PDFDocument, data: any, language: string) {
+    const { subscriptionTrends, userTrends } = data;
     
-    // Добавляем тренды подписок
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Тренды подписок' : 'Subscription Trends', { underline: true });
+    // Добавляем заголовок секции
+    doc.fontSize(14).text(language === 'ru' ? 'Тренды подписок' : 'Subscription Trends', { underline: true });
     doc.moveDown();
     
-    // Определяем колонки и заголовки для подписок
-    const subsHeaders = language === 'ru' 
-      ? ['Месяц', 'Количество', 'Сумма']
-      : ['Month', 'Count', 'Revenue'];
+    // Выводим таблицу трендов подписок
+    let y = doc.y;
+    const headers = language === 'ru' 
+      ? ['Период', 'Кол-во подписок', 'Доход']
+      : ['Period', 'Subscriptions Count', 'Revenue'];
     
-    const subsColumnPositions = [50, 200, 350];
+    const columnPositions = [100, 300, 450];
     
     // Рисуем заголовки
-    doc.fontSize(10);
-    subsHeaders.forEach((header, i) => {
-      addText(header, { continued: false, lineBreak: false });
-      
-      // Вручную позиционируем текст в колонках
-      if (i < subsHeaders.length - 1) {
-        doc.moveUp();
-        doc.x = subsColumnPositions[i + 1];
-      }
+    doc.fontSize(10).font('Helvetica-Bold');
+    headers.forEach((header, i) => {
+      doc.text(header, columnPositions[i], y);
     });
     
     doc.moveDown();
+    y = doc.y;
     
     // Рисуем содержимое таблицы подписок
-    subscriptionTrends.forEach((trend) => {
-      // Первая колонка - Месяц
-      doc.x = subsColumnPositions[0];
-      addText(trend.month, { continued: false, lineBreak: false });
+    doc.font('Helvetica');
+    subscriptionTrends.forEach(trend => {
+      doc.text(trend.month, columnPositions[0], y);
+      doc.text(String(trend.count || 0), columnPositions[1], y);
+      doc.text(String((trend.revenue || 0).toFixed(2)), columnPositions[2], y);
       
-      // Вторая колонка - Количество
-      doc.moveUp();
-      doc.x = subsColumnPositions[1];
-      addText(String(trend.count), { continued: false, lineBreak: false });
-      
-      // Третья колонка - Сумма
-      doc.moveUp();
-      doc.x = subsColumnPositions[2];
-      addText(String((trend.revenue || 0).toFixed(2)), { continued: false });
+      y += 20;
       
       // Если достигли конца страницы, переходим на новую
-      if (doc.y > 700) {
+      if (y > 700) {
         doc.addPage();
-        doc.y = 50;
+        y = 50;
       }
     });
     
     doc.moveDown(2);
     
-    // Добавляем тренды пользователей
-    doc.fontSize(14);
-    addText(language === 'ru' ? 'Тренды пользователей' : 'User Trends', { underline: true });
+    // Добавляем заголовок для пользовательских трендов
+    doc.fontSize(14).text(language === 'ru' ? 'Тренды пользователей' : 'User Trends', { underline: true });
     doc.moveDown();
     
-    // Определяем колонки и заголовки для пользователей
-    const usersHeaders = language === 'ru' 
-      ? ['Месяц', 'Количество новых пользователей']
-      : ['Month', 'New Users Count'];
+    // Выводим таблицу трендов пользователей
+    y = doc.y;
+    const userHeaders = language === 'ru' 
+      ? ['Период', 'Кол-во новых пользователей']
+      : ['Period', 'New Users Count'];
     
-    const usersColumnPositions = [50, 200];
+    const userColumnPositions = [100, 300];
     
     // Рисуем заголовки
-    doc.fontSize(10);
-    usersHeaders.forEach((header, i) => {
-      addText(header, { continued: false, lineBreak: false });
-      
-      // Вручную позиционируем текст в колонках
-      if (i < usersHeaders.length - 1) {
-        doc.moveUp();
-        doc.x = usersColumnPositions[i + 1];
-      }
+    doc.fontSize(10).font('Helvetica-Bold');
+    userHeaders.forEach((header, i) => {
+      doc.text(header, userColumnPositions[i], y);
     });
     
     doc.moveDown();
+    y = doc.y;
     
     // Рисуем содержимое таблицы пользователей
-    userTrends.forEach((trend) => {
-      // Первая колонка - Месяц
-      doc.x = usersColumnPositions[0];
-      addText(trend.month, { continued: false, lineBreak: false });
+    doc.font('Helvetica');
+    userTrends.forEach(trend => {
+      doc.text(trend.month, userColumnPositions[0], y);
+      doc.text(String(trend.count || 0), userColumnPositions[1], y);
       
-      // Вторая колонка - Количество
-      doc.moveUp();
-      doc.x = usersColumnPositions[1];
-      addText(String(trend.count), { continued: false });
+      y += 20;
       
       // Если достигли конца страницы, переходим на новую
-      if (doc.y > 700) {
+      if (y > 700) {
         doc.addPage();
-        doc.y = 50;
+        y = 50;
       }
     });
   }
   
-  private generateSubscriptionsExcel(workbook: ExcelJS.Workbook, data: any, language: string) {
-    const { subscriptions } = data;
+  private async generateExcelReport(data: any, params: ReportParams): Promise<{ fileName: string, filePath: string }> {
+    const { reportType, startDate, endDate } = params;
     
-    // Создаем лист с обзором
-    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Обзор' : 'Summary');
+    // Создаем имя файла
+    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
+    const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : '';
+    const endDateStr = endDate ? format(endDate, 'yyyy-MM-dd') : '';
+    
+    const dateRange = startDateStr && endDateStr 
+      ? `_${startDateStr}_${endDateStr}` 
+      : '';
+      
+    const fileName = `report_${reportType}${dateRange}_${timestamp}.xlsx`;
+    const filePath = path.join(REPORTS_DIR, fileName);
+    
+    // Создаем новую книгу Excel
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Report Generator';
+    workbook.created = new Date();
+    
+    // Добавляем лист в зависимости от типа отчета
+    switch (reportType) {
+      case 'subscriptions':
+        await this.generateSubscriptionsExcelContent(workbook, data, params.language);
+        break;
+      case 'users':
+        await this.generateUsersExcelContent(workbook, data, params.language);
+        break;
+      case 'services':
+        await this.generateServicesExcelContent(workbook, data, params.language);
+        break;
+      case 'financial':
+        await this.generateFinancialExcelContent(workbook, data, params.language);
+        break;
+      case 'trends':
+        await this.generateTrendsExcelContent(workbook, data, params.language);
+        break;
+    }
+    
+    // Сохраняем книгу в файл
+    await workbook.xlsx.writeFile(filePath);
+    
+    // Возвращаем информацию о файле
+    return { fileName, filePath };
+  }
+  
+  private async generateSubscriptionsExcelContent(workbook: ExcelJS.Workbook, data: any, language: string = 'en') {
+    const { subscriptions, title, generated, params } = data;
+    
+    // Добавляем лист для общей информации
+    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Сводка' : 'Summary');
     
     // Добавляем заголовок
-    summarySheet.getCell('A1').value = data.title;
+    summarySheet.getCell('A1').value = title;
     summarySheet.getCell('A1').font = { size: 16, bold: true };
     summarySheet.mergeCells('A1:D1');
     
-    // Добавляем информацию о дате создания
-    const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
-    const dateOptions = language === 'ru' ? { locale: ru } : undefined;
+    // Добавляем информацию о параметрах отчета
+    summarySheet.getCell('A3').value = language === 'ru' ? 'Дата создания' : 'Generated on';
+    summarySheet.getCell('B3').value = format(generated, 'yyyy-MM-dd HH:mm:ss');
     
-    summarySheet.getCell('A3').value = `${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`;
-    
-    // Добавляем информацию о диапазоне дат
-    let row = 4;
-    if (data.params.startDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(data.params.startDate, dateFormat, dateOptions)}`;
-      row++;
+    if (params.startDate) {
+      summarySheet.getCell('A4').value = language === 'ru' ? 'Начальная дата' : 'Start date';
+      summarySheet.getCell('B4').value = format(params.startDate, 'yyyy-MM-dd');
     }
     
-    if (data.params.endDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(data.params.endDate, dateFormat, dateOptions)}`;
-      row++;
+    if (params.endDate) {
+      summarySheet.getCell('A5').value = language === 'ru' ? 'Конечная дата' : 'End date';
+      summarySheet.getCell('B5').value = format(params.endDate, 'yyyy-MM-dd');
     }
-    
-    row += 2;
     
     // Добавляем сводную информацию
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Сводка' : 'Summary';
-    summarySheet.getCell(`A${row}`).font = { bold: true };
-    row++;
+    summarySheet.getCell('A7').value = language === 'ru' ? 'Всего подписок' : 'Total subscriptions';
+    summarySheet.getCell('B7').value = subscriptions.length;
     
-    summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Всего подписок' : 'Total subscriptions'}: ${subscriptions.length}`;
-    row++;
+    const totalRevenue = subscriptions.reduce((sum, sub) => sum + (sub.paymentAmount || 0), 0);
+    summarySheet.getCell('A8').value = language === 'ru' ? 'Общая сумма платежей' : 'Total payment amount';
+    summarySheet.getCell('B8').value = totalRevenue;
     
-    // Вычисляем общую сумму подписок
-    const totalRevenue = subscriptions.reduce((sum: number, sub: any) => sum + (sub.paymentAmount || 0), 0);
-    
-    summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Общая сумма платежей' : 'Total payment amount'}: ${totalRevenue.toFixed(2)}`;
-    
-    // Создаем лист с подписками
+    // Добавляем лист с подписками
     const subscriptionsSheet = workbook.addWorksheet(language === 'ru' ? 'Подписки' : 'Subscriptions');
     
-    // Добавляем заголовки
+    // Определяем заголовки
     const headers = language === 'ru' 
-      ? ['ID', 'Название', 'Сервис', 'Пользователь', 'Сумма', 'Статус', 'Дата создания']
-      : ['ID', 'Title', 'Service', 'User', 'Amount', 'Status', 'Created At'];
+      ? ['ID', 'Название', 'Сервис', 'Пользователь', 'Email', 'Сумма', 'Период', 'Статус', 'Дата создания']
+      : ['ID', 'Title', 'Service', 'User', 'Email', 'Amount', 'Period', 'Status', 'Created At'];
     
+    // Добавляем заголовки
     subscriptionsSheet.addRow(headers);
-    subscriptionsSheet.getRow(1).font = { bold: true };
     
-    // Добавляем данные подписок
-    subscriptions.forEach((sub: any) => {
-      const createdAt = sub.createdAt ? format(sub.createdAt, 'yyyy-MM-dd') : '-';
-      
+    // Устанавливаем стиль для заголовков
+    subscriptionsSheet.getRow(1).font = { bold: true };
+    subscriptionsSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+    
+    // Добавляем данные
+    subscriptions.forEach(sub => {
       subscriptionsSheet.addRow([
         sub.id,
-        sub.title || '-',
+        sub.title,
         sub.serviceName || '-',
+        sub.userName || '-',
         sub.userEmail || '-',
-        sub.paymentAmount || '-',
+        sub.paymentAmount || 0,
+        sub.paymentPeriod || '-',
         sub.status || '-',
-        createdAt
+        sub.createdAt ? format(sub.createdAt, 'yyyy-MM-dd') : '-'
       ]);
     });
     
-    // Настраиваем ширину колонок
+    // Автоматически подгоняем ширину колонок
     subscriptionsSheet.columns.forEach(column => {
-      column.width = 20;
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength) {
+          maxLength = columnLength;
+        }
+      });
+      column.width = maxLength < 10 ? 10 : maxLength + 2;
     });
   }
   
-  private generateUsersExcel(workbook: ExcelJS.Workbook, data: any, language: string) {
-    const { users, stats } = data;
+  private async generateUsersExcelContent(workbook: ExcelJS.Workbook, data: any, language: string = 'en') {
+    const { users, stats, title, generated, params } = data;
     
-    // Создаем лист с обзором
-    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Обзор' : 'Summary');
+    // Добавляем лист для общей информации
+    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Сводка' : 'Summary');
     
     // Добавляем заголовок
-    summarySheet.getCell('A1').value = data.title;
+    summarySheet.getCell('A1').value = title;
     summarySheet.getCell('A1').font = { size: 16, bold: true };
     summarySheet.mergeCells('A1:D1');
     
-    // Добавляем информацию о дате создания
-    const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
-    const dateOptions = language === 'ru' ? { locale: ru } : undefined;
+    // Добавляем информацию о параметрах отчета
+    summarySheet.getCell('A3').value = language === 'ru' ? 'Дата создания' : 'Generated on';
+    summarySheet.getCell('B3').value = format(generated, 'yyyy-MM-dd HH:mm:ss');
     
-    summarySheet.getCell('A3').value = `${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`;
-    
-    // Добавляем информацию о диапазоне дат
-    let row = 4;
-    if (data.params.startDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(data.params.startDate, dateFormat, dateOptions)}`;
-      row++;
+    if (params.startDate) {
+      summarySheet.getCell('A4').value = language === 'ru' ? 'Начальная дата' : 'Start date';
+      summarySheet.getCell('B4').value = format(params.startDate, 'yyyy-MM-dd');
     }
     
-    if (data.params.endDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(data.params.endDate, dateFormat, dateOptions)}`;
-      row++;
+    if (params.endDate) {
+      summarySheet.getCell('A5').value = language === 'ru' ? 'Конечная дата' : 'End date';
+      summarySheet.getCell('B5').value = format(params.endDate, 'yyyy-MM-dd');
     }
-    
-    row += 2;
     
     // Добавляем сводную информацию
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Сводка' : 'Summary';
-    summarySheet.getCell(`A${row}`).font = { bold: true };
-    row++;
+    summarySheet.getCell('A7').value = language === 'ru' ? 'Всего пользователей' : 'Total users';
+    summarySheet.getCell('B7').value = stats.total;
     
-    summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Всего пользователей' : 'Total users'}: ${stats.total}`;
-    row++;
+    summarySheet.getCell('A8').value = language === 'ru' ? 'Активных пользователей' : 'Active users';
+    summarySheet.getCell('B8').value = stats.active;
     
-    summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Активных пользователей' : 'Active users'}: ${stats.active}`;
-    row++;
+    summarySheet.getCell('A9').value = language === 'ru' ? 'Новых пользователей' : 'New users';
+    summarySheet.getCell('B9').value = stats.new;
     
-    summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Новых пользователей' : 'New users'}: ${stats.new}`;
-    
-    // Создаем лист с пользователями
+    // Добавляем лист с пользователями
     const usersSheet = workbook.addWorksheet(language === 'ru' ? 'Пользователи' : 'Users');
     
-    // Добавляем заголовки
+    // Определяем заголовки
     const headers = language === 'ru' 
-      ? ['ID', 'Email', 'Имя', 'Компания', 'Роль', 'Дата регистрации']
-      : ['ID', 'Email', 'Name', 'Company', 'Role', 'Registration Date'];
+      ? ['ID', 'Email', 'Имя', 'Телефон', 'Компания', 'Роль', 'Активен', 'Дата регистрации']
+      : ['ID', 'Email', 'Name', 'Phone', 'Company', 'Role', 'Active', 'Registration Date'];
     
+    // Добавляем заголовки
     usersSheet.addRow(headers);
-    usersSheet.getRow(1).font = { bold: true };
     
-    // Добавляем данные пользователей
-    users.forEach((user: any) => {
-      const createdAt = user.createdAt ? format(user.createdAt, 'yyyy-MM-dd') : '-';
-      
+    // Устанавливаем стиль для заголовков
+    usersSheet.getRow(1).font = { bold: true };
+    usersSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+    
+    // Добавляем данные
+    users.forEach(user => {
       usersSheet.addRow([
         user.id,
-        user.email || '-',
+        user.email,
         user.name || '-',
+        user.phone || '-',
         user.companyName || '-',
         user.role || '-',
-        createdAt
+        user.isActive ? (language === 'ru' ? 'Да' : 'Yes') : (language === 'ru' ? 'Нет' : 'No'),
+        user.createdAt ? format(user.createdAt, 'yyyy-MM-dd') : '-'
       ]);
     });
     
-    // Настраиваем ширину колонок
+    // Автоматически подгоняем ширину колонок
     usersSheet.columns.forEach(column => {
-      column.width = 20;
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength) {
+          maxLength = columnLength;
+        }
+      });
+      column.width = maxLength < 10 ? 10 : maxLength + 2;
     });
   }
   
-  private generateServicesExcel(workbook: ExcelJS.Workbook, data: any, language: string) {
-    const { services, usage } = data;
+  private async generateServicesExcelContent(workbook: ExcelJS.Workbook, data: any, language: string = 'en') {
+    const { services, usage, title, generated, params } = data;
     
-    // Создаем лист с обзором
-    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Обзор' : 'Summary');
+    // Добавляем лист для общей информации
+    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Сводка' : 'Summary');
     
     // Добавляем заголовок
-    summarySheet.getCell('A1').value = data.title;
+    summarySheet.getCell('A1').value = title;
     summarySheet.getCell('A1').font = { size: 16, bold: true };
     summarySheet.mergeCells('A1:D1');
     
-    // Добавляем информацию о дате создания
-    const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
-    const dateOptions = language === 'ru' ? { locale: ru } : undefined;
-    
-    summarySheet.getCell('A3').value = `${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`;
+    // Добавляем информацию о параметрах отчета
+    summarySheet.getCell('A3').value = language === 'ru' ? 'Дата создания' : 'Generated on';
+    summarySheet.getCell('B3').value = format(generated, 'yyyy-MM-dd HH:mm:ss');
     
     // Добавляем сводную информацию
-    let row = 5;
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Сводка' : 'Summary';
-    summarySheet.getCell(`A${row}`).font = { bold: true };
-    row++;
-    
-    summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Всего сервисов' : 'Total services'}: ${services.length}`;
-    row++;
+    summarySheet.getCell('A5').value = language === 'ru' ? 'Всего сервисов' : 'Total services';
+    summarySheet.getCell('B5').value = services.length;
     
     // Находим самый популярный сервис
     let popularService = { serviceName: '-', count: 0 };
     if (usage.length > 0) {
-      popularService = usage.reduce((prev: any, current: any) => 
+      popularService = usage.reduce((prev, current) => 
         (current.count > prev.count) ? current : prev, usage[0]);
     }
     
-    summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Самый популярный сервис' : 'Most popular service'}: ${popularService.serviceName} (${popularService.count} ${language === 'ru' ? 'подписок' : 'subscriptions'})`;
+    summarySheet.getCell('A6').value = language === 'ru' ? 'Самый популярный сервис' : 'Most popular service';
+    summarySheet.getCell('B6').value = `${popularService.serviceName} (${popularService.count} ${language === 'ru' ? 'подписок' : 'subscriptions'})`;
     
-    // Создаем лист с сервисами
+    // Добавляем лист с сервисами
     const servicesSheet = workbook.addWorksheet(language === 'ru' ? 'Сервисы' : 'Services');
     
-    // Добавляем заголовки
+    // Определяем заголовки
     const headers = language === 'ru' 
-      ? ['ID', 'Название', 'Кэшбэк', 'Комиссия', 'Подписок', 'Доход']
-      : ['ID', 'Title', 'Cashback', 'Commission', 'Subscriptions', 'Revenue'];
+      ? ['ID', 'Название', 'Описание', 'Кэшбэк', 'Комиссия', 'Активен', 'Кастомный', 'Владелец']
+      : ['ID', 'Title', 'Description', 'Cashback', 'Commission', 'Active', 'Custom', 'Owner'];
     
+    // Добавляем заголовки
     servicesSheet.addRow(headers);
+    
+    // Устанавливаем стиль для заголовков
     servicesSheet.getRow(1).font = { bold: true };
+    servicesSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
     
-    // Создаем карту использования сервисов для быстрого доступа
-    const usageMap = new Map();
-    usage.forEach((item: any) => {
-      usageMap.set(item.serviceId, { count: item.count, totalRevenue: item.totalRevenue });
-    });
-    
-    // Добавляем данные сервисов
-    services.forEach((service: any) => {
-      const serviceUsage = usageMap.get(service.id) || { count: 0, totalRevenue: 0 };
-      
+    // Добавляем данные
+    services.forEach(service => {
       servicesSheet.addRow([
         service.id,
-        service.title || '-',
+        service.title,
+        service.description || '-',
         service.cashback || '-',
         service.commission || '-',
-        serviceUsage.count || 0,
-        (serviceUsage.totalRevenue || 0).toFixed(2)
+        service.isActive ? (language === 'ru' ? 'Да' : 'Yes') : (language === 'ru' ? 'Нет' : 'No'),
+        service.isCustom ? (language === 'ru' ? 'Да' : 'Yes') : (language === 'ru' ? 'Нет' : 'No'),
+        service.ownerId || '-'
       ]);
     });
     
-    // Создаем лист с использованием сервисов
+    // Добавляем лист с использованием сервисов
     const usageSheet = workbook.addWorksheet(language === 'ru' ? 'Использование' : 'Usage');
     
-    // Добавляем заголовки
+    // Определяем заголовки для использования
     const usageHeaders = language === 'ru' 
       ? ['ID сервиса', 'Название сервиса', 'Количество подписок', 'Общий доход']
       : ['Service ID', 'Service Name', 'Subscriptions Count', 'Total Revenue'];
     
+    // Добавляем заголовки
     usageSheet.addRow(usageHeaders);
+    
+    // Устанавливаем стиль для заголовков
     usageSheet.getRow(1).font = { bold: true };
+    usageSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
     
     // Добавляем данные использования
-    usage.forEach((item: any) => {
+    usage.forEach(item => {
       usageSheet.addRow([
-        item.serviceId,
+        item.serviceId || '-',
         item.serviceName || '-',
         item.count || 0,
-        (item.totalRevenue || 0).toFixed(2)
+        item.totalRevenue || 0
       ]);
     });
     
-    // Настраиваем ширину колонок
-    servicesSheet.columns.forEach(column => {
-      column.width = 20;
-    });
-    
-    usageSheet.columns.forEach(column => {
-      column.width = 20;
+    // Автоматически подгоняем ширину колонок для обоих листов
+    [servicesSheet, usageSheet].forEach(sheet => {
+      sheet.columns.forEach(column => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value ? cell.value.toString().length : 10;
+          if (columnLength > maxLength) {
+            maxLength = columnLength;
+          }
+        });
+        column.width = maxLength < 10 ? 10 : maxLength + 2;
+      });
     });
   }
   
-  private generateFinancialExcel(workbook: ExcelJS.Workbook, data: any, language: string) {
-    const { transactions, summary } = data;
+  private async generateFinancialExcelContent(workbook: ExcelJS.Workbook, data: any, language: string = 'en') {
+    const { transactions, summary, title, generated, params } = data;
     
-    // Создаем лист с обзором
-    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Обзор' : 'Summary');
+    // Добавляем лист для общей информации
+    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Сводка' : 'Summary');
     
     // Добавляем заголовок
-    summarySheet.getCell('A1').value = data.title;
+    summarySheet.getCell('A1').value = title;
     summarySheet.getCell('A1').font = { size: 16, bold: true };
     summarySheet.mergeCells('A1:D1');
     
-    // Добавляем информацию о дате создания
-    const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
-    const dateOptions = language === 'ru' ? { locale: ru } : undefined;
+    // Добавляем информацию о параметрах отчета
+    summarySheet.getCell('A3').value = language === 'ru' ? 'Дата создания' : 'Generated on';
+    summarySheet.getCell('B3').value = format(generated, 'yyyy-MM-dd HH:mm:ss');
     
-    summarySheet.getCell('A3').value = `${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`;
-    
-    // Добавляем информацию о диапазоне дат
-    let row = 4;
-    if (data.params.startDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(data.params.startDate, dateFormat, dateOptions)}`;
-      row++;
+    if (params.startDate) {
+      summarySheet.getCell('A4').value = language === 'ru' ? 'Начальная дата' : 'Start date';
+      summarySheet.getCell('B4').value = format(params.startDate, 'yyyy-MM-dd');
     }
     
-    if (data.params.endDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(data.params.endDate, dateFormat, dateOptions)}`;
-      row++;
+    if (params.endDate) {
+      summarySheet.getCell('A5').value = language === 'ru' ? 'Конечная дата' : 'End date';
+      summarySheet.getCell('B5').value = format(params.endDate, 'yyyy-MM-dd');
     }
     
-    row += 2;
+    // Добавляем финансовую сводку
+    summarySheet.getCell('A7').value = language === 'ru' ? 'Общий доход' : 'Total Revenue';
+    summarySheet.getCell('B7').value = summary.totalRevenue;
     
-    // Добавляем сводную информацию
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Финансовая сводка' : 'Financial Summary';
-    summarySheet.getCell(`A${row}`).font = { bold: true };
-    row++;
+    summarySheet.getCell('A8').value = language === 'ru' ? 'Общий кэшбэк' : 'Total Cashback';
+    summarySheet.getCell('B8').value = summary.totalCashback;
     
-    // Добавляем таблицу сводки
-    const summaryHeaders = [
-      language === 'ru' ? 'Показатель' : 'Metric',
-      language === 'ru' ? 'Сумма' : 'Amount'
-    ];
+    summarySheet.getCell('A9').value = language === 'ru' ? 'Общая комиссия' : 'Total Commission';
+    summarySheet.getCell('B9').value = summary.totalCommission;
     
-    summarySheet.getCell(`A${row}`).value = summaryHeaders[0];
-    summarySheet.getCell(`B${row}`).value = summaryHeaders[1];
-    summarySheet.getRow(row).font = { bold: true };
-    row++;
+    summarySheet.getCell('A10').value = language === 'ru' ? 'Чистый доход' : 'Net Income';
+    summarySheet.getCell('B10').value = summary.netIncome;
     
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Общий доход' : 'Total Revenue';
-    summarySheet.getCell(`B${row}`).value = summary.totalRevenue.toFixed(2);
-    row++;
-    
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Общий кэшбэк' : 'Total Cashback';
-    summarySheet.getCell(`B${row}`).value = summary.totalCashback.toFixed(2);
-    row++;
-    
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Общая комиссия' : 'Total Commission';
-    summarySheet.getCell(`B${row}`).value = summary.totalCommission.toFixed(2);
-    row++;
-    
-    summarySheet.getCell(`A${row}`).value = language === 'ru' ? 'Чистый доход' : 'Net Income';
-    summarySheet.getCell(`B${row}`).value = summary.netIncome.toFixed(2);
-    summarySheet.getRow(row).font = { bold: true };
-    
-    // Создаем лист с транзакциями
+    // Добавляем лист с транзакциями
     const transactionsSheet = workbook.addWorksheet(language === 'ru' ? 'Транзакции' : 'Transactions');
     
-    // Добавляем заголовки
+    // Определяем заголовки
     const headers = language === 'ru' 
-      ? ['ID', 'Подписка', 'Сервис', 'Сумма', 'Кэшбэк', 'Комиссия', 'Дата']
-      : ['ID', 'Subscription', 'Service', 'Amount', 'Cashback', 'Commission', 'Date'];
+      ? ['ID', 'Подписка', 'Сервис', 'Сумма', 'Период', 'Кэшбэк', 'Комиссия', 'Дата']
+      : ['ID', 'Subscription', 'Service', 'Amount', 'Period', 'Cashback', 'Commission', 'Date'];
     
+    // Добавляем заголовки
     transactionsSheet.addRow(headers);
-    transactionsSheet.getRow(1).font = { bold: true };
     
-    // Добавляем данные транзакций
-    transactions.forEach((tr: any) => {
-      const createdAt = tr.createdAt ? format(tr.createdAt, 'yyyy-MM-dd') : '-';
-      
+    // Устанавливаем стиль для заголовков
+    transactionsSheet.getRow(1).font = { bold: true };
+    transactionsSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+    
+    // Добавляем данные
+    transactions.forEach(tr => {
       // Рассчитываем кэшбэк и комиссию
       let cashbackAmount = '-';
       if (tr.cashback) {
@@ -1450,96 +1155,365 @@ export class ReportService implements IReportService {
         tr.id,
         tr.title || '-',
         tr.serviceName || '-',
-        tr.paymentAmount || '-',
+        tr.paymentAmount || 0,
+        tr.paymentPeriod || '-',
         cashbackAmount,
         commissionAmount,
-        createdAt
+        tr.createdAt ? format(tr.createdAt, 'yyyy-MM-dd') : '-'
       ]);
     });
     
-    // Настраиваем ширину колонок
+    // Автоматически подгоняем ширину колонок
     transactionsSheet.columns.forEach(column => {
-      column.width = 20;
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell) => {
+        const columnLength = cell.value ? cell.value.toString().length : 10;
+        if (columnLength > maxLength) {
+          maxLength = columnLength;
+        }
+      });
+      column.width = maxLength < 10 ? 10 : maxLength + 2;
     });
   }
   
-  private generateTrendsExcel(workbook: ExcelJS.Workbook, data: any, language: string) {
-    const { subscriptionTrends, userTrends } = data;
+  private async generateTrendsExcelContent(workbook: ExcelJS.Workbook, data: any, language: string = 'en') {
+    const { subscriptionTrends, userTrends, title, generated, params } = data;
     
-    // Создаем лист с обзором
-    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Обзор' : 'Summary');
+    // Добавляем лист для общей информации
+    const summarySheet = workbook.addWorksheet(language === 'ru' ? 'Сводка' : 'Summary');
     
     // Добавляем заголовок
-    summarySheet.getCell('A1').value = data.title;
+    summarySheet.getCell('A1').value = title;
     summarySheet.getCell('A1').font = { size: 16, bold: true };
     summarySheet.mergeCells('A1:D1');
     
-    // Добавляем информацию о дате создания
-    const dateFormat = language === 'ru' ? 'dd MMMM yyyy' : 'MMM dd, yyyy';
-    const dateOptions = language === 'ru' ? { locale: ru } : undefined;
+    // Добавляем информацию о параметрах отчета
+    summarySheet.getCell('A3').value = language === 'ru' ? 'Дата создания' : 'Generated on';
+    summarySheet.getCell('B3').value = format(generated, 'yyyy-MM-dd HH:mm:ss');
     
-    summarySheet.getCell('A3').value = `${language === 'ru' ? 'Дата создания' : 'Generated on'}: ${format(data.generated, dateFormat, dateOptions)}`;
-    
-    // Добавляем информацию о диапазоне дат
-    let row = 4;
-    if (data.params.startDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Начальная дата' : 'Start date'}: ${format(data.params.startDate, dateFormat, dateOptions)}`;
-      row++;
-    }
-    
-    if (data.params.endDate) {
-      summarySheet.getCell(`A${row}`).value = `${language === 'ru' ? 'Конечная дата' : 'End date'}: ${format(data.params.endDate, dateFormat, dateOptions)}`;
-      row++;
-    }
-    
-    // Создаем лист с трендами подписок
+    // Добавляем лист с трендами подписок
     const subscriptionsSheet = workbook.addWorksheet(language === 'ru' ? 'Тренды подписок' : 'Subscription Trends');
     
+    // Определяем заголовки
+    const subHeaders = language === 'ru' 
+      ? ['Период', 'Количество подписок', 'Доход']
+      : ['Period', 'Subscriptions Count', 'Revenue'];
+    
     // Добавляем заголовки
-    const subsHeaders = language === 'ru' 
-      ? ['Месяц', 'Количество', 'Сумма']
-      : ['Month', 'Count', 'Revenue'];
+    subscriptionsSheet.addRow(subHeaders);
     
-    subscriptionsSheet.addRow(subsHeaders);
+    // Устанавливаем стиль для заголовков
     subscriptionsSheet.getRow(1).font = { bold: true };
+    subscriptionsSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
     
-    // Добавляем данные трендов подписок
-    subscriptionTrends.forEach((trend: any) => {
+    // Добавляем данные по трендам подписок
+    subscriptionTrends.forEach(trend => {
       subscriptionsSheet.addRow([
         trend.month,
-        trend.count,
-        (trend.revenue || 0).toFixed(2)
+        trend.count || 0,
+        trend.revenue || 0
       ]);
     });
     
-    // Создаем лист с трендами пользователей
+    // Добавляем лист с трендами пользователей
     const usersSheet = workbook.addWorksheet(language === 'ru' ? 'Тренды пользователей' : 'User Trends');
     
+    // Определяем заголовки для трендов пользователей
+    const userHeaders = language === 'ru' 
+      ? ['Период', 'Количество новых пользователей']
+      : ['Period', 'New Users Count'];
+    
     // Добавляем заголовки
-    const usersHeaders = language === 'ru' 
-      ? ['Месяц', 'Количество новых пользователей']
-      : ['Month', 'New Users Count'];
+    usersSheet.addRow(userHeaders);
     
-    usersSheet.addRow(usersHeaders);
+    // Устанавливаем стиль для заголовков
     usersSheet.getRow(1).font = { bold: true };
+    usersSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
     
-    // Добавляем данные трендов пользователей
-    userTrends.forEach((trend: any) => {
+    // Добавляем данные по трендам пользователей
+    userTrends.forEach(trend => {
       usersSheet.addRow([
         trend.month,
-        trend.count
+        trend.count || 0
       ]);
     });
     
-    // Настраиваем ширину колонок
-    subscriptionsSheet.columns.forEach(column => {
-      column.width = 20;
+    // Автоматически подгоняем ширину колонок для обоих листов
+    [subscriptionsSheet, usersSheet].forEach(sheet => {
+      sheet.columns.forEach(column => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value ? cell.value.toString().length : 10;
+          if (columnLength > maxLength) {
+            maxLength = columnLength;
+          }
+        });
+        column.width = maxLength < 10 ? 10 : maxLength + 2;
+      });
+    });
+  }
+  
+  private async generateCsvReport(data: any, params: ReportParams): Promise<{ fileName: string, filePath: string }> {
+    const { reportType, startDate, endDate } = params;
+    
+    // Создаем имя файла
+    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
+    const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : '';
+    const endDateStr = endDate ? format(endDate, 'yyyy-MM-dd') : '';
+    
+    const dateRange = startDateStr && endDateStr 
+      ? `_${startDateStr}_${endDateStr}` 
+      : '';
+      
+    const fileName = `report_${reportType}${dateRange}_${timestamp}.csv`;
+    const filePath = path.join(REPORTS_DIR, fileName);
+    
+    // Данные для CSV в зависимости от типа отчета
+    let csvContent = '';
+    const language = params.language || 'en';
+    
+    switch (reportType) {
+      case 'subscriptions':
+        csvContent = this.generateSubscriptionsCsvContent(data, language);
+        break;
+      case 'users':
+        csvContent = this.generateUsersCsvContent(data, language);
+        break;
+      case 'services':
+        csvContent = this.generateServicesCsvContent(data, language);
+        break;
+      case 'financial':
+        csvContent = this.generateFinancialCsvContent(data, language);
+        break;
+      case 'trends':
+        csvContent = this.generateTrendsCsvContent(data, language);
+        break;
+    }
+    
+    // Записываем CSV в файл
+    fs.writeFileSync(filePath, csvContent);
+    
+    // Возвращаем информацию о файле
+    return { fileName, filePath };
+  }
+  
+  private generateSubscriptionsCsvContent(data: any, language: string): string {
+    const { subscriptions } = data;
+    
+    // Формируем заголовки
+    const headers = language === 'ru' 
+      ? ['ID', 'Название', 'Сервис', 'Пользователь', 'Email', 'Сумма', 'Период', 'Статус', 'Дата создания']
+      : ['ID', 'Title', 'Service', 'User', 'Email', 'Amount', 'Period', 'Status', 'Created At'];
+    
+    let csv = headers.join(',') + '\n';
+    
+    // Формируем строки для каждой подписки
+    subscriptions.forEach(sub => {
+      const row = [
+        sub.id,
+        `"${(sub.title || '').replace(/"/g, '""')}"`, // Экранируем кавычки в CSV
+        `"${(sub.serviceName || '-').replace(/"/g, '""')}"`,
+        `"${(sub.userName || '-').replace(/"/g, '""')}"`,
+        `"${(sub.userEmail || '-').replace(/"/g, '""')}"`,
+        sub.paymentAmount || 0,
+        `"${(sub.paymentPeriod || '-').replace(/"/g, '""')}"`,
+        `"${(sub.status || '-').replace(/"/g, '""')}"`,
+        sub.createdAt ? format(sub.createdAt, 'yyyy-MM-dd') : '-'
+      ];
+      
+      csv += row.join(',') + '\n';
     });
     
-    usersSheet.columns.forEach(column => {
-      column.width = 20;
+    return csv;
+  }
+  
+  private generateUsersCsvContent(data: any, language: string): string {
+    const { users } = data;
+    
+    // Формируем заголовки
+    const headers = language === 'ru' 
+      ? ['ID', 'Email', 'Имя', 'Телефон', 'Компания', 'Роль', 'Активен', 'Дата регистрации']
+      : ['ID', 'Email', 'Name', 'Phone', 'Company', 'Role', 'Active', 'Registration Date'];
+    
+    let csv = headers.join(',') + '\n';
+    
+    // Формируем строки для каждого пользователя
+    users.forEach(user => {
+      const row = [
+        user.id,
+        `"${(user.email || '').replace(/"/g, '""')}"`,
+        `"${(user.name || '-').replace(/"/g, '""')}"`,
+        `"${(user.phone || '-').replace(/"/g, '""')}"`,
+        `"${(user.companyName || '-').replace(/"/g, '""')}"`,
+        `"${(user.role || '-').replace(/"/g, '""')}"`,
+        user.isActive ? (language === 'ru' ? 'Да' : 'Yes') : (language === 'ru' ? 'Нет' : 'No'),
+        user.createdAt ? format(user.createdAt, 'yyyy-MM-dd') : '-'
+      ];
+      
+      csv += row.join(',') + '\n';
     });
+    
+    return csv;
+  }
+  
+  private generateServicesCsvContent(data: any, language: string): string {
+    const { services, usage } = data;
+    
+    // Создаем карту для быстрого доступа к использованию сервисов
+    const usageMap = new Map();
+    usage.forEach(item => {
+      usageMap.set(item.serviceId, { count: item.count, totalRevenue: item.totalRevenue });
+    });
+    
+    // Формируем заголовки
+    const headers = language === 'ru' 
+      ? ['ID', 'Название', 'Описание', 'Кэшбэк', 'Комиссия', 'Активен', 'Кастомный', 'Подписок', 'Доход']
+      : ['ID', 'Title', 'Description', 'Cashback', 'Commission', 'Active', 'Custom', 'Subscriptions', 'Revenue'];
+    
+    let csv = headers.join(',') + '\n';
+    
+    // Формируем строки для каждого сервиса
+    services.forEach(service => {
+      const serviceUsage = usageMap.get(service.id) || { count: 0, totalRevenue: 0 };
+      
+      const row = [
+        service.id,
+        `"${(service.title || '').replace(/"/g, '""')}"`,
+        `"${(service.description || '-').replace(/"/g, '""')}"`,
+        `"${(service.cashback || '-').replace(/"/g, '""')}"`,
+        `"${(service.commission || '-').replace(/"/g, '""')}"`,
+        service.isActive ? (language === 'ru' ? 'Да' : 'Yes') : (language === 'ru' ? 'Нет' : 'No'),
+        service.isCustom ? (language === 'ru' ? 'Да' : 'Yes') : (language === 'ru' ? 'Нет' : 'No'),
+        serviceUsage.count || 0,
+        serviceUsage.totalRevenue || 0
+      ];
+      
+      csv += row.join(',') + '\n';
+    });
+    
+    return csv;
+  }
+  
+  private generateFinancialCsvContent(data: any, language: string): string {
+    const { transactions, summary } = data;
+    
+    // Формируем заголовки
+    const headers = language === 'ru' 
+      ? ['ID', 'Подписка', 'Сервис', 'Сумма', 'Период', 'Кэшбэк', 'Комиссия', 'Дата']
+      : ['ID', 'Subscription', 'Service', 'Amount', 'Period', 'Cashback', 'Commission', 'Date'];
+    
+    let csv = headers.join(',') + '\n';
+    
+    // Формируем строки для каждой финансовой транзакции
+    transactions.forEach(tr => {
+      // Рассчитываем кэшбэк и комиссию
+      let cashbackAmount = '-';
+      if (tr.cashback) {
+        if (tr.cashback.endsWith('%')) {
+          const percentage = parseFloat(tr.cashback);
+          cashbackAmount = ((tr.paymentAmount || 0) * percentage / 100).toFixed(2);
+        } else {
+          cashbackAmount = tr.cashback;
+        }
+      }
+      
+      let commissionAmount = '-';
+      if (tr.commission) {
+        if (tr.commission.endsWith('%')) {
+          const percentage = parseFloat(tr.commission);
+          commissionAmount = ((tr.paymentAmount || 0) * percentage / 100).toFixed(2);
+        } else {
+          commissionAmount = tr.commission;
+        }
+      }
+      
+      const row = [
+        tr.id,
+        `"${(tr.title || '-').replace(/"/g, '""')}"`,
+        `"${(tr.serviceName || '-').replace(/"/g, '""')}"`,
+        tr.paymentAmount || 0,
+        `"${(tr.paymentPeriod || '-').replace(/"/g, '""')}"`,
+        cashbackAmount,
+        commissionAmount,
+        tr.createdAt ? format(tr.createdAt, 'yyyy-MM-dd') : '-'
+      ];
+      
+      csv += row.join(',') + '\n';
+    });
+    
+    // Добавляем итоговые значения
+    csv += '\n';
+    csv += language === 'ru' ? 'Общий доход' : 'Total Revenue';
+    csv += ',' + summary.totalRevenue.toFixed(2) + '\n';
+    
+    csv += language === 'ru' ? 'Общий кэшбэк' : 'Total Cashback';
+    csv += ',' + summary.totalCashback.toFixed(2) + '\n';
+    
+    csv += language === 'ru' ? 'Общая комиссия' : 'Total Commission';
+    csv += ',' + summary.totalCommission.toFixed(2) + '\n';
+    
+    csv += language === 'ru' ? 'Чистый доход' : 'Net Income';
+    csv += ',' + summary.netIncome.toFixed(2) + '\n';
+    
+    return csv;
+  }
+  
+  private generateTrendsCsvContent(data: any, language: string): string {
+    const { subscriptionTrends, userTrends } = data;
+    
+    let csv = '';
+    
+    // Формируем заголовки для трендов подписок
+    const subHeaders = language === 'ru' 
+      ? ['Период', 'Количество подписок', 'Доход']
+      : ['Period', 'Subscriptions Count', 'Revenue'];
+    
+    csv += language === 'ru' ? '# Тренды подписок\n' : '# Subscription Trends\n';
+    csv += subHeaders.join(',') + '\n';
+    
+    // Формируем строки для каждого периода подписок
+    subscriptionTrends.forEach(trend => {
+      const row = [
+        trend.month,
+        trend.count || 0,
+        trend.revenue || 0
+      ];
+      
+      csv += row.join(',') + '\n';
+    });
+    
+    // Добавляем пустую строку-разделитель
+    csv += '\n';
+    
+    // Формируем заголовки для трендов пользователей
+    const userHeaders = language === 'ru' 
+      ? ['Период', 'Количество новых пользователей']
+      : ['Period', 'New Users Count'];
+    
+    csv += language === 'ru' ? '# Тренды пользователей\n' : '# User Trends\n';
+    csv += userHeaders.join(',') + '\n';
+    
+    // Формируем строки для каждого периода регистрации пользователей
+    userTrends.forEach(trend => {
+      const row = [
+        trend.month,
+        trend.count || 0
+      ];
+      
+      csv += row.join(',') + '\n';
+    });
+    
+    return csv;
   }
 }
 
+// Экспортируем экземпляр сервиса
 export const reportService = new ReportService();
