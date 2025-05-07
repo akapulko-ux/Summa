@@ -31,6 +31,7 @@ export const services = pgTable('services', {
   iconUrl: text('icon_url'),
   description: text('description'),
   cashback: text('cashback'), // Can be either fixed amount or percentage like "5%" or "10.00"
+  commission: text('commission'), // Commission charged by the service, can be fixed amount or percentage
   customFields: jsonb('custom_fields').default({}),
   isActive: boolean('is_active').default(true).notNull(),
   isCustom: boolean('is_custom').default(false), // Флаг для определения кастомных сервисов клиентов
@@ -95,6 +96,7 @@ export const insertServiceSchema = createInsertSchema(services, {
   iconUrl: z.string().optional(),
   description: z.string().optional(),
   cashback: z.string().optional(),
+  commission: z.string().optional(),
   customFields: z.record(z.any()).optional(),
   isActive: z.boolean().default(true),
   isCustom: z.boolean().default(false),

@@ -33,6 +33,9 @@ const serviceFormSchema = z.object({
   cashback: z.string().regex(/^(\d+(\.\d{1,2})?%?|\d+(\.\d{1,2})?)$/, {
     message: "Enter a valid number or percentage (e.g., 5, 5.00, 5%)",
   }).optional().or(z.literal("")),
+  commission: z.string().regex(/^(\d+(\.\d{1,2})?%?|\d+(\.\d{1,2})?)$/, {
+    message: "Enter a valid number or percentage (e.g., 5, 5.00, 5%)",
+  }).optional().or(z.literal("")),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -63,6 +66,7 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
         ...data,
         iconUrl: data.iconUrl || undefined,
         cashback: data.cashback || undefined,
+        commission: data.commission || undefined,
         isActive: isActive,
         isCustom: isCustom,
         ownerId: isCustom ? user?.id : undefined,
@@ -84,6 +88,7 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
         ...data,
         iconUrl: data.iconUrl || undefined,
         cashback: data.cashback || undefined,
+        commission: data.commission || undefined,
         isActive: isActive,
       };
       
@@ -103,6 +108,7 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
       description: "",
       iconUrl: "",
       cashback: "",
+      commission: "",
     },
   });
 
@@ -114,6 +120,7 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
         description: serviceData.description || "",
         iconUrl: serviceData.iconUrl || "",
         cashback: serviceData.cashback || "",
+        commission: serviceData.commission || "",
       });
       
       // Set isActive state from service data
