@@ -314,26 +314,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public endpoint for clients to browse available services
   app.get("/api/services/public", async (req, res) => {
     try {
-      // Фильтрация сервисов в зависимости от роли пользователя
-      let publicServices = [];
+      // Выполняем простой запрос для получения всех публичных сервисов
+      let query = db.select()
+        .from(services)
+        .where(eq(services.isActive, true));
       
-      // Получаем только активные сервисы
-      const activeServices = await db.select().from(services).where(eq(services.isActive, true));
-      
-      // Фильтруем результаты в памяти (избегаем сложных SQL-запросов)
-      if (req.isAuthenticated() && req.user.role === 'admin') {
-        // Для админов показываем все активные сервисы
-        publicServices = activeServices;
-      } else if (req.isAuthenticated()) {
-        // Для обычных пользователей показываем публичные сервисы и их кастомные сервисы
-        publicServices = activeServices.filter(service => 
-          !service.isCustom || 
-          (service.isCustom && service.ownerId === req.user.id)
+      // Для неаутентифицированных пользователей показываем только стандартные сервисы
+      if (!req.isAuthenticated()) {
+        query = query.where(
+          or(
+            eq(services.isCustom, false),
+            isNull(services.isCustom)
+          )
         );
-      } else {
-        // Для неаутентифицированных пользователей показываем только публичные сервисы
-        publicServices = activeServices.filter(service => !service.isCustom);
+      } else if (req.isAuthenticated() && req.user.role !== 'admin') {
+        // Для аутентифицированных пользователей (не админов) показываем стандартные сервисы + их кастомные
+        query = query.where(
+          or(
+            eq(services.isCustom, false),
+            isNull(services.isCustom),
+            and(
+              eq(services.isCustom, true),
+              eq(services.ownerId, req.user.id)
+            )
+          )
+        );
       }
+      
+      // Выполняем запрос
+      const publicServices = await query;
       
       // Сортируем по названию
       publicServices.sort((a, b) => a.title.localeCompare(b.title));
