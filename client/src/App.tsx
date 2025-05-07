@@ -28,6 +28,7 @@ function Router() {
       <ProtectedRoute path="/" component={Dashboard} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/subscriptions" component={SubscriptionsPage} />
+      <ProtectedRoute path="/services" component={ServicesPage} />
       
       {/* Административные маршруты (доступны только для администраторов) */}
       <AdminRoute path="/admin/subscriptions" component={AllSubscriptionsPage} />

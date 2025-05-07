@@ -13,7 +13,7 @@ import { dbOptimizer } from "./db-optimizer";
 import { scalingManager } from "./scaling";
 import { setupMonitoringRoutes } from "./routes/monitoring-routes";
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, or, isNull } from "drizzle-orm";
 import { users, services, subscriptions } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -314,21 +314,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public endpoint for clients to browse available services
   app.get("/api/services/public", isAuthenticated, async (req, res) => {
     try {
-      // Get only active services that are not custom (or are custom but owned by the current user)
-      const publicServices = await db.select()
-        .from(services)
-        .where(
-          and(
-            eq(services.isActive, true),
-            // Either not a custom service or owned by the current user
-            db.or(
-              eq(services.isCustom, false),
-              eq(services.isCustom, null),
-              req.user && req.user.id ? eq(services.ownerId, req.user.id) : false
-            )
-          )
-        )
-        .orderBy(services.title);
+      // Фильтрация сервисов в зависимости от роли пользователя
+      let publicServices = [];
+      
+      // Получаем только активные сервисы
+      const activeServices = await db.select().from(services).where(eq(services.isActive, true));
+      
+      // Фильтруем результаты в памяти (избегаем сложных SQL-запросов)
+      if (req.user && req.user.role === 'admin') {
+        // Для админов показываем все активные сервисы
+        publicServices = activeServices;
+      } else if (req.user) {
+        // Для обычных пользователей показываем публичные сервисы и их кастомные сервисы
+        publicServices = activeServices.filter(service => 
+          !service.isCustom || 
+          (service.isCustom && service.ownerId === req.user.id)
+        );
+      } else {
+        // Для неаутентифицированных пользователей показываем только публичные сервисы
+        publicServices = activeServices.filter(service => !service.isCustom);
+      }
+      
+      // Сортируем по названию
+      publicServices.sort((a, b) => a.title.localeCompare(b.title));
       
       res.json(publicServices);
     } catch (error) {
