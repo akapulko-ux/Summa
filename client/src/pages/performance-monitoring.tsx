@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -56,7 +57,9 @@ export default function PerformanceMonitoring() {
   // Обновляем состояние мониторинга при получении данных с сервера
   useEffect(() => {
     if (monitoringStatus && typeof monitoringStatus.enabled === 'boolean') {
+      console.log('[DEBUG] Received monitoringStatus from server:', monitoringStatus);
       setMonitoringEnabled(monitoringStatus.enabled);
+      console.log('[DEBUG] Updated local state to:', monitoringStatus.enabled);
     }
   }, [monitoringStatus]);
 
@@ -74,20 +77,31 @@ export default function PerformanceMonitoring() {
   // Мутация для включения/отключения мониторинга
   const toggleMonitoringMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
+      console.log(`[DEBUG] Sending request to toggle monitoring to:`, enabled);
       const result = await apiRequest('POST', '/api/monitoring/db/monitoring', { 
         enabled 
       });
-      return await result.json();
+      const data = await result.json();
+      console.log(`[DEBUG] Received response:`, data);
+      return data;
     },
-    onSuccess: (_, newValue) => {
-      // Устанавливаем точное значение, полученное при вызове мутации
-      setMonitoringEnabled(newValue);
+    onSuccess: (data, newValue) => {
+      console.log(`[DEBUG] Mutation success, data:`, data, `newValue:`, newValue);
+      // Используем значение из ответа сервера вместо параметра мутации
+      const serverEnabledValue = data.enabled;
+      console.log(`[DEBUG] Setting monitoringEnabled to:`, serverEnabledValue);
+      
+      // Устанавливаем точное значение, полученное из ответа сервера
+      setMonitoringEnabled(serverEnabledValue);
       toast({
-        title: newValue ? t('monitoring.enabled') : t('monitoring.disabled'),
-        description: newValue ? t('monitoring.monitoring_on') : t('monitoring.monitoring_off'),
+        title: serverEnabledValue ? t('monitoring.enabled') : t('monitoring.disabled'),
+        description: serverEnabledValue ? t('monitoring.monitoring_on') : t('monitoring.monitoring_off'),
       });
+      
       // Обновляем статистику и запрашиваем обновленный статус
       refetchDbStats();
+      // Также явно инвалидируем запрос статуса мониторинга
+      queryClient.invalidateQueries({ queryKey: ['/api/monitoring/db/status'] });
     },
     onError: (error: Error) => {
       toast({

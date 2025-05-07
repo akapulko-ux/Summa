@@ -5,6 +5,7 @@ import { Express, Request, Response } from 'express';
 import { cacheManager } from '../cache';
 import { dbOptimizer } from '../db-optimizer';
 import { scalingManager } from '../scaling';
+import { log } from '../vite';
 
 /**
  * Проверка роли администратора
@@ -54,6 +55,7 @@ export function setupMonitoringRoutes(app: Express) {
   // Эндпоинт для получения статуса мониторинга
   app.get('/api/monitoring/db/status', isAdmin, (req: Request, res: Response) => {
     const isEnabled = dbOptimizer.getMonitoringStatus();
+    log(`[DEBUG] GET /api/monitoring/db/status: returning status ${isEnabled}`, 'monitoring');
     res.json({ enabled: isEnabled });
   });
   
@@ -101,15 +103,20 @@ export function setupMonitoringRoutes(app: Express) {
   app.post('/api/monitoring/db/monitoring', isAdmin, async (req: Request, res: Response) => {
     const { enabled } = req.body;
     
+    log(`[DEBUG] POST /api/monitoring/db/monitoring: Request to set monitoring to ${enabled}`, 'monitoring');
+    
     try {
       if (enabled) {
         await dbOptimizer.enableQueryMonitoring();
-        res.json({ message: 'DB query monitoring enabled' });
+        log(`[DEBUG] Monitoring enabled successfully`, 'monitoring');
+        res.json({ message: 'DB query monitoring enabled', enabled: true });
       } else {
         await dbOptimizer.disableQueryMonitoring();
-        res.json({ message: 'DB query monitoring disabled' });
+        log(`[DEBUG] Monitoring disabled successfully`, 'monitoring');
+        res.json({ message: 'DB query monitoring disabled', enabled: false });
       }
     } catch (error) {
+      log(`[ERROR] Failed to update monitoring status: ${(error as Error).message}`, 'monitoring');
       res.status(500).json({ message: `Failed to update monitoring status: ${(error as Error).message}` });
     }
   });
