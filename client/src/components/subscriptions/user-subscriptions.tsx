@@ -113,6 +113,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     defaultValues: {
       userId,
       serviceId: undefined,
+      title: "",
       startDate: new Date(),
       endDate: undefined,
       status: "active",
@@ -270,6 +271,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
       form.reset({
         userId,
         serviceId: undefined,
+        title: "",
         startDate: new Date(),
         endDate: undefined,
         status: "active",
@@ -332,6 +334,35 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           )}
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {/* Отображение названия выбранного сервиса */}
+                {form.watch("serviceId") && (
+                  <div className="mb-4 mt-2">
+                    <div className="text-sm font-medium">
+                      {t('subscriptions.selectedService')}:
+                    </div>
+                    <div className="text-base font-semibold text-primary">
+                      {form.watch("serviceId") === "other" ? 
+                        t('subscriptions.otherService') : 
+                        getServiceName(Number(form.watch("serviceId")))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Поле названия подписки */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('subscriptions.title')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder={t('subscriptions.titlePlaceholder')} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
