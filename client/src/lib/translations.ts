@@ -1141,6 +1141,7 @@ export const en: Translation = {
     myCustomServices: "My Custom Services",
     allServices: "All Services",
     ownedBy: "Owned by",
+    hideCustomServices: "Hide Custom Services",
   },
 
   subscriptions: {
@@ -1713,6 +1714,7 @@ export const ru: Translation = {
     allServices: "Все сервисы",
     ownedBy: "Владелец",
     showCustomServices: "Показать кастомные сервисы",
+    hideCustomServices: "Скрыть кастомные сервисы",
   },
 
   subscriptions: {
