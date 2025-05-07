@@ -293,6 +293,7 @@ export type Translation = {
     serviceDescription: string;
     serviceIcon: string;
     cashback: string;
+    commission: string;
     customFields: string;
     customFieldsDesc: string;
     editCustomFields: string;
@@ -1108,6 +1109,7 @@ export const en: Translation = {
     serviceDescription: "Description",
     serviceIcon: "Icon URL",
     cashback: "Cashback",
+    commission: "Commission",
     customFields: "Custom Fields",
     customFieldsDesc: "Additional fields for this service",
     editCustomFields: "Edit Custom Fields",
@@ -1721,6 +1723,7 @@ export const ru: Translation = {
     serviceDescription: "Описание",
     serviceIcon: "URL иконки",
     cashback: "Кэшбэк",
+    commission: "Комиссия",
     customFields: "Пользовательские поля",
     customFieldsDesc: "Дополнительные поля для этого сервиса",
     editCustomFields: "Редактировать пользовательские поля",

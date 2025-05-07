@@ -229,6 +229,23 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="commission"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('services.commission')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder="5% or 10.00" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter a commission with % symbol (e.g., 5%) or a fixed amount (e.g., 10.00)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="flex items-center space-x-2 py-4">
                 <Switch
                   id="service-active"
