@@ -478,7 +478,7 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 250, 350, 450, 500];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Roboto');
+    doc.fontSize(10).font('Courier');
     headers.forEach((header, i) => {
       doc.text(header, columnPositions[i], y, { continued: false });
     });
@@ -548,7 +548,7 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 300, 380, 460, 520];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Roboto');
+    doc.fontSize(10).font('Courier');
     headers.forEach((header, i) => {
       doc.text(header, columnPositions[i], y, { continued: false });
     });
@@ -613,7 +613,7 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 200, 320, 380, 440, 500];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Helvetica-Bold');
+    doc.fontSize(10).font('Courier');
     headers.forEach((header, i) => {
       doc.text(header, columnPositions[i], y);
     });
@@ -690,7 +690,7 @@ export class ReportService implements IReportService {
     const columnPositions = [100, 300, 450];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Helvetica-Bold');
+    doc.fontSize(10).font('Courier');
     headers.forEach((header, i) => {
       doc.text(header, columnPositions[i], y);
     });
@@ -729,7 +729,7 @@ export class ReportService implements IReportService {
     const userColumnPositions = [100, 300];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Helvetica-Bold');
+    doc.fontSize(10).font('Courier');
     userHeaders.forEach((header, i) => {
       doc.text(header, userColumnPositions[i], y);
     });
