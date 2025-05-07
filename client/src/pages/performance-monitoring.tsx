@@ -152,7 +152,15 @@ export default function PerformanceMonitoring() {
                 <Database className="h-5 w-5" />
                 {t('monitoring.db_status')}
               </CardTitle>
-              <CardDescription>{t('monitoring.db_desc')}</CardDescription>
+              <CardDescription>
+                {t('monitoring.db_desc')}
+                <div className="mt-2 text-sm font-mono">
+                  <span className="text-muted-foreground">Debug - Monitoring status:</span> 
+                  <span className={monitoringEnabled ? "text-green-500" : "text-red-500"}>
+                    {monitoringEnabled ? "Enabled" : "Disabled"}
+                  </span>
+                </div>
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {isLoadingStats ? (
