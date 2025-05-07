@@ -50,7 +50,7 @@ export type Translation = {
     updatedAt: string;
     actions: string;
   };
-
+  
   // Кэш
   cache: {
     title: string;
@@ -63,7 +63,7 @@ export type Translation = {
     cleared_desc: string;
     no_data: string;
   };
-
+  
   // Мониторинг производительности
   monitoring: {
     title: string;
@@ -91,7 +91,7 @@ export type Translation = {
     cachePerformance: string;
     queryPerformance: string;
     connectionStatus: string;
-
+    
     // Дополнительные поля для страницы мониторинга
     db_status: string;
     db_desc: string;
@@ -119,7 +119,7 @@ export type Translation = {
     no_data_desc: string;
     enable_monitoring: string;
   };
-
+  
   // Layout
   layout: {
     adminPanel: string;
@@ -129,7 +129,7 @@ export type Translation = {
     toggleTheme: string;
     toggleSidebar: string;
   };
-
+  
   // Резервное копирование
   backups: {
     title: string;
@@ -211,7 +211,7 @@ export type Translation = {
     backups: string;
     monitoring: string;
   };
-
+  
   // Аналитика и графики
   analytics: {
     revenue: string;
@@ -366,8 +366,6 @@ export type Translation = {
     myCustomServices: string;
     allServices: string;
     ownedBy: string;
-    showCustomServices: string;
-    hideCustomServices: string;
   };
 
   // Подписки
@@ -456,7 +454,7 @@ export type Translation = {
       quarterly: string;
       yearly: string;
     };
-
+    
     // Новые поля для функциональности управления подписками
     addButton: string;
     addTitle: string;
@@ -501,7 +499,7 @@ export type Translation = {
 
   // Кастомные поля
   customFields: CustomFieldType;
-
+  
   // Пользователи
   users: {
     title: string;
@@ -583,7 +581,7 @@ export type Translation = {
     active: string;
     memberSince: string;
   };
-
+  
   // Массовые рассылки
   broadcast: {
     title: string;
@@ -827,7 +825,7 @@ export const en: Translation = {
     cachePerformance: "Cache Performance",
     queryPerformance: "Query Performance",
     connectionStatus: "Connection Status",
-
+    
     // Дополнительные поля для страницы мониторинга
     db_status: "Database Status",
     db_desc: "Current database connection and performance information",
@@ -855,7 +853,7 @@ export const en: Translation = {
     no_data_desc: "No database statistics available",
     enable_monitoring: "Enable monitoring to start collecting metrics"
   },
-
+  
   cache: {
     title: "Cache Status",
     total_hits: "Cache Hits",
@@ -955,7 +953,7 @@ export const en: Translation = {
     noConnectedUsers: "No connected users",
     noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
   },
-
+  
   backups: {
     title: "Database Backups",
     manageBackups: "Manage database backups",
@@ -1093,7 +1091,7 @@ export const en: Translation = {
     visibleToUsers: "Visible to Users",
     visibleToUsersDesc: "Show this field to regular users",
     addCustomField: "Add Custom Field",
-    requiredField: "Required Field,
+    requiredField: "Required Field",
     requiredFieldDesc: "Make this field mandatory for users to fill in",
     minValue: "Minimum Value",
     maxValue: "Maximum Value",
@@ -1143,8 +1141,6 @@ export const en: Translation = {
     myCustomServices: "My Custom Services",
     allServices: "All Services",
     ownedBy: "Owned by",
-    showCustomServices: "Show custom services",
-    hideCustomServices: "Hide custom services"
   },
 
   subscriptions: {
@@ -1184,134 +1180,13 @@ export const en: Translation = {
     active: "Active",
     activeUntil: "Active until",
     nextPayment: "Next payment",
-    allSubscriptions: "All Subscriptions",
-    allSubscriptionsDescription: "Manage all client subscriptions",
-    searchPlaceholder: "Search by service, user, or domain...",
-    searchService: "Search by service",
-    searchUser: "Search by user",
-    searchDomain: "Search by domain",
-    noSubscriptionsFound: "No subscriptions found",
-    adjustFilters: "Try adjusting your filters",
-    viewDetails: "View details",
-    viewUser: "View user",
-    errorLoadingSubscriptions: "Error loading subscriptions",
-    filters: {
-      selectStatus: "Select status",
-      statusAll: "All",
-      statusActive: "Active",
-      statusPending: "Pending",
-      statusExpired: "Expired",
-      statusCanceled: "Canceled",
-      selectSortField: "Select sort field",
-      sortService: "Service",
-      sortUser: "User",
-      sortStatus: "Status",
-      sortPrice: "Price",
-      sortCreatedAt: "Created at",
-      sortOrder: "Sort order",
-      selectSortOrder: "Select sort order"
-    },
-    columns: {
-      service: "Service",
-      user: "User",
-      status: "Status",
-      price: "Price",
-      period: "Period",
-      createdAt: "Created at",
-      actions: "Actions",
-      startDate: "Start date",
-      endDate: "End date",
-      amount: "Amount"
-    },
-    status: {
-      active: "Active",
-      pending: "Pending",
-      expired: "Expired",
-      canceled: "Canceled"
-    },
-    period: {
-      monthly: "Monthly",
-      quarterly: "Quarterly",
-      yearly: "Yearly"
-    },
-
-    // Новые поля для функциональности управления подписками
-    addButton: "Add subscription",
-    addTitle: "Add subscription",
-    addDescription: "Create a new subscription",
-    addSuccess: "Subscription added",
-    addSuccessDescription: "Subscription successfully added",
-    addError: "Error adding subscription",
-    deleteSuccess: "Subscription deleted",
-    deleteSuccessDescription: "Subscription successfully deleted",
-    deleteError: "Error deleting subscription",
-    amount: "Amount",
-    startDate: "Start date",
-    endDate: "End date",
-    selectService: "Select service",
-    selectPeriod: "Select period",
-    selectStatus: "Select status",
-    optional: "Optional",
-    pickDate: "Pick date",
-    periods: {
-      monthly: "Monthly",
-      quarterly: "Quarterly",
-      yearly: "Yearly"
-    },
-    statuses: {
-      active: "Active",
-      pending: "Pending",
-      expired: "Expired",
-      canceled: "Canceled"
-    },
-    columns: {
-      service: "Service",
-      startDate: "Start date",
-      endDate: "End date",
-      amount: "Amount",
-      period: "Period",
-      status: "Status",
-      actions: "Actions"
-    },
-    unknownService: "Unknown service",
-    errorLoading: "Error loading subscriptions"
   },
 
-  // Кастомные поля
-  customFields: CustomFieldType,
-
-  // Пользователи
   users: {
     title: "User Management",
     manageUsers: "Manage user accounts and permissions",
     addUser: "Add User",
     editUser: "Edit User",
-    manageSubscriptions: "Manage subscriptions",
-    manageSubscriptionsDescription: "Manage user subscriptions",
-    manageCustomFields: "Manage custom fields",
-    manageCustomFieldsDescription: "Manage custom fields for this user",
-    actions: "Actions",
-    edit: "Edit",
-    delete: "Delete",
-    filters: {
-      status: "Status",
-      selectStatus: "Select status",
-      statusAll: "All",
-      statusActive: "Active",
-      statusInactive: "Inactive",
-      sortBy: "Sort by",
-      selectSortField: "Select sort field",
-      sortOrder: "Sort order",
-      selectSortOrder: "Select sort order",
-      ascending: "Ascending",
-      descending: "Descending",
-      company: "Company",
-      enterCompany: "Enter company name",
-      sortName: "Name",
-      sortEmail: "Email",
-      sortCompany: "Company",
-      sortCreatedAt: "Created at"
-    },
     userEmail: "Email",
     userName: "Name",
     userCompany: "Company",
@@ -1326,10 +1201,7 @@ export const en: Translation = {
     updateUser: "Update User",
     confirmDelete: "Are you sure you want to delete this user?",
     noUsers: "No users found",
-    userDetails: "User details",
-    userDetailsDescription: "Information about the user",
-    viewFullProfile: "View full profile",
-    errorLoadingUser: "Error loading user",
+    userDetails: "User Details",
     userCreated: "User created successfully",
     userUpdated: "User updated successfully",
     userDeleted: "User deleted successfully",
@@ -1347,7 +1219,6 @@ export const en: Translation = {
     }
   },
 
-  // Профиль
   profile: {
     title: "Profile",
     personalInfo: "Personal Information",
@@ -1364,47 +1235,7 @@ export const en: Translation = {
     active: "Active",
     memberSince: "Member since",
   },
-
-  // Массовые рассылки
-  broadcast: {
-    title: "Broadcast Messages",
-    sendBroadcast: "Send Broadcast",
-    connectedUsers: "Connected Users",
-    newBroadcast: "New Broadcast Message",
-    newBroadcastDesc: "Create a new message to send to all connected users",
-    recipientFilter: "Recipient Filter",
-    selectRecipients: "Select recipients",
-    allUsers: "All Users",
-    adminUsers: "Admin Users Only",
-    clientUsers: "Client Users Only",
-    recipientFilterDesc: "Choose which group of users will receive this message",
-    messageContent: "Message Content",
-    messageContentPlaceholder: "Enter your message here...",
-    messageContentDesc: "This message will be sent to all selected users with connected Telegram accounts",
-    sendNow: "Send Now",
-    broadcastSent: "Broadcast sent",
-    broadcastSentDesc: "Your message was sent to {success} users (failed: {failed})",
-    broadcastFailed: "Broadcast failed",
-    lastBroadcastResult: "Last broadcast result",
-    deliveredCount: "Delivered",
-    failedCount: "Failed",
-    tips: "Broadcast Tips",
-    tip1: "Keep your messages concise and clear for better user experience",
-    tip2: "Use broadcast messages sparingly to avoid overwhelming users",
-    tip3: "Consider sending broadcasts during business hours when users are likely to see them",
-    tip4: "Include a clear call-to-action if you want users to take specific steps",
-    connectedUsersDesc: "Users with linked Telegram accounts",
-    totalConnected: "Total connected users",
-    userId: "User ID",
-    telegramChatId: "Telegram Chat ID",
-    linkedOn: "Linked on",
-    messageThis: "Message",
-    testMessageToUser: "This is a test message for user {userId} from the admin panel.",
-    noConnectedUsers: "No connected users",
-    noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
-  },
-
-  // Telegram
+  
   telegram: {
     title: "Telegram Connection",
     description: "Manage your Telegram integration",
@@ -1425,7 +1256,6 @@ export const en: Translation = {
     disconnectWarning: "You will no longer receive notifications or updates via Telegram.",
   },
 
-  // Ошибки и сообщения
   messages: {
     invalidCredentials: "Invalid email or password",
     requiredField: "This field is required",
@@ -1578,7 +1408,7 @@ export const ru: Translation = {
     cachePerformance: "Производительность кэша",
     queryPerformance: "Производительность запросов",
     connectionStatus: "Состояние соединений",
-
+    
     // Дополнительные переводы
     db_status: "Статус базы данных",
     db_desc: "Текущее соединение с базой данных и информация о производительности",
@@ -1694,7 +1524,7 @@ export const ru: Translation = {
     noConnectedUsers: "Нет подключенных пользователей",
     noConnectedUsersDesc: "В настоящее время нет пользователей с привязанными аккаунтами Telegram."
   },
-
+  
   backups: {
     title: "Резервные копии базы данных",
     manageBackups: "Управление резервными копиями базы данных",
@@ -1874,7 +1704,8 @@ export const ru: Translation = {
     serviceClients: "Клиенты сервиса",
     clientsDescription: "Список клиентов, использующих этот сервис",
     noClients: "Нет клиентов, использующих этот сервис",
-    active: "Активный",inactive: "Неактивный",
+    active: "Активный",
+    inactive: "Неактивный",
     // Custom services
     customService: "Кастомный сервис",
     createCustomService: "Создать кастомный сервис",
@@ -1882,7 +1713,6 @@ export const ru: Translation = {
     allServices: "Все сервисы",
     ownedBy: "Владелец",
     showCustomServices: "Показать кастомные сервисы",
-    hideCustomServices: "Скрыть кастомные сервисы"
   },
 
   subscriptions: {
@@ -1929,6 +1759,27 @@ export const ru: Translation = {
     searchService: "Поиск по сервису",
     searchUser: "Поиск по пользователю",
     searchDomain: "Поиск по домену",
+    addButton: "Добавить подписку",
+    addTitle: "Добавить подписку",
+    addDescription: "Создать новую подписку",
+    selectService: "Выберите сервис",
+    startDate: "Дата начала",
+    endDate: "Дата окончания",
+    optional: "Опционально",
+    selectPeriod: "Выберите период",
+    amount: "Сумма",
+    selectStatus: "Выберите статус",
+    periods: {
+      monthly: "Ежемесячно",
+      quarterly: "Ежеквартально",
+      yearly: "Ежегодно"
+    },
+    statuses: {
+      active: "Активна",
+      pending: "Ожидание",
+      expired: "Истекла",
+      canceled: "Отменена"
+    },
     noSubscriptionsFound: "Подписки не найдены",
     adjustFilters: "Попробуйте изменить параметры фильтрации",
     viewDetails: "Просмотр деталей",
@@ -2059,7 +1910,7 @@ export const ru: Translation = {
     active: "Активен",
     memberSince: "Участник с",
   },
-
+  
   telegram: {
     title: "Подключение Telegram",
     description: "Управление интеграцией с Telegram",
