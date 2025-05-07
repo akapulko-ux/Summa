@@ -97,7 +97,7 @@ export default function ServicesPage() {
             )}
             <div className="flex space-x-2">
               {service.cashback && (
-                <Badge variant="secondary" className="flex-shrink-0 text-white">
+                <Badge variant="secondary" className="flex-shrink-0">
                   {language === 'ru' ? 'Кэшбэк' : 'Cashback'}: {service.cashback}
                 </Badge>
               )}
@@ -151,7 +151,7 @@ export default function ServicesPage() {
             )}
             <div className="flex space-x-2">
               {service.cashback && (
-                <Badge variant="secondary" className="flex-shrink-0 text-white">
+                <Badge variant="secondary" className="flex-shrink-0">
                   {language === 'ru' ? 'Кэшбэк' : 'Cashback'}: {service.cashback}
                 </Badge>
               )}
