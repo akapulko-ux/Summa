@@ -77,6 +77,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   const { t, language } = useTranslations();
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
   
   // Получение списка подписок пользователя
   const { 
@@ -192,6 +193,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     if (serviceId === 'other') {
       // Для опции "Другой сервис" не меняем стоимость
       form.setValue("title", t('subscriptions.otherService'));
+      setSelectedServiceName(t('subscriptions.otherService'));
       return;
     }
     
@@ -201,6 +203,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     if (selectedService) {
       // Устанавливаем название сервиса
       form.setValue("title", selectedService.title);
+      setSelectedServiceName(selectedService.title);
       
       // Здесь можно было бы устанавливать стоимость по умолчанию,
       // если бы у сервиса была стоимость, но сейчас просто оставляем нулевую
@@ -276,6 +279,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
         paymentPeriod: "monthly",
         amount: 0
       });
+      setSelectedServiceName(null);
     }
   }, [isAddDialogOpen, form, userId]);
   
@@ -336,6 +340,14 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                     </FormItem>
                   )}
                 />
+                
+                {/* Отображение выбранного сервиса */}
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">{t('subscriptions.selectedService')}</div>
+                  <div className="border rounded-md p-3 bg-muted/30">
+                    {selectedServiceName || t('subscriptions.noServiceSelected')}
+                  </div>
+                </div>
                 
                 <FormField
                   control={form.control}
