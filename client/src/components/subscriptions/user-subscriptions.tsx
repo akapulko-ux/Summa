@@ -340,18 +340,22 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                 />
                 
                 {/* Отображение названия выбранного сервиса */}
-                {form.watch("serviceId") && (
-                  <div className="mb-4 mt-2">
-                    <div className="text-sm font-medium">
-                      {t('subscriptions.selectedService')}:
-                    </div>
-                    <div className="text-base font-semibold text-primary">
-                      {form.watch("serviceId") === "other" ? 
-                        t('subscriptions.otherService') : 
-                        getServiceName(Number(form.watch("serviceId")))}
-                    </div>
+                <div className="mb-4 mt-2 border rounded-md p-3 bg-muted/20">
+                  <div className="text-sm font-medium">
+                    {t('subscriptions.selectedService') || "Выбранный сервис"}:
                   </div>
-                )}
+                  <div className="text-base font-semibold text-primary">
+                    {!form.watch("serviceId") ? (
+                      <span className="text-muted-foreground italic">
+                        {t('subscriptions.selectServiceFirst') || "Пожалуйста, выберите сервис"}
+                      </span>
+                    ) : form.watch("serviceId") === "other" ? (
+                      t('subscriptions.otherService') || "Другой сервис"
+                    ) : (
+                      getServiceName(Number(form.watch("serviceId")))
+                    )}
+                  </div>
+                </div>
                 
                 {/* Поле названия подписки */}
                 <FormField
