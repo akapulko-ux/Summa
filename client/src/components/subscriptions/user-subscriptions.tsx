@@ -324,12 +324,15 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {Array.isArray(services) ? (
-                            services.map((service) => (
-                              <SelectItem key={service.id} value={service.id.toString()}>
-                                {service.title}
-                              </SelectItem>
-                            ))
+                          {Array.isArray(services) && services.length > 0 ? (
+                            <>
+                              {services.map((service) => (
+                                <SelectItem key={service.id} value={service.id.toString()}>
+                                  {service.title}
+                                </SelectItem>
+                              ))}
+                              <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
+                            </>
                           ) : (
                             <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
                           )}
