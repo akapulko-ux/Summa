@@ -937,6 +937,11 @@ export const en: Translation = {
     trendsReport: "Trends Report",
     trendsReportDesc: "Trends and forecasts based on historical data",
     
+    // Sample reports
+    subscriptionReportSample: "Subscription Report",
+    userGrowthReportSample: "User Growth Report",
+    financialReportSample: "Financial Report Q1",
+    
     // Report formats
     pdfDocument: "PDF Document",
     excelSpreadsheet: "Excel Spreadsheet",

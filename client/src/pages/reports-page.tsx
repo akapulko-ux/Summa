@@ -307,7 +307,7 @@ export default function ReportsPage() {
                     <div className="flex items-center gap-2">
                       <File className="h-5 w-5 text-red-500" />
                       <div>
-                        <p className="text-sm font-medium">Subscription Report</p>
+                        <p className="text-sm font-medium">{t('reports.subscriptionReportSample')}</p>
                         <p className="text-xs text-muted-foreground">{format(new Date(), "PPP")}</p>
                       </div>
                     </div>
@@ -320,7 +320,7 @@ export default function ReportsPage() {
                     <div className="flex items-center gap-2">
                       <FileSpreadsheet className="h-5 w-5 text-green-500" />
                       <div>
-                        <p className="text-sm font-medium">User Growth Report</p>
+                        <p className="text-sm font-medium">{t('reports.userGrowthReportSample')}</p>
                         <p className="text-xs text-muted-foreground">{format(new Date(Date.now() - 24 * 60 * 60 * 1000), "PPP")}</p>
                       </div>
                     </div>
@@ -333,7 +333,7 @@ export default function ReportsPage() {
                     <div className="flex items-center gap-2">
                       <File className="h-5 w-5 text-red-500" />
                       <div>
-                        <p className="text-sm font-medium">Financial Report Q1</p>
+                        <p className="text-sm font-medium">{t('reports.financialReportSample')}</p>
                         <p className="text-xs text-muted-foreground">{format(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), "PPP")}</p>
                       </div>
                     </div>
@@ -344,7 +344,7 @@ export default function ReportsPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full">View All Reports</Button>
+                <Button variant="outline" className="w-full">{t('reports.viewAllReports')}</Button>
               </CardFooter>
             </Card>
           </div>
