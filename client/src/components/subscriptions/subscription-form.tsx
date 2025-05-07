@@ -544,7 +544,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             name="licensesCount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Licenses</FormLabel>
+                <FormLabel>{t("subscriptions.licensesCount")}</FormLabel>
                 <FormControl>
                   <Input type="number" min="1" {...field} />
                 </FormControl>
@@ -558,7 +558,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
             name="usersCount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Users</FormLabel>
+                <FormLabel>{t("subscriptions.usersCount")}</FormLabel>
                 <FormControl>
                   <Input type="number" min="1" {...field} />
                 </FormControl>
@@ -573,21 +573,21 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>{t("subscriptions.status")}</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue placeholder={t("subscriptions.status")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="expired">Expired</SelectItem>
-                  <SelectItem value="canceled">Canceled</SelectItem>
+                  <SelectItem value="active">{t("subscriptions.statusActive")}</SelectItem>
+                  <SelectItem value="pending">{t("subscriptions.statusPending")}</SelectItem>
+                  <SelectItem value="expired">{t("subscriptions.statusExpired")}</SelectItem>
+                  <SelectItem value="canceled">{t("subscriptions.statusCanceled")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -599,7 +599,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
           {isSubmitting && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
-          {subscriptionId ? "Update Subscription" : "Create Subscription"}
+          {subscriptionId ? t("subscriptions.updateSubscription") : t("subscriptions.createSubscription")}
         </Button>
       </form>
     </Form>
