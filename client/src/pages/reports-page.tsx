@@ -85,41 +85,41 @@ export default function ReportsPage() {
   const reportTypes = [
     { 
       id: "subscriptions", 
-      name: "Subscription Report", 
-      description: "Detailed information about subscriptions and revenue", 
+      name: t('reports.subscriptionReport'), 
+      description: t('reports.subscriptionReportDesc'), 
       icon: <CreditCard className="h-4 w-4" />
     },
     { 
       id: "users", 
-      name: "User Report", 
-      description: "User growth and activity statistics", 
+      name: t('reports.userReport'), 
+      description: t('reports.userReportDesc'), 
       icon: <Users className="h-4 w-4" />
     },
     { 
       id: "services", 
-      name: "Services Report", 
-      description: "Service usage and popularity", 
+      name: t('reports.servicesReport'), 
+      description: t('reports.servicesReportDesc'), 
       icon: <MessageSquare className="h-4 w-4" />
     },
     { 
       id: "financial", 
-      name: "Financial Report", 
-      description: "Revenue, expenses and profit information", 
+      name: t('reports.financialReport'), 
+      description: t('reports.financialReportDesc'), 
       icon: <LineChart className="h-4 w-4" />
     },
     { 
       id: "trends", 
-      name: "Trends Report", 
-      description: "Trends and forecasts based on historical data", 
+      name: t('reports.trendsReport'), 
+      description: t('reports.trendsReportDesc'), 
       icon: <BarChart4 className="h-4 w-4" />
     },
   ];
 
   // Список доступных форматов отчетов
   const reportFormats = [
-    { id: "pdf", name: "PDF Document", icon: <File className="h-4 w-4 text-red-500" /> },
-    { id: "excel", name: "Excel Spreadsheet", icon: <FileSpreadsheet className="h-4 w-4" /> },
-    { id: "csv", name: "CSV File", icon: <FileText className="h-4 w-4" /> },
+    { id: "pdf", name: t('reports.pdfDocument'), icon: <File className="h-4 w-4 text-red-500" /> },
+    { id: "excel", name: t('reports.excelSpreadsheet'), icon: <FileSpreadsheet className="h-4 w-4" /> },
+    { id: "csv", name: t('reports.csvFile'), icon: <FileText className="h-4 w-4" /> },
   ];
 
   return (
