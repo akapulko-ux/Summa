@@ -193,9 +193,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public endpoint for clients to browse available services - должен быть перед /:id маршрутом!
+  app.get("/api/services/public", async (req, res) => {
+    try {
+      // Выполняем простой запрос для получения всех публичных сервисов
+      let query = db.select()
+        .from(services)
+        .where(eq(services.isActive, true));
+      
+      // Для неаутентифицированных пользователей показываем только стандартные сервисы
+      if (!req.isAuthenticated()) {
+        query = query.where(
+          or(
+            eq(services.isCustom, false),
+            isNull(services.isCustom)
+          )
+        );
+      } else if (req.isAuthenticated() && req.user.role !== 'admin') {
+        // Для аутентифицированных пользователей (не админов) показываем стандартные сервисы + их кастомные
+        query = query.where(
+          or(
+            eq(services.isCustom, false),
+            isNull(services.isCustom),
+            and(
+              eq(services.isCustom, true),
+              eq(services.ownerId, req.user.id)
+            )
+          )
+        );
+      }
+      
+      // Выполняем запрос
+      const publicServices = await query;
+      
+      // Сортируем по названию
+      publicServices.sort((a, b) => a.title.localeCompare(b.title));
+      
+      res.json(publicServices);
+    } catch (error) {
+      console.error("Error fetching public services:", error);
+      res.status(500).json({ message: "Failed to fetch services" });
+    }
+  });
+
   app.get("/api/services/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      // Проверка на валидный id
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid service ID" });
+      }
+      
       const service = await storage.getService(id);
       
       if (!service) {
@@ -308,49 +356,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching service clients:", error);
       res.status(500).json({ message: "Failed to fetch service clients" });
-    }
-  });
-
-  // Public endpoint for clients to browse available services
-  app.get("/api/services/public", async (req, res) => {
-    try {
-      // Выполняем простой запрос для получения всех публичных сервисов
-      let query = db.select()
-        .from(services)
-        .where(eq(services.isActive, true));
-      
-      // Для неаутентифицированных пользователей показываем только стандартные сервисы
-      if (!req.isAuthenticated()) {
-        query = query.where(
-          or(
-            eq(services.isCustom, false),
-            isNull(services.isCustom)
-          )
-        );
-      } else if (req.isAuthenticated() && req.user.role !== 'admin') {
-        // Для аутентифицированных пользователей (не админов) показываем стандартные сервисы + их кастомные
-        query = query.where(
-          or(
-            eq(services.isCustom, false),
-            isNull(services.isCustom),
-            and(
-              eq(services.isCustom, true),
-              eq(services.ownerId, req.user.id)
-            )
-          )
-        );
-      }
-      
-      // Выполняем запрос
-      const publicServices = await query;
-      
-      // Сортируем по названию
-      publicServices.sort((a, b) => a.title.localeCompare(b.title));
-      
-      res.json(publicServices);
-    } catch (error) {
-      console.error("Error fetching public services:", error);
-      res.status(500).json({ message: "Failed to fetch services" });
     }
   });
 
