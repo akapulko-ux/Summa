@@ -515,56 +515,256 @@ export class DatabaseStorage implements IStorage {
   // Новые методы для расширенной аналитики
 
   async getUserRegistrationsStats(period: string): Promise<any[]> {
-    // Заглушка для статистики регистраций пользователей
-    // В реальном приложении здесь должен быть SQL-запрос
-    const registrationData = [
-      { date: '2024-01', count: 12 },
-      { date: '2024-02', count: 18 },
-      { date: '2024-03', count: 15 },
-      { date: '2024-04', count: 22 },
-      { date: '2024-05', count: 28 }
-    ];
-    
-    return registrationData;
+    return dbOptimizer.executeQueryWithCache(
+      async () => {
+        let timeFormat: string;
+        let interval: string;
+        
+        // Установка форматов в зависимости от выбранного периода
+        if (period === 'year') {
+          timeFormat = 'YYYY';
+          interval = '1 year';
+        } else if (period === 'quarter') {
+          timeFormat = 'YYYY-"Q"Q';
+          interval = '3 month';
+        } else {
+          // По умолчанию месячный период
+          timeFormat = 'YYYY-MM';
+          interval = '1 month';
+        }
+        
+        const result = await db.execute(sql`
+          WITH periods AS (
+            SELECT 
+              to_char(date_series, ${timeFormat}) as date,
+              date_series
+            FROM generate_series(
+              date_trunc(${interval}, current_date - interval '1 year'),
+              current_date,
+              ${interval}::interval
+            ) as date_series
+          ),
+          user_counts AS (
+            SELECT 
+              to_char(date_trunc(${interval}, created_at), ${timeFormat}) as date,
+              count(*) as count
+            FROM users
+            WHERE created_at >= current_date - interval '1 year'
+            GROUP BY date
+          )
+          SELECT 
+            p.date,
+            COALESCE(uc.count, 0) as count
+          FROM periods p
+          LEFT JOIN user_counts uc ON p.date = uc.date
+          ORDER BY p.date_series
+        `);
+        
+        return result.rows.map(row => ({
+          date: row.date,
+          count: parseInt(row.count)
+        }));
+      },
+      `user_registrations_${period}`,
+      300, // кэшируем на 5 минут
+      'getUserRegistrationsStats'
+    );
   }
   
   async getCashbackStats(userId?: number, period: string = 'month'): Promise<any[]> {
-    // Заглушка для данных о кэшбэке
-    // В реальном приложении здесь должен быть SQL-запрос
-    const cashbackData = [
-      { period: '2024-01', amount: '24.50' },
-      { period: '2024-02', amount: '35.75' },
-      { period: '2024-03', amount: '42.20' },
-      { period: '2024-04', amount: '18.90' },
-      { period: '2024-05', amount: '29.30' }
-    ];
-    
-    return cashbackData;
+    return dbOptimizer.executeQueryWithCache(
+      async () => {
+        let timeFormat: string;
+        let interval: string;
+        
+        // Установка форматов в зависимости от выбранного периода
+        if (period === 'year') {
+          timeFormat = 'YYYY';
+          interval = '1 year';
+        } else if (period === 'quarter') {
+          timeFormat = 'YYYY-"Q"Q';
+          interval = '3 month';
+        } else {
+          // По умолчанию месячный период
+          timeFormat = 'YYYY-MM';
+          interval = '1 month';
+        }
+        
+        // Базовый запрос для получения данных о кэшбэке
+        let query = sql`
+          WITH periods AS (
+            SELECT 
+              to_char(date_series, ${timeFormat}) as period,
+              date_series
+            FROM generate_series(
+              date_trunc(${interval}, current_date - interval '1 year'),
+              current_date,
+              ${interval}::interval
+            ) as date_series
+          ),
+          cashback_data AS (
+            SELECT 
+              to_char(date_trunc(${interval}, s.created_at), ${timeFormat}) as period,
+              SUM(
+                CASE 
+                  WHEN sv.cashback LIKE '%\\%' THEN 
+                    (s.payment_amount * CAST(REPLACE(sv.cashback, '%', '') AS DECIMAL) / 100)
+                  ELSE 
+                    CAST(COALESCE(sv.cashback, '0') AS DECIMAL)
+                END
+              ) as amount
+            FROM subscriptions s
+            JOIN services sv ON s.service_id = sv.id
+            WHERE sv.cashback IS NOT NULL AND sv.cashback != ''
+        `;
+        
+        // Добавляем фильтр по пользователю, если указан userId
+        if (userId) {
+          query = sql.append(query, sql` AND s.user_id = ${userId}`);
+        }
+        
+        // Завершаем запрос
+        query = sql.append(query, sql`
+            GROUP BY period
+          )
+          SELECT 
+            p.period,
+            COALESCE(cd.amount, 0) as amount
+          FROM periods p
+          LEFT JOIN cashback_data cd ON p.period = cd.period
+          ORDER BY p.date_series
+        `);
+        
+        const result = await db.execute(query);
+        
+        return result.rows.map(row => ({
+          period: row.period,
+          amount: parseFloat(row.amount).toFixed(2)
+        }));
+      },
+      `cashback_stats_${period}_${userId || 'all'}`,
+      300, // кэшируем на 5 минут
+      'getCashbackStats'
+    );
   }
   
   async getClientsActivityStats(): Promise<any> {
-    // Заглушка для статистики активности клиентов
-    // В реальном приложении здесь должен быть SQL-запрос
-    return {
-      active: 35,
-      inactive: 15,
-      total: 50,
-      activePercentage: '70.0'
-    };
+    return dbOptimizer.executeQueryWithCache(
+      async () => {
+        // Подсчет активных клиентов
+        const activeClientsQuery = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(users)
+          .where(
+            and(
+              eq(users.role, 'client'),
+              eq(users.isActive, true)
+            )
+          );
+        
+        // Подсчет неактивных клиентов
+        const inactiveClientsQuery = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(users)
+          .where(
+            and(
+              eq(users.role, 'client'),
+              eq(users.isActive, false)
+            )
+          );
+        
+        // Общее количество клиентов
+        const totalClientsQuery = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(users)
+          .where(eq(users.role, 'client'));
+        
+        const activeCount = activeClientsQuery[0]?.count || 0;
+        const inactiveCount = inactiveClientsQuery[0]?.count || 0;
+        const totalCount = totalClientsQuery[0]?.count || 0;
+        
+        // Расчет процента активных клиентов
+        const activePercentage = totalCount > 0 
+          ? ((activeCount / totalCount) * 100).toFixed(1) 
+          : '0.0';
+        
+        return {
+          active: activeCount,
+          inactive: inactiveCount,
+          total: totalCount,
+          activePercentage
+        };
+      },
+      'clients_activity_stats',
+      300, // кэшируем на 5 минут
+      'getClientsActivityStats'
+    );
   }
   
   async getSubscriptionCostsStats(period: string = 'month'): Promise<any[]> {
-    // Заглушка для статистики по стоимости подписок
-    // В реальном приложении здесь должен быть SQL-запрос
-    const costData = [
-      { period: '2024-01', avgPrice: '24.99', minPrice: '9.99', maxPrice: '49.99', count: 18 },
-      { period: '2024-02', avgPrice: '26.50', minPrice: '9.99', maxPrice: '59.99', count: 22 },
-      { period: '2024-03', avgPrice: '28.75', minPrice: '14.99', maxPrice: '69.99', count: 20 },
-      { period: '2024-04', avgPrice: '29.90', minPrice: '14.99', maxPrice: '79.99', count: 25 },
-      { period: '2024-05', avgPrice: '32.50', minPrice: '19.99', maxPrice: '99.99', count: 30 }
-    ];
-    
-    return costData;
+    return dbOptimizer.executeQueryWithCache(
+      async () => {
+        let timeFormat: string;
+        let interval: string;
+        
+        // Установка форматов в зависимости от выбранного периода
+        if (period === 'year') {
+          timeFormat = 'YYYY';
+          interval = '1 year';
+        } else if (period === 'quarter') {
+          timeFormat = 'YYYY-"Q"Q';
+          interval = '3 month';
+        } else {
+          // По умолчанию месячный период
+          timeFormat = 'YYYY-MM';
+          interval = '1 month';
+        }
+        
+        const result = await db.execute(sql`
+          WITH periods AS (
+            SELECT 
+              to_char(date_series, ${timeFormat}) as period,
+              date_series
+            FROM generate_series(
+              date_trunc(${interval}, current_date - interval '1 year'),
+              current_date,
+              ${interval}::interval
+            ) as date_series
+          ),
+          subscription_costs AS (
+            SELECT 
+              to_char(date_trunc(${interval}, created_at), ${timeFormat}) as period,
+              AVG(payment_amount) as avg_price,
+              MIN(payment_amount) as min_price,
+              MAX(payment_amount) as max_price,
+              COUNT(*) as count
+            FROM subscriptions
+            WHERE payment_amount IS NOT NULL AND payment_amount > 0
+            GROUP BY period
+          )
+          SELECT 
+            p.period,
+            COALESCE(sc.avg_price, 0) as avg_price,
+            COALESCE(sc.min_price, 0) as min_price,
+            COALESCE(sc.max_price, 0) as max_price,
+            COALESCE(sc.count, 0) as count
+          FROM periods p
+          LEFT JOIN subscription_costs sc ON p.period = sc.period
+          ORDER BY p.date_series
+        `);
+        
+        return result.rows.map(row => ({
+          period: row.period,
+          avgPrice: parseFloat(row.avg_price).toFixed(2),
+          minPrice: parseFloat(row.min_price).toFixed(2),
+          maxPrice: parseFloat(row.max_price).toFixed(2),
+          count: parseInt(row.count)
+        }));
+      },
+      `subscription_costs_${period}`,
+      300, // кэшируем на 5 минут
+      'getSubscriptionCostsStats'
+    );
   }
   
   async deleteUser(id: number): Promise<boolean> {
