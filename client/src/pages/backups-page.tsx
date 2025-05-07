@@ -818,6 +818,8 @@ export default function BackupsPage() {
               </Tooltip>
             </TooltipProvider>
             
+            <UploadBackupDialog />
+            
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -1079,37 +1081,65 @@ export default function BackupsPage() {
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <h3 className="font-medium mb-1">
-                  {language === 'ru' ? "О резервном копировании" : "About Backups"}
+                  {language === 'ru' ? "Типы резервных копий" : "Backup Types"}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {language === 'ru'
-                    ? "Резервные копии создаются автоматически раз в день, но вы также можете создавать их вручную."
-                    : "Backups are created automatically once a day, but you can also create them manually."}
+                    ? "Резервные копии имеют разные типы: ручные (manual), автоматические (auto), создаваемые перед восстановлением (pre-restore) и импортированные (imported)."
+                    : "Backup files have different types: manual, automatic (auto), pre-restore (created before restoration), and imported."}
                 </p>
               </div>
               
               <div>
                 <h3 className="font-medium mb-1">
-                  {language === 'ru' ? "Хранение резервных копий" : "Backup Storage"}
+                  {language === 'ru' ? "Расширенное восстановление" : "Advanced Restore"}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {language === 'ru'
-                    ? "Резервные копии хранятся в директории на сервере. Рекомендуется периодически скачивать важные резервные копии для внешнего хранения."
-                    : "Backup files are stored in a directory on the server. It is recommended to periodically download important backups for external storage."}
+                    ? "Функция расширенного восстановления позволяет восстановить только структуру или только данные, а также выбрать определенные схемы или таблицы."
+                    : "The advanced restore feature allows you to restore only the structure or only the data, and also select specific schemas or tables."}
                 </p>
               </div>
               
               <div>
                 <h3 className="font-medium mb-1">
-                  {language === 'ru' ? "Очистка старых копий" : "Cleaning Old Backups"}
+                  {language === 'ru' ? "Импорт и экспорт" : "Import and Export"}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {language === 'ru'
-                    ? "Функция очистки оставляет только 5 последних резервных копий для экономии места на диске."
-                    : "The cleaning function keeps only the last 5 backup files to save disk space."}
+                    ? "Вы можете загрузить файлы резервных копий из внешних источников или скачать существующие резервные копии для хранения на внешних носителях."
+                    : "You can upload backup files from external sources or download existing backup files for storage on external media."}
                 </p>
               </div>
             </div>
+            
+            <CardFooter className="flex flex-col items-start gap-2 pt-6 px-0">
+              <h3 className="text-sm font-medium">
+                {language === 'ru' ? "Рекомендации по использованию" : "Usage Recommendations"}
+              </h3>
+              <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                <li>
+                  {language === 'ru'
+                    ? "Создавайте резервные копии перед внесением значительных изменений в систему"
+                    : "Create backups before making significant changes to the system"}
+                </li>
+                <li>
+                  {language === 'ru'
+                    ? "Регулярно скачивайте важные резервные копии для внешнего хранения"
+                    : "Regularly download important backups for external storage"}
+                </li>
+                <li>
+                  {language === 'ru'
+                    ? "Используйте расширенное восстановление для точечного восстановления данных"
+                    : "Use advanced restore for targeted data recovery"}
+                </li>
+                <li>
+                  {language === 'ru'
+                    ? "При восстановлении рекомендуется создавать предварительную резервную копию"
+                    : "When restoring, it is recommended to create a preliminary backup"}
+                </li>
+              </ul>
+            </CardFooter>
           </CardContent>
         </Card>
       </div>
