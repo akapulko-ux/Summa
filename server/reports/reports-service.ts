@@ -414,7 +414,7 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 200, 300, 400, 450, 500];
     
     // Рисуем заголовки 
-    doc.fontSize(10).font('Roboto');
+    doc.fontSize(10).font('Courier');
     headers.forEach((header, i) => {
       doc.text(header, columnPositions[i], y, { continued: false });
     });
@@ -458,7 +458,7 @@ export class ReportService implements IReportService {
     const { users, stats } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
     doc.fontSize(12).text(`${language === 'ru' ? 'Всего пользователей' : 'Total users'}: ${stats.total}`);
     doc.text(`${language === 'ru' ? 'Активных пользователей' : 'Active users'}: ${stats.active}`);
     doc.text(`${language === 'ru' ? 'Новых пользователей' : 'New users'}: ${stats.new}`);
@@ -521,7 +521,7 @@ export class ReportService implements IReportService {
     const { services, usage } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(14).font('Courier').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
     doc.fontSize(12).text(`${language === 'ru' ? 'Всего сервисов' : 'Total services'}: ${services.length}`);
     
     // Находим самый популярный сервис
