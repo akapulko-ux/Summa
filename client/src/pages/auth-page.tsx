@@ -182,10 +182,14 @@ export default function AuthPage() {
           </CardHeader>
           <CardContent>
             <Tabs value={authMode} onValueChange={(v) => setAuthMode(v as any)} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
-                <TabsTrigger value="register">{t('auth.register')}</TabsTrigger>
-                <TabsTrigger value="magic-link" className="text-xs sm:text-sm px-0 sm:px-2">{t('auth.magicLink')}</TabsTrigger>
+              <TabsList className="flex w-full">
+                <TabsTrigger value="login" className="flex-1">{t('auth.login')}</TabsTrigger>
+                <TabsTrigger value="register" className="flex-1">{t('auth.register')}</TabsTrigger>
+                <TabsTrigger value="magic-link" className="flex-1">
+                  <span className="text-xs sm:text-sm truncate">
+                    {t('auth.magicLink')}
+                  </span>
+                </TabsTrigger>
               </TabsList>
               
               {/* Login Form */}
@@ -334,20 +338,22 @@ export default function AuthPage() {
                     />
                     <Button 
                       type="submit" 
-                      className="w-full h-auto py-2 whitespace-normal" 
+                      className="w-full flex items-center justify-center min-h-10 py-2 px-2" 
                       disabled={magicLinkMutation.isPending}
                     >
-                      {magicLinkMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin shrink-0" />
-                          <span className="text-sm">{t('auth.sendingLink')}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Mail className="mr-2 h-4 w-4 shrink-0" />
-                          <span className="text-sm">{t('auth.sendMagicLink')}</span>
-                        </>
-                      )}
+                      <div className="flex flex-col items-center sm:flex-row sm:items-center justify-center">
+                        {magicLinkMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin mb-1 sm:mb-0 sm:mr-2" />
+                            <span className="text-xs text-center">{t('auth.sendingLink')}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="h-4 w-4 mb-1 sm:mb-0 sm:mr-2" />
+                            <span className="text-xs text-center">{t('auth.sendMagicLink')}</span>
+                          </>
+                        )}
+                      </div>
                     </Button>
                     {magicLinkMutation.isSuccess && (
                       <div className="bg-green-100 text-green-800 p-3 rounded-md text-sm">
