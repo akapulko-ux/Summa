@@ -52,6 +52,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: t('nav.dashboard'), path: '/', icon: <Workflow className="h-5 w-5 mr-2" /> },
     { title: t('nav.profile'), path: '/profile', icon: <User className="h-5 w-5 mr-2" /> },
     { title: t('nav.subscriptions'), path: '/subscriptions', icon: <CreditCard className="h-5 w-5 mr-2" /> },
+  ];
+  
+  // Пункт "Сервисы" только для клиентов
+  const clientNavigationItems = [
+    ...navigationItems,
     { title: t('nav.services'), path: '/services', icon: <Settings className="h-5 w-5 mr-2" /> },
   ];
 
@@ -84,7 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </div>
                 <nav className="flex-1 overflow-auto p-4">
                   <div className="space-y-1">
-                    {navigationItems.map((item) => (
+                    {(isAdmin ? navigationItems : clientNavigationItems).map((item) => (
                       <Button
                         key={item.path}
                         variant={location === item.path ? "secondary" : "ghost"}
@@ -274,7 +279,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Боковая панель для настольных устройств */}
         <aside className="hidden lg:flex lg:w-64 border-r flex-col bg-background">
           <nav className="flex-1 space-y-1 p-4">
-            {navigationItems.map((item) => (
+            {(isAdmin ? navigationItems : clientNavigationItems).map((item) => (
               <Button
                 key={item.path}
                 variant={location === item.path ? "secondary" : "ghost"}
