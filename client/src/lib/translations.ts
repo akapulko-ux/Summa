@@ -946,11 +946,6 @@ export const en: Translation = {
     pdfDocument: "PDF Document",
     excelSpreadsheet: "Excel Spreadsheet",
     csvFile: "CSV File",
-    
-    // Sample reports
-    subscriptionReportSample: "Subscription Report",
-    userGrowthReportSample: "User Growth Report",
-    financialReportQ1Sample: "Financial Report Q1",
   },
 
   layout: {
