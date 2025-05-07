@@ -86,9 +86,53 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         status: data.status || "active"
       };
       
-      // Добавляем необязательные поля только если они имеют значение
+      // Если указан существующий сервис (не "other")
       if (data.serviceId && data.serviceId !== "other" && data.serviceId !== "") {
         transformedData.serviceId = parseInt(data.serviceId);
+      }
+      // Если выбран "other" и указано кастомное название сервиса
+      else if (data.serviceId === "other" && selectedServiceName && selectedServiceName !== "Other (Custom)") {
+        // Сначала проверим, существует ли уже кастомный сервис с таким именем
+        let existingCustomService = null;
+        if (servicesData?.services) {
+          existingCustomService = servicesData.services.find(
+            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.userId === user?.id
+          );
+        }
+        
+        let serviceId;
+        
+        // Если существует кастомный сервис пользователя с таким названием, используем его
+        if (existingCustomService) {
+          serviceId = existingCustomService.id;
+        } else {
+          // Иначе создаем новый кастомный сервис
+          try {
+            const serviceRes = await apiRequest("POST", "/api/services", {
+              title: selectedServiceName,
+              description: "Custom service",
+              isCustom: true,
+              isActive: true,
+              price: data.paymentAmount ? parseFloat(data.paymentAmount) : 0,
+              userId: user?.id
+            });
+            
+            const serviceData = await serviceRes.json();
+            console.log("Custom service created successfully:", serviceData);
+            
+            if (serviceData && serviceData.id) {
+              serviceId = serviceData.id;
+            }
+          } catch (serviceError) {
+            console.error("Error creating custom service:", serviceError);
+            // Продолжаем создание подписки даже если не удалось создать сервис
+          }
+        }
+        
+        // Устанавливаем ID сервиса (существующего или нового)
+        if (serviceId) {
+          transformedData.serviceId = serviceId;
+        }
       }
       
       if (data.paidUntil) {
@@ -151,9 +195,53 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
         status: data.status || "active"
       };
       
-      // Добавляем необязательные поля только если они имеют значение
+      // Если указан существующий сервис (не "other")
       if (data.serviceId && data.serviceId !== "other" && data.serviceId !== "") {
         transformedData.serviceId = parseInt(data.serviceId);
+      }
+      // Если выбран "other" и указано кастомное название сервиса
+      else if (data.serviceId === "other" && selectedServiceName && selectedServiceName !== "Other (Custom)") {
+        // Сначала проверим, существует ли уже кастомный сервис с таким именем
+        let existingCustomService = null;
+        if (servicesData?.services) {
+          existingCustomService = servicesData.services.find(
+            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.userId === user?.id
+          );
+        }
+        
+        let serviceId;
+        
+        // Если существует кастомный сервис пользователя с таким названием, используем его
+        if (existingCustomService) {
+          serviceId = existingCustomService.id;
+        } else {
+          // Иначе создаем новый кастомный сервис
+          try {
+            const serviceRes = await apiRequest("POST", "/api/services", {
+              title: selectedServiceName,
+              description: "Custom service",
+              isCustom: true,
+              isActive: true,
+              price: data.paymentAmount ? parseFloat(data.paymentAmount) : 0,
+              userId: user?.id
+            });
+            
+            const serviceData = await serviceRes.json();
+            console.log("Custom service created successfully:", serviceData);
+            
+            if (serviceData && serviceData.id) {
+              serviceId = serviceData.id;
+            }
+          } catch (serviceError) {
+            console.error("Error creating custom service:", serviceError);
+            // Продолжаем обновление подписки даже если не удалось создать сервис
+          }
+        }
+        
+        // Устанавливаем ID сервиса (существующего или нового)
+        if (serviceId) {
+          transformedData.serviceId = serviceId;
+        }
       }
       
       if (data.paidUntil) {
