@@ -1693,7 +1693,7 @@ export const ru: Translation = {
     help: "Помощь и поддержка",
     reports: "Отчеты",
     backups: "Резервные копии",
-    monitoring: "Мониторинг производительности",
+    monitoring: "Мониторинг",
   },
 
   dashboard: {
