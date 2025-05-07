@@ -1075,7 +1075,7 @@ export const en: Translation = {
     help: "Help & Support",
     reports: "Reports",
     backups: "Backups",
-    monitoring: "Performance Monitoring",
+    monitoring: "Monitoring",
   },
 
   dashboard: {
