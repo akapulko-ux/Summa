@@ -1142,6 +1142,7 @@ export const en: Translation = {
     allServices: "All Services",
     ownedBy: "Owned by",
     hideCustomServices: "Hide Custom Services",
+    showCustomServices: "Show Custom Services",
   },
 
   subscriptions: {
