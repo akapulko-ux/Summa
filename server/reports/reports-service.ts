@@ -312,8 +312,27 @@ export class ReportService implements IReportService {
     const fileName = `report_${reportType}${dateRange}_${timestamp}.pdf`;
     const filePath = path.join(REPORTS_DIR, fileName);
     
-    // Создаем PDF документ
-    const doc = new PDFDocument({ margin: 50 });
+    // Путь к шрифту с поддержкой кириллицы
+    const fontPath = path.join(process.cwd(), 'server/assets/fonts/Roboto-Regular.ttf');
+    
+    // Создаем PDF документ с поддержкой Unicode для кириллицы
+    const doc = new PDFDocument({ 
+      margin: 50,
+      info: {
+        Title: data.title,
+        Author: 'Subscription Management System',
+        Subject: `${reportType} report`,
+        Keywords: 'report,subscription,management',
+        CreationDate: new Date()
+      }
+    });
+    
+    // Регистрируем шрифт для поддержки кириллицы
+    if (fs.existsSync(fontPath)) {
+      doc.registerFont('Roboto', fontPath);
+      doc.font('Roboto');
+    }
+    
     const writeStream = fs.createWriteStream(filePath);
     
     doc.pipe(writeStream);
@@ -376,7 +395,7 @@ export class ReportService implements IReportService {
     const { subscriptions } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14).text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
     doc.fontSize(12).text(
       `${language === 'ru' ? 'Всего подписок' : 'Total subscriptions'}: ${subscriptions.length}`
     );
@@ -399,27 +418,27 @@ export class ReportService implements IReportService {
     let y = doc.y;
     const columnPositions = [50, 100, 200, 300, 400, 450, 500];
     
-    // Рисуем заголовки
-    doc.fontSize(10).font('Helvetica-Bold');
+    // Рисуем заголовки 
+    doc.fontSize(10).font('Roboto');
     headers.forEach((header, i) => {
-      doc.text(header, columnPositions[i], y);
+      doc.text(header, columnPositions[i], y, { continued: false });
     });
     
     doc.moveDown();
     y = doc.y;
     
     // Рисуем содержимое таблицы
-    doc.font('Helvetica');
+    doc.font('Roboto');
     subscriptions.slice(0, 20).forEach((sub) => {
-      doc.text(String(sub.id), columnPositions[0], y);
-      doc.text(sub.title?.substring(0, 15) || '-', columnPositions[1], y);
-      doc.text(sub.serviceName?.substring(0, 15) || '-', columnPositions[2], y);
-      doc.text(sub.userEmail?.substring(0, 15) || '-', columnPositions[3], y);
-      doc.text(String(sub.paymentAmount || '-'), columnPositions[4], y);
-      doc.text(String(sub.status || '-'), columnPositions[5], y);
+      doc.text(String(sub.id), columnPositions[0], y, { continued: false });
+      doc.text(sub.title?.substring(0, 15) || '-', columnPositions[1], y, { continued: false });
+      doc.text(sub.serviceName?.substring(0, 15) || '-', columnPositions[2], y, { continued: false });
+      doc.text(sub.userEmail?.substring(0, 15) || '-', columnPositions[3], y, { continued: false });
+      doc.text(String(sub.paymentAmount || '-'), columnPositions[4], y, { continued: false });
+      doc.text(String(sub.status || '-'), columnPositions[5], y, { continued: false });
       
       const createdAt = sub.createdAt ? format(sub.createdAt, 'yyyy-MM-dd') : '-';
-      doc.text(createdAt, columnPositions[6], y);
+      doc.text(createdAt, columnPositions[6], y, { continued: false });
       
       y += 20;
       
@@ -444,7 +463,7 @@ export class ReportService implements IReportService {
     const { users, stats } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14).text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
     doc.fontSize(12).text(`${language === 'ru' ? 'Всего пользователей' : 'Total users'}: ${stats.total}`);
     doc.text(`${language === 'ru' ? 'Активных пользователей' : 'Active users'}: ${stats.active}`);
     doc.text(`${language === 'ru' ? 'Новых пользователей' : 'New users'}: ${stats.new}`);
@@ -464,25 +483,25 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 250, 350, 450, 500];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Helvetica-Bold');
+    doc.fontSize(10).font('Roboto');
     headers.forEach((header, i) => {
-      doc.text(header, columnPositions[i], y);
+      doc.text(header, columnPositions[i], y, { continued: false });
     });
     
     doc.moveDown();
     y = doc.y;
     
     // Рисуем содержимое таблицы
-    doc.font('Helvetica');
+    doc.font('Roboto');
     users.slice(0, 20).forEach((user) => {
-      doc.text(String(user.id), columnPositions[0], y);
-      doc.text(user.email?.substring(0, 25) || '-', columnPositions[1], y);
-      doc.text(user.name?.substring(0, 15) || '-', columnPositions[2], y);
-      doc.text(user.companyName?.substring(0, 15) || '-', columnPositions[3], y);
-      doc.text(String(user.role || '-'), columnPositions[4], y);
+      doc.text(String(user.id), columnPositions[0], y, { continued: false });
+      doc.text(user.email?.substring(0, 25) || '-', columnPositions[1], y, { continued: false });
+      doc.text(user.name?.substring(0, 15) || '-', columnPositions[2], y, { continued: false });
+      doc.text(user.companyName?.substring(0, 15) || '-', columnPositions[3], y, { continued: false });
+      doc.text(String(user.role || '-'), columnPositions[4], y, { continued: false });
       
       const createdAt = user.createdAt ? format(user.createdAt, 'yyyy-MM-dd') : '-';
-      doc.text(createdAt, columnPositions[5], y);
+      doc.text(createdAt, columnPositions[5], y, { continued: false });
       
       y += 20;
       
@@ -507,7 +526,7 @@ export class ReportService implements IReportService {
     const { services, usage } = data;
     
     // Добавляем общую информацию
-    doc.fontSize(14).text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
+    doc.fontSize(14).font('Roboto').text(language === 'ru' ? 'Сводка' : 'Summary', { underline: true });
     doc.fontSize(12).text(`${language === 'ru' ? 'Всего сервисов' : 'Total services'}: ${services.length}`);
     
     // Находим самый популярный сервис
@@ -534,9 +553,9 @@ export class ReportService implements IReportService {
     const columnPositions = [50, 100, 300, 380, 460, 520];
     
     // Рисуем заголовки
-    doc.fontSize(10).font('Helvetica-Bold');
+    doc.fontSize(10).font('Roboto');
     headers.forEach((header, i) => {
-      doc.text(header, columnPositions[i], y);
+      doc.text(header, columnPositions[i], y, { continued: false });
     });
     
     doc.moveDown();
@@ -549,16 +568,16 @@ export class ReportService implements IReportService {
     });
     
     // Рисуем содержимое таблицы
-    doc.font('Helvetica');
+    doc.font('Roboto');
     services.forEach((service) => {
       const serviceUsage = usageMap.get(service.id) || { count: 0, totalRevenue: 0 };
       
-      doc.text(String(service.id), columnPositions[0], y);
-      doc.text(service.title?.substring(0, 30) || '-', columnPositions[1], y);
-      doc.text(service.cashback || '-', columnPositions[2], y);
-      doc.text(service.commission || '-', columnPositions[3], y);
-      doc.text(String(serviceUsage.count || 0), columnPositions[4], y);
-      doc.text(String((serviceUsage.totalRevenue || 0).toFixed(2)), columnPositions[5], y);
+      doc.text(String(service.id), columnPositions[0], y, { continued: false });
+      doc.text(service.title?.substring(0, 30) || '-', columnPositions[1], y, { continued: false });
+      doc.text(service.cashback || '-', columnPositions[2], y, { continued: false });
+      doc.text(service.commission || '-', columnPositions[3], y, { continued: false });
+      doc.text(String(serviceUsage.count || 0), columnPositions[4], y, { continued: false });
+      doc.text(String((serviceUsage.totalRevenue || 0).toFixed(2)), columnPositions[5], y, { continued: false });
       
       y += 20;
       
