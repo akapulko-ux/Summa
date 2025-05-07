@@ -1,7 +1,6 @@
 import { AppLayout } from "@/components/layout/app-layout";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { RecentSubscriptions } from "@/components/dashboard/recent-subscriptions";
-import { PopularServices } from "@/components/dashboard/popular-services";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
@@ -76,12 +75,9 @@ export default function Dashboard() {
       <StatsCards />
 
       {/* Recent Activity Section */}
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-1 md:col-span-2 lg:col-span-4">
+      <div className="grid gap-4 grid-cols-1">
+        <div className="col-span-1">
           <RecentSubscriptions />
-        </div>
-        <div className="col-span-1 md:col-span-2 lg:col-span-3">
-          <PopularServices />
         </div>
       </div>
 
