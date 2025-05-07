@@ -102,7 +102,7 @@ export default function Dashboard() {
               {t('services.browseServices')}
             </p>
             <Button asChild variant="outline" className="w-full">
-              <Link href={isAdmin ? "/admin/services" : "/services"}>{t('dashboard.viewServices')}</Link>
+              <Link href="/subscriptions">{t('dashboard.viewServices')}</Link>
             </Button>
           </div>
         </div>
