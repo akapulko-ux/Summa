@@ -158,7 +158,7 @@ export function StatsCards() {
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight text-sm font-medium">{t('services.totalCashbackAmount')}</h3>
-                <Percent className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
                 <Skeleton className="h-8 w-24 my-1" />
@@ -181,8 +181,8 @@ export function StatsCards() {
                         }
                       });
                       
-                      // Форматируем как процент
-                      return `${totalCashbackAmount.toFixed(2)}%`;
+                      // Форматируем как денежную сумму в рублях
+                      return `${totalCashbackAmount.toFixed(2)} ₽`;
                     })()}
                   </div>
                   <p className="text-xs text-muted-foreground">
