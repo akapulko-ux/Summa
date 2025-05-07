@@ -28,6 +28,7 @@ import { Subscription, Service } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "@/hooks/use-translations";
 
 // Form schema
 const subscriptionFormSchema = z.object({
@@ -54,6 +55,7 @@ interface SubscriptionFormProps {
 export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionFormProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
   const [isCustomService, setIsCustomService] = useState<boolean>(false);
 
@@ -374,7 +376,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
                 onValueChange={(value) => {
                   field.onChange(value);
                   if (value === "other") {
-                    setSelectedServiceName("Other (Custom)");
+                    setSelectedServiceName("");
                     setIsCustomService(true);
                   } else if (servicesData?.services) {
                     const service = servicesData.services.find((s: Service) => s.id.toString() === value);
@@ -418,19 +420,20 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
 
         {/* Отображение выбранного сервиса */}
         <div className="space-y-2">
-          <div className="text-sm font-medium">Selected Service</div>
+          <div className="text-sm font-medium">{t("subscriptions.selectedService")}</div>
           {isCustomService ? (
             <div className="border rounded-md p-0 bg-muted/30">
               <Input 
                 value={selectedServiceName || ""}
                 onChange={(e) => setSelectedServiceName(e.target.value)}
-                placeholder="Enter custom service name"
+                placeholder={t("subscriptions.enterServiceName")}
                 className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                required
               />
             </div>
           ) : (
             <div className="border rounded-md p-3 bg-muted/30">
-              {selectedServiceName || "No service selected"}
+              {selectedServiceName || t("subscriptions.noServiceSelected")}
             </div>
           )}
         </div>
