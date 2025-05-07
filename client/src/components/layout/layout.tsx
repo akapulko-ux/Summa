@@ -52,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: t('nav.dashboard'), path: '/', icon: <Workflow className="h-5 w-5 mr-2" /> },
     { title: t('nav.profile'), path: '/profile', icon: <User className="h-5 w-5 mr-2" /> },
     { title: t('nav.subscriptions'), path: '/subscriptions', icon: <CreditCard className="h-5 w-5 mr-2" /> },
-    { title: t('nav.services'), path: '/services', icon: <Settings className="h-5 w-5 mr-2" /> },
+    ...(isAdmin ? [] : [{ title: t('nav.services'), path: '/services', icon: <Settings className="h-5 w-5 mr-2" /> }]),
   ];
 
   const adminNavigationItems = [
@@ -152,14 +152,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {t('nav.subscriptions')}
               </span>
             </Link>
-            <Link href="/services">
-              <span className={cn(
-                "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
-                location === "/services" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
-              )}>
-                {t('nav.services')}
-              </span>
-            </Link>
+            {!isAdmin && (
+              <Link href="/services">
+                <span className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
+                  location === "/services" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
+                )}>
+                  {t('nav.services')}
+                </span>
+              </Link>
+            )}
             {isAdmin && (
               <>
                 <button 
@@ -169,7 +171,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     location === "/admin/services" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
                   )}
                 >
-                  {t('nav.services')} ({t('common.admin')})
+                  {t('nav.services')}
                 </button>
                 <button 
                   onClick={() => window.location.href = "/admin/users"} 
