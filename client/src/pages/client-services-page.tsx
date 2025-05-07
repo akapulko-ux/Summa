@@ -18,12 +18,15 @@ export default function ClientServicesPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
   // Загрузка списка сервисов
-  const { data: services, isLoading } = useQuery<Service[]>({
+  const { data, isLoading } = useQuery<{ services: Service[] }>({
     queryKey: ["/api/services"],
   });
 
+  // Получаем массив сервисов из ответа API
+  const services = data?.services || [];
+
   // Функция фильтрации сервисов по поисковому запросу
-  const filteredServices = services?.filter(
+  const filteredServices = services.filter(
     (service) =>
       service.title.toLowerCase().includes(search.toLowerCase()) ||
       (service.description && service.description.toLowerCase().includes(search.toLowerCase()))
