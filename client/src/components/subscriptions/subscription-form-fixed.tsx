@@ -138,7 +138,7 @@ export function SubscriptionForm({
               description: "Custom service",
               isCustom: true,
               isActive: true,
-              ownerId: user?.id
+              ownerId: (userId || user?.id)
             });
             
             const serviceData = await serviceRes.json();
@@ -246,7 +246,7 @@ export function SubscriptionForm({
               description: "Custom service",
               isCustom: true,
               isActive: true,
-              ownerId: user?.id
+              ownerId: (userId || user?.id)
             });
             
             const serviceData = await serviceRes.json();
