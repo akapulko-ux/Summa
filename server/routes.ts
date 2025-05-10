@@ -13,6 +13,7 @@ import { dbOptimizer } from "./db-optimizer";
 import { scalingManager } from "./scaling";
 import { setupMonitoringRoutes } from "./routes/monitoring-routes";
 import { registerReportsRoutes } from "./reports/reports-routes";
+import { setupUploadRoutes } from "./routes/uploads";
 import { db } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 import { users, services, subscriptions } from "@shared/schema";
