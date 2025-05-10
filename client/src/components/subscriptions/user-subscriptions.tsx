@@ -179,9 +179,43 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     },
   });
   
-  // Обработчик отправки формы
+  // Мутация для обновления подписки
+  const updateSubscriptionMutation = useMutation({
+    mutationFn: async (data: SubscriptionFormValues) => {
+      if (!selectedSubscriptionId) throw new Error("No subscription selected");
+      const res = await apiRequest("PATCH", `/api/subscriptions/${selectedSubscriptionId}`, data);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to update subscription");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: t('subscriptions.updateSuccess'),
+        description: t('subscriptions.updateSuccessDescription'),
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/user", userId] });
+      setIsEditDialogOpen(false);
+      setSelectedSubscriptionId(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('subscriptions.updateError'),
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Обработчик отправки формы для создания подписки
   const onSubmit = (data: SubscriptionFormValues) => {
     createSubscriptionMutation.mutate(data);
+  };
+  
+  // Обработчик отправки формы для обновления подписки
+  const onUpdateSubmit = (data: SubscriptionFormValues) => {
+    updateSubscriptionMutation.mutate(data);
   };
   
   // Обработчик удаления подписки
@@ -189,6 +223,12 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     if (window.confirm(t('subscriptions.confirmDelete'))) {
       deleteSubscriptionMutation.mutate(subscriptionId);
     }
+  };
+  
+  // Обработчик редактирования подписки
+  const handleEdit = (subscriptionId: number) => {
+    setSelectedSubscriptionId(subscriptionId);
+    setIsEditDialogOpen(true);
   };
   
   // При выборе сервиса
@@ -581,15 +621,26 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                     <TableCell>{renderPaymentPeriod(subscription.paymentPeriod || "monthly")}</TableCell>
                     <TableCell>{renderStatus(subscription.status || "active")}</TableCell>
                     <TableCell className="text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => handleDelete(subscription.id)}
-                        disabled={deleteSubscriptionMutation.isPending}
-                      >
-                        <Trash className="h-4 w-4" />
-                        <span className="sr-only">{t('common.delete')}</span>
-                      </Button>
+                      <div className="flex justify-end">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleEdit(subscription.id)}
+                          className="mr-1"
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">{t('common.edit')}</span>
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleDelete(subscription.id)}
+                          disabled={deleteSubscriptionMutation.isPending}
+                        >
+                          <Trash className="h-4 w-4" />
+                          <span className="sr-only">{t('common.delete')}</span>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -598,6 +649,28 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
           </div>
         )}
       </CardContent>
+
+      {/* Диалог для редактирования подписки */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t('subscriptions.editTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('subscriptions.editDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedSubscriptionId && subscriptions && (
+            <SubscriptionForm 
+              onSubmit={onUpdateSubmit}
+              initialData={subscriptions.find(sub => sub.id === selectedSubscriptionId)}
+              userId={userId}
+              buttonText={t('common.save')}
+              services={services || []}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
