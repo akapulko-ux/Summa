@@ -45,6 +45,7 @@ export const subscriptions = pgTable('subscriptions', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').references(() => users.id).notNull(),
   serviceId: integer('service_id').references(() => services.id),
+  serviceName: text('service_name'), // Добавляем поле для хранения названия сервиса
   title: text('title').notNull(),
   domain: text('domain'),
   loginId: text('login_id'),
@@ -127,6 +128,7 @@ export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
   usersCount: z.number().default(1),
   status: z.enum(['active', 'pending', 'expired', 'canceled']).default('active'),
   customFields: z.record(z.any()).optional(),
+  serviceName: z.string().optional(), // Добавляем новое поле для кастомного названия сервиса
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export const insertCustomFieldSchema = createInsertSchema(customFields, {
