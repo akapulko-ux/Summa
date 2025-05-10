@@ -453,11 +453,23 @@ export type Translation = {
     searchService: string;
     searchUser: string;
     searchDomain: string;
+    searchCompany: string;
     noSubscriptionsFound: string;
     adjustFilters: string;
     viewDetails: string;
     viewUser: string;
     errorLoadingSubscriptions: string;
+    searchHelp: string;
+    filterDescription: string;
+    columnVisibility: string;
+    columnVisibilityDescription: string;
+    priceMin: string;
+    priceMax: string;
+    startDateFrom: string;
+    startDateTo: string;
+    endDateFrom: string;
+    endDateTo: string;
+    resetColumns: string;
     filters: {
       selectStatus: string;
       statusAll: string;
@@ -473,6 +485,13 @@ export type Translation = {
       sortCreatedAt: string;
       sortOrder: string;
       selectSortOrder: string;
+      priceMin: string;
+      priceMax: string;
+      startDateFrom: string;
+      startDateTo: string;
+      endDateFrom: string;
+      endDateTo: string;
+      sortOptionsDescription: string;
     };
     columns: {
       service: string;
