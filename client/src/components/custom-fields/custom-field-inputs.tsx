@@ -106,7 +106,7 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{t('services.customFields')}</CardTitle>
+          <CardTitle>{t('subscriptions.customFields')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex justify-center py-4">
@@ -290,7 +290,7 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('services.advancedFields')}</CardTitle>
+        <CardTitle>{t('subscriptions.advancedFields')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

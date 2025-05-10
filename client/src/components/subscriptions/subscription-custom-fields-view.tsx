@@ -49,7 +49,7 @@ export function SubscriptionCustomFieldsView({ customFields }: SubscriptionCusto
   return (
     <Card className="mt-4">
       <CardHeader>
-        <CardTitle>{t('services.customFields')}</CardTitle>
+        <CardTitle>{t('subscriptions.advancedFields')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible className="w-full">
