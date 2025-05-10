@@ -203,6 +203,11 @@ export function SubscriptionForm({
         transformedData.paymentAmount = parseFloat(data.paymentAmount);
       }
       
+      // Добавляем кастомные поля, если они есть
+      if (data.customFields) {
+        transformedData.customFields = data.customFields;
+      }
+      
       console.log("Transformed data for API:", transformedData);
       
       try {
@@ -322,6 +327,11 @@ export function SubscriptionForm({
       
       if (data.paymentAmount) {
         transformedData.paymentAmount = parseFloat(data.paymentAmount);
+      }
+      
+      // Добавляем кастомные поля, если они есть
+      if (data.customFields) {
+        transformedData.customFields = data.customFields;
       }
       
       console.log("Transformed data for API:", transformedData);
@@ -692,6 +702,15 @@ export function SubscriptionForm({
               </FormItem>
             )}
           />
+
+          {/* Кастомные поля сервиса - отображаются только если выбран сервис и это не опция "другой" */}
+          {form.watch("serviceId") && form.watch("serviceId") !== "other" && (
+            <CustomFieldInputs 
+              serviceId={form.watch("serviceId")} 
+              form={form} 
+              disabled={isSubmitting} 
+            />
+          )}
         </div>
 
         <Button disabled={isSubmitting} type="submit" className="w-full">
