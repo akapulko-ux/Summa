@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { useTranslations } from "@/lib/translations";
+import { useTranslations } from "@/hooks/use-translations";
 import Layout from "@/components/layout/layout";
 import CashbackAdminForm from "@/components/cashback/cashback-admin-form";
 import CashbackHistory from "@/components/cashback/cashback-history";

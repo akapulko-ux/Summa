@@ -19,6 +19,7 @@ import BackupsPage from "@/pages/backups-page";
 import AnalyticsPage from "@/pages/analytics-page-v3";
 import ReportsPage from "@/pages/reports-page";
 import PerformanceMonitoring from "@/pages/performance-monitoring";
+import CashbackPage from "@/pages/cashback-page";
 // @ts-ignore - импортируем провайдер темы
 import { ThemeProvider } from "./providers/theme-provider";
 
@@ -30,6 +31,7 @@ function Router() {
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/subscriptions" component={SubscriptionsPage} />
       <ProtectedRoute path="/services" component={ClientServicesPage} />
+      <ProtectedRoute path="/cashback" component={CashbackPage} />
       
       {/* Административные маршруты (доступны только для администраторов) */}
       <AdminRoute path="/admin/subscriptions" component={AllSubscriptionsPage} />

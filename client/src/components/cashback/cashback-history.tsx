@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { apiRequest } from "@/lib/queryClient";
-import { useTranslations } from "@/lib/translations";
+import { useTranslations } from "@/hooks/use-translations";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 

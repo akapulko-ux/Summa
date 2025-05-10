@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { useTranslations } from "@/lib/translations";
+import { useTranslations } from "@/hooks/use-translations";
 
 // Form schema для добавления кэшбека
 const cashbackFormSchema = z.object({

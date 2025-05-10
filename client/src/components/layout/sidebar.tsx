@@ -10,6 +10,7 @@ import {
   Settings,
   MessagesSquare,
   Database,
+  Coins,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -52,6 +53,12 @@ export function Sidebar({ className }: SidebarProps) {
       title: "Subscriptions",
       href: "/subscriptions",
       icon: <CreditCard className="h-4 w-4" />,
+      visibleFor: ["client", "admin"],
+    },
+    {
+      title: "Cashback",
+      href: "/cashback",
+      icon: <Coins className="h-4 w-4" />,
       visibleFor: ["client", "admin"],
     },
     {
