@@ -81,7 +81,6 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null);
-  const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
   
   // Получение списка подписок пользователя с названиями сервисов
   const { 
@@ -231,28 +230,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
     setIsEditDialogOpen(true);
   };
   
-  // При выборе сервиса
-  const handleServiceChange = (serviceId: string) => {
-    if (serviceId === 'other') {
-      // Для опции "Другой сервис" оставляем поле пустым
-      form.setValue("title", "");
-      setSelectedServiceName(""); // Оставляем поле пустым
-      return;
-    }
-    
-    if (!Array.isArray(services)) return;
-    
-    const selectedService = services.find(s => s.id === parseInt(serviceId));
-    if (selectedService) {
-      // Устанавливаем название сервиса
-      form.setValue("title", selectedService.title);
-      setSelectedServiceName(selectedService.title);
-      
-      // Здесь можно было бы устанавливать стоимость по умолчанию,
-      // если бы у сервиса была стоимость, но сейчас просто оставляем нулевую
-      form.setValue("amount", 0);
-    }
-  };
+
   
   // Функция для отображения статуса подписки с соответствующим стилем
   const renderStatus = (status: string) => {
@@ -322,7 +300,6 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
         paymentPeriod: "monthly",
         amount: 0
       });
-      setSelectedServiceName(null);
     }
   }, [isAddDialogOpen, form, userId]);
   
@@ -347,233 +324,13 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                 {t('subscriptions.addDescription')}
               </DialogDescription>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="serviceId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('subscriptions.service')}</FormLabel>
-                      <Select 
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          handleServiceChange(value);
-                        }}
-                        defaultValue={field.value?.toString()}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('subscriptions.selectService')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Array.isArray(services) && services.length > 0 ? (
-                            <>
-                              {services.map((service) => (
-                                <SelectItem key={service.id} value={service.id.toString()}>
-                                  {service.title}
-                                </SelectItem>
-                              ))}
-                              <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
-                            </>
-                          ) : (
-                            <SelectItem value="other">{t('subscriptions.otherService')}</SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                {/* Отображение выбранного сервиса */}
-                <FormField
-                  control={form.control}
-                  name="title"
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('subscriptions.selectedService')}</FormLabel>
-                      <FormControl>
-                        {form.getValues('serviceId') === 'other' ? (
-                          <Input
-                            {...field}
-                            placeholder={t('subscriptions.enterServiceName')}
-                            required
-                          />
-                        ) : (
-                          <div className="border rounded-md p-3 bg-muted/30">
-                            {selectedServiceName || t('subscriptions.noServiceSelected')}
-                          </div>
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>{t('subscriptions.startDate')}</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className="pl-3 text-left font-normal"
-                            >
-                              {field.value ? (
-                                format(field.value, "dd.MM.yyyy")
-                              ) : (
-                                <span>{t('subscriptions.pickDate')}</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="endDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>{t('subscriptions.endDate')}</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className="pl-3 text-left font-normal"
-                            >
-                              {field.value ? (
-                                format(field.value, "dd.MM.yyyy")
-                              ) : (
-                                <span>{t('subscriptions.optional')}</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            initialFocus
-                            disabled={(date) => date < form.getValues("startDate")}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="paymentPeriod"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('subscriptions.paymentPeriod')}</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('subscriptions.selectPeriod')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="monthly">{t('subscriptions.periods.monthly')}</SelectItem>
-                          <SelectItem value="quarterly">{t('subscriptions.periods.quarterly')}</SelectItem>
-                          <SelectItem value="yearly">{t('subscriptions.periods.yearly')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="amount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('subscriptions.amount')}</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                          <Input
-                            type="number"
-                            placeholder="0.00"
-                            className="pl-10"
-                            {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('subscriptions.status')}</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('subscriptions.selectStatus')} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="active">{t('subscriptions.statuses.active')}</SelectItem>
-                          <SelectItem value="pending">{t('subscriptions.statuses.pending')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <DialogFooter>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => setIsAddDialogOpen(false)}
-                  >
-                    {t('common.cancel')}
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={createSubscriptionMutation.isPending}
-                  >
-                    {createSubscriptionMutation.isPending && (
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {t('common.save')}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
+            <SubscriptionForm
+              onSubmit={onSubmit}
+              userId={userId}
+              buttonText={t('common.add')}
+              services={services || []}
+              isLoading={createSubscriptionMutation.isPending}
+            />
           </DialogContent>
         </Dialog>
       </CardHeader>
