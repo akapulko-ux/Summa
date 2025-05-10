@@ -88,13 +88,13 @@ export function UserFiltersComponent({
 
   return (
     <div className="mb-4">
-      <div className="flex items-center space-x-2 mb-2">
+      <div className="flex flex-col sm:flex-row gap-2 mb-2">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
             placeholder={t('users.searchPlaceholder')}
-            className="pl-8"
+            className="pl-8 w-full"
             value={localFilters.search}
             onChange={(e) => handleSearchChange(e.target.value)}
             onKeyDown={(e) => {
@@ -104,30 +104,32 @@ export function UserFiltersComponent({
             }}
           />
         </div>
-        <Button 
-          variant="outline"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="gap-1"
-        >
-          <Filter className="h-4 w-4" />
-          {t('common.filters')}
-        </Button>
-        
-        <Button onClick={handleApplyFilters} className="gap-1">
-          <Search className="h-4 w-4" />
-          {t('common.apply')}
-        </Button>
-        
-        {filtersApplied && (
+        <div className="flex flex-wrap gap-2 justify-end">
           <Button 
-            variant="ghost" 
-            onClick={handleResetFilters}
-            className="gap-1"
+            variant="outline"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="gap-1 whitespace-nowrap"
           >
-            <RotateCcw className="h-4 w-4" />
-            {t('common.reset')}
+            <Filter className="h-4 w-4" />
+            {t('common.filters')}
           </Button>
-        )}
+          
+          <Button onClick={handleApplyFilters} className="gap-1 whitespace-nowrap">
+            <Search className="h-4 w-4" />
+            {t('common.apply')}
+          </Button>
+          
+          {filtersApplied && (
+            <Button 
+              variant="ghost" 
+              onClick={handleResetFilters}
+              className="gap-1 whitespace-nowrap"
+            >
+              <RotateCcw className="h-4 w-4" />
+              {t('common.reset')}
+            </Button>
+          )}
+        </div>
       </div>
       
       {isExpanded && (
