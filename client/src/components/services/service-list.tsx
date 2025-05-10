@@ -77,6 +77,8 @@ export function ServiceList() {
     onSuccess: () => {
       // Явно инвалидируем кеш для обновления списка сервисов
       queryClient.invalidateQueries({ queryKey: ["/api/services"] });
+      // Принудительно обновляем текущие данные
+      refetch();
     },
     onError: (error) => {
       console.error("Error deleting service:", error);
@@ -97,8 +99,11 @@ export function ServiceList() {
   const handleDelete = (serviceId: number) => {
     if (window.confirm(t('services.confirmDelete'))) {
       deleteServiceMutation.mutate(serviceId);
-      // Здесь мы уже настроили инвалидацию кеша в мутации deleteServiceMutation,
-      // поэтому нам не нужно вызывать queryClient.invalidateQueries здесь напрямую
+      // Вызываем рефреш для обновления данных немедленно
+      setTimeout(() => {
+        // Используем setTimeout, чтобы дать мутации время выполнить запрос на удаление
+        refetch();
+      }, 300);
     }
   };
 
@@ -346,6 +351,8 @@ export function ServiceList() {
               onSuccess={() => {
                 // Явно инвалидируем кеш для обновления списка сервисов
                 queryClient.invalidateQueries({ queryKey: ["/api/services"] });
+                // Принудительно обновляем текущие данные
+                refetch();
                 setIsEditDialogOpen(false);
               }}
             />
