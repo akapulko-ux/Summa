@@ -331,6 +331,7 @@ export type Translation = {
     commission: string;
     customFields: string;
     customFieldsDesc: string;
+    advancedFields: string; // Новый перевод "Расширенные поля"
     editCustomFields: string;
     editCustomFieldsDesc: string;
     search: string;
