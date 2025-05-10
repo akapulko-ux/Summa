@@ -290,7 +290,7 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('services.customFields')}</CardTitle>
+        <CardTitle>Расширенные поля</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
