@@ -3,7 +3,6 @@ import {
   services, 
   subscriptions, 
   customFields,
-  cashbackTransactions,
   type User, 
   type InsertUser, 
   type Service, 
@@ -11,8 +10,7 @@ import {
   type Subscription,
   type InsertSubscription,
   type CustomField,
-  type InsertCustomField,
-  type CashbackTransaction
+  type InsertCustomField
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { eq, and, desc, asc, like, or, sql } from "drizzle-orm";
@@ -73,11 +71,6 @@ export interface IStorage {
   getCashbackStats(userId?: number, period?: string): Promise<any[]>;
   getClientsActivityStats(): Promise<any>;
   getSubscriptionCostsStats(period?: string): Promise<any[]>;
-  
-  // Cashback operations
-  getUserCashbackBalance(userId: number): Promise<number>;
-  addUserCashback(userId: number, amount: number, description: string): Promise<{ success: boolean; newBalance: number }>;
-  getUserCashbackHistory(userId: number, page?: number, limit?: number): Promise<{ history: any[], total: number }>;
   
   // Session store
   sessionStore: session.SessionStore;
@@ -788,100 +781,6 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error deleting user:", error);
       return false;
-    }
-  }
-
-  // Cashback operations
-  async getUserCashbackBalance(userId: number): Promise<number> {
-    try {
-      const [user] = await db.select({ cashbackBalance: users.cashbackBalance })
-        .from(users)
-        .where(eq(users.id, userId));
-      
-      if (!user) {
-        throw new Error(`User with ID ${userId} not found`);
-      }
-      
-      return user.cashbackBalance;
-    } catch (error) {
-      console.error("Error getting user cashback balance:", error);
-      return 0;
-    }
-  }
-
-  async addUserCashback(userId: number, amount: number, description: string): Promise<{ success: boolean; newBalance: number }> {
-    try {
-      // Транзакция для атомарного обновления баланса и добавления записи в историю
-      return await db.transaction(async (tx) => {
-        // 1. Получаем текущий баланс пользователя
-        const [user] = await tx.select({ balance: users.cashbackBalance })
-          .from(users)
-          .where(eq(users.id, userId));
-        
-        if (!user) {
-          throw new Error(`User with ID ${userId} not found`);
-        }
-        
-        // 2. Вычисляем новый баланс
-        const newBalance = user.balance + amount;
-        
-        // 3. Обновляем баланс пользователя
-        await tx.update(users)
-          .set({ cashbackBalance: newBalance, updatedAt: new Date() })
-          .where(eq(users.id, userId));
-          
-        // 4. Создаем запись в истории операций
-        await tx.insert(cashbackTransactions)
-          .values({
-            userId,
-            amount,
-            description,
-            balanceAfter: newBalance
-          });
-          
-        return {
-          success: true,
-          newBalance
-        };
-      });
-    } catch (error) {
-      console.error("Error adding user cashback:", error);
-      return {
-        success: false,
-        newBalance: await this.getUserCashbackBalance(userId)
-      };
-    }
-  }
-
-  async getUserCashbackHistory(userId: number, page = 1, limit = 10): Promise<{ history: CashbackTransaction[], total: number }> {
-    try {
-      const offset = (page - 1) * limit;
-      
-      // Получаем общее количество записей
-      const [countResult] = await db.select({ count: sql`count(*)` })
-        .from(cashbackTransactions)
-        .where(eq(cashbackTransactions.userId, userId));
-      
-      const total = Number(countResult.count);
-      
-      // Получаем записи с пагинацией
-      const history = await db.select()
-        .from(cashbackTransactions)
-        .where(eq(cashbackTransactions.userId, userId))
-        .orderBy(desc(cashbackTransactions.createdAt))
-        .limit(limit)
-        .offset(offset);
-      
-      return {
-        history,
-        total
-      };
-    } catch (error) {
-      console.error("Error getting user cashback history:", error);
-      return {
-        history: [],
-        total: 0
-      };
     }
   }
 }

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema, insertCashbackTransactionSchema } from "@shared/schema";
+import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { zValidationErrorToMessage } from "./utils";
 import backupRoutes from "./backup/backup-routes";
@@ -767,88 +767,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Подключаем маршруты для загрузки файлов
   setupUploadRoutes(app);
-  
-  // Cashback API endpoints
-  // Get user cashback balance
-  app.get('/api/cashback/balance', (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    
-    storage.getUserCashbackBalance(req.user.id)
-      .then(balance => {
-        res.json({ balance });
-      })
-      .catch(error => {
-        console.error('Error getting cashback balance:', error);
-        res.status(500).json({ message: 'Failed to get cashback balance' });
-      });
-  });
-  
-  // Get user cashback transaction history
-  app.get('/api/cashback/history', (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    
-    storage.getUserCashbackHistory(req.user.id, page, limit)
-      .then(result => {
-        res.json(result);
-      })
-      .catch(error => {
-        console.error('Error getting cashback history:', error);
-        res.status(500).json({ message: 'Failed to get cashback history' });
-      });
-  });
-  
-  // Add cashback to user account (admin only)
-  app.post('/api/cashback/add', async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    
-    // Проверка роли пользователя - только администраторы могут добавлять кэшбэк
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: "Access denied. Admin rights required." });
-    }
-    
-    const { userId, amount, description } = req.body;
-    
-    if (!userId || !amount || !description) {
-      return res.status(400).json({ message: "Missing required fields: userId, amount, description" });
-    }
-    
-    try {
-      // Проверить, существует ли пользователь
-      const user = await storage.getUser(userId);
-      
-      if (!user) {
-        return res.status(404).json({ message: `User with ID ${userId} not found` });
-      }
-      
-      const result = await storage.addUserCashback(userId, amount, description);
-      
-      if (result.success) {
-        res.json({
-          success: true,
-          message: `Successfully added ${amount} cashback to user ${userId}`,
-          newBalance: result.newBalance
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: "Failed to add cashback",
-          currentBalance: result.newBalance
-        });
-      }
-    } catch (error) {
-      console.error('Error adding cashback:', error);
-      res.status(500).json({ message: 'Failed to add cashback' });
-    }
-  });
 
   // Подключаем маршруты для Telegram бота
   setupTelegramRoutes(app);
