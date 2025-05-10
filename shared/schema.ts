@@ -20,6 +20,7 @@ export const users = pgTable('users', {
   telegramChatId: text('telegram_chat_id'),
   isActive: boolean('is_active').default(true).notNull(),
   role: userRoleEnum('role').default('client').notNull(),
+  cashbackBalance: doublePrecision('cashback_balance').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -90,6 +91,7 @@ export const insertUserSchema = createInsertSchema(users, {
   telegramChatId: z.string().optional(),
   isActive: z.boolean().default(true),
   role: z.enum(['admin', 'client']).default('client'),
+  cashbackBalance: z.number().default(0),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export const insertServiceSchema = createInsertSchema(services, {
@@ -163,6 +165,23 @@ export const insertSystemSettingSchema = createInsertSchema(systemSettings, {
 export const backupTypeEnum = pgEnum('backup_type', ['manual', 'auto', 'pre-restore', 'imported', 'unknown']);
 export const backupFormatEnum = pgEnum('backup_format', ['plain', 'custom', 'directory', 'tar', 'compressed', 'unknown']);
 
+// Cashback history table
+export const cashbackTransactions = pgTable('cashback_transactions', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  amount: doublePrecision('amount').notNull(),
+  description: text('description').notNull(),
+  balanceAfter: doublePrecision('balance_after').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const insertCashbackTransactionSchema = createInsertSchema(cashbackTransactions, {
+  userId: z.number(),
+  amount: z.number(),
+  description: z.string(),
+  balanceAfter: z.number(),
+}).omit({ id: true, createdAt: true });
+
 export const backupMetadata = pgTable('backup_metadata', {
   id: serial('id').primaryKey(),
   fileName: text('file_name').notNull().unique(),
@@ -205,6 +224,9 @@ export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
 
 export type BackupMetadata = typeof backupMetadata.$inferSelect;
 export type InsertBackupMetadata = z.infer<typeof insertBackupMetadataSchema>;
+
+export type CashbackTransaction = typeof cashbackTransactions.$inferSelect;
+export type InsertCashbackTransaction = z.infer<typeof insertCashbackTransactionSchema>;
 
 // Auth related schemas for client side validation
 export const loginSchema = z.object({
