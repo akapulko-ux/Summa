@@ -28,6 +28,8 @@ export type Translation = {
     date: string;
     restore: string;
     information: string;
+    select: string;
+    enter: string;
     refresh: string;
     no_data: string;
     yes: string;
