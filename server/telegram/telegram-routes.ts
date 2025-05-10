@@ -64,7 +64,7 @@ export function setupTelegramRoutes(app: Express) {
       const { message } = req.body;
       
       // Если сообщение не указано, используем стандартное
-      const testMessage = message || 'Это тестовое уведомление от SaaSly. Ваш Telegram успешно подключен!';
+      const testMessage = message || 'Это тестовое уведомление от Сумма. Ваш Telegram успешно подключен!';
       
       if (!user.telegramChatId) {
         return res.status(400).json({ message: 'Your Telegram account is not connected yet' });
