@@ -326,6 +326,7 @@ export type Translation = {
     serviceTitle: string;
     serviceDescription: string;
     serviceIcon: string;
+    serviceIconDescription: string;
     cashback: string;
     commission: string;
     customFields: string;
@@ -1208,7 +1209,8 @@ export const en: Translation = {
     editService: "Edit Service",
     serviceTitle: "Service Title",
     serviceDescription: "Description",
-    serviceIcon: "Icon URL",
+    serviceIcon: "Service Icon",
+    serviceIconDescription: "Upload an icon image (preferably SVG format)",
     cashback: "Cashback",
     commission: "Commission",
     customFields: "Custom Fields",
@@ -1917,7 +1919,8 @@ export const ru: Translation = {
     editService: "Редактировать сервис",
     serviceTitle: "Название сервиса",
     serviceDescription: "Описание",
-    serviceIcon: "URL иконки",
+    serviceIcon: "Иконка сервиса",
+    serviceIconDescription: "Загрузите изображение иконки (предпочтительно в формате SVG)",
     cashback: "Кэшбэк",
     commission: "Комиссия",
     customFields: "Пользовательские поля",
