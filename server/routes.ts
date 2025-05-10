@@ -444,6 +444,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Subscription not found" });
       }
       
+      // Логируем найденную подписку для отладки
+      console.log(`Fetched subscription ${id}:`, JSON.stringify(subscription));
+      
       // Regular users can only see their own subscriptions
       if (req.user.role !== "admin" && subscription.userId !== req.user.id) {
         return res.status(403).json({ message: "Forbidden" });

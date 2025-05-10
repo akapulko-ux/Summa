@@ -724,7 +724,8 @@ export function SubscriptionForm({
             <CustomFieldInputs 
               serviceId={form.watch("serviceId")} 
               form={form} 
-              disabled={isSubmitting} 
+              disabled={isSubmitting}
+              key={form.watch("serviceId")} // Для обновления компонента при смене сервиса
             />
           )}
         </div>
