@@ -29,6 +29,7 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from "@/hooks/use-translations";
+import { CustomFieldInputs } from "@/components/custom-fields/custom-field-inputs";
 
 // Form schema
 const subscriptionFormSchema = z.object({
@@ -47,6 +48,7 @@ const subscriptionFormSchema = z.object({
   usersCount: z.string().transform((val) => val ? parseInt(val) : 1).default("1"),
   status: z.enum(["active", "pending", "expired", "canceled"]).default("active"),
   userId: z.number().optional(), // Добавляем поле userId для серверной валидации
+  customFields: z.record(z.any()).optional(), // Добавляем поле для кастомных полей
 });
 
 type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>;
