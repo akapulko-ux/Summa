@@ -180,8 +180,21 @@ export function SubscriptionForm({
         }
       }
       
-      if (data.paidUntil) {
-        transformedData.paidUntil = new Date(data.paidUntil);
+      // ИСПРАВЛЕНО: Правильная обработка даты
+      if (data.paidUntil && data.paidUntil.trim() !== '') {
+        try {
+          // Правильно преобразуем дату в ISO формат для базы данных
+          const dateObj = new Date(data.paidUntil);
+          if (!isNaN(dateObj.getTime())) {
+            // Используем toISOString для правильного форматирования
+            transformedData.paidUntil = dateObj.toISOString();
+            console.log("Converted date:", transformedData.paidUntil);
+          } else {
+            console.warn("Invalid date format received:", data.paidUntil);
+          }
+        } catch (e) {
+          console.error("Error processing date:", e);
+        }
       }
       
       if (data.paymentAmount) {
@@ -288,8 +301,21 @@ export function SubscriptionForm({
         }
       }
       
-      if (data.paidUntil) {
-        transformedData.paidUntil = new Date(data.paidUntil);
+      // ИСПРАВЛЕНО: Правильная обработка даты при обновлении
+      if (data.paidUntil && data.paidUntil.trim() !== '') {
+        try {
+          // Правильно преобразуем дату в ISO формат для базы данных
+          const dateObj = new Date(data.paidUntil);
+          if (!isNaN(dateObj.getTime())) {
+            // Используем toISOString для правильного форматирования
+            transformedData.paidUntil = dateObj.toISOString();
+            console.log("Converted date for update:", transformedData.paidUntil);
+          } else {
+            console.warn("Invalid date format received for update:", data.paidUntil);
+          }
+        } catch (e) {
+          console.error("Error processing date for update:", e);
+        }
       }
       
       if (data.paymentAmount) {
@@ -426,256 +452,249 @@ export function SubscriptionForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-2">
-        <FormField
-          control={form.control}
-          name="serviceId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("subscriptions.service")}</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  if (value === "other") {
-                    setSelectedServiceName("");
-                    setIsCustomService(true);
-                  } else {
-                    // Ищем сервис в отфильтрованном массиве
-                    const service = filteredServices.find((s: Service) => s.id.toString() === value);
-                    if (service) {
-                      setSelectedServiceName(service.title);
-                      setIsCustomService(false);
-                    }
-                  }
-                }}
-                defaultValue={field.value}
-                value={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("subscriptions.selectService")} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {isLoadingServices ? (
-                    <SelectItem value="loading" disabled>
-                      {t("common.loading") + "..."}
-                    </SelectItem>
-                  ) : filteredServices && filteredServices.length > 0 ? (
-                    <>
-                      {filteredServices.map((service: Service) => (
-                        <SelectItem key={service.id} value={service.id.toString()}>
-                          {service.title}
-                        </SelectItem>
-                      ))}
-                      <SelectItem value="other">{t("subscriptions.customServiceName")}</SelectItem>
-                    </>
-                  ) : (
-                    <SelectItem value="other">{t("subscriptions.customServiceName")}</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Отображение выбранного сервиса */}
-        <div className="space-y-2">
-          <div className="text-sm font-medium">{t("subscriptions.selectedService")}</div>
-          <div className="rounded border p-2">
-            {isCustomService ? (
-              <FormField
-                control={form.control}
-                name="customServiceName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder={t("subscriptions.enterServiceName")}
-                        value={selectedServiceName || ""}
-                        onChange={(e) => setSelectedServiceName(e.target.value)}
-                        required={isCustomService}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ) : (
-              <div className="min-h-9 flex items-center">
-                {selectedServiceName || t("subscriptions.noServiceSelected")}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("subscriptions.subscriptionTitle")}</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <FormField
             control={form.control}
-            name="domain"
+            name="serviceId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.domain")}</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="loginId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("subscriptions.loginId")}</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="paymentPeriod"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("subscriptions.paymentPeriod")}</FormLabel>
+                <FormLabel>{t("subscriptions.service")}</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  disabled={isSubmitting}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    
+                    // Если выбран "other" или ничего не выбрано, разрешаем редактировать имя сервиса
+                    if (value === "other" || !value) {
+                      setIsCustomService(true);
+                      setSelectedServiceName("");
+                    } else {
+                      // Иначе находим имя выбранного сервиса
+                      const service = filteredServices.find((s) => String(s.id) === value);
+                      if (service) {
+                        setSelectedServiceName(service.title);
+                        setIsCustomService(false);
+                      }
+                    }
+                  }}
+                  value={field.value || ""}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select payment period" />
+                      <SelectValue placeholder={t("subscriptions.selectService")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="monthly">{t("subscriptions.monthly")}</SelectItem>
-                    <SelectItem value="quarterly">{t("subscriptions.quarterly")}</SelectItem>
-                    <SelectItem value="yearly">{t("subscriptions.yearly")}</SelectItem>
+                    {filteredServices.map((service) => (
+                      <SelectItem key={service.id} value={String(service.id)}>
+                        {service.title}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="other">{t("subscriptions.otherCustom")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
+          
+          {/* Название выбранного сервиса */}
+          <FormItem>
+            <FormLabel>{t("subscriptions.serviceName")}</FormLabel>
+            {isCustomService ? (
+              <Input
+                disabled={isSubmitting}
+                placeholder={t("subscriptions.enterServiceName")}
+                value={selectedServiceName || ""}
+                onChange={(e) => setSelectedServiceName(e.target.value)}
+              />
+            ) : (
+              <FormItem className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground">
+                {selectedServiceName || t("subscriptions.noServiceSelected")}
+              </FormItem>
+            )}
+          </FormItem>
+          
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("subscriptions.title")}</FormLabel>
+                <FormControl>
+                  <Input disabled={isSubmitting} placeholder={t("subscriptions.enterTitle")} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="domain"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.domain")}</FormLabel>
+                  <FormControl>
+                    <Input disabled={isSubmitting} placeholder={t("subscriptions.enterDomain")} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="loginId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.login")}</FormLabel>
+                  <FormControl>
+                    <Input disabled={isSubmitting} placeholder={t("subscriptions.enterLogin")} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="paymentPeriod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.paymentPeriod")}</FormLabel>
+                  <Select
+                    disabled={isSubmitting}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("subscriptions.selectPeriod")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="monthly">{t("subscriptions.monthly")}</SelectItem>
+                      <SelectItem value="quarterly">{t("subscriptions.quarterly")}</SelectItem>
+                      <SelectItem value="yearly">{t("subscriptions.yearly")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paidUntil"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.paidUntil")}</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
-            name="paidUntil"
+            name="paymentAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.paidUntil")}</FormLabel>
+                <FormLabel>{t("subscriptions.paymentAmount")}</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input 
+                    disabled={isSubmitting} 
+                    placeholder={t("subscriptions.enterAmount")} 
+                    type="number" 
+                    {...field} 
+                  />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="licensesCount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.licensesCount")}</FormLabel>
+                  <FormControl>
+                    <Input 
+                      disabled={isSubmitting} 
+                      placeholder={t("subscriptions.enterLicensesCount")} 
+                      type="number" 
+                      min="1" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="usersCount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.usersCount")}</FormLabel>
+                  <FormControl>
+                    <Input 
+                      disabled={isSubmitting} 
+                      placeholder={t("subscriptions.enterUsersCount")} 
+                      type="number" 
+                      min="1" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("subscriptions.status")}</FormLabel>
+                <Select
+                  disabled={isSubmitting}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("subscriptions.selectStatus")} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="active">{t("subscriptions.statusActive")}</SelectItem>
+                    <SelectItem value="pending">{t("subscriptions.statusPending")}</SelectItem>
+                    <SelectItem value="expired">{t("subscriptions.statusExpired")}</SelectItem>
+                    <SelectItem value="canceled">{t("subscriptions.statusCanceled")}</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name="paymentAmount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("subscriptions.paymentAmount")}</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  min="0" 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="licensesCount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("subscriptions.licensesCount")}</FormLabel>
-                <FormControl>
-                  <Input type="number" min="1" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="usersCount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("subscriptions.usersCount")}</FormLabel>
-                <FormControl>
-                  <Input type="number" min="1" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("subscriptions.status")}</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("subscriptions.status")} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="active">{t("subscriptions.statusActive")}</SelectItem>
-                  <SelectItem value="pending">{t("subscriptions.statusPending")}</SelectItem>
-                  <SelectItem value="expired">{t("subscriptions.statusExpired")}</SelectItem>
-                  <SelectItem value="canceled">{t("subscriptions.statusCanceled")}</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
-          {buttonText || (subscriptionId ? t("subscriptions.updateSubscription") : t("subscriptions.createSubscription"))}
+        <Button disabled={isSubmitting} type="submit" className="w-full">
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {buttonText}
         </Button>
       </form>
     </Form>
