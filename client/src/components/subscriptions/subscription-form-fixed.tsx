@@ -489,6 +489,9 @@ export function SubscriptionForm({
                       if (service) {
                         setSelectedServiceName(service.title);
                         setIsCustomService(false);
+                        
+                        // При выборе сервиса, очищаем предыдущие значения кастомных полей
+                        form.setValue('customFields', {});
                       }
                     }
                   }}

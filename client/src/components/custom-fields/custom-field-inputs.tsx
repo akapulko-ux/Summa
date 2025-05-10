@@ -91,8 +91,11 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
       
       // Устанавливаем значения в форму
       form.setValue('customFields', newFieldValues);
+      
+      // Логируем значения для отладки
+      console.log("CustomFieldInputs: Setting custom field values:", newFieldValues);
     }
-  }, [customFields, form]);
+  }, [customFields, form, serviceId]);
 
   // Если загрузка или нет кастомных полей, не отображаем ничего
   if (isLoading) {
