@@ -49,10 +49,23 @@ type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>;
 
 interface SubscriptionFormProps {
   subscriptionId?: number;
+  initialData?: any;
+  userId?: number;
   onSuccess?: () => void;
+  onSubmit?: (data: SubscriptionFormValues) => void;
+  buttonText?: string;
+  services?: Service[];
 }
 
-export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionFormProps) {
+export function SubscriptionForm({ 
+  subscriptionId, 
+  initialData,
+  userId,
+  onSuccess, 
+  onSubmit: externalSubmit,
+  buttonText = "Save",
+  services: externalServices
+}: SubscriptionFormProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslations();
@@ -309,52 +322,63 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
     },
   });
 
-  // Update form values when subscription data is loaded
+  // Update form values when subscription data is loaded or initialData is provided
   useEffect(() => {
-    if (subscriptionData) {
-      const paidUntil = subscriptionData.paidUntil 
-        ? new Date(subscriptionData.paidUntil).toISOString().split('T')[0]
+    // Предпочитаем initialData, если он предоставлен, иначе используем subscriptionData
+    const data = initialData || subscriptionData;
+    
+    if (data) {
+      const paidUntil = data.paidUntil 
+        ? new Date(data.paidUntil).toISOString().split('T')[0]
         : "";
         
       form.reset({
-        title: subscriptionData.title,
-        serviceId: subscriptionData.serviceId ? String(subscriptionData.serviceId) : "other",
-        domain: subscriptionData.domain || "",
-        loginId: subscriptionData.loginId || "",
-        paymentPeriod: subscriptionData.paymentPeriod,
+        title: data.title,
+        serviceId: data.serviceId ? String(data.serviceId) : "other",
+        domain: data.domain || "",
+        loginId: data.loginId || "",
+        paymentPeriod: data.paymentPeriod || "monthly",
         paidUntil,
-        paymentAmount: subscriptionData.paymentAmount ? String(subscriptionData.paymentAmount) : "",
-        licensesCount: String(subscriptionData.licensesCount),
-        usersCount: String(subscriptionData.usersCount),
-        status: subscriptionData.status,
+        paymentAmount: data.paymentAmount ? String(data.paymentAmount) : "",
+        licensesCount: String(data.licensesCount || "1"),
+        usersCount: String(data.usersCount || "1"),
+        status: data.status || "active",
+        userId: userId || user?.id  // Используем переданный userId или текущего пользователя
       });
       
+      // Получаем доступные сервисы из экстернальных сервисов или из запроса API
+      const availableServices = externalServices || servicesData?.services || [];
+      
       // Устанавливаем имя сервиса при загрузке данных подписки
-      if (subscriptionData.serviceId && servicesData?.services) {
+      if (data.serviceId && availableServices.length > 0) {
         // Ищем сервис среди всех сервисов, не только фильтрованных,
         // так как это может быть кастомный сервис другого пользователя или админа
-        const service = servicesData.services.find((s: Service) => s.id === subscriptionData.serviceId);
+        const service = availableServices.find((s: Service) => s.id === data.serviceId);
         if (service) {
           setSelectedServiceName(service.title);
           // Проверяем сервис - если это не кастомный сервис или это кастомный сервис
           // текущего пользователя, то устанавливаем поле как нередактируемое (isCustomService = false)
           // В противном случае (кастомный сервис другого пользователя) - делаем поле редактируемым
-          setIsCustomService(service.isCustom && service.ownerId !== user?.id);
+          setIsCustomService(service.isCustom && service.ownerId !== (userId || user?.id));
         } else {
           setSelectedServiceName("");
           setIsCustomService(true);
         }
-      } else if (subscriptionData.serviceId === null || subscriptionData.serviceId === undefined) {
+      } else if (data.serviceId === null || data.serviceId === undefined) {
         // Если serviceId не указан, это, вероятно, "other"
         setSelectedServiceName("");
         setIsCustomService(true);
       }
     }
-  }, [subscriptionData, form, servicesData]);
+  }, [initialData, subscriptionData, form, servicesData, externalServices, userId, user?.id]);
 
   // Form submission handler
   function onSubmit(data: SubscriptionFormValues) {
-    if (subscriptionId) {
+    // Если предоставлен внешний обработчик, используем его
+    if (externalSubmit) {
+      externalSubmit(data);
+    } else if (subscriptionId) {
+      // Иначе используем встроенную логику
       updateMutation.mutate(data);
     } else {
       createMutation.mutate(data);
@@ -626,7 +650,7 @@ export function SubscriptionForm({ subscriptionId, onSuccess }: SubscriptionForm
           {isSubmitting && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
-          {subscriptionId ? t("subscriptions.updateSubscription") : t("subscriptions.createSubscription")}
+          {buttonText || (subscriptionId ? t("subscriptions.updateSubscription") : t("subscriptions.createSubscription"))}
         </Button>
       </form>
     </Form>
