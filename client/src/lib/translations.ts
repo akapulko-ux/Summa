@@ -1,3 +1,4 @@
+typescript
 // Файл с переводами для всего приложения
 
 export type Translation = {
@@ -50,7 +51,7 @@ export type Translation = {
     updatedAt: string;
     actions: string;
   };
-  
+
   // Кэш
   cache: {
     title: string;
@@ -63,7 +64,7 @@ export type Translation = {
     cleared_desc: string;
     no_data: string;
   };
-  
+
   // Мониторинг производительности
   monitoring: {
     title: string;
@@ -91,7 +92,7 @@ export type Translation = {
     cachePerformance: string;
     queryPerformance: string;
     connectionStatus: string;
-    
+
     // Дополнительные поля для страницы мониторинга
     db_status: string;
     db_desc: string;
@@ -119,7 +120,7 @@ export type Translation = {
     no_data_desc: string;
     enable_monitoring: string;
   };
-  
+
   // Layout
   layout: {
     adminPanel: string;
@@ -129,7 +130,7 @@ export type Translation = {
     toggleTheme: string;
     toggleSidebar: string;
   };
-  
+
   // Резервное копирование
   backups: {
     title: string;
@@ -152,7 +153,7 @@ export type Translation = {
     cleanOldBackups: string;
     keepCount: string;
     scheduleInterval: string;
-    
+
     // Новые поля для расширенных функций
     uploadBackup: string;
     downloadBackup: string;
@@ -160,21 +161,21 @@ export type Translation = {
     backupFormats: string;
     advancedRestore: string;
     metadataInfo: string;
-    
+
     // Типы бэкапов
     typeManual: string;
     typeAuto: string;
     typePreRestore: string;
     typeImported: string;
     typeUnknown: string;
-    
+
     // Поля для загрузки файлов
     selectBackupFile: string;
     supportedFormats: string;
     namePrefix: string;
     uploadButton: string;
     uploading: string;
-    
+
     // Поля для расширенного восстановления
     createBackupFirst: string;
     onlyStructure: string;
@@ -245,7 +246,7 @@ export type Translation = {
     backups: string;
     monitoring: string;
   };
-  
+
   // Аналитика и графики
   analytics: {
     revenue: string;
@@ -485,15 +486,6 @@ export type Translation = {
       sortStatus: string;
       sortPrice: string;
       sortCreatedAt: string;
-      sortOrder: string;
-      selectSortOrder: string;
-      priceMin: string;
-      priceMax: string;
-      startDateFrom: string;
-      startDateTo: string;
-      endDateFrom: string;
-      endDateTo: string;
-      sortOptionsDescription: string;
     };
     columns: {
       service: string;
@@ -518,7 +510,7 @@ export type Translation = {
       quarterly: string;
       yearly: string;
     };
-    
+
     // Новые поля для функциональности управления подписками
     addButton: string;
     addTitle: string;
@@ -554,7 +546,7 @@ export type Translation = {
 
   // Кастомные поля
   customFields: CustomFieldType;
-  
+
   // Пользователи
   users: {
     title: string;
@@ -636,7 +628,7 @@ export type Translation = {
     active: string;
     memberSince: string;
   };
-  
+
   // Массовые рассылки
   broadcast: {
     title: string;
@@ -882,7 +874,7 @@ export const en: Translation = {
     cachePerformance: "Cache Performance",
     queryPerformance: "Query Performance",
     connectionStatus: "Connection Status",
-    
+
     // Дополнительные поля для страницы мониторинга
     db_status: "Database Status",
     db_desc: "Current database connection and performance information",
@@ -910,7 +902,7 @@ export const en: Translation = {
     no_data_desc: "No database statistics available",
     enable_monitoring: "Enable monitoring to start collecting metrics"
   },
-  
+
   cache: {
     title: "Cache Status",
     total_hits: "Cache Hits",
@@ -964,7 +956,7 @@ export const en: Translation = {
     servicesByCount: "Services by subscription count",
     avgMinMaxPrices: "Average, min and max subscription prices",
   },
-  
+
   reports: {
     title: "Reports",
     generateReport: "Generate Report",
@@ -994,7 +986,7 @@ export const en: Translation = {
     dateCreated: "Date Created",
     fileSize: "File Size",
     reportsList: "Reports List",
-    
+
     // Report types
     subscriptionReport: "Subscription Report",
     subscriptionReportDesc: "Detailed information about subscriptions and revenue",
@@ -1006,12 +998,12 @@ export const en: Translation = {
     financialReportDesc: "Revenue, expenses and profit information",
     trendsReport: "Trends Report",
     trendsReportDesc: "Trends and forecasts based on historical data",
-    
+
     // Sample reports
     subscriptionReportSample: "Subscription Report",
     userGrowthReportSample: "User Growth Report",
     financialReportSample: "Financial Report Q1",
-    
+
     // Report formats
     pdfDocument: "PDF Document",
     excelSpreadsheet: "Excel Spreadsheet",
@@ -1063,7 +1055,7 @@ export const en: Translation = {
     noConnectedUsers: "No connected users",
     noConnectedUsersDesc: "There are currently no users with linked Telegram accounts."
   },
-  
+
   backups: {
     title: "Database Backups",
     manageBackups: "Manage database backups",
@@ -1085,7 +1077,7 @@ export const en: Translation = {
     cleanOldBackups: "Clean Old Backups",
     keepCount: "Keep Count",
     scheduleInterval: "Schedule Interval (hours)",
-    
+
     // New fields for advanced features
     uploadBackup: "Upload Backup",
     downloadBackup: "Download Backup",
@@ -1093,21 +1085,21 @@ export const en: Translation = {
     backupFormats: "Backup Formats",
     advancedRestore: "Advanced Restore",
     metadataInfo: "Backup Information",
-    
+
     // Backup types
     typeManual: "Manual",
     typeAuto: "Auto",
     typePreRestore: "Pre-restore",
     typeImported: "Imported",
     typeUnknown: "Unknown",
-    
+
     // Upload file fields
     selectBackupFile: "Backup File",
     supportedFormats: "Supported formats: .sql, .dump, .dir, .tar, .zip",
     namePrefix: "Name Prefix",
     uploadButton: "Upload",
     uploading: "Uploading...",
-    
+
     // Advanced restore fields
     createBackupFirst: "Create backup before restoring",
     onlyStructure: "Restore structure only (no data)",
@@ -1320,7 +1312,7 @@ export const en: Translation = {
     monthly: "Monthly",
     quarterly: "Quarterly",
     yearly: "Yearly",
-    paymentAmount: "Payment Amount",
+    paymentAmount: string;
     paidUntil: "Paid Until",
     licensesCount: "Licenses Count",
     enterLicensesCount: "Enter number of licenses",
@@ -1482,6 +1474,7 @@ export const en: Translation = {
       actions: "Actions"
     },
     filters: {
+      status: "Status",
       selectStatus: "Select Status",
       statusAll: "All",
       statusActive: "Active",
@@ -1517,7 +1510,7 @@ export const en: Translation = {
     active: "Active",
     memberSince: "Member since",
   },
-  
+
   telegram: {
     title: "Telegram Connection",
     description: "Manage your Telegram integration",
@@ -1692,7 +1685,7 @@ export const ru: Translation = {
     cachePerformance: "Производительность кэша",
     queryPerformance: "Производительность запросов",
     connectionStatus: "Состояние соединений",
-    
+
     // Дополнительные переводы
     db_status: "Статус базы данных",
     db_desc: "Текущее соединение с базой данных и информация о производительности",
@@ -1792,7 +1785,7 @@ export const ru: Translation = {
     dateCreated: "Дата создания",
     fileSize: "Размер файла",
     reportsList: "Список отчетов",
-    
+
     // Report types
     subscriptionReport: "Отчет по подпискам",
     subscriptionReportDesc: "Подробная информация о подписках и доходах",
@@ -1804,12 +1797,12 @@ export const ru: Translation = {
     financialReportDesc: "Информация о доходах, расходах и прибыли",
     trendsReport: "Отчет по трендам",
     trendsReportDesc: "Тренды и прогнозы на основе исторических данных",
-    
+
     // Report formats
     pdfDocument: "PDF документ",
     excelSpreadsheet: "Excel таблица",
     csvFile: "CSV файл",
-    
+
     // Sample reports
     subscriptionReportSample: "Отчет по подпискам",
     userGrowthReportSample: "Отчет по росту пользователей",
@@ -1860,7 +1853,7 @@ export const ru: Translation = {
     noConnectedUsers: "Нет подключенных пользователей",
     noConnectedUsersDesc: "В настоящее время нет пользователей с привязанными аккаунтами Telegram."
   },
-  
+
   backups: {
     title: "Резервные копии базы данных",
     manageBackups: "Управление резервными копиями базы данных",
@@ -1882,7 +1875,7 @@ export const ru: Translation = {
     cleanOldBackups: "Очистить старые резервные копии",
     keepCount: "Количество для сохранения",
     scheduleInterval: "Интервал расписания (часы)",
-    
+
     // Новые поля для расширенных функций
     uploadBackup: "Загрузить резервную копию",
     downloadBackup: "Скачать резервную копию",
@@ -1890,21 +1883,21 @@ export const ru: Translation = {
     backupFormats: "Форматы резервных копий",
     advancedRestore: "Расширенное восстановление",
     metadataInfo: "Информация о резервной копии",
-    
+
     // Типы бэкапов
     typeManual: "Ручной",
     typeAuto: "Авто",
     typePreRestore: "Пред-восстановление",
     typeImported: "Импортированный",
     typeUnknown: "Неизвестный",
-    
+
     // Поля для загрузки файлов
     selectBackupFile: "Файл резервной копии",
     supportedFormats: "Поддерживаемые форматы: .sql, .dump, .dir, .tar, .zip",
     namePrefix: "Префикс имени",
     uploadButton: "Загрузить",
     uploading: "Загрузка...",
-    
+
     // Поля для расширенного восстановления
     createBackupFirst: "Создать резервную копию перед восстановлением",
     onlyStructure: "Восстановить только структуру (без данных)",
@@ -2101,7 +2094,7 @@ export const ru: Translation = {
     editSubscription: "Редактировать подписку",
     editTitle: "Редактирование подписки",
     editDescription: "Обновление информации о подписке",
-    subscriptionTitle: "Название подписки", 
+    subscriptionTitle: "Название подписки",
     showing: "Показано",
     startDate: "Дата начала",
     endDate: "Дата окончания",
@@ -2202,7 +2195,7 @@ export const ru: Translation = {
       sortPrice: "Цене",
       sortPeriod: "Периоду",
       sortTitle: "Названию",
-      sortStartDate: "Дате начала", 
+      sortStartDate: "Дате начала",
       sortEndDate: "Дате окончания",
       sortDomain: "Домену",
       sortCreatedAt: "Дате создания",
@@ -2321,7 +2314,285 @@ export const ru: Translation = {
     active: "Активен",
     memberSince: "Участник с",
   },
-  
+
+  telegram: {
+    title: "Подключение Telegram",
+    description: "Управление интеграцией с Telegram",
+    connect: "Подключить Telegram",
+    connected: "Подключено к Telegram",
+    notConnected: "Не подключено к Telegram",
+    generateLink: "Сгенерировать код подключения",
+    linkInstructions: "Чтобы подключить Telegram, выполните следующие шаги:",
+    openBot: "1. Откройте Telegram и найдите нашего бота",
+    sendCommand: "2. Отправьте боту команду /connect {code}",
+    afterLink: "После подключения вы будете получать уведомления и обновления через Telegram",
+    receiveNotifications: "Вы будете получать уведомления о ваших подписках и обновлениях",
+    sendTestNotification: "Отправить тестовое уведомление",
+    testNotificationSent: "Тестовое уведомление успешно отправлено",
+    disconnect: "Отключить Telegram",
+    disconnected: "Telegram успешно отключен",
+    confirmDisconnect: "Вы уверены, что хотите отключить ваш аккаунт Telegram?",
+    disconnectWarning: "Вы больше не будете получать уведомления или обновления через Telegram.",
+  },
+
+  messages: {
+    invalidCredentials: "Неверный email или пароль",
+    requiredField: "Это поле обязательно для заполнения",
+    invalidEmail: "Пожалуйста, введите корректный email адрес",
+    passwordTooShort: "Пароль должен содержать не менее 8 символов",
+    passwordsDoNotMatch: "Пароли не совпадают",
+    unauthorized: "Неавторизованный доступ",
+    forbidden: "У вас нет разрешения на доступ к этому ресурсу",
+    notFound: "Запрашиваемый ресурс не найден",
+    serverError: "На сервере произошла ошибка",
+    welcomeBack: "С возвращением, {name}!",
+    goodbye: "Вы вышли из системы",
+    invalidToken: "Токен недействителен или истек",
+    expiredToken: "Срок действия токена истек",
+    userNotFound: "Пользователь не найден",
+    loginFailed: "Ошибка входа",
+    emailAlreadyExists: "Пользователь с таким email уже существует",
+    invalidLink: "Ссылка недействительна или просрочена",
+    linkExpired: "Срок действия ссылки истек",
+    somethingWentWrong: "Что-то пошло не так. Пожалуйста, попробуйте позже.",
+  },
+  subscriptions: {
+    title: "Подписки",
+    description: "Управляйте подписками на различные сервисы",
+    manageSubscriptions: "Управление всеми вашими активными подписками на сервисы",
+    addSubscription: "Добавить подписку",
+    editSubscription: "Редактировать подписку",
+    editTitle: "Редактирование подписки",
+    editDescription: "Обновление информации о подписке",
+    subscriptionTitle: "Название подписки",
+    showing: "Показано",
+    startDate: "Дата начала",
+    endDate: "Дата окончания",
+    service: "Сервис",
+    selectService: "Выберите сервис",
+    selectedService: "Выбранный сервис",
+    noServiceSelected: "Сервис не выбран",
+    enterServiceName: "Введите название сервиса",
+    customServiceName: "Свой сервис",
+    domain: "Домен",
+    loginId: "Логин",
+    paymentPeriod: "Период оплаты",
+    monthly: "Ежемесячно",
+    quarterly: "Ежеквартально",
+    yearly: "Ежегодно",
+    paymentAmount: "Сумма оплаты",
+    paidUntil: "Оплачено до",
+    licensesCount: "Количество лицензий",
+    enterLicensesCount: "Введите количество лицензий",
+    usersCount: "Количество пользователей",
+    status: "Статус",
+    statusActive: "Активна",
+    statusPending: "Ожидание",
+    statusExpired: "Истекла",
+    statusCanceled: "Отменена",
+    createSubscription: "Создать подписку",
+    updateSubscription: "Обновить подписку",
+    confirmDelete: "Вы уверены, что хотите удалить эту подписку?",
+    noSubscriptions: "Подписки не найдены",
+    subscriptionDetails: "Детали подписки",
+    subscriptionCreated: "Подписка успешно создана",
+    subscriptionUpdated: "Подписка успешно обновлена",
+    subscriptionDeleted: "Подписка успешно удалена",
+    mySubscriptions: "Мои подписки",
+    active: "Активна",
+    activeUntil: "Активна до",
+    nextPayment: "Следующий платеж",
+    allSubscriptions: "Все подписки",
+    allSubscriptionsDescription: "Управление всеми подписками клиентов",
+    searchPlaceholder: "Поиск подписок...",
+    searchService: "Поиск по сервису",
+    searchUser: "Поиск по пользователю",
+    searchDomain: "Поиск по домену",
+    addButton: "Добавить подписку",
+    addTitle: "Добавить подписку",
+    addDescription: "Создать новую подписку",
+    optional: "Опционально",
+    selectPeriod: "Выберите период",
+    amount: "Сумма",
+    selectStatus: "Выберите статус",
+    serviceName: "Название сервиса",
+    otherCustom: "Другой (свой)",
+    enterTitle: "Введите название подписки",
+    enterDomain: "Введите домен",
+    login: "Логин",
+    enterLogin: "Введите логин",
+    enterAmount: "Введите сумму",
+    enterUsersCount: "Введите количество пользователей",
+    periods: {
+      monthly: "Ежемесячно",
+      quarterly: "Ежеквартально",
+      yearly: "Ежегодно"
+    },
+    periodValues: {
+      monthly: "Ежемесячно",
+      quarterly: "Ежеквартально",
+      yearly: "Ежегодно"
+    },
+    statuses: {
+      active: "Активна",
+      pending: "Ожидание",
+      expired: "Истекла",
+      canceled: "Отменена"
+    },
+    noSubscriptionsFound: "Подписки не найдены",
+    adjustFilters: "Попробуйте изменить параметры фильтрации",
+    viewDetails: "Просмотр деталей",
+    viewUser: "Просмотр пользователя",
+    errorLoadingSubscriptions: "Ошибка загрузки подписок",
+    filterDescription: "Фильтруйте и сортируйте список подписок",
+    searchHelp: "Поиск по сервисам, пользователям и доменам",
+    columnVisibility: "Отображение столбцов",
+    columnVisibilityDescription: "Выберите столбцы для отображения в таблице",
+    searchCompany: "Поиск по компании",
+    priceMin: "Мин. цена",
+    priceMax: "Макс. цена",
+    startDateFrom: "Дата начала (с)",
+    startDateTo: "Дата начала (по)",
+    endDateFrom: "Дата окончания (с)",
+    endDateTo: "Дата окончания (по)",
+    resetColumns: "Сбросить столбцы",
+    resetFilters: "Сбросить фильтры",
+    sortOptionsDescription: "Выберите поле и порядок сортировки",
+    filters: {
+      selectStatus: "Выберите статус",
+      statusAll: "Все",
+      statusActive: "Активные",
+      statusPending: "В ожидании",
+      statusExpired: "Истекшие",
+      statusCanceled: "Отмененные",
+      periodAll: "Все периоды",
+      selectSortField: "Выберите поле для сортировки",
+      sortService: "Сервису",
+      sortUser: "Пользователю",
+      sortStatus: "Статусу",
+      sortPrice: "Цене",
+      sortPeriod: "Периоду",
+      sortTitle: "Названию",
+      sortStartDate: "Дате начала",
+      sortEndDate: "Дате окончания",
+      sortDomain: "Домену",
+      sortCreatedAt: "Дате создания",
+      sortOrder: "Порядок сортировки",
+      selectSortOrder: "Выберите порядок сортировки",
+      sortOptionsDescription: "Выберите поле и порядок сортировки",
+      priceMin: "Мин. цена",
+      priceMax: "Макс. цена",
+      startDateFrom: "Дата начала (с)",
+      startDateTo: "Дата начала (по)",
+      endDateFrom: "Дата окончания (с)",
+      endDateTo: "Дата окончания (по)"
+    },
+    columns: {
+      service: "Сервис",
+      user: "Пользователь",
+      status: "Статус",
+      price: "Цена",
+      period: "Период",
+      createdAt: "Дата создания",
+      actions: "Действия",
+      startDate: "Дата начала",
+      endDate: "Дата окончания",
+      amount: "Сумма"
+    },
+    statusValues: {
+      active: "Активна",
+      pending: "Ожидание",
+      expired: "Истекла",
+      canceled: "Отменена"
+    },
+
+    unknownService: "Неизвестный сервис",
+    errorLoading: "Ошибка загрузки подписок",
+  },
+
+  users: {
+    title: "Управление пользователями",
+    manageUsers: "Управление учетными записями пользователей и правами доступа",
+    addUser: "Добавить пользователя",
+    editUser: "Редактировать пользователя",
+    manageSubscriptions: "Управление подписками",
+    manageSubscriptionsDescription: "Управление подписками пользователя",
+    manageCustomFields: "Управление пользовательскими полями",
+    manageCustomFieldsDescription: "Управление пользовательскими полями для этого пользователя",
+    actions: "Действия",
+    edit: "Редактировать",
+    delete: "Удалить",
+    userEmail: "Email",
+    userName: "Имя",
+    userCompany: "Компания",
+    userPhone: "Телефон",
+    userRole: "Роль",
+    roleAdmin: "Администратор",
+    roleClient: "Клиент",
+    status: "Статус",
+    statusActive: "Активен",
+    statusInactive: "Неактивен",
+    createUser: "Создать пользователя",
+    updateUser: "Обновить пользователя",
+    confirmDelete: "Вы уверены, что хотите удалить этого пользователя?",
+    noUsers: "Пользователи не найдены",
+    userDetails: "Детали пользователя",
+    userDetailsDescription: "Информация о пользователе",
+    viewFullProfile: "Полный профиль",
+    errorLoadingUser: "Ошибка загрузки пользователя",
+    userCreated: "Пользователь успешно создан",
+    userUpdated: "Пользователь успешно обновлен",
+    userDeleted: "Пользователь успешно удален",
+    showing: "Показано {current} из {total} пользователей",
+    searchPlaceholder: "Поиск пользователей...",
+    errorLoading: "Ошибка загрузки пользователей. Пожалуйста, попробуйте снова.",
+    noUsersFound: "Пользователи не найдены.",
+    filters: {
+      status: "Статус",
+      selectStatus: "Выберите статус",
+      statusAll: "Все",
+      statusActive: "Активные",
+      statusInactive: "Неактивные",
+      sortBy: "Сортировать по",
+      selectSortField: "Выберите поле для сортировки",
+      sortOrder: "Порядок сортировки",
+      selectSortOrder: "Выберите порядок сортировки",
+      ascending: "По возрастанию",
+      descending: "По убыванию",
+      company: "Компания",
+      enterCompany: "Введите название компании",
+      sortName: "Имени",
+      sortEmail: "Email",
+      sortCompany: "Компании",
+      sortCreatedAt: "Дате создания"
+    },
+    columns: {
+      name: "Имя",
+      email: "Email",
+      company: "Компания",
+      status: "Статус",
+      subscriptions: "Подписки",
+      actions: "Действия"
+    }
+  },
+
+  profile: {
+    title: "Профиль",
+    personalInfo: "Личная информация",
+    accountSettings: "Настройки аккаунта",
+    updateProfile: "Обновить профиль",
+    changePassword: "Изменить пароль",
+    currentPassword: "Текущий пароль",
+    newPassword: "Новый пароль",
+    confirmNewPassword: "Подтвердить новый пароль",
+    profileUpdated: "Профиль успешно обновлен",
+    passwordUpdated: "Пароль успешно обновлен",
+    role: "Роль",
+    accountStatus: "Статус аккаунта",
+    active: "Активен",
+    memberSince: "Участник с",
+  },
+
   telegram: {
     title: "Подключение Telegram",
     description: "Управление интеграцией с Telegram",
