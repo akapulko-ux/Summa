@@ -74,8 +74,13 @@ export function ServiceList() {
       await apiRequest("DELETE", `/api/services/${serviceId}`);
     },
     onSuccess: () => {
+      // Явно инвалидируем кеш для обновления списка сервисов
       queryClient.invalidateQueries({ queryKey: ["/api/services"] });
     },
+    onError: (error) => {
+      console.error("Error deleting service:", error);
+      alert(language === 'ru' ? 'Ошибка при удалении сервиса' : 'Error deleting service');
+    }
   });
 
   const handleEdit = (serviceId: number) => {
@@ -91,6 +96,8 @@ export function ServiceList() {
   const handleDelete = (serviceId: number) => {
     if (window.confirm(t('services.confirmDelete'))) {
       deleteServiceMutation.mutate(serviceId);
+      // Здесь мы уже настроили инвалидацию кеша в мутации deleteServiceMutation,
+      // поэтому нам не нужно вызывать queryClient.invalidateQueries здесь напрямую
     }
   };
 
@@ -336,6 +343,7 @@ export function ServiceList() {
             <ServiceForm 
               serviceId={selectedServiceId} 
               onSuccess={() => {
+                // Явно инвалидируем кеш для обновления списка сервисов
                 queryClient.invalidateQueries({ queryKey: ["/api/services"] });
                 setIsEditDialogOpen(false);
               }}
