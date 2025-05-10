@@ -610,7 +610,10 @@ export function AdvancedSubscriptionList({
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>{t('subscriptions.editSubscription')}</DialogTitle>
+            <DialogTitle>{t('subscriptions.editTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('subscriptions.editDescription')}
+            </DialogDescription>
           </DialogHeader>
           {selectedSubscriptionId && (
             <SubscriptionForm 

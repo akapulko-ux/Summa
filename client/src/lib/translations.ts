@@ -2058,6 +2058,8 @@ export const ru: Translation = {
     addButton: "Добавить подписку",
     addTitle: "Добавить подписку",
     addDescription: "Создать новую подписку",
+    editTitle: "Редактирование подписки",
+    editDescription: "Изменить данные подписки",
     optional: "Опционально",
     selectPeriod: "Выберите период",
     amount: "Сумма",
