@@ -576,30 +576,32 @@ export function SubscriptionFilters({
           </div>
         </div>
 
-        <SheetFooter className="flex flex-col gap-2 pt-2 border-t">
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetFilters}
-            >
-              {t('subscriptions.resetFilters')}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetColumnVisibility}
-            >
-              {t('subscriptions.resetColumns')}
-            </Button>
-          </div>
-          
-          <div className="mt-4 flex justify-center">
-            <SheetClose asChild>
-              <Button className="w-full" onClick={applyFilters}>
-                {t('common.applyFilters')}
+        <SheetFooter className="flex flex-col pt-2 border-t">
+          <div>
+            <div className="flex gap-2 mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetFilters}
+              >
+                {t('subscriptions.resetFilters')}
               </Button>
-            </SheetClose>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetColumnVisibility}
+              >
+                {t('subscriptions.resetColumns')}
+              </Button>
+            </div>
+            
+            <div>
+              <SheetClose asChild>
+                <Button className="w-full" onClick={applyFilters}>
+                  {t('common.applyFilters')}
+                </Button>
+              </SheetClose>
+            </div>
           </div>
         </SheetFooter>
       </SheetContent>
