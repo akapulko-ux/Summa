@@ -159,24 +159,23 @@ export function AdvancedSubscriptionList({
   });
   
   // Получение данных о сервисах и пользователях для обогащения данных подписок
-  const { data: services } = useQuery({
+  const { data: servicesData } = useQuery<{ services: any[]; total: number }>({
     queryKey: ["/api/services"],
-    queryFn: async () => {
-      const response = await fetch("/api/services");
-      if (!response.ok) {
-        throw new Error("Failed to fetch services");
-      }
-      const data = await response.json();
-      return data.services || [];
-    },
   });
   
   // Обогащаем данные подписок информацией о сервисах и пользователях
   const enrichSubscriptions = (subscriptions: any[]): SubscriptionWithExtras[] => {
     if (!subscriptions) return [];
+    
+    // Извлекаем массив сервисов, если он доступен
+    const servicesList = servicesData?.services || [];
+    
+    console.log("Services data structure:", servicesData);
+    console.log("Services list extracted:", servicesList);
+    
     return subscriptions.map(sub => {
       // Находим информацию о сервисе
-      const service = services?.find(s => s.id === sub.serviceId);
+      const service = servicesList.find(s => s.id === sub.serviceId);
       
       return {
         ...sub,
