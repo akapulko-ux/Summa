@@ -39,6 +39,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
@@ -49,7 +50,11 @@ import {
   Trash, 
   AlertCircle,
   CheckCircle2,
-  Pencil
+  Pencil,
+  ChevronsUpDown,
+  ChevronDown,
+  ChevronUp,
+  Loader2
 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -82,6 +87,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null);
+  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<number | null>(null);
   
   // Получение списка подписок пользователя с названиями сервисов
   const { 
