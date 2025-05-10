@@ -164,7 +164,7 @@ export function AdvancedSubscriptionList({
   });
 
   // Получение данных о пользователях
-  const { data: usersData } = useQuery<any[]>({
+  const { data: usersData } = useQuery<{ users: any[]; total: number }>({
     queryKey: ["/api/users"],
     enabled: user?.role === 'admin', // Запрашиваем только если пользователь - админ
   });
@@ -176,7 +176,13 @@ export function AdvancedSubscriptionList({
     // Извлекаем массив сервисов, если он доступен
     const servicesList = servicesData?.services || [];
     // Получаем список пользователей
-    const usersList = usersData || [];
+    const usersList = usersData?.users || [];
+    
+    // Логирование для отладки
+    console.log("Services data:", servicesData);
+    console.log("Users data:", usersData);
+    console.log("Services list extracted:", servicesList);
+    console.log("Users list extracted:", usersList);
     
     return subscriptions.map(sub => {
       // Находим информацию о сервисе
