@@ -439,6 +439,10 @@ export function SubscriptionForm({
 
   // Form submission handler
   function onSubmit(data: SubscriptionFormValues) {
+    // Логируем данные формы для отладки
+    console.log("Form submission data:", JSON.stringify(data, null, 2));
+    console.log("Custom fields data:", JSON.stringify(data.customFields, null, 2));
+    
     // Если предоставлен внешний обработчик, используем его
     if (externalSubmit) {
       externalSubmit(data);
