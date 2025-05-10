@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslations } from "@/hooks/use-translations";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -376,8 +376,9 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
               </TableHeader>
               <TableBody>
                 {subscriptions?.map((subscription) => (
-                  <TableRow key={subscription.id}>
-                    <TableCell className="font-medium">
+                  <React.Fragment key={subscription.id}>
+                    <TableRow>
+                      <TableCell className="font-medium">
                       {subscription.serviceName || getServiceName(subscription.serviceId)}
                     </TableCell>
                     <TableCell>{formatDate(subscription.createdAt)}</TableCell>
@@ -407,7 +408,17 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
                         </Button>
                       </div>
                     </TableCell>
-                  </TableRow>
+                    </TableRow>
+                    {subscription.customFields && Object.keys(subscription.customFields).length > 0 && (
+                      <TableRow className="bg-gray-50/50">
+                        <TableCell colSpan={7} className="p-0">
+                          <div className="px-4 py-2">
+                            <SubscriptionCustomFieldsView customFields={subscription.customFields} />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
                 ))}
               </TableBody>
             </Table>
