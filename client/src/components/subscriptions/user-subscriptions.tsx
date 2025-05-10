@@ -5,6 +5,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Subscription, Service } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { SubscriptionForm } from "@/components/subscriptions/subscription-form-fixed";
+import { SubscriptionCustomFieldsView } from "@/components/subscriptions/subscription-custom-fields-view";
 import {
   Card,
   CardContent,
