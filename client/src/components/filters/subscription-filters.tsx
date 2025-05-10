@@ -478,7 +478,7 @@ export function SubscriptionFilters({
                   }
                 />
                 <Label htmlFor="column-user" className="cursor-pointer">
-                  {t('subscriptions.columns.user')}
+                  {t('users.title')}
                 </Label>
               </div>
               
