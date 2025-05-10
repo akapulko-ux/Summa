@@ -37,7 +37,11 @@ const subscriptionFormSchema = z.object({
   domain: z.string().optional(),
   loginId: z.string().optional(),
   paymentPeriod: z.enum(["monthly", "quarterly", "yearly"]).default("monthly"),
-  paidUntil: z.string().optional(),
+  paidUntil: z.string()
+    .refine(val => !val || !isNaN(new Date(val).getTime()), {
+      message: "Invalid date format"
+    })
+    .optional(),
   paymentAmount: z.string().transform((val) => val ? parseFloat(val) : undefined).optional(),
   licensesCount: z.string().transform((val) => val ? parseInt(val) : 1).default("1"),
   usersCount: z.string().transform((val) => val ? parseInt(val) : 1).default("1"),
