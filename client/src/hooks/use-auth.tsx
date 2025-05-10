@@ -37,14 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return await res.json();
     },
     onSuccess: (user: User) => {
-      console.log("Login successful, user data:", user);
       queryClient.setQueryData(["/api/user"], user);
       toast({
         title: "Login successful",
         description: `Welcome back, ${user.name || user.email}!`,
       });
-      // Перенаправление на главную страницу после успешной авторизации
-      window.location.href = "/";
     },
     onError: (error: Error) => {
       toast({
