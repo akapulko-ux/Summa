@@ -100,6 +100,17 @@ export default function AuthPage() {
     }
   }
 
+  // Add debug info for Preview mode
+  useEffect(() => {
+    // Добавляем консольный лог для отладки проблем со входом
+    console.log('Auth page loaded with params:', {
+      errorParam,
+      location: window.location.href,
+      isPreviewMode: window.location.hostname.includes('.replit.dev') || 
+                   window.location.hostname.includes('.replit.app')
+    });
+  }, [errorParam]);
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Hero section */}
