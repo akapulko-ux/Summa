@@ -190,14 +190,30 @@ export function AdvancedSubscriptionList({
       // Находим информацию о пользователе
       const userInfo = usersList.find(u => u.id === sub.userId);
       
-      return {
+      // Детальное логирование объекта подписки и связанных объектов
+      console.log("Processing subscription:", sub);
+      console.log("Related service:", service);
+      console.log("Related user info:", userInfo);
+      
+      // В базе данных может быть несколько разных имен для одних и тех же полей
+      // в зависимости от того, откуда пришли данные. Обрабатываем все возможные варианты.
+      const result = {
         ...sub,
-        serviceName: service?.title || sub.serviceName || t('subscriptions.unknownService'),
-        serviceTitle: service?.title || sub.serviceTitle || t('subscriptions.unknownService'),
-        userName: userInfo?.name || sub.userName || t('common.notAvailable'),
-        userEmail: userInfo?.email || sub.userEmail || t('common.notAvailable'),
-        companyName: userInfo?.company || sub.companyName || t('common.notAvailable'),
+        // Поля сервиса
+        serviceName: service?.title || service?.name || sub.serviceName || sub.serviceTitle || t('subscriptions.unknownService'),
+        serviceTitle: service?.title || service?.name || sub.serviceTitle || sub.serviceName || t('subscriptions.unknownService'),
+        
+        // Поля пользователя
+        userName: userInfo?.name || userInfo?.username || userInfo?.fullName || sub.userName || sub.username || t('common.notAvailable'),
+        userEmail: userInfo?.email || userInfo?.emailAddress || sub.userEmail || sub.email || t('common.notAvailable'),
+        companyName: userInfo?.company || userInfo?.companyName || userInfo?.organization || sub.companyName || sub.company || sub.organization || t('common.notAvailable'),
+        
+        // Поля оплаты
+        paymentAmount: sub.amount || sub.paymentAmount || sub.price || 0,
       };
+      
+      console.log("Enriched subscription:", result);
+      return result;
     });
   };
   
@@ -549,13 +565,13 @@ export function AdvancedSubscriptionList({
                     
                     {columnVisibility.company && (
                       <TableCell>
-                        {subscription.companyName || t('common.notAvailable')}
+                        {subscription.companyName || subscription.company || t('common.notAvailable')}
                       </TableCell>
                     )}
                     
                     {columnVisibility.price && (
                       <TableCell>
-                        {formatMoney(subscription.paymentAmount)}
+                        {formatMoney(subscription.amount || subscription.paymentAmount)}
                       </TableCell>
                     )}
                     
