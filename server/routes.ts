@@ -465,12 +465,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         data.userId = req.user.id;
       }
       
+      // Отладочная информация
+      console.log("Creating subscription with data:", JSON.stringify(data, null, 2));
+      
       const validatedData = insertSubscriptionSchema.parse(data);
+      
+      // Отладочная информация после валидации
+      console.log("Validated subscription data:", JSON.stringify(validatedData, null, 2));
+      
       const subscription = await storage.createSubscription(validatedData);
       
       res.status(201).json(subscription);
     } catch (error) {
       if (error instanceof ZodError) {
+        console.error("Zod validation error:", error.errors);
         return res.status(400).json({ message: zValidationErrorToMessage(error) });
       }
       console.error("Error creating subscription:", error);
@@ -495,7 +503,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Валидируем данные перед обновлением, игнорируя обязательные поля
       // создаём частичную схему, исключая обязательные поля
       const updateSchema = insertSubscriptionSchema.partial();
+      
+      // Отладочная информация
+      console.log("Updating subscription with data:", JSON.stringify(req.body, null, 2));
+      
       const validatedData = updateSchema.parse(req.body);
+      
+      // Отладочная информация после валидации
+      console.log("Validated update data:", JSON.stringify(validatedData, null, 2));
       
       const updated = await storage.updateSubscription(id, validatedData);
       
