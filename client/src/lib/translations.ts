@@ -1329,6 +1329,9 @@ export const en: Translation = {
     resetFilters: "Reset Filters",
     resetColumns: "Reset Columns",
     sortOptionsDescription: "Choose which field to sort by and in what order",
+    searchService: "Search by service",
+    searchUser: "Search by user",
+    searchDomain: "Search by domain",
     filters: {
       priceMin: "Min Price",
       priceMax: "Max Price",
@@ -1339,7 +1342,21 @@ export const en: Translation = {
       endDateTo: "End Date To",
       sortStartDate: "Start Date",
       sortEndDate: "End Date",
-      sortDomain: "Domain"
+      sortDomain: "Domain",
+      selectStatus: "Select Status",
+      statusAll: "All Statuses",
+      statusActive: "Active",
+      statusPending: "Pending",
+      statusExpired: "Expired",
+      statusCanceled: "Canceled",
+      selectSortField: "Select Field",
+      sortService: "Service",
+      sortUser: "User",
+      sortStatus: "Status",
+      sortPrice: "Price",
+      sortCreatedAt: "Created At",
+      sortOrder: "Sort Order", 
+      selectSortOrder: "Select Order"
     },
   },
 
