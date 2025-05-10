@@ -492,10 +492,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Forbidden" });
       }
       
-      const updated = await storage.updateSubscription(id, req.body);
+      // Валидируем данные перед обновлением, игнорируя обязательные поля
+      // создаём частичную схему, исключая обязательные поля
+      const updateSchema = insertSubscriptionSchema.partial();
+      const validatedData = updateSchema.parse(req.body);
+      
+      const updated = await storage.updateSubscription(id, validatedData);
       
       res.json(updated);
     } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: zValidationErrorToMessage(error) });
+      }
       console.error("Error updating subscription:", error);
       res.status(500).json({ message: "Failed to update subscription" });
     }

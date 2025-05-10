@@ -403,7 +403,8 @@ export function SubscriptionForm({
         licensesCount: String(data.licensesCount || "1"),
         usersCount: String(data.usersCount || "1"),
         status: data.status || "active",
-        userId: userId || user?.id  // Используем переданный userId или текущего пользователя
+        userId: userId || user?.id,  // Используем переданный userId или текущего пользователя
+        customFields: data.customFields || {} // Добавляем сохраненные кастомные поля
       });
       
       // Получаем доступные сервисы из экстернальных сервисов или из запроса API
