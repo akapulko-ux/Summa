@@ -81,17 +81,37 @@ export function SubscriptionForm({
   // Fetch available services
   const { data: servicesData, isLoading: isLoadingServices } = useQuery({
     queryKey: ["/api/services"],
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/services?status=active");
+        if (!res.ok) throw new Error("Failed to fetch services");
+        const data = await res.json();
+        console.log("API fetched services:", data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching services:", error);
+        throw error;
+      }
+    },
   });
   
   // Используем внешние сервисы, если они предоставлены, иначе фильтруем сервисы из API
   const filteredServices = externalServices 
-    ? externalServices
+    ? externalServices 
     : (servicesData?.services 
       ? servicesData.services.filter((service: Service) => 
           !service.isCustom || // стандартные сервисы
           (service.isCustom && service.ownerId === (userId || user?.id)) // кастомные сервисы текущего/указанного пользователя
         )
       : []);
+      
+  console.log("SubscriptionForm - Available services:", { 
+    externalServices, 
+    servicesData,
+    filteredServices,
+    userId,
+    currentUserId: user?.id
+  });
 
   // Create mutation for new subscriptions
   const createMutation = useMutation({
