@@ -100,12 +100,11 @@ export function SubscriptionList() {
 
   // Format payment period
   const formatPaymentPeriod = (period: string) => {
-    const firstLetter = period.charAt(0).toUpperCase();
-    return firstLetter + period.slice(1);
+    return t(`subscriptions.periodValues.${period}`);
   };
 
   const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return t('common.notAvailable');
     return new Date(dateString).toLocaleDateString();
   };
 
@@ -113,13 +112,13 @@ export function SubscriptionList() {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Subscriptions</CardTitle>
+          <CardTitle>{t('subscriptions.title')}</CardTitle>
           <div className="flex items-center gap-2">
             <div className="relative">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search subscriptions..."
+                placeholder={t('subscriptions.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -133,12 +132,12 @@ export function SubscriptionList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Domain</TableHead>
-                <TableHead>Payment</TableHead>
-                <TableHead>Paid Until</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t('subscriptions.subscriptionTitle')}</TableHead>
+                <TableHead>{t('subscriptions.domain')}</TableHead>
+                <TableHead>{t('subscriptions.paymentAmount')}</TableHead>
+                <TableHead>{t('subscriptions.paidUntil')}</TableHead>
+                <TableHead>{t('subscriptions.status')}</TableHead>
+                <TableHead className="text-right">{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -157,13 +156,13 @@ export function SubscriptionList() {
               ) : isError ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
-                    Error loading subscriptions. Please try again.
+                    {t('subscriptions.errorLoading')}
                   </TableCell>
                 </TableRow>
               ) : data?.subscriptions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
-                    No subscriptions found.
+                    {t('subscriptions.noSubscriptions')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -189,14 +188,14 @@ export function SubscriptionList() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(subscription.id)}>
                             <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                            {t('common.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleDelete(subscription.id)}
                             className="text-destructive focus:text-destructive"
                           >
                             <Trash className="mr-2 h-4 w-4" />
-                            Delete
+                            {t('common.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -212,7 +211,7 @@ export function SubscriptionList() {
         <CardFooter className="border-t px-6 py-4">
           <div className="flex items-center justify-between w-full">
             <div className="text-sm text-muted-foreground">
-              Showing {data.subscriptions.length} of {data.total} subscriptions
+              {t('subscriptions.showing', { displayed: data.subscriptions.length, total: data.total })}
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -222,7 +221,7 @@ export function SubscriptionList() {
                 disabled={page === 1}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                Previous
+                {t('common.prev')}
               </Button>
               <Button
                 variant="outline"
@@ -230,7 +229,7 @@ export function SubscriptionList() {
                 onClick={handleNextPage}
                 disabled={page >= Math.ceil(data.total / limit)}
               >
-                Next
+                {t('common.next')}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -242,7 +241,7 @@ export function SubscriptionList() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Edit Subscription</DialogTitle>
+            <DialogTitle>{t('subscriptions.editSubscription')}</DialogTitle>
           </DialogHeader>
           {selectedSubscriptionId && (
             <SubscriptionForm 
