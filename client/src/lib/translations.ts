@@ -2010,6 +2010,11 @@ export const ru: Translation = {
       quarterly: "Ежеквартально",
       yearly: "Ежегодно"
     },
+    periodValues: {
+      monthly: "Ежемесячно",
+      quarterly: "Ежеквартально",
+      yearly: "Ежегодно"
+    },
     statuses: {
       active: "Активна",
       pending: "Ожидание",
