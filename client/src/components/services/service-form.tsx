@@ -24,6 +24,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomFieldsManager } from "@/components/custom-fields/custom-fields-manager";
+import { FileUpload } from "@/components/ui/file-upload";
 
 // Form schema
 const serviceFormSchema = z.object({

@@ -1,8 +1,14 @@
 import { Express, Request, Response } from "express";
+import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
+import { fileURLToPath } from 'url';
+
+// Получаем текущую директорию в ESM формате
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Настройка хранилища загрузок
 const uploadDir = path.join(__dirname, "../../uploads");
@@ -91,5 +97,5 @@ export const setupUploadRoutes = (app: Express) => {
       return res.status(403).json({ message: "Доступ запрещен" });
     }
     next();
-  }, require("express").static(uploadDir));
+  }, express.static(uploadDir));
 };

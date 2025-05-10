@@ -738,6 +738,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Подключаем маршруты для отчетов
   registerReportsRoutes(app);
+  
+  // Подключаем маршруты для загрузки файлов
+  setupUploadRoutes(app);
 
   // Подключаем маршруты для Telegram бота
   setupTelegramRoutes(app);
