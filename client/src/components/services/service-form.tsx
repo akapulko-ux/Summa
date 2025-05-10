@@ -203,11 +203,13 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
                   <FormItem>
                     <FormLabel>{t('services.serviceIcon')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://example.com/icon.svg" {...field} />
+                      <FileUpload 
+                        initialUrl={field.value}
+                        onUpload={(url) => field.onChange(url)}
+                        accept="image/*"
+                        description={t('services.serviceIconDescription')}
+                      />
                     </FormControl>
-                    <FormDescription>
-                      URL to an icon image (preferably SVG format)
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
