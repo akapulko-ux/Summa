@@ -31,8 +31,10 @@ import { Subscription, Service } from "@shared/schema";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { SubscriptionForm } from "./subscription-form-fixed";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "@/hooks/use-translations";
 
 export function SubscriptionList() {
+  const { t } = useTranslations();
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -63,7 +65,7 @@ export function SubscriptionList() {
   };
 
   const handleDelete = (subscriptionId: number) => {
-    if (window.confirm("Are you sure you want to delete this subscription?")) {
+    if (window.confirm(t('subscriptions.confirmDelete'))) {
       deleteSubscriptionMutation.mutate(subscriptionId);
     }
   };
@@ -84,13 +86,13 @@ export function SubscriptionList() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Active</Badge>;
+        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">{t('subscriptions.statusActive')}</Badge>;
       case "pending":
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>;
+        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">{t('subscriptions.statusPending')}</Badge>;
       case "expired":
-        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">Expired</Badge>;
+        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">{t('subscriptions.statusExpired')}</Badge>;
       case "canceled":
-        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">Canceled</Badge>;
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">{t('subscriptions.statusCanceled')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
