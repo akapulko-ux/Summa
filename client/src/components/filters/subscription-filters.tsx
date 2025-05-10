@@ -159,7 +159,7 @@ export function SubscriptionFilters({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[340px] sm:w-[540px] overflow-y-auto">
+      <SheetContent className="w-[360px] sm:w-[600px] overflow-y-auto">
         <SheetHeader className="px-1">
           <SheetTitle>{t('common.filterOptions')}</SheetTitle>
           <SheetDescription>
