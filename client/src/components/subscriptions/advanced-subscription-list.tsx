@@ -346,33 +346,61 @@ export function AdvancedSubscriptionList({
   };
   
   // Функции форматирования данных
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">{t('subscriptions.statusActive')}</Badge>;
-      case "pending":
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">{t('subscriptions.statusPending')}</Badge>;
-      case "expired":
-        return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">{t('subscriptions.statusExpired')}</Badge>;
-      case "canceled":
-        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">{t('subscriptions.statusCanceled')}</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
+  const getStatusBadge = (status: string | null | undefined) => {
+    if (!status) {
+      return <Badge variant="outline">{t('common.notAvailable')}</Badge>;
+    }
+    
+    try {
+      switch (status.toLowerCase()) {
+        case "active":
+          return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">{t('subscriptions.statusActive')}</Badge>;
+        case "pending":
+          return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200">{t('subscriptions.statusPending')}</Badge>;
+        case "expired":
+          return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">{t('subscriptions.statusExpired')}</Badge>;
+        case "canceled":
+          return <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">{t('subscriptions.statusCanceled')}</Badge>;
+        default:
+          return <Badge variant="outline">{status}</Badge>;
+      }
+    } catch (e) {
+      console.warn('Error formatting status badge:', e);
+      return <Badge variant="outline">{status}</Badge>;
     }
   };
   
-  const formatPaymentPeriod = (period: string) => {
-    return t(`subscriptions.periodValues.${period}`);
+  const formatPaymentPeriod = (period: string | null | undefined) => {
+    if (!period) return t('common.notAvailable');
+    try {
+      return t(`subscriptions.periodValues.${period}`) || period;
+    } catch (e) {
+      console.warn('Error formatting payment period:', e);
+      return period;
+    }
   };
   
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return t('common.notAvailable');
-    return format(new Date(dateString), 'dd.MM.yyyy');
+    try {
+      return format(new Date(dateString), 'dd.MM.yyyy');
+    } catch (e) {
+      console.warn('Error formatting date:', e);
+      return dateString;
+    }
   };
   
-  const formatMoney = (amount: number | null | undefined) => {
+  const formatMoney = (amount: number | string | null | undefined) => {
     if (amount === null || amount === undefined) return t('common.notAvailable');
-    return `$${amount.toFixed(2)}`;
+    try {
+      // Преобразуем в число, если передана строка
+      const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+      if (isNaN(numAmount)) return amount;
+      return `$${numAmount.toFixed(2)}`;
+    } catch (e) {
+      console.warn('Error formatting money:', e);
+      return amount;
+    }
   };
 
   // Отображение состояний загрузки и ошибки
