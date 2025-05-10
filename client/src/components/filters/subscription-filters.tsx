@@ -576,11 +576,12 @@ export function SubscriptionFilters({
           </div>
         </div>
 
-        <SheetFooter className="flex-row justify-between gap-2 pt-2 border-t">
-          <div className="flex gap-2">
+        <SheetFooter className="flex flex-col sm:flex-row w-full gap-2 pt-2 border-t">
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
             <Button
               variant="outline"
               size="sm"
+              className="w-full sm:w-auto whitespace-nowrap"
               onClick={resetFilters}
             >
               {t('subscriptions.resetFilters')}
@@ -588,13 +589,14 @@ export function SubscriptionFilters({
             <Button
               variant="outline"
               size="sm"
+              className="w-full sm:w-auto whitespace-nowrap"
               onClick={resetColumnVisibility}
             >
               {t('subscriptions.resetColumns')}
             </Button>
           </div>
-          <SheetClose asChild>
-            <Button size="sm" onClick={applyFilters}>
+          <SheetClose asChild className="w-full sm:w-auto ml-auto">
+            <Button size="sm" className="w-full sm:w-auto whitespace-nowrap" onClick={applyFilters}>
               {t('common.applyFilters')}
             </Button>
           </SheetClose>
