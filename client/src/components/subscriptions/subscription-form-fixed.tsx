@@ -96,18 +96,22 @@ export function SubscriptionForm({
   });
   
   // Используем внешние сервисы, если они предоставлены, иначе фильтруем сервисы из API
-  const filteredServices = externalServices 
+  // Проверяем данные сервисов и преобразуем их при необходимости
+  const servicesArray = externalServices && externalServices.length > 0 
     ? externalServices 
-    : (servicesData?.services 
-      ? servicesData.services.filter((service: Service) => 
-          !service.isCustom || // стандартные сервисы
-          (service.isCustom && service.ownerId === (userId || user?.id)) // кастомные сервисы текущего/указанного пользователя
-        )
+    : (servicesData && servicesData.services 
+      ? servicesData.services 
       : []);
+      
+  const filteredServices = servicesArray.filter((service: Service) => 
+    !service.isCustom || // стандартные сервисы
+    (service.isCustom && service.ownerId === (userId || user?.id)) // кастомные сервисы текущего/указанного пользователя
+  );
       
   console.log("SubscriptionForm - Available services:", { 
     externalServices, 
     servicesData,
+    servicesArray, 
     filteredServices,
     userId,
     currentUserId: user?.id
@@ -368,7 +372,9 @@ export function SubscriptionForm({
       });
       
       // Получаем доступные сервисы из экстернальных сервисов или из запроса API
-      const availableServices = externalServices || servicesData?.services || [];
+      const availableServices = externalServices && externalServices.length > 0 
+        ? externalServices 
+        : (servicesData && servicesData.services ? servicesData.services : []);
       
       // Устанавливаем имя сервиса при загрузке данных подписки
       if (data.serviceId && availableServices.length > 0) {
@@ -435,8 +441,9 @@ export function SubscriptionForm({
                   if (value === "other") {
                     setSelectedServiceName("");
                     setIsCustomService(true);
-                  } else if (servicesData?.services) {
-                    const service = servicesData.services.find((s: Service) => s.id.toString() === value);
+                  } else {
+                    // Ищем сервис в отфильтрованном массиве
+                    const service = filteredServices.find((s: Service) => s.id.toString() === value);
                     if (service) {
                       setSelectedServiceName(service.title);
                       setIsCustomService(false);

@@ -106,6 +106,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
       const res = await apiRequest("GET", "/api/services?status=active");
       if (!res.ok) throw new Error("Failed to fetch services");
       const data = await res.json();
+      console.log("UserSubscriptions - API fetched services:", data);
       return data.services;
     },
   });
@@ -328,7 +329,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
               onSubmit={onSubmit}
               userId={userId}
               buttonText={t('common.add')}
-              services={services || []}
+              services={Array.isArray(services) ? services : []}
               isLoading={createSubscriptionMutation.isPending}
             />
           </DialogContent>
@@ -423,7 +424,7 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
               initialData={subscriptions.find(sub => sub.id === selectedSubscriptionId)}
               userId={userId}
               buttonText={t('common.save')}
-              services={services || []}
+              services={Array.isArray(services) ? services : []}
             />
           )}
         </DialogContent>
