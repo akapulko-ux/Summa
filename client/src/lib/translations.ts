@@ -522,6 +522,8 @@ export type Translation = {
     addButton: string;
     addTitle: string;
     addDescription: string;
+    editTitle: string;
+    editDescription: string;
     addSuccess: string;
     addSuccessDescription: string;
     addError: string;
