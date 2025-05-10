@@ -108,14 +108,7 @@ export function SubscriptionForm({
     (service.isCustom && service.ownerId === (userId || user?.id)) // кастомные сервисы текущего/указанного пользователя
   );
       
-  console.log("SubscriptionForm - Available services:", { 
-    externalServices, 
-    servicesData,
-    servicesArray, 
-    filteredServices,
-    userId,
-    currentUserId: user?.id
-  });
+
 
   // Create mutation for new subscriptions
   const createMutation = useMutation({
