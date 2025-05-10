@@ -73,6 +73,38 @@ export const setupUploadRoutes = (app: Express) => {
       return res.status(500).json({ message: "Ошибка при загрузке файла" });
     }
   });
+  
+  // Эндпоинт удаления иконки
+  app.delete("/api/upload/icon", (req: Request, res: Response) => {
+    try {
+      const { iconUrl } = req.query;
+      
+      if (!iconUrl || typeof iconUrl !== 'string') {
+        return res.status(400).json({ message: "URL иконки не указан" });
+      }
+      
+      // Извлекаем имя файла из URL
+      const filename = iconUrl.split('/').pop();
+      if (!filename) {
+        return res.status(400).json({ message: "Неверный формат URL" });
+      }
+      
+      const filePath = path.join(iconDir, filename);
+      
+      // Проверяем, существует ли файл
+      if (fs.existsSync(filePath)) {
+        // Удаляем файл
+        fs.unlinkSync(filePath);
+        return res.status(200).json({ message: "Файл успешно удален" });
+      } else {
+        // Файл не найден, но возвращаем успех, так как результат тот же
+        return res.status(200).json({ message: "Файл не найден" });
+      }
+    } catch (error: any) {
+      console.error("Ошибка удаления файла:", error.message);
+      return res.status(500).json({ message: "Ошибка при удалении файла" });
+    }
+  });
 
   // Создаем статический маршрут для доступа к загруженным файлам
   app.use("/uploads", (req, res, next) => {

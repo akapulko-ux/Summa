@@ -63,11 +63,27 @@ export function FileUpload({
     }
   };
 
-  const handleRemove = () => {
-    setPreviewUrl(null);
-    onUpload("");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+  const handleRemove = async () => {
+    try {
+      // Если есть URL файла и он загружен на сервер (начинается с /uploads/)
+      if (previewUrl && previewUrl.startsWith('/uploads/')) {
+        // Удаляем файл с сервера
+        await fetch(`/api/upload/icon?iconUrl=${encodeURIComponent(previewUrl)}`, {
+          method: 'DELETE',
+        });
+      }
+      
+      // Очищаем URL в родительском компоненте
+      setPreviewUrl(null);
+      onUpload("");
+      
+      // Сбрасываем поле ввода файла
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Error removing file:", error);
+      setError("Ошибка при удалении файла");
     }
   };
 
