@@ -1493,15 +1493,7 @@ export const en: Translation = {
     noUsers: "No users found",
     userDetails: "User Details",
     userDetailsDescription: "View and edit user details",
-    searchPlaceholder: "Search users...",
-    columns: {
-      name: "Name",
-      email: "Email",
-      company: "Company",
-      status: "Status",
-      subscriptions: "Subscriptions",
-      actions: "Actions"
-    }
+    searchPlaceholder: "Search users..."
   },
 
   profile: {
@@ -2199,16 +2191,21 @@ export const ru: Translation = {
       sortUser: "Пользователю",
       sortStatus: "Статусу",
       sortPrice: "Цене",
+      sortPeriod: "Периоду",
+      sortTitle: "Названию",
+      sortStartDate: "Дате начала", 
+      sortEndDate: "Дате окончания",
+      sortDomain: "Домену",
       sortCreatedAt: "Дате создания",
       sortOrder: "Порядок сортировки",
       selectSortOrder: "Выберите порядок сортировки",
+      sortOptionsDescription: "Выберите поле и порядок сортировки",
       priceMin: "Мин. цена",
       priceMax: "Макс. цена",
       startDateFrom: "Дата начала (с)",
       startDateTo: "Дата начала (по)",
       endDateFrom: "Дата окончания (с)",
-      endDateTo: "Дата окончания (по)",
-      sortOptionsDescription: "Выберите поле для сортировки и порядок"
+      endDateTo: "Дата окончания (по)"
     },
     columns: {
       service: "Сервис",
