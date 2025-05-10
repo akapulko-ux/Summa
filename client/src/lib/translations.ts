@@ -1317,6 +1317,11 @@ export const en: Translation = {
     active: "Active",
     activeUntil: "Active until",
     nextPayment: "Next payment",
+    periodValues: {
+      monthly: "Monthly",
+      quarterly: "Quarterly",
+      yearly: "Yearly"
+    },
   },
 
   users: {
@@ -2050,11 +2055,7 @@ export const ru: Translation = {
       expired: "Истекла",
       canceled: "Отменена"
     },
-    periodValues: {
-      monthly: "Ежемесячно",
-      quarterly: "Ежеквартально",
-      yearly: "Ежегодно"
-    },
+
     unknownService: "Неизвестный сервис",
     errorLoading: "Ошибка загрузки подписок",
   },
