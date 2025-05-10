@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema } from "@shared/schema";
+import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema, insertCashbackTransactionSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { zValidationErrorToMessage } from "./utils";
 import backupRoutes from "./backup/backup-routes";
