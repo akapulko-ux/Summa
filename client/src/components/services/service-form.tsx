@@ -30,7 +30,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 const serviceFormSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   description: z.string().optional(),
-  iconUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
+  iconUrl: z.string().optional().or(z.literal("")),
   cashback: z.string().regex(/^(\d+(\.\d{1,2})?%?|\d+(\.\d{1,2})?)$/, {
     message: "Enter a valid number or percentage (e.g., 5, 5.00, 5%)",
   }).optional().or(z.literal("")),
