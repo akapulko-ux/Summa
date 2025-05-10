@@ -31,9 +31,9 @@ function Router() {
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/subscriptions" component={SubscriptionsPage} />
       <ProtectedRoute path="/services" component={ClientServicesPage} />
-      <ProtectedRoute path="/cashback" component={CashbackPage} />
       
       {/* Административные маршруты (доступны только для администраторов) */}
+      <AdminRoute path="/admin/cashback" component={CashbackPage} />
       <AdminRoute path="/admin/subscriptions" component={AllSubscriptionsPage} />
       <AdminRoute path="/admin/services" component={ServicesPage} />
       <AdminRoute path="/admin/users" component={UserManagement} />
