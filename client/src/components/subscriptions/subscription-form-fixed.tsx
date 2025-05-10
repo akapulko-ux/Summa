@@ -83,14 +83,15 @@ export function SubscriptionForm({
     queryKey: ["/api/services"],
   });
   
-  // Фильтруем сервисы, чтобы отображать только стандартные сервисы
-  // и кастомные сервисы текущего пользователя
-  const filteredServices = servicesData?.services 
-    ? servicesData.services.filter(service => 
-        !service.isCustom || // стандартные сервисы
-        (service.isCustom && service.ownerId === user?.id) // кастомные сервисы текущего пользователя
-      )
-    : [];
+  // Используем внешние сервисы, если они предоставлены, иначе фильтруем сервисы из API
+  const filteredServices = externalServices 
+    ? externalServices
+    : (servicesData?.services 
+      ? servicesData.services.filter((service: Service) => 
+          !service.isCustom || // стандартные сервисы
+          (service.isCustom && service.ownerId === (userId || user?.id)) // кастомные сервисы текущего/указанного пользователя
+        )
+      : []);
 
   // Create mutation for new subscriptions
   const createMutation = useMutation({
@@ -101,7 +102,7 @@ export function SubscriptionForm({
       // Создаем базовую структуру данных
       const transformedData: any = {
         title: data.title,
-        userId: user?.id, // Всегда устанавливаем текущего пользователя
+        userId: userId || user?.id, // Используем переданный userId, если он есть, иначе текущего пользователя
         domain: data.domain || undefined,
         loginId: data.loginId || undefined,
         paymentPeriod: data.paymentPeriod || "monthly",
@@ -120,7 +121,7 @@ export function SubscriptionForm({
         let existingCustomService = null;
         if (servicesData?.services) {
           existingCustomService = servicesData.services.find(
-            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === user?.id
+            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === (userId || user?.id)
           );
         }
         
@@ -228,7 +229,7 @@ export function SubscriptionForm({
         let existingCustomService = null;
         if (servicesData?.services) {
           existingCustomService = servicesData.services.find(
-            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === user?.id
+            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === (userId || user?.id)
           );
         }
         
