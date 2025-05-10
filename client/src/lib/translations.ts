@@ -522,8 +522,6 @@ export type Translation = {
     addButton: string;
     addTitle: string;
     addDescription: string;
-    editTitle: string;
-    editDescription: string;
     addSuccess: string;
     addSuccessDescription: string;
     addError: string;
@@ -1354,15 +1352,6 @@ export const en: Translation = {
     searchService: "Search by service",
     searchUser: "Search by user",
     searchDomain: "Search by domain",
-    addButton: "Add Subscription",
-    addTitle: "Add Subscription",
-    addDescription: "Create a new subscription",
-    editTitle: "Edit Subscription",
-    editDescription: "Update subscription details",
-    optional: "Optional",
-    selectPeriod: "Select period",
-    amount: "Amount",
-    selectStatus: "Select status",
     filters: {
       selectStatus: "Select Status",
       statusAll: "All",
@@ -2067,8 +2056,6 @@ export const ru: Translation = {
     addButton: "Добавить подписку",
     addTitle: "Добавить подписку",
     addDescription: "Создать новую подписку",
-    editTitle: "Редактирование подписки",
-    editDescription: "Изменить данные подписки",
     optional: "Опционально",
     selectPeriod: "Выберите период",
     amount: "Сумма",
