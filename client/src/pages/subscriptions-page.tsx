@@ -45,7 +45,7 @@ export default function SubscriptionsPage() {
       </div>
 
       {isAdmin ? (
-        <AdvancedSubscriptionList showAddButton={true} />
+        <AdvancedSubscriptionList showAddButton={false} />
       ) : (
         <SubscriptionList />
       )}
