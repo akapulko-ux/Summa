@@ -576,7 +576,7 @@ export function SubscriptionFilters({
           </div>
         </div>
 
-        <SheetFooter className="flex-row justify-between gap-2 pt-2 border-t">
+        <SheetFooter className="flex flex-col gap-2 pt-2 border-t">
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -593,11 +593,14 @@ export function SubscriptionFilters({
               {t('subscriptions.resetColumns')}
             </Button>
           </div>
-          <SheetClose asChild>
-            <Button size="sm" onClick={applyFilters}>
-              {t('common.applyFilters')}
-            </Button>
-          </SheetClose>
+          
+          <div className="mt-4 flex justify-center">
+            <SheetClose asChild>
+              <Button className="w-full" onClick={applyFilters}>
+                {t('common.applyFilters')}
+              </Button>
+            </SheetClose>
+          </div>
         </SheetFooter>
       </SheetContent>
     </Sheet>
