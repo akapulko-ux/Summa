@@ -53,7 +53,7 @@ export class TelegramBotManager implements ITelegramBotManager {
     // Обработка команды /start
     this.bot.onText(/\/start/, (msg) => {
       const chatId = msg.chat.id;
-      this.bot.sendMessage(chatId, 'Добро пожаловать в SaaSly! Используйте /link <код> для подключения вашего аккаунта.');
+      this.bot.sendMessage(chatId, 'Добро пожаловать в Сумма! Используйте /link <код> для подключения вашего аккаунта.');
     });
     
     // Обработка команды /help
@@ -62,7 +62,7 @@ export class TelegramBotManager implements ITelegramBotManager {
       this.bot.sendMessage(chatId, 
         'Доступные команды:\n' +
         '/start - Начать работу с ботом\n' +
-        '/link <код> - Привязать ваш аккаунт SaaSly\n' +
+        '/link <код> - Привязать ваш аккаунт Сумма\n' +
         '/status - Проверить статус подписок\n' +
         '/help - Показать эту справку'
       );
@@ -312,7 +312,7 @@ export class TelegramBotManager implements ITelegramBotManager {
         const telegramChatId = parseInt(user.telegramChatId);
         await this.bot.sendMessage(
           telegramChatId, 
-          'Ваш аккаунт Telegram был отключен от SaaSly. Вы больше не будете получать уведомления. Для повторного подключения используйте код из вашего профиля.'
+          'Ваш аккаунт Telegram был отключен от Сумма. Вы больше не будете получать уведомления. Для повторного подключения используйте код из вашего профиля.'
         );
       } catch (notifyError) {
         console.error('Error sending disconnect notification:', notifyError);
