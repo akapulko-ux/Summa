@@ -54,6 +54,7 @@ export const subscriptions = pgTable('subscriptions', {
   licensesCount: integer('licenses_count').default(1),
   usersCount: integer('users_count').default(1),
   status: subscriptionStatusEnum('status').default('active'),
+  customFields: jsonb('custom_fields').default({}),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -125,6 +126,7 @@ export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
   licensesCount: z.number().default(1),
   usersCount: z.number().default(1),
   status: z.enum(['active', 'pending', 'expired', 'canceled']).default('active'),
+  customFields: z.record(z.any()).optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
 export const insertCustomFieldSchema = createInsertSchema(customFields, {
