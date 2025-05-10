@@ -82,13 +82,13 @@ export function ServiceFiltersComponent({
 
   return (
     <div className="flex flex-col space-y-4 w-full">
-      <div className="flex flex-col sm:flex-row gap-2 w-full">
+      <div className="flex items-center gap-2 w-full">
         <div className="relative flex-1">
           <Input
             placeholder={t("services.search")}
             value={filters.search}
             onChange={handleSearchChange}
-            className="pl-8 w-full"
+            className="pl-8"
           />
           <div className="absolute left-2.5 top-2.5 text-muted-foreground">
             <svg
@@ -116,125 +116,116 @@ export function ServiceFiltersComponent({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2 justify-end">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="gap-2 whitespace-nowrap">
-                <Filter size={16} />
-                {t("common.filter")}
-                {filtersApplied && (
-                  <Badge variant="secondary" className="ml-1 px-1 h-5">
-                    !
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[700px] sm:w-[1024px]">
-              <SheetHeader>
-                <SheetTitle>{t("common.filterOptions")}</SheetTitle>
-                <SheetDescription>
-                  {t("services.filterDesc")}
-                </SheetDescription>
-              </SheetHeader>
-              <div className="my-6 space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="status">{t("common.status")}</Label>
-                  <Select
-                    value={localFilters.status}
-                    onValueChange={(value) =>
-                      handleFilterChange("status", value as "all" | "active" | "inactive")
-                    }
-                  >
-                    <SelectTrigger id="status">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t("services.statusAll")}</SelectItem>
-                      <SelectItem value="active">{t("common.active")}</SelectItem>
-                      <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <Filter size={16} />
+              {t("common.filter")}
+              {filtersApplied && (
+                <Badge variant="secondary" className="ml-1 px-1 h-5">
+                  !
+                </Badge>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-[300px] sm:w-[400px]">
+            <SheetHeader>
+              <SheetTitle>{t("common.filterOptions")}</SheetTitle>
+              <SheetDescription>
+                {t("services.filterDesc")}
+              </SheetDescription>
+            </SheetHeader>
+            <div className="my-6 space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="status">{t("common.status")}</Label>
+                <Select
+                  value={localFilters.status}
+                  onValueChange={(value) =>
+                    handleFilterChange("status", value as "all" | "active" | "inactive")
+                  }
+                >
+                  <SelectTrigger id="status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t("services.statusAll")}</SelectItem>
+                    <SelectItem value="active">{t("common.active")}</SelectItem>
+                    <SelectItem value="inactive">{t("common.inactive")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                <div className="space-y-2">
-                  <Label>{t("common.sortOptions")}</Label>
-                  <div className="flex flex-col space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="sortBy">{t("common.sortBy")}</Label>
-                      <Select
-                        value={localFilters.sortBy}
-                        onValueChange={(value) => handleFilterChange("sortBy", value)}
-                      >
-                        <SelectTrigger id="sortBy">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {sortOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+              <div className="space-y-2">
+                <Label>{t("common.sortOptions")}</Label>
+                <div className="flex flex-col space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="sortBy">{t("common.sortBy")}</Label>
+                    <Select
+                      value={localFilters.sortBy}
+                      onValueChange={(value) => handleFilterChange("sortBy", value)}
+                    >
+                      <SelectTrigger id="sortBy">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sortOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="sortOrder">{t("common.sortOrder")}</Label>
-                      <Select
-                        value={localFilters.sortOrder}
-                        onValueChange={(value) =>
-                          handleFilterChange("sortOrder", value as "asc" | "desc")
-                        }
-                      >
-                        <SelectTrigger id="sortOrder">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="asc">{t("common.ascending")}</SelectItem>
-                          <SelectItem value="desc">{t("common.descending")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sortOrder">{t("common.sortOrder")}</Label>
+                    <Select
+                      value={localFilters.sortOrder}
+                      onValueChange={(value) =>
+                        handleFilterChange("sortOrder", value as "asc" | "desc")
+                      }
+                    >
+                      <SelectTrigger id="sortOrder">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="asc">{t("common.ascending")}</SelectItem>
+                        <SelectItem value="desc">{t("common.descending")}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
-              <SheetFooter className="flex flex-col sm:flex-row w-full gap-2 pt-2 border-t">
-                <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full sm:min-w-[130px] whitespace-nowrap text-[13px] sm:text-sm px-3 py-1"
-                    onClick={resetFilters}
-                  >
-                    {t("common.clearFilters")}
-                  </Button>
-                </div>
-                <SheetClose asChild className="w-full sm:w-auto ml-auto">
-                  <Button 
-                    size="sm" 
-                    className="w-full sm:min-w-[170px] whitespace-nowrap text-[13px] sm:text-sm px-3 py-1 font-medium"
-                    onClick={applyFilters}
-                  >
-                    {t("common.applyFilters")}
-                  </Button>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+            </div>
+            <SheetFooter className="flex flex-col sm:flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+                className="w-full sm:w-auto"
+              >
+                {t("common.clearFilters")}
+              </Button>
+              <SheetClose asChild>
+                <Button onClick={applyFilters} className="w-full sm:w-auto">
+                  {t("common.applyFilters")}
+                </Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={resetFilters}
-            disabled={!filtersApplied}
-            className="relative whitespace-nowrap"
-          >
-            <SlidersHorizontal size={16} />
-            {filtersApplied && (
-              <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
-            )}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={resetFilters}
+          disabled={!filtersApplied}
+          className="relative"
+        >
+          <SlidersHorizontal size={16} />
+          {filtersApplied && (
+            <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+          )}
+        </Button>
       </div>
 
       {filtersApplied && (
