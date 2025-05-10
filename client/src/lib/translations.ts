@@ -501,6 +501,9 @@ export type Translation = {
       period: string;
       createdAt: string;
       actions: string;
+      startDate: string;
+      endDate: string;
+      amount: string;
     };
     status: {
       active: string;
@@ -542,15 +545,6 @@ export type Translation = {
       pending: string;
       expired: string;
       canceled: string;
-    };
-    columns: {
-      service: string;
-      startDate: string;
-      endDate: string;
-      amount: string;
-      period: string;
-      status: string;
-      actions: string;
     };
     unknownService: string;
     errorLoading: string;
@@ -1356,6 +1350,13 @@ export const en: Translation = {
     searchUser: "Search by user",
     searchDomain: "Search by domain",
     filters: {
+      selectStatus: "Select Status",
+      statusAll: "All",
+      statusActive: "Active",
+      statusPending: "Pending",
+      statusExpired: "Expired",
+      statusCanceled: "Canceled",
+      selectSortField: "Select Sort Field", 
       priceMin: "Min Price",
       priceMax: "Max Price",
       periodAll: "All Periods",
@@ -2061,8 +2062,6 @@ export const ru: Translation = {
     addButton: "Добавить подписку",
     addTitle: "Добавить подписку",
     addDescription: "Создать новую подписку",
-    startDate: "Дата начала",
-    endDate: "Дата окончания",
     optional: "Опционально",
     selectPeriod: "Выберите период",
     amount: "Сумма",
