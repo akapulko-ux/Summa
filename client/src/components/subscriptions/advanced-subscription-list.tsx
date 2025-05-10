@@ -162,6 +162,12 @@ export function AdvancedSubscriptionList({
   const { data: servicesData } = useQuery<{ services: any[]; total: number }>({
     queryKey: ["/api/services"],
   });
+
+  // Получение данных о пользователях
+  const { data: usersData } = useQuery<any[]>({
+    queryKey: ["/api/users"],
+    enabled: user?.role === 'admin', // Запрашиваем только если пользователь - админ
+  });
   
   // Обогащаем данные подписок информацией о сервисах и пользователях
   const enrichSubscriptions = (subscriptions: any[]): SubscriptionWithExtras[] => {
@@ -169,19 +175,22 @@ export function AdvancedSubscriptionList({
     
     // Извлекаем массив сервисов, если он доступен
     const servicesList = servicesData?.services || [];
-    
-    console.log("Services data structure:", servicesData);
-    console.log("Services list extracted:", servicesList);
+    // Получаем список пользователей
+    const usersList = usersData || [];
     
     return subscriptions.map(sub => {
       // Находим информацию о сервисе
       const service = servicesList.find(s => s.id === sub.serviceId);
+      // Находим информацию о пользователе
+      const userInfo = usersList.find(u => u.id === sub.userId);
       
       return {
         ...sub,
         serviceName: service?.title || sub.serviceName || t('subscriptions.unknownService'),
         serviceTitle: service?.title || sub.serviceTitle || t('subscriptions.unknownService'),
-        // Другие поля уже могут существовать в объекте sub
+        userName: userInfo?.name || sub.userName || t('common.notAvailable'),
+        userEmail: userInfo?.email || sub.userEmail || t('common.notAvailable'),
+        companyName: userInfo?.company || sub.companyName || t('common.notAvailable'),
       };
     });
   };
