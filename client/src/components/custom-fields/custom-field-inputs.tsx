@@ -69,7 +69,11 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
   // Обновление формы при изменении кастомных полей
   useEffect(() => {
     if (customFields && customFields.length > 0) {
-      const newFieldValues = { ...customFieldValues };
+      // Проверяем, есть ли уже сохраненные значения в форме
+      const existingValues = form.getValues('customFields') || {};
+      console.log("Existing form customFields:", existingValues);
+      
+      const newFieldValues = { ...existingValues };
       
       // Инициализируем значения для кастомных полей
       customFields.forEach((field: CustomField) => {
@@ -89,11 +93,11 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
 
       setCustomFieldValues(newFieldValues);
       
-      // Устанавливаем значения в форму
-      form.setValue('customFields', newFieldValues);
-      
       // Логируем значения для отладки
       console.log("CustomFieldInputs: Setting custom field values:", newFieldValues);
+      
+      // Устанавливаем значения в форму
+      form.setValue('customFields', newFieldValues);
     }
   }, [customFields, form, serviceId]);
 

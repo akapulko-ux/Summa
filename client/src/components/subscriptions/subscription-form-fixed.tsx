@@ -425,6 +425,12 @@ export function SubscriptionForm({
           // текущего пользователя, то устанавливаем поле как нередактируемое (isCustomService = false)
           // В противном случае (кастомный сервис другого пользователя) - делаем поле редактируемым
           setIsCustomService(service.isCustom && service.ownerId !== (userId || user?.id));
+          
+          // Для отладки: выводим информацию о пользовательских полях
+          console.log("Loading subscription with customFields:", data.customFields);
+          if (data.customFields && Object.keys(data.customFields).length > 0) {
+            console.log("Found non-empty customFields for subscription:", data.customFields);
+          }
         } else {
           setSelectedServiceName("");
           setIsCustomService(true);
