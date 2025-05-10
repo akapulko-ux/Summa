@@ -199,11 +199,11 @@ export function ServiceFiltersComponent({
                 </div>
               </div>
               <SheetFooter className="flex flex-col sm:flex-row w-full gap-2 pt-2 border-t">
-                <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
+                <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full sm:w-auto whitespace-nowrap"
+                    className="w-full sm:min-w-[130px] whitespace-nowrap text-[13px] sm:text-sm px-3 py-1"
                     onClick={resetFilters}
                   >
                     {t("common.clearFilters")}
@@ -212,7 +212,7 @@ export function ServiceFiltersComponent({
                 <SheetClose asChild className="w-full sm:w-auto ml-auto">
                   <Button 
                     size="sm" 
-                    className="w-full sm:w-auto whitespace-nowrap"
+                    className="w-full sm:min-w-[170px] whitespace-nowrap text-[13px] sm:text-sm px-3 py-1 font-medium"
                     onClick={applyFilters}
                   >
                     {t("common.applyFilters")}
