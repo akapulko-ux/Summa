@@ -131,7 +131,8 @@ export function SubscriptionForm({
         paymentPeriod: data.paymentPeriod || "monthly",
         licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
         usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
-        status: data.status || "active"
+        status: data.status || "active",
+        customFields: data.customFields || {} // Добавляем пользовательские поля
       };
       
       // Если указан существующий сервис (не "other")
@@ -257,7 +258,8 @@ export function SubscriptionForm({
         paymentPeriod: data.paymentPeriod || "monthly",
         licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
         usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
-        status: data.status || "active"
+        status: data.status || "active",
+        customFields: data.customFields || {} // Добавляем пользовательские поля
       };
       
       // Если указан существующий сервис (не "other")
