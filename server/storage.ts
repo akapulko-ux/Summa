@@ -155,8 +155,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteService(id: number): Promise<boolean> {
-    const result = await db.delete(services).where(eq(services.id, id));
-    return result.count > 0;
+    try {
+      const result = await db.delete(services).where(eq(services.id, id));
+      console.log(`Service deletion result for ID ${id}:`, result);
+      return result.count > 0;
+    } catch (error) {
+      console.error(`Error deleting service with ID ${id}:`, error);
+      throw error;
+    }
   }
 
   async listServices(

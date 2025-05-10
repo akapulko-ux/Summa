@@ -65,6 +65,7 @@ export function ServiceList() {
     data,
     isLoading,
     isError,
+    refetch
   } = useQuery<{ services: Service[], total: number }>({
     queryKey: ["/api/services", { page, limit, ...filters }],
   });
