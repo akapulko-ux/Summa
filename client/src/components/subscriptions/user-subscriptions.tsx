@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Subscription, Service } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { SubscriptionForm } from "@/components/subscriptions/subscription-form-fixed";
 import {
   Card,
   CardContent,
@@ -46,7 +47,8 @@ import {
   RefreshCw, 
   Trash, 
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Pencil
 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -77,6 +79,8 @@ export function UserSubscriptions({ userId }: UserSubscriptionsProps) {
   const { t, language } = useTranslations();
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null);
   const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
   
   // Получение списка подписок пользователя с названиями сервисов
