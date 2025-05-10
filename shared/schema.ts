@@ -110,7 +110,17 @@ export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
   domain: z.string().optional(),
   loginId: z.string().optional(),
   paymentPeriod: z.enum(['monthly', 'quarterly', 'yearly']).default('monthly'),
-  paidUntil: z.date().optional(),
+  paidUntil: z.string().optional().transform(val => {
+    if (!val) return undefined;
+    try {
+      // Преобразуем строку даты в ISO формат
+      const date = new Date(val);
+      return !isNaN(date.getTime()) ? date : undefined;
+    } catch (e) {
+      console.error("Error parsing date:", e);
+      return undefined;
+    }
+  }),
   paymentAmount: z.number().optional(),
   licensesCount: z.number().default(1),
   usersCount: z.number().default(1),
