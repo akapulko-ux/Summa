@@ -61,7 +61,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   ];
 
   const adminNavigationItems = [
-    { title: t('nav.subscriptions'), path: '/admin/subscriptions', icon: <CreditCard className="h-5 w-5 mr-2" /> },
     { title: t('nav.services'), path: '/admin/services', icon: <Settings className="h-5 w-5 mr-2" /> },
     { title: t('nav.users'), path: '/admin/users', icon: <Users className="h-5 w-5 mr-2" /> },
     { title: t('nav.backups'), path: '/admin/backups', icon: <Database className="h-5 w-5 mr-2" /> },
@@ -170,14 +169,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
             {isAdmin && (
               <>
-                <Link href="/admin/subscriptions">
-                  <span className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
-                    location === "/admin/subscriptions" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
-                  )}>
-                    {t('nav.subscriptions')}
-                  </span>
-                </Link>
+
                 <Link href="/admin/services">
                   <span className={cn(
                     "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
@@ -251,12 +243,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </DropdownMenuItem>
                 {isAdmin && (
                   <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin/subscriptions">
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        <span>{t('nav.subscriptions')}</span>
-                      </Link>
-                    </DropdownMenuItem>
+
                     <DropdownMenuItem asChild>
                       <Link href="/admin/analytics">
                         <BarChart className="mr-2 h-4 w-4" />
