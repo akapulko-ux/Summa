@@ -457,6 +457,16 @@ export type Translation = {
     searchService: string;
     searchUser: string;
     searchDomain: string;
+    serviceName: string;
+    otherCustom: string;
+    enterTitle: string;
+    enterDomain: string;
+    login: string;
+    enterLogin: string;
+    enterAmount: string;
+    enterUsersCount: string;
+    plan: string;
+    selectPlan: string;
     searchCompany: string;
     noSubscriptionsFound: string;
     adjustFilters: string;
