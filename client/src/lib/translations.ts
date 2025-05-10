@@ -2087,6 +2087,7 @@ export const ru: Translation = {
     startDateTo: "Дата начала (по)",
     endDateFrom: "Дата окончания (с)",
     endDateTo: "Дата окончания (по)",
+    resetFilters: "Сбросить",
     resetColumns: "Сбросить столбцы",
     sortOptionsDescription: "Выберите поле и порядок сортировки",
     filters: {
