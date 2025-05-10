@@ -129,7 +129,7 @@ export function ServiceFiltersComponent({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent className="w-[360px] sm:w-[600px]">
+            <SheetContent className="w-[380px] sm:w-[680px]">
               <SheetHeader>
                 <SheetTitle>{t("common.filterOptions")}</SheetTitle>
                 <SheetDescription>

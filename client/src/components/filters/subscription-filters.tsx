@@ -159,7 +159,7 @@ export function SubscriptionFilters({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[360px] sm:w-[600px] overflow-y-auto">
+      <SheetContent className="w-[380px] sm:w-[680px] overflow-y-auto">
         <SheetHeader className="px-1">
           <SheetTitle>{t('common.filterOptions')}</SheetTitle>
           <SheetDescription>
@@ -577,11 +577,11 @@ export function SubscriptionFilters({
         </div>
 
         <SheetFooter className="flex flex-col sm:flex-row w-full gap-2 pt-2 border-t">
-          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
             <Button
               variant="outline"
               size="sm"
-              className="w-full sm:w-auto whitespace-nowrap"
+              className="w-full sm:min-w-[130px] whitespace-nowrap text-[13px] sm:text-sm px-3 py-1"
               onClick={resetFilters}
             >
               {t('subscriptions.resetFilters')}
@@ -589,14 +589,18 @@ export function SubscriptionFilters({
             <Button
               variant="outline"
               size="sm"
-              className="w-full sm:w-auto whitespace-nowrap"
+              className="w-full sm:min-w-[130px] whitespace-nowrap text-[13px] sm:text-sm px-3 py-1"
               onClick={resetColumnVisibility}
             >
               {t('subscriptions.resetColumns')}
             </Button>
           </div>
           <SheetClose asChild className="w-full sm:w-auto ml-auto">
-            <Button size="sm" className="w-full sm:w-auto whitespace-nowrap" onClick={applyFilters}>
+            <Button 
+              size="sm" 
+              className="w-full sm:min-w-[170px] whitespace-nowrap text-[13px] sm:text-sm px-3 py-1 font-medium" 
+              onClick={applyFilters}
+            >
               {t('common.applyFilters')}
             </Button>
           </SheetClose>
