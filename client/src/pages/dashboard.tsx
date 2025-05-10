@@ -4,7 +4,7 @@ import { RecentSubscriptions } from "@/components/dashboard/recent-subscriptions
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { SubscriptionForm } from "@/components/subscriptions/subscription-form-fixed";
+import { SubscriptionForm } from "@/components/subscriptions/subscription-form-updated";
 import { ServiceForm } from "@/components/services/service-form";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";

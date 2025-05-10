@@ -44,7 +44,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Subscription, Service, User as UserType } from "@shared/schema";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { SubscriptionForm } from "./subscription-form-fixed";
+import { SubscriptionForm } from "./subscription-form-updated";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
 import { SubscriptionFilters, SubscriptionColumnVisibility } from "../filters/subscription-filters";
