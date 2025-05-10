@@ -204,7 +204,7 @@ export function SubscriptionFilters({
 
             {/* Пользователь */}
             <div className="space-y-2">
-              <Label htmlFor="user">{t('subscriptions.columns.user')}</Label>
+              <Label htmlFor="user">{t('users.title')}</Label>
               <Input
                 id="user"
                 placeholder={t('subscriptions.searchUser')}

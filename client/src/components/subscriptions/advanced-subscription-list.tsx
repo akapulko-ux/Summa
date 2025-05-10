@@ -448,7 +448,7 @@ export function AdvancedSubscriptionList({
                 {columnVisibility.title && <TableHead>{t('subscriptions.subscriptionTitle')}</TableHead>}
                 {columnVisibility.service && <TableHead>{t('subscriptions.service')}</TableHead>}
                 {columnVisibility.domain && <TableHead>{t('subscriptions.domain')}</TableHead>}
-                {columnVisibility.user && <TableHead>{t('subscriptions.columns.user')}</TableHead>}
+                {columnVisibility.user && <TableHead>{t('users.title')}</TableHead>}
                 {columnVisibility.company && <TableHead>{t('users.userCompany')}</TableHead>}
                 {columnVisibility.price && <TableHead>{t('subscriptions.paymentAmount')}</TableHead>}
                 {columnVisibility.period && <TableHead>{t('subscriptions.paymentPeriod')}</TableHead>}
