@@ -84,7 +84,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="flex flex-col h-full">
                 <div className="flex items-center border-b p-4">
                   <div className="flex items-center">
-                    <h2 className="text-lg font-semibold">SaaSly</h2>
+                    <h2 className="text-lg font-semibold">Сумма</h2>
                   </div>
                 </div>
                 <nav className="flex-1 overflow-auto p-4">
@@ -137,7 +137,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Sheet>
           <Link href="/">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold">SaaSly</span>
+              <span className="text-xl font-bold">Сумма</span>
             </div>
           </Link>
           <nav className="ml-8 hidden md:flex gap-6 items-center">

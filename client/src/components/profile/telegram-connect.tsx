@@ -132,7 +132,7 @@ export function TelegramConnect() {
       <Alert className="mt-4">
         <AlertTitle className="font-semibold">{t('telegram.linkInstructions')}</AlertTitle>
         <AlertDescription className="mt-2">
-          <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/SaaSlyServiceBot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@SaaSlyServiceBot</a></p>
+          <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/СуммаServiceBot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@СуммаServiceBot</a></p>
           <p className="mb-2">2. {t('telegram.sendCommand')}: <code className="bg-muted px-2 py-1 rounded">/link {linkCode}</code></p>
           <p>{t('telegram.afterLink')}</p>
         </AlertDescription>

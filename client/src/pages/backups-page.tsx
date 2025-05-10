@@ -784,7 +784,7 @@ export default function BackupsPage() {
   return (
     <AppLayout title={t('backups.title')}>
       <Helmet>
-        <title>{language === 'ru' ? "Резервное копирование | SaaSly" : "Backup Management | SaaSly"}</title>
+        <title>{language === 'ru' ? "Резервное копирование | Сумма" : "Backup Management | Сумма"}</title>
       </Helmet>
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
