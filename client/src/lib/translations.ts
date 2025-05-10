@@ -1363,17 +1363,6 @@ export const en: Translation = {
     selectPeriod: "Select period",
     amount: "Amount",
     selectStatus: "Select status",
-    periods: {
-      monthly: "Monthly",
-      quarterly: "Quarterly",
-      yearly: "Yearly"
-    },
-    statuses: {
-      active: "Active",
-      pending: "Pending",
-      expired: "Expired",
-      canceled: "Canceled"
-    },
     filters: {
       selectStatus: "Select Status",
       statusAll: "All",
@@ -1424,10 +1413,6 @@ export const en: Translation = {
     showing: "Showing {current} of {total} users",
     searchPlaceholder: "Search users...",
     errorLoading: "Error loading users. Please try again.",
-    manageSubscriptions: "Manage Subscriptions",
-    manageSubscriptionsDescription: "Manage user's subscription details",
-    manageCustomFields: "Custom Fields",
-    manageCustomFieldsDescription: "Manage custom fields for this user",
     noUsersFound: "No users found.",
     columns: {
       name: "Name",
