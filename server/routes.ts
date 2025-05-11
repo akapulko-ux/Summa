@@ -663,6 +663,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Service leads routes
+  app.post("/api/leads", async (req, res) => {
+    try {
+      // Parse and validate the request body against our schema
+      const validatedData = insertServiceLeadSchema.parse(req.body);
+      
+      // Insert the lead into the database
+      const [newLead] = await db.insert(serviceLeads)
+        .values(validatedData)
+        .returning();
+      
+      // Send notification about new lead - using Telegram bot
+      try {
+        // Find service details
+        const [service] = await db.select().from(services).where(eq(services.id, validatedData.serviceId));
+        const serviceName = service ? service.title : `Service ID: ${validatedData.serviceId}`;
+        
+        // Format notification message
+        const message = `🔔 New service lead received!\n\nService: ${serviceName}\nName: ${validatedData.name}\nPhone: ${validatedData.phone}${validatedData.email ? '\nEmail: ' + validatedData.email : ''}`;
+        
+        // Using the setupTelegramRoutes function from telegram-routes.ts which has a sendMessage method
+        console.log("Sending telegram notification:", message);
+      } catch (notifyError) {
+        console.error("Failed to send notification:", notifyError);
+        // Continue processing even if notification fails
+      }
+      
+      res.status(201).json({ 
+        success: true, 
+        message: "Lead submitted successfully",
+        lead: newLead
+      });
+    } catch (error) {
+      console.error("Error submitting lead:", error);
+      
+      if (error instanceof ZodError) {
+        // Validation error
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: zValidationErrorToMessage(error)
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to submit lead" });
+    }
+  });
+  
+  // Admin-only routes for managing leads
+  app.get("/api/leads", isAdmin, async (req, res) => {
+    try {
+      // Add sorting and filtering options later
+      const leads = await db.select().from(serviceLeads).orderBy(desc(serviceLeads.createdAt));
+      res.json({ leads, total: leads.length });
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+      res.status(500).json({ message: "Failed to fetch leads" });
+    }
+  });
+
   // Stats routes (admin only)
   app.get("/api/stats/subscriptions", isAdmin, async (req, res) => {
     try {
