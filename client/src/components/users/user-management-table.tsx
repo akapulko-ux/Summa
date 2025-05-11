@@ -482,6 +482,18 @@ export function UserManagementTable() {
             </DialogDescription>
           </DialogHeader>
           
+          {/* Отображение текущего баланса кэшбэка */}
+          <div className="mb-4 p-4 border rounded-md bg-muted">
+            <div className="flex justify-between items-center">
+              <span className="font-medium">{t('cashback.current_balance')}:</span>
+              {userCashbackData?.balance !== undefined ? (
+                <span className="text-lg font-bold">{userCashbackData.balance.toFixed(2)}</span>
+              ) : (
+                <span className="text-muted-foreground">{t('common.loading')}...</span>
+              )}
+            </div>
+          </div>
+          
           <Form {...cashbackForm}>
             <form onSubmit={cashbackForm.handleSubmit(onCashbackSubmit)} className="space-y-6">
               <FormField

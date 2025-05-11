@@ -820,6 +820,7 @@ export const en: Translation = {
     cashback_admin_description: "Use this form to add cashback to client accounts",
     cashback_client_description: "Your current cashback balance and transaction history",
     cashback_description_placeholder: "Enter a description for this cashback transaction",
+    current_balance: "Current Balance",
   },
   customFields: {
     title: "Custom Fields",
