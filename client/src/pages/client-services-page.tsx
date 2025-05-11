@@ -98,14 +98,14 @@ export default function ClientServicesPage() {
             className="w-full"
             onClick={() => setShowSubscriptionForm(true)}
           >
-            {t('services.добавитьВПодписки')}
+            {language === 'ru' ? 'Добавить в подписки' : 'Add to subscriptions'}
           </Button>
           <Button 
             size="sm" 
             className="w-full"
             onClick={() => setShowLeadForm(true)}
           >
-            {t('services.купить')}
+            {language === 'ru' ? 'Купить' : 'Buy'}
           </Button>
         </CardFooter>
         
@@ -194,13 +194,13 @@ export default function ClientServicesPage() {
                   size="sm"
                   onClick={() => setShowSubscriptionForm(true)}
                 >
-                  {t('services.добавитьВПодписки')}
+                  {language === 'ru' ? 'Добавить в подписки' : 'Add to subscriptions'}
                 </Button>
                 <Button 
                   size="sm"
                   onClick={() => setShowLeadForm(true)}
                 >
-                  {t('services.купить')}
+                  {language === 'ru' ? 'Купить' : 'Buy'}
                 </Button>
               </div>
             </div>
