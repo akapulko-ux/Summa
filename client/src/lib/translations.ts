@@ -319,6 +319,29 @@ export type Translation = {
   };
 
   // Сервисы
+  cashback: {
+    cashback: string;
+    cashback_balance: string;
+    cashback_history: string;
+    add_cashback: string;
+    client: string;
+    amount: string;
+    description: string;
+    select_client: string;
+    processing: string;
+    cashback_added_success: string;
+    cashback_add_error: string;
+    success: string;
+    error: string;
+    error_loading_data: string;
+    try_again: string;
+    no_cashback_transactions: string;
+    date: string;
+    cashback_admin_description: string;
+    cashback_client_description: string;
+    cashback_description_placeholder: string;
+  };
+
   services: {
     title: string;
     manageServices: string;
