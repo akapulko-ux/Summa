@@ -55,7 +55,7 @@ export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
 
   const leadMutation = useMutation({
     mutationFn: (data: ServiceLeadFormValues) => {
-      return apiRequest<{ success: boolean }>("/api/leads", {
+      return apiRequest("/api/leads", {
         method: "POST",
         data,
       });

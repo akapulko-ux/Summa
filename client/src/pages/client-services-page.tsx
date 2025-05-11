@@ -10,8 +10,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LayoutGrid, List, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription 
+} from "@/components/ui/dialog";
+import { ServiceLeadForm } from "@/components/services/service-lead-form";
+import { SubscriptionForm } from "@/components/subscriptions/subscription-form-fixed";
 
 export default function ClientServicesPage() {
   const { t, language } = useTranslations();
@@ -42,88 +50,197 @@ export default function ClientServicesPage() {
   );
 
   // Компонент для отображения карточки сервиса в сетке
-  const ServiceGridCard = ({ service }: { service: Service }) => (
-    <Card className="overflow-hidden">
-      <CardHeader className="p-4 pb-0">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
+  const ServiceGridCard = ({ service }: { service: Service }) => {
+    const [showLeadForm, setShowLeadForm] = useState(false);
+    const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
+    
+    return (
+      <Card className="overflow-hidden relative group">
+        <CardHeader className="p-4 pb-0">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              {service.iconUrl ? (
+                <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center bg-muted">
+                  <img 
+                    src={service.iconUrl} 
+                    alt={service.title} 
+                    className="w-10 h-10 object-contain" 
+                  />
+                </div>
+              ) : (
+                <div className="w-12 h-12 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-lg">
+                  {service.title.substring(0, 2).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <CardTitle className="text-base">{service.title}</CardTitle>
+                {service.cashback && (
+                  <Badge variant="outline" className="mt-1">
+                    {t('services.cashback')}: {service.cashback}
+                  </Badge>
+                )}
+                {service.commission && (
+                  <Badge variant="outline" className="mt-1 bg-amber-50">
+                    {t('services.commission')}: {service.commission}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 pt-3">
+          {service.description && <CardDescription>{service.description}</CardDescription>}
+        </CardContent>
+        <CardFooter className="p-4 pt-0 gap-2 flex-col">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full"
+            onClick={() => setShowSubscriptionForm(true)}
+          >
+            {t('services.добавитьВПодписки')}
+          </Button>
+          <Button 
+            size="sm" 
+            className="w-full"
+            onClick={() => setShowLeadForm(true)}
+          >
+            {t('services.купить')}
+          </Button>
+        </CardFooter>
+        
+        {/* Dialog для формы заявки */}
+        <Dialog open={showLeadForm} onOpenChange={setShowLeadForm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('leads.title')}</DialogTitle>
+              <DialogDescription>{t('leads.description')}</DialogDescription>
+            </DialogHeader>
+            
+            {/* Импортируем и используем нашу форму заявки */}
+            <ServiceLeadForm 
+              service={service} 
+              onSuccess={() => setShowLeadForm(false)} 
+            />
+          </DialogContent>
+        </Dialog>
+        
+        {/* Dialog для формы подписки */}
+        <Dialog open={showSubscriptionForm} onOpenChange={setShowSubscriptionForm}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>{t('subscriptions.addSubscription')}</DialogTitle>
+              <DialogDescription>
+                {t('subscriptions.addSubscriptionDescription')}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <SubscriptionFormFixed 
+              defaultService={service}
+              onSuccess={() => setShowSubscriptionForm(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      </Card>
+    );
+  };
+
+  // Компонент для отображения сервиса в списке
+  const ServiceListItem = ({ service }: { service: Service }) => {
+    const [showLeadForm, setShowLeadForm] = useState(false);
+    const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
+    
+    return (
+      <Card className="mb-2">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
             {service.iconUrl ? (
-              <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center bg-muted">
+              <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center bg-muted shrink-0">
                 <img 
                   src={service.iconUrl} 
                   alt={service.title} 
-                  className="w-10 h-10 object-contain" 
+                  className="w-8 h-8 object-contain" 
                 />
               </div>
             ) : (
-              <div className="w-12 h-12 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-lg">
+              <div className="w-10 h-10 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-lg shrink-0">
                 {service.title.substring(0, 2).toUpperCase()}
               </div>
             )}
-            <div>
-              <CardTitle className="text-base">{service.title}</CardTitle>
-              {service.cashback && (
-                <Badge variant="outline" className="mt-1">
-                  {t('services.cashback')}: {service.cashback}
-                </Badge>
-              )}
-              {service.commission && (
-                <Badge variant="outline" className="mt-1 bg-amber-50">
-                  {t('services.commission')}: {service.commission}
-                </Badge>
+            <div className="flex-1">
+              <div className="font-medium">{service.title}</div>
+              {service.description && (
+                <div className="text-sm text-muted-foreground line-clamp-1">
+                  {service.description}
+                </div>
               )}
             </div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-3">
-        {service.description && <CardDescription>{service.description}</CardDescription>}
-      </CardContent>
-    </Card>
-  );
-
-  // Компонент для отображения сервиса в списке
-  const ServiceListItem = ({ service }: { service: Service }) => (
-    <Card className="mb-2">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-4">
-          {service.iconUrl ? (
-            <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center bg-muted shrink-0">
-              <img 
-                src={service.iconUrl} 
-                alt={service.title} 
-                className="w-8 h-8 object-contain" 
-              />
-            </div>
-          ) : (
-            <div className="w-10 h-10 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-lg shrink-0">
-              {service.title.substring(0, 2).toUpperCase()}
-            </div>
-          )}
-          <div className="flex-1">
-            <div className="font-medium">{service.title}</div>
-            {service.description && (
-              <div className="text-sm text-muted-foreground line-clamp-1">
-                {service.description}
+            <div className="flex flex-col gap-2 items-end min-w-[250px]">
+              <div className="flex flex-col items-end mb-2">
+                {service.cashback && (
+                  <Badge variant="outline" className="mb-1">
+                    {t('services.cashback')}: {service.cashback}
+                  </Badge>
+                )}
+                {service.commission && (
+                  <Badge variant="outline" className="bg-amber-50">
+                    {t('services.commission')}: {service.commission}
+                  </Badge>
+                )}
               </div>
-            )}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowSubscriptionForm(true)}
+                >
+                  {t('services.добавитьВПодписки')}
+                </Button>
+                <Button 
+                  size="sm"
+                  onClick={() => setShowLeadForm(true)}
+                >
+                  {t('services.купить')}
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-end">
-            {service.cashback && (
-              <Badge variant="outline" className="mb-1">
-                {t('services.cashback')}: {service.cashback}
-              </Badge>
-            )}
-            {service.commission && (
-              <Badge variant="outline" className="bg-amber-50">
-                {t('services.commission')}: {service.commission}
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+        
+        {/* Dialog для формы заявки */}
+        <Dialog open={showLeadForm} onOpenChange={setShowLeadForm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('leads.title')}</DialogTitle>
+              <DialogDescription>{t('leads.description')}</DialogDescription>
+            </DialogHeader>
+            
+            <ServiceLeadForm 
+              service={service} 
+              onSuccess={() => setShowLeadForm(false)} 
+            />
+          </DialogContent>
+        </Dialog>
+        
+        {/* Dialog для формы подписки */}
+        <Dialog open={showSubscriptionForm} onOpenChange={setShowSubscriptionForm}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>{t('subscriptions.addSubscription')}</DialogTitle>
+              <DialogDescription>
+                {t('subscriptions.addSubscriptionDescription')}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <SubscriptionFormFixed 
+              defaultService={service}
+              onSuccess={() => setShowSubscriptionForm(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      </Card>
+    );
+  };
 
   return (
     <AppLayout title={t('services.availableServices')}>
