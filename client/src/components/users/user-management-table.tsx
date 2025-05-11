@@ -118,10 +118,28 @@ export function UserManagementTable() {
     mutationFn: async ({ userId, amount, description }: { userId: number, amount: number, description: string }) => {
       return await apiRequest("POST", `/api/users/${userId}/cashback`, { amount, description });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      toast({
+        title: t('cashback.success'),
+        description: t('cashback.cashback_added_success'),
+        variant: "default",
+      });
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      // Также инвалидируем кэш для запросов кэшбэка этого пользователя, если они существуют
+      if (selectedUserId) {
+        queryClient.invalidateQueries({ queryKey: [`/api/users/${selectedUserId}/cashback`] });
+      }
       setIsAddCashbackDialogOpen(false);
+      cashbackForm.reset(); // Очищаем форму
     },
+    onError: (error) => {
+      console.error("Error adding cashback:", error);
+      toast({
+        title: t('cashback.error'),
+        description: t('cashback.cashback_add_error'),
+        variant: "destructive",
+      });
+    }
   });
 
   const toggleSelectAll = () => {

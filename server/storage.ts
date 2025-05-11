@@ -775,9 +775,31 @@ export class DatabaseStorage implements IStorage {
   
   // Методы для работы с кэшбэком
   async addCashbackTransaction(transaction: InsertCashbackTransaction): Promise<CashbackTransaction> {
+    // Здесь нужно реализовать расчет текущего баланса кэшбэка для пользователя
+    // и обновить поле balanceAfter в транзакции
+    
+    // 1. Получаем последнюю транзакцию для этого пользователя, чтобы узнать текущий баланс
+    const [lastTransaction] = await db
+      .select()
+      .from(cashbackTransactions)
+      .where(eq(cashbackTransactions.userId, transaction.userId))
+      .orderBy(desc(cashbackTransactions.id))
+      .limit(1);
+    
+    // 2. Рассчитываем новый баланс (либо начинаем с 0, если транзакций еще не было)
+    const currentBalance = lastTransaction?.balanceAfter || 0;
+    const newBalance = currentBalance + transaction.amount;
+    
+    // 3. Добавляем информацию о новом балансе в транзакцию
+    const transactionWithBalance = {
+      ...transaction,
+      balanceAfter: newBalance
+    };
+    
+    // 4. Сохраняем транзакцию в базу
     const [result] = await db
       .insert(cashbackTransactions)
-      .values(transaction)
+      .values(transactionWithBalance)
       .returning();
     
     return result;

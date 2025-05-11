@@ -174,6 +174,7 @@ export const insertCashbackTransactionSchema = createInsertSchema(cashbackTransa
   userId: z.number(),
   amount: z.number(),
   description: z.string().optional(),
+  balanceAfter: z.number().optional(),
   createdBy: z.number().optional(),
 }).omit({ id: true, createdAt: true });
 
