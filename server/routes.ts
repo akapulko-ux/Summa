@@ -753,6 +753,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Получение текущего баланса кэшбэка пользователя
+  app.get("/api/users/:userId/cashback/balance", isAuthenticated, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Только админы могут просматривать кэшбэк других пользователей
+      if (req.user.id !== userId && req.user.role !== "admin") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const balance = await storage.getUserCashbackBalance(userId);
+      res.json({ balance });
+    } catch (error) {
+      console.error("Error fetching user cashback balance:", error);
+      res.status(500).json({ message: "Failed to fetch cashback balance" });
+    }
+  });
+  
   // Получение истории кэшбэка для пользователя
   app.get("/api/users/:userId/cashback", isAuthenticated, async (req, res) => {
     try {

@@ -75,6 +75,7 @@ export function UserManagementTable() {
   const [isSubscriptionsDialogOpen, setIsSubscriptionsDialogOpen] = useState(false);
   const [isCustomFieldsDialogOpen, setIsCustomFieldsDialogOpen] = useState(false);
   const [isAddCashbackDialogOpen, setIsAddCashbackDialogOpen] = useState(false);
+  const [currentUserBalance, setCurrentUserBalance] = useState<number | null>(null);
   
   // Инициализация формы для начисления кэшбэка
   const cashbackForm = useForm<CashbackFormValues>({
@@ -113,6 +114,18 @@ export function UserManagementTable() {
     },
   });
   
+  // Запрос для получения текущего баланса кэшбэка пользователя
+  const {
+    data: userCashbackData,
+    refetch: refetchUserCashback
+  } = useQuery<{ balance: number }>({
+    queryKey: [`/api/users/${selectedUserId}/cashback/balance`],
+    enabled: !!selectedUserId && isAddCashbackDialogOpen,
+    onSuccess: (data) => {
+      setCurrentUserBalance(data.balance);
+    }
+  });
+  
   // Мутация для начисления кэшбэка
   const addCashbackMutation = useMutation({
     mutationFn: async ({ userId, amount, description }: { userId: number, amount: number, description: string }) => {
@@ -128,9 +141,11 @@ export function UserManagementTable() {
       // Также инвалидируем кэш для запросов кэшбэка этого пользователя, если они существуют
       if (selectedUserId) {
         queryClient.invalidateQueries({ queryKey: [`/api/users/${selectedUserId}/cashback`] });
+        queryClient.invalidateQueries({ queryKey: [`/api/users/${selectedUserId}/cashback/balance`] });
       }
       setIsAddCashbackDialogOpen(false);
       cashbackForm.reset(); // Очищаем форму
+      setCurrentUserBalance(null); // Сбрасываем текущий баланс
     },
     onError: (error) => {
       console.error("Error adding cashback:", error);
