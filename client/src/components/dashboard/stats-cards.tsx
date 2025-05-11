@@ -171,49 +171,10 @@ export function StatsCards() {
               ) : (
                 <>
                   <div className="text-2xl font-bold text-green-500">
-                    {cashbackBalanceData?.balance ? `${cashbackBalanceData.balance.toFixed(2)} ₽` : '0.00 ₽'}
+                    {cashbackBalanceData?.balance !== undefined ? `${cashbackBalanceData.balance.toFixed(2)} ₽` : '0.00 ₽'}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('cashback.current_balance')}
-                  </p>
-                </>
-              )}
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t('services.totalCashbackAmount')}</h3>
-                <span className="h-4 w-4 text-muted-foreground flex items-center justify-center text-sm">₽</span>
-              </div>
-              {isUserLoading ? (
-                <Skeleton className="h-8 w-24 my-1" />
-              ) : (
-                <>
-                  <div className="text-2xl font-bold text-green-500">
-                    {(() => {
-                      // Получаем все подписки пользователя
-                      const subscriptions = userSubscriptions?.subscriptions || [];
-                      // Суммируем денежные суммы кешбека из всех сервисов
-                      let totalCashbackAmount = 0;
-                      
-                      subscriptions.forEach(subscription => {
-                        // Рассчитываем кешбек в денежном эквиваленте
-                        if (subscription.serviceData?.cashbackPercent && subscription.paymentAmount) {
-                          const cashbackPercent = Number(subscription.serviceData.cashbackPercent);
-                          const paymentAmount = Number(subscription.paymentAmount);
-                          const cashbackAmount = (paymentAmount * cashbackPercent) / 100;
-                          totalCashbackAmount += cashbackAmount;
-                        }
-                      });
-                      
-                      // Форматируем как денежную сумму в рублях
-                      return `${totalCashbackAmount.toFixed(2)} ₽`;
-                    })()}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t('services.totalCashbackAmountDescription')}
                   </p>
                 </>
               )}
