@@ -135,8 +135,8 @@ export default function ClientServicesPage() {
               </DialogDescription>
             </DialogHeader>
             
-            <SubscriptionFormFixed 
-              defaultService={service}
+            <SubscriptionForm 
+              initialData={{serviceId: service.id, title: service.title}}
               onSuccess={() => setShowSubscriptionForm(false)}
             />
           </DialogContent>
@@ -232,8 +232,8 @@ export default function ClientServicesPage() {
               </DialogDescription>
             </DialogHeader>
             
-            <SubscriptionFormFixed 
-              defaultService={service}
+            <SubscriptionForm
+              initialData={{serviceId: service.id, title: service.title}}
               onSuccess={() => setShowSubscriptionForm(false)}
             />
           </DialogContent>
