@@ -159,6 +159,23 @@ export const insertSystemSettingSchema = createInsertSchema(systemSettings, {
   value: z.string().optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
 
+// Cashback transactions table
+export const cashbackTransactions = pgTable('cashback_transactions', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  amount: doublePrecision('amount').notNull(),
+  description: text('description'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  createdBy: integer('created_by').references(() => users.id), // Admin who added the cashback
+});
+
+export const insertCashbackTransactionSchema = createInsertSchema(cashbackTransactions, {
+  userId: z.number(),
+  amount: z.number(),
+  description: z.string().optional(),
+  createdBy: z.number().optional(),
+}).omit({ id: true, createdAt: true });
+
 // Backup metadata table
 export const backupTypeEnum = pgEnum('backup_type', ['manual', 'auto', 'pre-restore', 'imported', 'unknown']);
 export const backupFormatEnum = pgEnum('backup_format', ['plain', 'custom', 'directory', 'tar', 'compressed', 'unknown']);
@@ -205,6 +222,9 @@ export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
 
 export type BackupMetadata = typeof backupMetadata.$inferSelect;
 export type InsertBackupMetadata = z.infer<typeof insertBackupMetadataSchema>;
+
+export type CashbackTransaction = typeof cashbackTransactions.$inferSelect;
+export type InsertCashbackTransaction = z.infer<typeof insertCashbackTransactionSchema>;
 
 // Auth related schemas for client side validation
 export const loginSchema = z.object({

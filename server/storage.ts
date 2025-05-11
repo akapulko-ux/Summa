@@ -3,6 +3,7 @@ import {
   services, 
   subscriptions, 
   customFields,
+  cashbackTransactions,
   type User, 
   type InsertUser, 
   type Service, 
@@ -10,7 +11,9 @@ import {
   type Subscription,
   type InsertSubscription,
   type CustomField,
-  type InsertCustomField
+  type InsertCustomField,
+  type CashbackTransaction,
+  type InsertCashbackTransaction
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { eq, and, desc, asc, like, or, sql } from "drizzle-orm";
