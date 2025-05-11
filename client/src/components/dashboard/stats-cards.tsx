@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, CreditCard, DollarSign, Activity, Clock, Calendar, Percent } from "lucide-react";
+import { Users, CreditCard, DollarSign, Activity, Clock, Calendar, Percent, Wallet } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslations } from "@/hooks/use-translations";
@@ -31,9 +31,15 @@ export function StatsCards() {
     queryKey: ["/api/subscriptions"],
     enabled: true, // Для всех пользователей
   });
+  
+  // Запрос текущего баланса кэшбэка пользователя
+  const { data: cashbackBalance, isLoading: loadingCashbackBalance } = useQuery({
+    queryKey: ["/api/cashback/balance"],
+    enabled: !isAdmin && !!user?.id, // Только для обычных пользователей
+  });
 
   const isAdminLoading = isAdmin && (loadingUserStats || loadingSubStats || loadingServiceStats);
-  const isUserLoading = loadingUserSubscriptions;
+  const isUserLoading = loadingUserSubscriptions || loadingCashbackBalance;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -154,6 +160,27 @@ export function StatsCards() {
             </CardContent>
           </Card>
 
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <h3 className="tracking-tight text-sm font-medium">{t('cashback.cashback_balance')}</h3>
+                <Wallet className="h-4 w-4 text-muted-foreground" />
+              </div>
+              {isUserLoading ? (
+                <Skeleton className="h-8 w-24 my-1" />
+              ) : (
+                <>
+                  <div className="text-2xl font-bold text-green-500">
+                    {cashbackBalance?.balance ? `${cashbackBalance.balance.toFixed(2)} ₽` : '0.00 ₽'}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t('cashback.current_balance')}
+                  </p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+          
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
