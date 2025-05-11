@@ -10,6 +10,7 @@ import { useTranslations } from "@/hooks/use-translations";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Table,
   TableBody,
@@ -58,6 +59,7 @@ type CashbackFormValues = z.infer<typeof cashbackFormSchema>;
 
 export function UserManagementTable() {
   const { t, language } = useTranslations();
+  const { toast } = useToast();
   const [filters, setFilters] = useState<UserFilters>({
     search: "",
     status: "all",

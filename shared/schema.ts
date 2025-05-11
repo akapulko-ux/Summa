@@ -165,6 +165,7 @@ export const cashbackTransactions = pgTable('cashback_transactions', {
   userId: integer('user_id').references(() => users.id).notNull(),
   amount: doublePrecision('amount').notNull(),
   description: text('description'),
+  balanceAfter: doublePrecision('balance_after'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   createdBy: integer('created_by').references(() => users.id), // Admin who added the cashback
 });
