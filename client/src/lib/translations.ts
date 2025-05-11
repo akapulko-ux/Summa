@@ -1660,6 +1660,7 @@ export const ru: Translation = {
     cashback_admin_description: "Используйте эту форму для начисления кэшбэка на счета клиентов",
     cashback_client_description: "Ваш текущий баланс кэшбэка и история транзакций",
     cashback_description_placeholder: "Введите описание для этой транзакции кэшбэка",
+    current_balance: "Текущий баланс",
   },
   customFields: {
     title: "Пользовательские поля",
