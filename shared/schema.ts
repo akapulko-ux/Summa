@@ -228,6 +228,28 @@ export type InsertBackupMetadata = z.infer<typeof insertBackupMetadataSchema>;
 export type CashbackTransaction = typeof cashbackTransactions.$inferSelect;
 export type InsertCashbackTransaction = z.infer<typeof insertCashbackTransactionSchema>;
 
+// Leads table
+export const serviceLeads = pgTable('service_leads', {
+  id: serial('id').primaryKey(),
+  serviceId: integer('service_id').references(() => services.id).notNull(),
+  name: text('name').notNull(),
+  phone: text('phone').notNull(),
+  email: text('email'),
+  status: text('status').default('new').notNull(), // новая, обработана, отклонена
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const insertServiceLeadSchema = createInsertSchema(serviceLeads, {
+  serviceId: z.number(),
+  name: z.string().min(2),
+  phone: z.string().min(5),
+  email: z.string().email().optional().or(z.literal("")),
+}).omit({ id: true, status: true, createdAt: true, updatedAt: true });
+
+export type ServiceLead = typeof serviceLeads.$inferSelect;
+export type InsertServiceLead = z.infer<typeof insertServiceLeadSchema>;
+
 // Auth related schemas for client side validation
 export const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email" }),
