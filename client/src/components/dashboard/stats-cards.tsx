@@ -31,9 +31,15 @@ export function StatsCards() {
     queryKey: ["/api/subscriptions"],
     enabled: true, // Для всех пользователей
   });
+  
+  // Запрос текущего баланса кэшбэка пользователя
+  const { data: cashbackBalanceData, isLoading: loadingCashbackBalance } = useQuery<{ balance: number }>({
+    queryKey: [`/api/users/${user?.id}/cashback/balance`],
+    enabled: !!user?.id && !isAdmin, // Только для обычных пользователей
+  });
 
   const isAdminLoading = isAdmin && (loadingUserStats || loadingSubStats || loadingServiceStats);
-  const isUserLoading = loadingUserSubscriptions;
+  const isUserLoading = loadingUserSubscriptions || loadingCashbackBalance;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -154,6 +160,27 @@ export function StatsCards() {
             </CardContent>
           </Card>
 
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <h3 className="tracking-tight text-sm font-medium">{t('cashback.cashback_balance')}</h3>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </div>
+              {isUserLoading ? (
+                <Skeleton className="h-8 w-24 my-1" />
+              ) : (
+                <>
+                  <div className="text-2xl font-bold text-green-500">
+                    {cashbackBalanceData?.balance ? `${cashbackBalanceData.balance.toFixed(2)} ₽` : '0.00 ₽'}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t('cashback.current_balance')}
+                  </p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+          
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
