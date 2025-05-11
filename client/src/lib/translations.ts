@@ -799,6 +799,28 @@ type CustomFieldType = {
 };
 
 export const en: Translation = {
+  cashback: {
+    cashback: "Cashback",
+    cashback_balance: "Cashback Balance",
+    cashback_history: "Cashback History",
+    add_cashback: "Add Cashback",
+    client: "Client",
+    amount: "Amount",
+    description: "Description",
+    select_client: "Select Client",
+    processing: "Processing",
+    cashback_added_success: "Cashback successfully added",
+    cashback_add_error: "Error adding cashback",
+    success: "Success",
+    error: "Error",
+    error_loading_data: "Error loading data",
+    try_again: "Please try again",
+    no_cashback_transactions: "No cashback transactions found",
+    date: "Date",
+    cashback_admin_description: "Use this form to add cashback to client accounts",
+    cashback_client_description: "Your current cashback balance and transaction history",
+    cashback_description_placeholder: "Enter a description for this cashback transaction",
+  },
   customFields: {
     title: "Custom Fields",
     description: "Manage custom fields for this entity",
@@ -1616,6 +1638,28 @@ export const en: Translation = {
 };
 
 export const ru: Translation = {
+  cashback: {
+    cashback: "Кэшбэк",
+    cashback_balance: "Баланс кэшбэка",
+    cashback_history: "История кэшбэка",
+    add_cashback: "Начислить кэшбэк",
+    client: "Клиент",
+    amount: "Сумма",
+    description: "Описание",
+    select_client: "Выберите клиента",
+    processing: "Обработка",
+    cashback_added_success: "Кэшбэк успешно добавлен",
+    cashback_add_error: "Ошибка при добавлении кэшбэка",
+    success: "Успешно",
+    error: "Ошибка",
+    error_loading_data: "Ошибка загрузки данных",
+    try_again: "Пожалуйста, попробуйте еще раз",
+    no_cashback_transactions: "Транзакции кэшбэка не найдены",
+    date: "Дата",
+    cashback_admin_description: "Используйте эту форму для начисления кэшбэка на счета клиентов",
+    cashback_client_description: "Ваш текущий баланс кэшбэка и история транзакций",
+    cashback_description_placeholder: "Введите описание для этой транзакции кэшбэка",
+  },
   customFields: {
     title: "Пользовательские поля",
     description: "Управление пользовательскими полями для этого объекта",

@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight, User as UserIcon, Settings, CreditCard } from "lucide-react";
+import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight, User as UserIcon, Settings, CreditCard, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -37,6 +37,8 @@ import { UserForm } from "./user-form";
 import { UserFiltersComponent, type UserFilters, type UserSortOption } from "../filters/user-filters";
 import { UserSubscriptions } from "../subscriptions/user-subscriptions";
 import { UserCustomFields } from "../custom-fields/user-custom-fields";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
 export function UserManagementTable() {
   const { t, language } = useTranslations();
