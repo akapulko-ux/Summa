@@ -773,6 +773,88 @@ export class DatabaseStorage implements IStorage {
     );
   }
   
+  // Методы для работы с кэшбэком
+  async addCashbackTransaction(transaction: InsertCashbackTransaction): Promise<CashbackTransaction> {
+    const [result] = await db
+      .insert(cashbackTransactions)
+      .values(transaction)
+      .returning();
+    
+    return result;
+  }
+  
+  async getUserCashbackTransactions(userId: number, page: number = 1, limit: number = 10): Promise<{ transactions: CashbackTransaction[], total: number }> {
+    // Получаем общее количество транзакций для пользователя
+    const [totalResult] = await db
+      .select({ count: sql`count(*)`.mapWith(Number) })
+      .from(cashbackTransactions)
+      .where(eq(cashbackTransactions.userId, userId));
+    
+    const total = totalResult.count;
+    
+    // Получаем транзакции с пагинацией
+    const transactions = await db
+      .select()
+      .from(cashbackTransactions)
+      .where(eq(cashbackTransactions.userId, userId))
+      .orderBy(desc(cashbackTransactions.createdAt))
+      .limit(limit)
+      .offset((page - 1) * limit);
+    
+    return { transactions, total };
+  }
+  
+  async getCashbackStats(userId?: number, period: string = 'month'): Promise<any[]> {
+    return dbOptimizer.executeQueryWithCache(
+      async () => {
+        let timeFormat: string;
+        
+        // Установка форматов в зависимости от выбранного периода
+        if (period === 'year') {
+          timeFormat = 'YYYY';
+        } else if (period === 'quarter') {
+          timeFormat = 'YYYY-"Q"Q';
+        } else if (period === 'week') {
+          timeFormat = 'YYYY-"W"WW';
+        } else {
+          // По умолчанию - месяц
+          timeFormat = 'YYYY-MM';
+        }
+        
+        // SQL запрос для получения статистики кэшбэка
+        const query = `
+          WITH periods AS (
+            SELECT 
+              to_char(date_trunc('${period}', ct.created_at), '${timeFormat}') AS period,
+              SUM(ct.amount) AS total_amount,
+              COUNT(*) AS transaction_count
+            FROM 
+              cashback_transactions ct
+            ${userId ? `WHERE ct.user_id = ${userId}` : ''}
+            GROUP BY 
+              period
+            ORDER BY 
+              period
+          )
+          SELECT 
+            period,
+            total_amount,
+            transaction_count
+          FROM 
+            periods p
+          ORDER BY 
+            period;
+        `;
+        
+        const result = await pool.query(query);
+        return result.rows;
+      },
+      `cashback_stats_${userId || 'all'}_${period}`,
+      300, // кэшируем на 5 минут
+      'getCashbackStats'
+    );
+  }
+  
   async deleteUser(id: number): Promise<boolean> {
     try {
       // Проверяем существование пользователя перед удалением

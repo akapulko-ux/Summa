@@ -720,6 +720,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch cashback stats" });
     }
   });
+  
+  // Добавление кэшбэка пользователю (только для админов)
+  app.post("/api/users/:userId/cashback", isAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const { amount, description } = req.body;
+      
+      // Проверяем существование пользователя
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Проверяем валидность суммы
+      if (typeof amount !== 'number' || amount <= 0) {
+        return res.status(400).json({ message: "Amount must be a positive number" });
+      }
+      
+      // Создаем транзакцию
+      const transaction = await storage.addCashbackTransaction({
+        userId,
+        amount,
+        description,
+        createdBy: req.user.id
+      });
+      
+      res.status(201).json(transaction);
+    } catch (error) {
+      console.error("Error adding cashback:", error);
+      res.status(500).json({ message: "Failed to add cashback" });
+    }
+  });
+  
+  // Получение истории кэшбэка для пользователя
+  app.get("/api/users/:userId/cashback", isAuthenticated, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Только админы могут просматривать кэшбэк других пользователей
+      if (req.user.id !== userId && req.user.role !== "admin") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      
+      const result = await storage.getUserCashbackTransactions(userId, page, limit);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching user cashback transactions:", error);
+      res.status(500).json({ message: "Failed to fetch cashback transactions" });
+    }
+  });
 
   // API для получения статистики активных/неактивных клиентов
   app.get("/api/stats/clients-activity", isAdmin, async (req, res) => {
