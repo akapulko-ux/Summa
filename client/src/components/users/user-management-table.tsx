@@ -40,6 +40,22 @@ import { UserCustomFields } from "../custom-fields/user-custom-fields";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+// Схема для валидации формы начисления кэшбэка
+const cashbackFormSchema = z.object({
+  amount: z.coerce.number().positive({
+    message: "Amount must be a positive number",
+  }),
+  description: z.string().min(3, {
+    message: "Description must be at least 3 characters",
+  }),
+});
+
+type CashbackFormValues = z.infer<typeof cashbackFormSchema>;
+
 export function UserManagementTable() {
   const { t, language } = useTranslations();
   const [filters, setFilters] = useState<UserFilters>({
@@ -56,6 +72,27 @@ export function UserManagementTable() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [isSubscriptionsDialogOpen, setIsSubscriptionsDialogOpen] = useState(false);
   const [isCustomFieldsDialogOpen, setIsCustomFieldsDialogOpen] = useState(false);
+  const [isAddCashbackDialogOpen, setIsAddCashbackDialogOpen] = useState(false);
+  
+  // Инициализация формы для начисления кэшбэка
+  const cashbackForm = useForm<CashbackFormValues>({
+    resolver: zodResolver(cashbackFormSchema),
+    defaultValues: {
+      amount: 0,
+      description: "",
+    },
+  });
+  
+  // Обработка отправки формы начисления кэшбэка
+  const onCashbackSubmit = (values: CashbackFormValues) => {
+    if (selectedUserId) {
+      addCashbackMutation.mutate({
+        userId: selectedUserId,
+        amount: values.amount,
+        description: values.description,
+      });
+    }
+  };
 
   const {
     data,
@@ -71,6 +108,17 @@ export function UserManagementTable() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+    },
+  });
+  
+  // Мутация для начисления кэшбэка
+  const addCashbackMutation = useMutation({
+    mutationFn: async ({ userId, amount, description }: { userId: number, amount: number, description: string }) => {
+      return await apiRequest("POST", `/api/users/${userId}/cashback`, { amount, description });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setIsAddCashbackDialogOpen(false);
     },
   });
 
@@ -279,6 +327,15 @@ export function UserManagementTable() {
                               <UserIcon className="h-4 w-4 mr-2" />
                               {t('users.manageCustomFields')}
                             </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => {
+                                setSelectedUserId(user.id);
+                                setIsAddCashbackDialogOpen(true);
+                              }}
+                            >
+                              <DollarSign className="h-4 w-4 mr-2" />
+                              {t('cashback.add_cashback')}
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               onClick={() => handleDelete(user.id)}
@@ -372,6 +429,79 @@ export function UserManagementTable() {
           {selectedUserId && (
             <UserCustomFields userId={selectedUserId} />
           )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Диалог для начисления кэшбэка */}
+      <Dialog open={isAddCashbackDialogOpen} onOpenChange={(open) => {
+        setIsAddCashbackDialogOpen(open);
+        if (!open) {
+          cashbackForm.reset();
+        }
+      }}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t('cashback.add_cashback')}</DialogTitle>
+            <DialogDescription>
+              {t('cashback.cashback_admin_description')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...cashbackForm}>
+            <form onSubmit={cashbackForm.handleSubmit(onCashbackSubmit)} className="space-y-6">
+              <FormField
+                control={cashbackForm.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('cashback.amount')}</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number"
+                        step="0.01"
+                        placeholder={t('cashback.amount')}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={cashbackForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('cashback.description')}</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder={t('cashback.cashback_description_placeholder')}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex justify-end space-x-4 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddCashbackDialogOpen(false)}
+                >
+                  {t('common.cancel')}
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={addCashbackMutation.isPending}
+                >
+                  {addCashbackMutation.isPending ? t('cashback.processing') : t('cashback.add_cashback')}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </Card>
