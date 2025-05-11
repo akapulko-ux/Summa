@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, CreditCard, DollarSign, Activity, Clock, Calendar, Percent, Wallet } from "lucide-react";
+import { Users, CreditCard, Activity, Clock, Calendar, Percent, Wallet } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslations } from "@/hooks/use-translations";
@@ -96,14 +96,14 @@ export function StatsCards() {
                 <h3 className="tracking-tight text-sm font-medium">
                   {t('subscriptions.paymentAmount')}
                 </h3>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="h-4 w-4 text-muted-foreground flex items-center justify-center text-sm">₽</span>
               </div>
               {isAdminLoading ? (
                 <Skeleton className="h-8 w-24 my-1" />
               ) : (
                 <>
                   <div className="text-2xl font-bold">
-                    ${subStats?.totalRevenue?.toFixed(2) || "0.00"}
+                    {subStats?.totalRevenue?.toFixed(2) || "0.00"} ₽
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('subscriptions.title')}
