@@ -26,7 +26,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight, User as UserIcon, Settings, CreditCard, DollarSign } from "lucide-react";
+import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight, User as UserIcon, Settings, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -368,7 +368,7 @@ export function UserManagementTable() {
                                 setIsAddCashbackDialogOpen(true);
                               }}
                             >
-                              <DollarSign className="h-4 w-4 mr-2" />
+                              <span className="h-4 w-4 mr-2 flex items-center justify-center text-sm">₽</span>
                               {t('cashback.add_cashback')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
