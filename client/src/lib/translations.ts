@@ -821,6 +821,8 @@ export const en: Translation = {
     cashback_client_description: "Your current cashback balance and transaction history",
     cashback_description_placeholder: "Enter a description for this cashback transaction",
     current_balance: "Current Balance",
+    earned_cashback: "Earned Cashback",
+    current_cashback_balance: "Current cashback balance",
   },
   customFields: {
     title: "Custom Fields",
@@ -1661,6 +1663,8 @@ export const ru: Translation = {
     cashback_client_description: "Ваш текущий баланс кэшбэка и история транзакций",
     cashback_description_placeholder: "Введите описание для этой транзакции кэшбэка",
     current_balance: "Текущий баланс",
+    earned_cashback: "Начисленный кэшбэк",
+    current_cashback_balance: "Текущий баланс кэшбэка",
   },
   customFields: {
     title: "Пользовательские поля",
