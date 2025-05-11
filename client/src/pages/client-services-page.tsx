@@ -129,9 +129,11 @@ export default function ClientServicesPage() {
         <Dialog open={showSubscriptionForm} onOpenChange={setShowSubscriptionForm}>
           <DialogContent className="max-w-4xl">
             <DialogHeader>
-              <DialogTitle>{t('subscriptions.addSubscription')}</DialogTitle>
+              <DialogTitle>{language === 'ru' ? 'Добавить подписку' : 'Add Subscription'}</DialogTitle>
               <DialogDescription>
-                {t('subscriptions.addSubscriptionDescription')}
+                {language === 'ru' 
+                  ? 'Заполните форму ниже, чтобы добавить новую подписку на услугу' 
+                  : 'Fill out the form below to add a new service subscription'}
               </DialogDescription>
             </DialogHeader>
             
@@ -226,9 +228,11 @@ export default function ClientServicesPage() {
         <Dialog open={showSubscriptionForm} onOpenChange={setShowSubscriptionForm}>
           <DialogContent className="max-w-4xl">
             <DialogHeader>
-              <DialogTitle>{t('subscriptions.addSubscription')}</DialogTitle>
+              <DialogTitle>{language === 'ru' ? 'Добавить подписку' : 'Add Subscription'}</DialogTitle>
               <DialogDescription>
-                {t('subscriptions.addSubscriptionDescription')}
+                {language === 'ru' 
+                  ? 'Заполните форму ниже, чтобы добавить новую подписку на услугу' 
+                  : 'Fill out the form below to add a new service subscription'}
               </DialogDescription>
             </DialogHeader>
             
