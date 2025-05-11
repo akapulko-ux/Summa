@@ -71,9 +71,13 @@ export interface IStorage {
   
   // Расширенная аналитика
   getUserRegistrationsStats(period: string): Promise<any[]>;
-  getCashbackStats(userId?: number, period?: string): Promise<any[]>;
   getClientsActivityStats(): Promise<any>;
   getSubscriptionCostsStats(period?: string): Promise<any[]>;
+  
+  // Cashback operations
+  addCashbackTransaction(transaction: InsertCashbackTransaction): Promise<CashbackTransaction>;
+  getUserCashbackTransactions(userId: number, page?: number, limit?: number): Promise<{ transactions: CashbackTransaction[], total: number }>;
+  getCashbackStats(userId?: number, period?: string): Promise<any[]>;
   
   // Session store
   sessionStore: session.SessionStore;
