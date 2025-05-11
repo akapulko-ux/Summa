@@ -113,8 +113,8 @@ export default function ClientServicesPage() {
         <Dialog open={showLeadForm} onOpenChange={setShowLeadForm}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{t('leads.title')}</DialogTitle>
-              <DialogDescription>{t('leads.description')}</DialogDescription>
+              <DialogTitle>{language === 'ru' ? 'Заказать услугу' : 'Request Service'}</DialogTitle>
+              <DialogDescription>{language === 'ru' ? 'Оставьте заявку на эту услугу' : 'Submit your request for this service'}</DialogDescription>
             </DialogHeader>
             
             {/* Импортируем и используем нашу форму заявки */}
@@ -211,8 +211,8 @@ export default function ClientServicesPage() {
         <Dialog open={showLeadForm} onOpenChange={setShowLeadForm}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{t('leads.title')}</DialogTitle>
-              <DialogDescription>{t('leads.description')}</DialogDescription>
+              <DialogTitle>{language === 'ru' ? 'Заказать услугу' : 'Request Service'}</DialogTitle>
+              <DialogDescription>{language === 'ru' ? 'Оставьте заявку на эту услугу' : 'Submit your request for this service'}</DialogDescription>
             </DialogHeader>
             
             <ServiceLeadForm 

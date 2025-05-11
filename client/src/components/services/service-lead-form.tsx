@@ -37,7 +37,7 @@ type ServiceLeadFormProps = {
 };
 
 export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const { toast } = useToast();
 
   // Default values for the form
@@ -59,8 +59,10 @@ export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
     },
     onSuccess: () => {
       toast({
-        title: t("leads.requestSubmitted"),
-        description: t("leads.requestSubmittedDesc"),
+        title: language === 'ru' ? 'Заявка отправлена' : 'Request Submitted',
+        description: language === 'ru' 
+          ? `Ваша заявка на услугу "${service.title}" успешно отправлена. Мы свяжемся с вами в ближайшее время.` 
+          : `Your request for "${service.title}" service has been submitted successfully. We'll contact you shortly.`,
       });
       form.reset(defaultValues);
       if (onSuccess) {
@@ -69,8 +71,10 @@ export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
     },
     onError: () => {
       toast({
-        title: t("leads.requestFailed"),
-        description: t("leads.requestFailedDesc"),
+        title: language === 'ru' ? 'Ошибка отправки' : 'Request Failed',
+        description: language === 'ru' 
+          ? 'Произошла ошибка при отправке заявки. Пожалуйста, попробуйте еще раз позже.' 
+          : 'There was an error submitting your request. Please try again later.',
         variant: "destructive",
       });
     },
@@ -88,9 +92,9 @@ export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('leads.name')}</FormLabel>
+              <FormLabel>{language === 'ru' ? 'Ваше имя' : 'Your Name'}</FormLabel>
               <FormControl>
-                <Input placeholder={t('leads.enterName')} {...field} />
+                <Input placeholder={language === 'ru' ? 'Введите ваше имя' : 'Enter your name'} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -102,9 +106,9 @@ export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('leads.phone')}</FormLabel>
+              <FormLabel>{language === 'ru' ? 'Номер телефона' : 'Phone Number'}</FormLabel>
               <FormControl>
-                <Input placeholder={t('leads.enterPhone')} {...field} />
+                <Input placeholder={language === 'ru' ? 'Введите ваш номер телефона' : 'Enter your phone number'} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -116,9 +120,9 @@ export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('leads.emailOptional')}</FormLabel>
+              <FormLabel>{language === 'ru' ? 'Электронная почта (необязательно)' : 'Email (optional)'}</FormLabel>
               <FormControl>
-                <Input placeholder={t('leads.enterEmail')} {...field} />
+                <Input placeholder={language === 'ru' ? 'Введите ваш email (необязательно)' : 'Enter your email (optional)'} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,10 +137,10 @@ export function ServiceLeadForm({ service, onSuccess }: ServiceLeadFormProps) {
           {leadMutation.isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('common.processing')}
+              {language === 'ru' ? 'Обработка...' : 'Processing...'}
             </>
           ) : (
-            t('leads.submitRequest')
+            language === 'ru' ? 'Отправить заявку' : 'Submit Request'
           )}
         </Button>
       </form>
