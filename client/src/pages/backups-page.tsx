@@ -989,7 +989,7 @@ export default function BackupsPage() {
                                     onClick={() => setSelectedBackup(backup.name)}
                                   >
                                     <Upload className="h-4 w-4 mr-1" />
-                                    {t('common.restore')}
+                                    {language === 'ru' ? "Восстановить" : "Restore"}
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
@@ -1003,7 +1003,7 @@ export default function BackupsPage() {
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>
-                                      {t('common.cancel')}
+                                      {language === 'ru' ? "Отмена" : "Cancel"}
                                     </AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => {
@@ -1016,7 +1016,7 @@ export default function BackupsPage() {
                                       {restoreBackupMutation.isPending && (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                       )}
-                                      {t('common.restore')}
+                                      {language === 'ru' ? "Восстановить" : "Restore"}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -1049,7 +1049,7 @@ export default function BackupsPage() {
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>
-                                      {t('common.cancel')}
+                                      {language === 'ru' ? "Отмена" : "Cancel"}
                                     </AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => {
@@ -1063,7 +1063,7 @@ export default function BackupsPage() {
                                       {deleteBackupMutation.isPending && (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                       )}
-                                      {t('common.delete')}
+                                      {language === 'ru' ? "Удалить" : "Delete"}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
