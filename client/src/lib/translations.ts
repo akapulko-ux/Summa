@@ -1641,6 +1641,8 @@ export const en: Translation = {
     confirmDisconnect: "Are you sure you want to disconnect your Telegram account?",
     disconnectWarning: "You will no longer receive notifications or updates via Telegram.",
     commandCopied: "Command copied to clipboard",
+    connectViaLink: "Connect via Telegram",
+    orManualSteps: "Or follow these steps manually:",
   },
 
   messages: {
@@ -2493,6 +2495,8 @@ export const ru: Translation = {
     confirmDisconnect: "Вы уверены, что хотите отключить ваш аккаунт Telegram?",
     disconnectWarning: "Вы больше не будете получать уведомления или обновления через Telegram.",
     commandCopied: "Команда скопирована в буфер обмена",
+    connectViaLink: "Подключить через Telegram",
+    orManualSteps: "Или выполните эти шаги вручную:",
   },
 
   messages: {
