@@ -1,8 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
-import { UploadIcon, XIcon, ImageIcon, Loader2 } from "lucide-react";
+import { UploadIcon, XIcon, ImageIcon, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 import { toast } from "@/hooks/use-toast";
 
@@ -28,6 +28,13 @@ export function FileUpload({
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialUrl || null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Обновляем previewUrl при изменении initialUrl (например, при загрузке данных)
+  useEffect(() => {
+    if (initialUrl) {
+      setPreviewUrl(initialUrl);
+    }
+  }, [initialUrl]);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -152,10 +159,12 @@ export function FileUpload({
         </div>
       ) : (
         <div className="flex flex-col gap-2">
+          {/* Предпросмотр изображения */}
           <div className="relative aspect-video w-full max-w-xs overflow-hidden rounded-md border">
             {previewUrl.endsWith('.svg') || previewUrl.endsWith('.png') || 
              previewUrl.endsWith('.jpg') || previewUrl.endsWith('.jpeg') || 
-             previewUrl.endsWith('.gif') ? (
+             previewUrl.endsWith('.gif') || 
+             previewUrl.startsWith('/api/service-icon/') ? (
               <img
                 src={previewUrl}
                 alt="Uploaded file"
@@ -166,17 +175,71 @@ export function FileUpload({
                 <ImageIcon className="h-10 w-10 text-muted-foreground" />
               </div>
             )}
+            
+            {/* Кнопка удаления иконки (крестик) */}
             <Button
               type="button"
               variant="destructive"
               size="icon"
               className="absolute right-2 top-2 h-6 w-6 rounded-full"
               onClick={handleRemove}
+              title={t('common.remove')}
             >
               <XIcon className="h-3 w-3" />
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground break-all">{previewUrl}</p>
+          
+          {/* Кнопки управления под превью */}
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-muted-foreground break-all max-w-[70%] truncate">
+              {previewUrl.startsWith('/api/service-icon/') 
+                ? t('services.iconSavedInDatabase')
+                : previewUrl
+              }
+            </p>
+            
+            <div className="flex gap-2">
+              {/* Кнопка замены файла */}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                title={t('common.change')}
+              >
+                {isUploading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <UploadIcon className="h-4 w-4" />
+                )}
+              </Button>
+              
+              {/* Кнопка удаления */}
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={handleRemove}
+                disabled={isUploading}
+                title={t('common.remove')}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          
+          {/* Скрытый input для загрузки нового файла */}
+          <Input
+            type="file"
+            accept={accept}
+            onChange={handleFileChange}
+            className="hidden"
+            ref={fileInputRef}
+            disabled={isUploading}
+          />
+          
+          {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
       )}
     </div>
