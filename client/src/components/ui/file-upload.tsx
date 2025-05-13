@@ -31,8 +31,10 @@ export function FileUpload({
   
   // Обновляем previewUrl при изменении initialUrl (например, при загрузке данных)
   useEffect(() => {
+    console.log("FileUpload: initialUrl changed", initialUrl);
     if (initialUrl) {
       setPreviewUrl(initialUrl);
+      console.log("FileUpload: setPreviewUrl to", initialUrl);
     }
   }, [initialUrl]);
 
