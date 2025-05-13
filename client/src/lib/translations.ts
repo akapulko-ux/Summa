@@ -357,6 +357,7 @@ export type Translation = {
     serviceDescription: string;
     serviceIcon: string;
     serviceIconDescription: string;
+    iconSavedInDatabase: string;
     cashback: string;
     commission: string;
     customFields: string;
