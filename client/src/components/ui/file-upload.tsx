@@ -4,6 +4,7 @@ import { Input } from "./input";
 import { Label } from "./label";
 import { UploadIcon, XIcon, ImageIcon, Loader2 } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
+import { toast } from "@/hooks/use-toast";
 
 interface FileUploadProps {
   onUpload: (data: { iconUrl: string, iconData?: string, iconMimeType?: string }) => void;
@@ -78,41 +79,41 @@ export function FileUpload({
 
   const handleRemove = async () => {
     try {
+      // Проверяем, есть ли ID сервиса (обязательно для удаления)
+      if (!serviceId) {
+        setError("Невозможно удалить иконку без ID сервиса");
+        return;
+      }
+      
       // Параметры для запроса на удаление
-      let url = "/api/upload/icon";
-      const params = new URLSearchParams();
+      const url = `/api/upload/icon?serviceId=${serviceId}`;
       
-      // Если есть URL, добавляем его к запросу
-      if (previewUrl && previewUrl.startsWith('/uploads/')) {
-        params.append("iconUrl", previewUrl);
-      }
-      
-      // Если есть ID сервиса, добавляем его к запросу
-      if (serviceId) {
-        params.append("serviceId", serviceId.toString());
-      }
-      
-      // Формируем полный URL запроса
-      if (params.toString()) {
-        url += `?${params.toString()}`;
-      }
-      
-      // Удаляем файл с сервера
-      await fetch(url, {
+      // Удаляем иконку из базы данных
+      const response = await fetch(url, {
         method: 'DELETE',
       });
       
-      // Очищаем URL в родительском компоненте
+      if (!response.ok) {
+        throw new Error(`Ошибка удаления: ${response.statusText}`);
+      }
+      
+      // Очищаем URL и данные в родительском компоненте
       setPreviewUrl(null);
-      onUpload({ iconUrl: "" });
+      onUpload({ 
+        iconUrl: "",
+        iconData: "", 
+        iconMimeType: "" 
+      });
       
       // Сбрасываем поле ввода файла
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      
+      console.log("Иконка успешно удалена из базы данных");
     } catch (error) {
-      console.error("Error removing file:", error);
-      setError("Ошибка при удалении файла");
+      console.error("Error removing icon:", error);
+      setError(error instanceof Error ? error.message : "Ошибка при удалении иконки");
     }
   };
 
