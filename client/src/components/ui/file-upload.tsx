@@ -65,7 +65,7 @@ export function FileUpload({
       });
 
       if (!response.ok) {
-        throw new Error(`Ошибка загрузки: ${response.statusText}`);
+        throw new Error(`Upload error: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -78,7 +78,7 @@ export function FileUpload({
         iconMimeType: data.iconMimeType
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Произошла ошибка при загрузке файла");
+      setError(err instanceof Error ? err.message : "An error occurred while uploading the file");
       console.error("Error uploading file:", err);
     } finally {
       setIsUploading(false);
@@ -89,7 +89,7 @@ export function FileUpload({
     try {
       // Проверяем, есть ли ID сервиса (обязательно для удаления)
       if (!serviceId) {
-        setError("Невозможно удалить иконку без ID сервиса");
+        setError("Cannot delete icon without service ID");
         return;
       }
       
@@ -102,7 +102,7 @@ export function FileUpload({
       });
       
       if (!response.ok) {
-        throw new Error(`Ошибка удаления: ${response.statusText}`);
+        throw new Error(`Deletion error: ${response.statusText}`);
       }
       
       // Очищаем URL и данные в родительском компоненте
@@ -161,7 +161,7 @@ export function FileUpload({
       ) : (
         <div className="flex flex-col gap-2">
           {/* Предпросмотр изображения */}
-          <div className="relative aspect-video w-full max-w-xs overflow-hidden rounded-md border">
+          <div className="relative aspect-square w-full max-w-[160px] overflow-hidden rounded-md border bg-white">
             {previewUrl.endsWith('.svg') || previewUrl.endsWith('.png') || 
              previewUrl.endsWith('.jpg') || previewUrl.endsWith('.jpeg') || 
              previewUrl.endsWith('.gif') || 
@@ -169,7 +169,7 @@ export function FileUpload({
               <img
                 src={previewUrl}
                 alt="Uploaded file"
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain p-2"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-muted">
@@ -182,9 +182,9 @@ export function FileUpload({
               type="button"
               variant="destructive"
               size="icon"
-              className="absolute right-2 top-2 h-6 w-6 rounded-full"
+              className="absolute right-2 top-2 h-6 w-6 rounded-full shadow-sm"
               onClick={handleRemove}
-              title={t('common.remove')}
+              title="Удалить"
             >
               <XIcon className="h-3 w-3" />
             </Button>
@@ -192,12 +192,17 @@ export function FileUpload({
           
           {/* Кнопки управления под превью */}
           <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground break-all max-w-[70%] truncate">
-              {previewUrl.startsWith('/api/service-icon/') 
-                ? "Иконка сохранена в базе данных"
-                : previewUrl
-              }
-            </p>
+            {previewUrl.startsWith('/api/service-icon/') && (
+              <div className="text-sm text-green-600 flex items-center">
+                <ImageIcon className="h-4 w-4 mr-1" />
+                <span>Сохранено в базе данных</span>
+              </div>
+            )}
+            {!previewUrl.startsWith('/api/service-icon/') && (
+              <p className="text-sm text-muted-foreground break-all max-w-[70%] truncate">
+                {previewUrl}
+              </p>
+            )}
             
             <div className="flex gap-2">
               {/* Кнопка замены файла */}
