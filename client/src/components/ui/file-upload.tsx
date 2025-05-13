@@ -5,7 +5,6 @@ import { Label } from "./label";
 import { UploadIcon, XIcon, ImageIcon, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
   onUpload: (data: { iconUrl: string, iconData?: string, iconMimeType?: string }) => void;
@@ -30,10 +29,12 @@ export function FileUpload({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Update previewUrl when initialUrl changes (for example, when loading data)
+  // Обновляем previewUrl при изменении initialUrl (например, при загрузке данных)
   useEffect(() => {
-      if (initialUrl) {
+    console.log("FileUpload: initialUrl changed", initialUrl);
+    if (initialUrl) {
       setPreviewUrl(initialUrl);
+      console.log("FileUpload: setPreviewUrl to", initialUrl);
     }
   }, [initialUrl]);
 
@@ -45,40 +46,40 @@ export function FileUpload({
     setIsUploading(true);
 
     try {
-      // Display the preview of the uploaded file
+      // Показываем превью загружаемого файла
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
 
-      // Create FormData for file upload
+      // Создаем FormData для отправки файла
       const formData = new FormData();
       formData.append("icon", file);
       
-      // If service ID exists, add it to the request
+      // Если есть ID сервиса, добавляем его в запрос
       if (serviceId) {
         formData.append("serviceId", serviceId.toString());
       }
 
-      // Send the file to the server
+      // Отправляем файл на сервер
       const response = await fetch("/api/upload/icon", {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error(`Upload error: ${response.statusText}`);
+        throw new Error(`Ошибка загрузки: ${response.statusText}`);
       }
 
       const data = await response.json();
       setPreviewUrl(data.iconUrl);
       
-      // Pass all data back to the parent component
+      // Передаем все данные обратно в родительский компонент
       onUpload({
         iconUrl: data.iconUrl,
         iconData: data.iconData,
         iconMimeType: data.iconMimeType
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred while uploading the file");
+      setError(err instanceof Error ? err.message : "Произошла ошибка при загрузке файла");
       console.error("Error uploading file:", err);
     } finally {
       setIsUploading(false);
@@ -87,25 +88,25 @@ export function FileUpload({
 
   const handleRemove = async () => {
     try {
-      // Check if service ID exists (required for deletion)
+      // Проверяем, есть ли ID сервиса (обязательно для удаления)
       if (!serviceId) {
-        setError("Cannot delete icon without service ID");
+        setError("Невозможно удалить иконку без ID сервиса");
         return;
       }
       
-      // Parameters for the deletion request
+      // Параметры для запроса на удаление
       const url = `/api/upload/icon?serviceId=${serviceId}`;
       
-      // Delete the icon from the database
+      // Удаляем иконку из базы данных
       const response = await fetch(url, {
         method: 'DELETE',
       });
       
       if (!response.ok) {
-        throw new Error(`Deletion error: ${response.statusText}`);
+        throw new Error(`Ошибка удаления: ${response.statusText}`);
       }
       
-      // Clear URL and data in parent component
+      // Очищаем URL и данные в родительском компоненте
       setPreviewUrl(null);
       onUpload({ 
         iconUrl: "",
@@ -113,15 +114,15 @@ export function FileUpload({
         iconMimeType: "" 
       });
       
-      // Reset the file input field
+      // Сбрасываем поле ввода файла
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
       
-      console.log("Icon successfully deleted from database");
+      console.log("Иконка успешно удалена из базы данных");
     } catch (error) {
       console.error("Error removing icon:", error);
-      setError(error instanceof Error ? error.message : "Error deleting icon");
+      setError(error instanceof Error ? error.message : "Ошибка при удалении иконки");
     }
   };
 
@@ -161,7 +162,7 @@ export function FileUpload({
       ) : (
         <div className="flex flex-col gap-2">
           {/* Предпросмотр изображения */}
-          <div className="relative aspect-square w-full max-w-[160px] overflow-hidden rounded-md border bg-white">
+          <div className="relative aspect-video w-full max-w-xs overflow-hidden rounded-md border">
             {previewUrl.endsWith('.svg') || previewUrl.endsWith('.png') || 
              previewUrl.endsWith('.jpg') || previewUrl.endsWith('.jpeg') || 
              previewUrl.endsWith('.gif') || 
@@ -169,7 +170,7 @@ export function FileUpload({
               <img
                 src={previewUrl}
                 alt="Uploaded file"
-                className="h-full w-full object-contain p-2"
+                className="h-full w-full object-contain"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-muted">
@@ -182,9 +183,9 @@ export function FileUpload({
               type="button"
               variant="destructive"
               size="icon"
-              className="absolute right-2 top-2 h-6 w-6 rounded-full shadow-sm"
+              className="absolute right-2 top-2 h-6 w-6 rounded-full"
               onClick={handleRemove}
-              title={t('common.delete')}
+              title={t('common.remove')}
             >
               <XIcon className="h-3 w-3" />
             </Button>
@@ -192,17 +193,12 @@ export function FileUpload({
           
           {/* Кнопки управления под превью */}
           <div className="flex justify-between items-center">
-            {previewUrl.startsWith('/api/service-icon/') && (
-              <div className="text-sm text-green-600 flex items-center">
-                <ImageIcon className="h-4 w-4 mr-1" />
-                <span>{t('services.iconSavedInDatabase')}</span>
-              </div>
-            )}
-            {!previewUrl.startsWith('/api/service-icon/') && (
-              <p className="text-sm text-muted-foreground break-all max-w-[70%] truncate">
-                {previewUrl}
-              </p>
-            )}
+            <p className="text-sm text-muted-foreground break-all max-w-[70%] truncate">
+              {previewUrl.startsWith('/api/service-icon/') 
+                ? t('services.iconSavedInDatabase')
+                : previewUrl
+              }
+            </p>
             
             <div className="flex gap-2">
               {/* Кнопка замены файла */}
@@ -212,7 +208,7 @@ export function FileUpload({
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                title={t('common.edit')}
+                title={t('common.change')}
               >
                 {isUploading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -228,7 +224,7 @@ export function FileUpload({
                 size="sm"
                 onClick={handleRemove}
                 disabled={isUploading}
-                title={t('common.delete')}
+                title={t('common.remove')}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

@@ -357,7 +357,6 @@ export type Translation = {
     serviceDescription: string;
     serviceIcon: string;
     serviceIconDescription: string;
-    iconSavedInDatabase: string;
     cashback: string;
     commission: string;
     customFields: string;
@@ -919,7 +918,6 @@ export const en: Translation = {
     apply: "Apply",
     filterOptions: "Filter Options",
     sortBy: "Sort By",
-    sortOrder: "Sort Order",
     ascending: "Ascending",
     descending: "Descending",
     applyFilters: "Apply Filters",
@@ -1287,7 +1285,6 @@ export const en: Translation = {
     serviceDescription: "Description",
     serviceIcon: "Service Icon",
     serviceIconDescription: "Upload an icon image in JPG or PNG format",
-    iconSavedInDatabase: "Icon saved in database",
     cashback: "Cashback",
     commission: "Commission",
     customFields: "Custom Fields",
@@ -1787,7 +1784,6 @@ export const ru: Translation = {
     reset: "Сбросить",
     filterOptions: "Параметры фильтра",
     sortBy: "Сортировать по",
-    sortOrder: "Порядок сортировки",
     ascending: "По возрастанию",
     descending: "По убыванию",
     applyFilters: "Применить фильтры",
