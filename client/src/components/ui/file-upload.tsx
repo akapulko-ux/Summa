@@ -30,7 +30,7 @@ export function FileUpload({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Обновляем previewUrl при изменении initialUrl (например, при загрузке данных)
+  // Update previewUrl when initialUrl changes (for example, when loading data)
   useEffect(() => {
       if (initialUrl) {
       setPreviewUrl(initialUrl);
@@ -45,7 +45,7 @@ export function FileUpload({
     setIsUploading(true);
 
     try {
-      // Показываем превью загружаемого файла
+      // Display the preview of the uploaded file
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
 
@@ -118,10 +118,10 @@ export function FileUpload({
         fileInputRef.current.value = "";
       }
       
-      console.log("Иконка успешно удалена из базы данных");
+      console.log("Icon successfully deleted from database");
     } catch (error) {
       console.error("Error removing icon:", error);
-      setError(error instanceof Error ? error.message : "Ошибка при удалении иконки");
+      setError(error instanceof Error ? error.message : "Error deleting icon");
     }
   };
 
@@ -184,7 +184,7 @@ export function FileUpload({
               size="icon"
               className="absolute right-2 top-2 h-6 w-6 rounded-full shadow-sm"
               onClick={handleRemove}
-              title="Удалить"
+              title={t('common.delete')}
             >
               <XIcon className="h-3 w-3" />
             </Button>
@@ -195,7 +195,7 @@ export function FileUpload({
             {previewUrl.startsWith('/api/service-icon/') && (
               <div className="text-sm text-green-600 flex items-center">
                 <ImageIcon className="h-4 w-4 mr-1" />
-                <span>Сохранено в базе данных</span>
+                <span>{t('services.iconSavedInDatabase')}</span>
               </div>
             )}
             {!previewUrl.startsWith('/api/service-icon/') && (
@@ -212,7 +212,7 @@ export function FileUpload({
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                title="Изменить"
+                title={t('common.edit')}
               >
                 {isUploading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -228,7 +228,7 @@ export function FileUpload({
                 size="sm"
                 onClick={handleRemove}
                 disabled={isUploading}
-                title="Удалить"
+                title={t('common.delete')}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
