@@ -81,8 +81,32 @@ type BackupFileExtended = {
 function BackupMetadataDialog({ backupName }: { backupName: string }) {
   const { language } = useTranslations();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [metadata, setMetadata] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Восстановление из резервной копии
+  const restoreBackupMutation = useMutation({
+    mutationFn: async (filename: string) => {
+      const response = await apiRequest("POST", `/api/backups/restore/${filename}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: language === 'ru' ? "База данных восстановлена" : "Database restored",
+        description: language === 'ru' ? "База данных успешно восстановлена из резервной копии" : "Database was successfully restored from backup",
+        variant: "default",
+      });
+      queryClient.invalidateQueries();
+    },
+    onError: (error: any) => {
+      toast({
+        title: language === 'ru' ? "Ошибка восстановления" : "Restore failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const fetchMetadata = async () => {
     setIsLoading(true);
@@ -235,6 +259,22 @@ function BackupMetadataDialog({ backupName }: { backupName: string }) {
               ? "Нет данных о резервной копии"
               : "No backup metadata available"}
           </div>
+        )}
+        {metadata && (
+          <DialogFooter>
+            <Button 
+              variant="outline"
+              onClick={() => restoreBackupMutation.mutate(backupName)}
+              disabled={restoreBackupMutation.isPending}
+            >
+              {restoreBackupMutation.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="mr-2 h-4 w-4" />
+              )}
+              {language === 'ru' ? "Восстановить" : "Restore"}
+            </Button>
+          </DialogFooter>
         )}
       </DialogContent>
     </Dialog>
