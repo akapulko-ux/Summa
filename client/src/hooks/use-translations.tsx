@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { en, ru, Translation } from '@/lib/translations';
-import '@/lib/translations-fix'; // Импортируем дополнительные переводы
 
 type LanguageCode = 'en' | 'ru';
 

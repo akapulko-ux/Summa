@@ -31,10 +31,8 @@ export function FileUpload({
   
   // Обновляем previewUrl при изменении initialUrl (например, при загрузке данных)
   useEffect(() => {
-    console.log("FileUpload: initialUrl changed", initialUrl);
-    if (initialUrl) {
+      if (initialUrl) {
       setPreviewUrl(initialUrl);
-      console.log("FileUpload: setPreviewUrl to", initialUrl);
     }
   }, [initialUrl]);
 
@@ -195,7 +193,7 @@ export function FileUpload({
           <div className="flex justify-between items-center">
             <p className="text-sm text-muted-foreground break-all max-w-[70%] truncate">
               {previewUrl.startsWith('/api/service-icon/') 
-                ? t('services.iconSavedInDatabase')
+                ? "Иконка сохранена в базе данных"
                 : previewUrl
               }
             </p>
@@ -208,7 +206,7 @@ export function FileUpload({
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                title={t('common.change')}
+                title="Изменить"
               >
                 {isUploading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -224,7 +222,7 @@ export function FileUpload({
                 size="sm"
                 onClick={handleRemove}
                 disabled={isUploading}
-                title={t('common.remove')}
+                title="Удалить"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
