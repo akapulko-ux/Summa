@@ -1286,6 +1286,7 @@ export const en: Translation = {
     serviceDescription: "Description",
     serviceIcon: "Service Icon",
     serviceIconDescription: "Upload an icon image in JPG or PNG format",
+    iconSavedInDatabase: "Icon saved in database",
     cashback: "Cashback",
     commission: "Commission",
     customFields: "Custom Fields",

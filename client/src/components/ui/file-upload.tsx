@@ -5,6 +5,7 @@ import { Label } from "./label";
 import { UploadIcon, XIcon, ImageIcon, Loader2, Trash2 } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
   onUpload: (data: { iconUrl: string, iconData?: string, iconMimeType?: string }) => void;
