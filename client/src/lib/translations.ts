@@ -733,6 +733,8 @@ export type Translation = {
     confirmDisconnect: string;
     disconnectWarning: string;
     commandCopied: string;
+    connectViaLink: string;
+    orManualSteps: string;
   };
 
   // Ошибки и сообщения
