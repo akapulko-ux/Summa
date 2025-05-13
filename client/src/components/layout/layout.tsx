@@ -67,7 +67,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: t('nav.analytics'), path: '/admin/analytics', icon: <BarChart className="h-5 w-5 mr-2" /> },
     { title: t('nav.reports'), path: '/admin/reports', icon: <FileText className="h-5 w-5 mr-2" /> },
     { title: t('nav.monitoring'), path: '/admin/monitoring', icon: <BarChart className="h-5 w-5 mr-2" /> },
-    { title: 'Инструменты', path: '/admin/tools', icon: <Settings className="h-5 w-5 mr-2" /> },
+    { title: 'Инструменты администратора', path: '/admin/tools', icon: <Settings className="h-5 w-5 mr-2" /> },
   ];
 
   return (
