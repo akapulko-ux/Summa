@@ -215,11 +215,33 @@ function BackupMetadataDialog({ backupName }: { backupName: string }) {
                   {language === 'ru' ? "Таблицы" : "Tables"}
                 </h4>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {metadata.tables.slice(0, 10).map((table: string, index: number) => (
-                    <Badge key={index} variant="secondary">
-                      {table}
-                    </Badge>
-                  ))}
+                  {metadata.tables.slice(0, 10).map((table: string, index: number) => {
+                    // Функция для получения более понятного названия таблицы
+                    const getTableDisplayName = (tableName: string): string => {
+                      const parts = tableName.split('.');
+                      const name = parts.length > 1 ? parts[1] : tableName;
+                      
+                      const tableTranslations: Record<string, string> = {
+                        'custom_fields': language === 'ru' ? 'Пользовательские поля' : 'Custom Fields',
+                        'services': language === 'ru' ? 'Сервисы' : 'Services',
+                        'session': language === 'ru' ? 'Сессии' : 'Sessions',
+                        'subscriptions': language === 'ru' ? 'Подписки' : 'Subscriptions',
+                        'system_settings': language === 'ru' ? 'Настройки системы' : 'System Settings',
+                        'users': language === 'ru' ? 'Пользователи' : 'Users',
+                        'cashback_transactions': language === 'ru' ? 'Транзакции кэшбэка' : 'Cashback Transactions',
+                        'backup_metadata': language === 'ru' ? 'Метаданные бэкапов' : 'Backup Metadata',
+                        'service_leads': language === 'ru' ? 'Заявки на сервисы' : 'Service Leads'
+                      };
+                      
+                      return tableTranslations[name] || name;
+                    };
+                    
+                    return (
+                      <Badge key={index} variant="secondary">
+                        {getTableDisplayName(table)}
+                      </Badge>
+                    );
+                  })}
                   {metadata.tables.length > 10 && (
                     <Badge variant="secondary">
                       +{metadata.tables.length - 10} {language === 'ru' ? "еще" : "more"}
@@ -235,11 +257,25 @@ function BackupMetadataDialog({ backupName }: { backupName: string }) {
                   {language === 'ru' ? "Схемы" : "Schemas"}
                 </h4>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {metadata.schemas.map((schema: string, index: number) => (
-                    <Badge key={index} variant="outline">
-                      {schema}
-                    </Badge>
-                  ))}
+                  {metadata.schemas.map((schema: string, index: number) => {
+                    // Функция для получения более понятного названия схемы
+                    const getSchemaDisplayName = (schemaName: string): string => {
+                      const schemaTranslations: Record<string, string> = {
+                        'public': language === 'ru' ? 'Основная схема' : 'Public Schema',
+                        'auth': language === 'ru' ? 'Аутентификация' : 'Authentication',
+                        'pg_catalog': language === 'ru' ? 'Системный каталог' : 'System Catalog',
+                        'information_schema': language === 'ru' ? 'Информационная схема' : 'Information Schema'
+                      };
+                      
+                      return schemaTranslations[schemaName] || schemaName;
+                    };
+                    
+                    return (
+                      <Badge key={index} variant="outline">
+                        {getSchemaDisplayName(schema)}
+                      </Badge>
+                    );
+                  })}
                 </div>
               </div>
             )}
