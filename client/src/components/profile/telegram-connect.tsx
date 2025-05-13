@@ -10,7 +10,8 @@ import {
   Loader2, 
   BellRing,
   LogOut,
-  AlertTriangle 
+  AlertTriangle,
+  Copy
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
@@ -128,12 +129,33 @@ export function TelegramConnect() {
   const renderLinkInstructions = () => {
     if (!linkCode) return null;
 
+    // Функция для копирования команды в буфер обмена
+    const copyCommand = () => {
+      navigator.clipboard.writeText(`/link ${linkCode}`);
+      toast({
+        title: t('common.copied'),
+        description: t('telegram.commandCopied'),
+      });
+    };
+
     return (
       <Alert className="mt-4">
         <AlertTitle className="font-semibold">{t('telegram.linkInstructions')}</AlertTitle>
         <AlertDescription className="mt-2">
           <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/saasly_bot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@saasly_bot</a></p>
-          <p className="mb-2">2. {t('telegram.sendCommand')}: <code className="bg-muted px-2 py-1 rounded">/link {linkCode}</code></p>
+          <p className="mb-2 flex items-center">
+            2. {t('telegram.sendCommand')}: 
+            <code className="bg-muted px-2 py-1 rounded ml-1 mr-1">/link {linkCode}</code>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6 p-0 hover:bg-muted" 
+              onClick={copyCommand}
+              title={t('common.copy')}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </p>
           <p>{t('telegram.afterLink')}</p>
         </AlertDescription>
       </Alert>

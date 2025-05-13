@@ -48,6 +48,8 @@ export type Translation = {
     filterOptions: string;
     sortOptions: string;
     status: string;
+    copy: string;
+    copied: string;
     createdAt: string;
     updatedAt: string;
     actions: string;
@@ -730,6 +732,7 @@ export type Translation = {
     disconnected: string;
     confirmDisconnect: string;
     disconnectWarning: string;
+    commandCopied: string;
   };
 
   // Ошибки и сообщения
