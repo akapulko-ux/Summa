@@ -243,8 +243,8 @@ export function TelegramConnect() {
             {/* Кнопка отправки тестового уведомления */}
             <Button 
               onClick={handleSendTestNotification}
-              variant="secondary"
-              className="w-full"
+              variant="default"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={sendTestNotificationMutation.isPending}
             >
               {sendTestNotificationMutation.isPending ? (
