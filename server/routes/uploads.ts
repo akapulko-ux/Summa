@@ -106,21 +106,18 @@ export const setupUploadRoutes = (app: Express) => {
 
       const serviceId = req.body.serviceId ? parseInt(req.body.serviceId) : null;
       
-      // Генерируем уникальное имя файла
+      // Генерируем уникальное имя файла (для URL и удобства идентификации)
       const uniqueFileName = `${uuidv4()}${path.extname(req.file.originalname || '')}`;
-      const iconUrl = `/uploads/icons/${uniqueFileName}`;
+      const iconUrl = `/api/service-icon/${serviceId || 'temp'}`;
       
-      // Сохраняем данные изображения в формате base64
+      // Сохраняем данные изображения в формате base64 (это основное хранилище)
       const iconData = req.file.buffer.toString('base64');
       const iconMimeType = req.file.mimetype;
-      
-      // Также сохраняем файл на диск для совместимости со старым подходом
-      const filePath = path.join(iconDir, uniqueFileName);
-      fs.writeFileSync(filePath, req.file.buffer);
       
       // Если указан ID сервиса, обновляем запись в базе данных
       if (serviceId) {
         await updateServiceIcon(serviceId, iconData, iconMimeType, iconUrl);
+        console.log(`Иконка сохранена в базе данных для сервиса #${serviceId}`);
       }
       
       // Возвращаем URL и данные загруженного файла
@@ -138,37 +135,20 @@ export const setupUploadRoutes = (app: Express) => {
   // Эндпоинт удаления иконки
   app.delete("/api/upload/icon", async (req: Request, res: Response) => {
     try {
-      const { iconUrl } = req.query;
       const serviceId = req.query.serviceId ? parseInt(req.query.serviceId as string) : null;
       
-      if ((!iconUrl || typeof iconUrl !== 'string') && !serviceId) {
-        return res.status(400).json({ message: "URL иконки или ID сервиса не указаны" });
+      if (!serviceId) {
+        return res.status(400).json({ message: "ID сервиса не указан" });
       }
       
-      // Если указан ID сервиса, очищаем данные иконки в базе данных
-      if (serviceId) {
-        await updateServiceIcon(serviceId, null, null, null);
-      }
-      
-      // Если указан URL, удаляем файл с диска (для совместимости)
-      if (iconUrl && typeof iconUrl === 'string') {
-        // Извлекаем имя файла из URL
-        const filename = iconUrl.split('/').pop();
-        if (filename) {
-          const filePath = path.join(iconDir, filename);
-          
-          // Проверяем, существует ли файл
-          if (fs.existsSync(filePath)) {
-            // Удаляем файл
-            fs.unlinkSync(filePath);
-          }
-        }
-      }
+      // Очищаем данные иконки в базе данных
+      await updateServiceIcon(serviceId, null, null, null);
+      console.log(`Иконка удалена из базы данных для сервиса #${serviceId}`);
       
       return res.status(200).json({ message: "Иконка успешно удалена" });
     } catch (error: any) {
-      console.error("Ошибка удаления файла:", error.message);
-      return res.status(500).json({ message: "Ошибка при удалении файла" });
+      console.error("Ошибка удаления иконки:", error.message);
+      return res.status(500).json({ message: "Ошибка при удалении иконки" });
     }
   });
 
@@ -201,121 +181,7 @@ export const setupUploadRoutes = (app: Express) => {
     }
   });
   
-  // Эндпоинт для получения статуса иконок сервисов
-  app.get("/api/service-icons-status", async (req: Request, res: Response) => {
-    try {
-      // Получаем все сервисы
-      const servicesData = await db.select({
-        id: services.id,
-        iconUrl: services.iconUrl,
-        iconData: services.iconData
-      }).from(services);
-      
-      // Статистика по иконкам
-      const status = {
-        total: servicesData.length,
-        inDb: 0,          // Иконки в базе данных
-        onlyFilesystem: 0, // Иконки только в файловой системе
-        missing: 0         // Отсутствуют иконки
-      };
-      
-      // Анализируем каждый сервис
-      for (const service of servicesData) {
-        // Если иконка есть в базе данных
-        if (service.iconData) {
-          status.inDb++;
-        } 
-        // Если иконка есть только в файловой системе
-        else if (service.iconUrl && service.iconUrl.startsWith('/uploads/')) {
-          const filename = service.iconUrl.split('/').pop();
-          if (filename && fs.existsSync(path.join(iconDir, filename))) {
-            status.onlyFilesystem++;
-          } else {
-            status.missing++; // URL есть, но файл не найден
-          }
-        }
-        // Если внешняя иконка или отсутствует
-        else if (!service.iconUrl) {
-          status.missing++;
-        }
-      }
-      
-      return res.status(200).json(status);
-    } catch (error: any) {
-      console.error("Ошибка получения статуса иконок:", error.message);
-      return res.status(500).json({ message: "Ошибка при получении статуса иконок" });
-    }
-  });
 
-  // Эндпоинт для миграции существующих иконок в базу данных
-  app.post("/api/migrate-icons", async (_req: Request, res: Response) => {
-    try {
-      // Получаем все сервисы с URL иконок
-      const servicesWithIcons = await db.select({
-        id: services.id,
-        iconUrl: services.iconUrl,
-        iconData: services.iconData
-      }).from(services);
-      
-      let migratedCount = 0;
-      let failedCount = 0;
-      
-      for (const service of servicesWithIcons) {
-        if (!service.iconUrl || service.iconData) continue; // Пропускаем, если нет URL или иконка уже в базе
-        
-        // Проверяем, указывает ли iconUrl на локальный файл
-        if (service.iconUrl.startsWith('/uploads/')) {
-          // Извлекаем имя файла из URL
-          const filename = service.iconUrl.split('/').pop();
-          if (!filename) continue;
-          
-          const filePath = path.join(iconDir, filename);
-          
-          // Проверяем, существует ли файл
-          if (fs.existsSync(filePath)) {
-            // Определяем MIME-тип на основе расширения
-            const ext = path.extname(filePath).toLowerCase();
-            let mimeType = 'application/octet-stream';
-            
-            if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg';
-            else if (ext === '.png') mimeType = 'image/png';
-            else if (ext === '.gif') mimeType = 'image/gif';
-            else if (ext === '.svg') mimeType = 'image/svg+xml';
-            
-            // Читаем файл в base64
-            const iconData = getBase64FromFilePath(filePath);
-            
-            if (iconData) {
-              // Обновляем запись в базе данных
-              const success = await updateServiceIcon(service.id, iconData, mimeType, service.iconUrl);
-              
-              if (success) {
-                migratedCount++;
-              } else {
-                failedCount++;
-              }
-            } else {
-              failedCount++;
-            }
-          } else {
-            failedCount++;
-          }
-        } else {
-          // URL внешний, пропускаем
-          continue;
-        }
-      }
-      
-      return res.status(200).json({
-        message: `Миграция завершена. Обработано: ${migratedCount}, ошибок: ${failedCount}`,
-        migrated: migratedCount,
-        failed: failedCount
-      });
-    } catch (error: any) {
-      console.error("Ошибка миграции иконок:", error.message);
-      return res.status(500).json({ message: "Ошибка при миграции иконок" });
-    }
-  });
 
   // Создаем статический маршрут для доступа к загруженным файлам (для совместимости)
   app.use("/uploads", (req, res, next) => {
