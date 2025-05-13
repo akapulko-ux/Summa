@@ -29,6 +29,8 @@ export const services = pgTable('services', {
   id: serial('id').primaryKey(),
   title: text('title').notNull(),
   iconUrl: text('icon_url'),
+  iconData: text('icon_data'), // Хранение изображения в формате base64
+  iconMimeType: text('icon_mime_type'), // MIME-тип сохраненного изображения
   description: text('description'),
   cashback: text('cashback'), // Can be either fixed amount or percentage like "5%" or "10.00"
   commission: text('commission'), // Commission charged by the service, can be fixed amount or percentage
@@ -95,6 +97,8 @@ export const insertUserSchema = createInsertSchema(users, {
 export const insertServiceSchema = createInsertSchema(services, {
   title: z.string().min(1),
   iconUrl: z.string().optional(),
+  iconData: z.string().optional(),
+  iconMimeType: z.string().optional(),
   description: z.string().optional(),
   cashback: z.string().optional(),
   commission: z.string().optional(),
