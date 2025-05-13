@@ -9,59 +9,59 @@ import { db } from "../db";
 import { services, Service } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
-// Получаем текущую директорию в ESM формате
+// Get current directory in ESM format
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Настройка хранилища загрузок для временных файлов
+// Configure upload storage for temporary files
 const uploadDir = path.join(__dirname, "../../uploads");
 
-// Создать директорию, если не существует
+// Create directory if it doesn't exist
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Аналогично создадим директорию для иконок
+// Similarly create a directory for icons
 const iconDir = path.join(uploadDir, "icons");
 if (!fs.existsSync(iconDir)) {
   fs.mkdirSync(iconDir, { recursive: true });
 }
 
-// Настройка multer для временного хранения загружаемых файлов
-// В отличие от прежней реализации, используем memoryStorage для работы с буфером в памяти
+// Configure multer for temporary storage of uploaded files
+// Unlike the previous implementation, we use memoryStorage to work with the buffer in memory
 const iconStorage = multer.memoryStorage();
 
-// Фильтрация файлов (только изображения)
+// File filtering (images only)
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Недопустимый тип файла. Разрешены только изображения (JPG, PNG, GIF, SVG)."));
+    cb(new Error("Invalid file type. Only images (JPG, PNG, GIF, SVG) are allowed."));
   }
 };
 
-// Настройка загрузки с ограничением размера
+// Upload configuration with size limitation
 const upload = multer({
-  storage: iconStorage, // используем хранилище в памяти
+  storage: iconStorage, // using in-memory storage
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5 МБ
+    fileSize: 5 * 1024 * 1024, // 5 MB
   },
   fileFilter,
 });
 
-// Функция для чтения файла в формат base64
+// Function to read a file into base64 format
 const getBase64FromFilePath = (filePath: string): string => {
   try {
     const fileBuffer = fs.readFileSync(filePath);
     return fileBuffer.toString('base64');
   } catch (error) {
-    console.error('Ошибка чтения файла в base64:', error);
+    console.error('Error reading file into base64:', error);
     return '';
   }
 }
 
-// Функция для получения иконки из базы данных по ID сервиса
+// Function to retrieve an icon from the database by service ID
 const getServiceIcon = async (serviceId: number): Promise<{ iconData: string | null, iconMimeType: string | null, iconUrl: string | null }> => {
   try {
     const [service] = await db.select({
@@ -72,12 +72,12 @@ const getServiceIcon = async (serviceId: number): Promise<{ iconData: string | n
     
     return service || { iconData: null, iconMimeType: null, iconUrl: null };
   } catch (error) {
-    console.error('Ошибка получения иконки из БД:', error);
+    console.error('Error retrieving icon from database:', error);
     return { iconData: null, iconMimeType: null, iconUrl: null };
   }
 };
 
-// Функция для обновления иконки сервиса в базе данных
+// Function to update a service icon in the database
 const updateServiceIcon = async (serviceId: number, iconData: string | null, iconMimeType: string | null, iconUrl: string | null): Promise<boolean> => {
   try {
     await db.update(services)
@@ -91,7 +91,7 @@ const updateServiceIcon = async (serviceId: number, iconData: string | null, ico
     
     return true;
   } catch (error) {
-    console.error('Ошибка обновления иконки в БД:', error);
+    console.error('Error updating icon in database:', error);
     return false;
   }
 };
