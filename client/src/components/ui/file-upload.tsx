@@ -6,8 +6,9 @@ import { UploadIcon, XIcon, ImageIcon, Loader2 } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 
 interface FileUploadProps {
-  onUpload: (url: string) => void;
+  onUpload: (data: { iconUrl: string, iconData?: string, iconMimeType?: string }) => void;
   initialUrl?: string;
+  serviceId?: number;
   label?: string;
   accept?: string;
   description?: string;
@@ -16,6 +17,7 @@ interface FileUploadProps {
 export function FileUpload({
   onUpload,
   initialUrl,
+  serviceId,
   label,
   accept = "image/*",
   description,
@@ -41,6 +43,11 @@ export function FileUpload({
       // Создаем FormData для отправки файла
       const formData = new FormData();
       formData.append("icon", file);
+      
+      // Если есть ID сервиса, добавляем его в запрос
+      if (serviceId) {
+        formData.append("serviceId", serviceId.toString());
+      }
 
       // Отправляем файл на сервер
       const response = await fetch("/api/upload/icon", {
@@ -54,7 +61,13 @@ export function FileUpload({
 
       const data = await response.json();
       setPreviewUrl(data.iconUrl);
-      onUpload(data.iconUrl); // Передаем URL обратно в родительский компонент
+      
+      // Передаем все данные обратно в родительский компонент
+      onUpload({
+        iconUrl: data.iconUrl,
+        iconData: data.iconData,
+        iconMimeType: data.iconMimeType
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Произошла ошибка при загрузке файла");
       console.error("Error uploading file:", err);
@@ -65,17 +78,33 @@ export function FileUpload({
 
   const handleRemove = async () => {
     try {
-      // Если есть URL файла и он загружен на сервер (начинается с /uploads/)
+      // Параметры для запроса на удаление
+      let url = "/api/upload/icon";
+      const params = new URLSearchParams();
+      
+      // Если есть URL, добавляем его к запросу
       if (previewUrl && previewUrl.startsWith('/uploads/')) {
-        // Удаляем файл с сервера
-        await fetch(`/api/upload/icon?iconUrl=${encodeURIComponent(previewUrl)}`, {
-          method: 'DELETE',
-        });
+        params.append("iconUrl", previewUrl);
       }
+      
+      // Если есть ID сервиса, добавляем его к запросу
+      if (serviceId) {
+        params.append("serviceId", serviceId.toString());
+      }
+      
+      // Формируем полный URL запроса
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+      
+      // Удаляем файл с сервера
+      await fetch(url, {
+        method: 'DELETE',
+      });
       
       // Очищаем URL в родительском компоненте
       setPreviewUrl(null);
-      onUpload("");
+      onUpload({ iconUrl: "" });
       
       // Сбрасываем поле ввода файла
       if (fileInputRef.current) {

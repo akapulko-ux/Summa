@@ -205,9 +205,11 @@ export const setupUploadRoutes = (app: Express) => {
   app.post("/api/migrate-icons", async (_req: Request, res: Response) => {
     try {
       // Получаем все сервисы с URL иконок
-      const servicesWithIcons = await db.select().from(services).where(
-        eq(services.iconUrl, undefined).not()
-      );
+      const servicesWithIcons = await db.select({
+        id: services.id,
+        iconUrl: services.iconUrl,
+        iconData: services.iconData
+      }).from(services);
       
       let migratedCount = 0;
       let failedCount = 0;

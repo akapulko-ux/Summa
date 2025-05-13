@@ -31,6 +31,8 @@ const serviceFormSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   description: z.string().optional(),
   iconUrl: z.string().optional().or(z.literal("")),
+  iconData: z.string().optional().or(z.literal("")),
+  iconMimeType: z.string().optional().or(z.literal("")),
   cashback: z.string().regex(/^(\d+(\.\d{1,2})?%?|\d+(\.\d{1,2})?)$/, {
     message: "Enter a valid number or percentage (e.g., 5, 5.00, 5%)",
   }).optional().or(z.literal("")),
@@ -66,6 +68,8 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
       const processedData = {
         ...data,
         iconUrl: data.iconUrl || undefined,
+        iconData: data.iconData || undefined,
+        iconMimeType: data.iconMimeType || undefined,
         cashback: data.cashback || undefined,
         commission: data.commission || undefined,
         isActive: isActive,
@@ -88,6 +92,8 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
       const processedData = {
         ...data,
         iconUrl: data.iconUrl || undefined,
+        iconData: data.iconData || undefined,
+        iconMimeType: data.iconMimeType || undefined,
         cashback: data.cashback || undefined,
         commission: data.commission || undefined,
         isActive: isActive,
@@ -205,7 +211,17 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
                     <FormControl>
                       <FileUpload 
                         initialUrl={field.value}
-                        onUpload={(url) => field.onChange(url)}
+                        serviceId={serviceId}
+                        onUpload={(data) => {
+                          field.onChange(data.iconUrl);
+                          // Установка дополнительных полей для сохранения в базу данных
+                          if (data.iconData) {
+                            form.setValue('iconData', data.iconData);
+                          }
+                          if (data.iconMimeType) {
+                            form.setValue('iconMimeType', data.iconMimeType);
+                          }
+                        }}
                         accept="image/*"
                         description={t('services.serviceIconDescription')}
                       />
