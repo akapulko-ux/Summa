@@ -41,6 +41,7 @@ export type Translation = {
     saveFirstToConfigureThis: string;
     filter: string;
     sortBy: string;
+    sortOrder: string;
     ascending: string;
     descending: string;
     clearFilters: string;
@@ -53,6 +54,8 @@ export type Translation = {
     createdAt: string;
     updatedAt: string;
     actions: string;
+    change: string;
+    uploadFile: string;
   };
   
   // Кэш
