@@ -129,6 +129,9 @@ export function TelegramConnect() {
   const renderLinkInstructions = () => {
     if (!linkCode) return null;
 
+    // Формируем прямую ссылку для Telegram с командой
+    const directTelegramLink = `https://t.me/saasly_bot?start=link_${linkCode}`;
+
     // Функция для копирования команды в буфер обмена
     const copyCommand = () => {
       navigator.clipboard.writeText(`/link ${linkCode}`);
@@ -142,6 +145,21 @@ export function TelegramConnect() {
       <Alert className="mt-4">
         <AlertTitle className="font-semibold">{t('telegram.linkInstructions')}</AlertTitle>
         <AlertDescription className="mt-2">
+          <p className="mb-4">
+            <Button 
+              className="w-full"
+              variant="default"
+              asChild
+            >
+              <a href={directTelegramLink} target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Подключить через Telegram
+              </a>
+            </Button>
+          </p>
+          
+          <p className="text-sm text-muted-foreground mb-2">Или выполните эти шаги вручную:</p>
+          
           <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/saasly_bot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@saasly_bot</a></p>
           <p className="mb-2 flex items-center">
             2. {t('telegram.sendCommand')}: 

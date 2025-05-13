@@ -50,10 +50,27 @@ export class TelegramBotManager implements ITelegramBotManager {
    * Инициализация бота и настройка обработчиков
    */
   init(): void {
-    // Обработка команды /start
-    this.bot.onText(/\/start/, (msg) => {
+    // Обработка команды /start с параметрами и без
+    this.bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
       const chatId = msg.chat.id;
-      this.bot.sendMessage(chatId, 'Добро пожаловать в Сумма! Используйте /link <код> для подключения вашего аккаунта.');
+      const startParam = match?.[1];
+      
+      // Проверка на параметр link_CODE в формате глубоких ссылок Telegram
+      if (startParam && startParam.startsWith('link_')) {
+        const linkCode = startParam.substring(5); // Убираем префикс "link_"
+        
+        // Используем существующий метод для привязки аккаунта
+        const success = await this.linkUserAccount(linkCode, chatId);
+        
+        if (success) {
+          this.bot.sendMessage(chatId, 'Ваш аккаунт успешно привязан! Теперь вы будете получать уведомления о ваших подписках.');
+        } else {
+          this.bot.sendMessage(chatId, 'Не удалось привязать аккаунт. Возможно, код неверный или истек срок его действия.');
+        }
+      } else {
+        // Стандартное приветственное сообщение
+        this.bot.sendMessage(chatId, 'Добро пожаловать в Сумма! Используйте /link <код> для подключения вашего аккаунта.');
+      }
     });
     
     // Обработка команды /help
