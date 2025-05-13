@@ -200,6 +200,52 @@ export const setupUploadRoutes = (app: Express) => {
       return res.status(500).json({ message: "Ошибка при получении иконки" });
     }
   });
+  
+  // Эндпоинт для получения статуса иконок сервисов
+  app.get("/api/service-icons-status", async (req: Request, res: Response) => {
+    try {
+      // Получаем все сервисы
+      const servicesData = await db.select({
+        id: services.id,
+        iconUrl: services.iconUrl,
+        iconData: services.iconData
+      }).from(services);
+      
+      // Статистика по иконкам
+      const status = {
+        total: servicesData.length,
+        inDb: 0,          // Иконки в базе данных
+        onlyFilesystem: 0, // Иконки только в файловой системе
+        missing: 0         // Отсутствуют иконки
+      };
+      
+      // Анализируем каждый сервис
+      for (const service of servicesData) {
+        // Если иконка есть в базе данных
+        if (service.iconData) {
+          status.inDb++;
+        } 
+        // Если иконка есть только в файловой системе
+        else if (service.iconUrl && service.iconUrl.startsWith('/uploads/')) {
+          const filename = service.iconUrl.split('/').pop();
+          if (filename && fs.existsSync(path.join(iconDir, filename))) {
+            status.onlyFilesystem++;
+          } else {
+            status.missing++; // URL есть, но файл не найден
+          }
+        }
+        // Если внешняя иконка или отсутствует
+        else if (!service.iconUrl) {
+          status.missing++;
+        }
+      }
+      
+      return res.status(200).json(status);
+    } catch (error: any) {
+      console.error("Ошибка получения статуса иконок:", error.message);
+      return res.status(500).json({ message: "Ошибка при получении статуса иконок" });
+    }
+  });
 
   // Эндпоинт для миграции существующих иконок в базу данных
   app.post("/api/migrate-icons", async (_req: Request, res: Response) => {
