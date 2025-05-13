@@ -1628,8 +1628,8 @@ export const en: Translation = {
     notConnected: "Not connected to Telegram",
     generateLink: "Generate Connection Code",
     linkInstructions: "To connect your Telegram, follow these steps:",
-    openBot: "1. Open Telegram and search for our bot",
-    sendCommand: "2. Send the command /connect {code} to the bot",
+    openBot: "Open Telegram and search for our bot",
+    sendCommand: "Send the command /link {code} to the bot",
     afterLink: "After connecting, you will receive notifications and updates via Telegram",
     receiveNotifications: "You will receive notifications about your subscriptions and updates",
     sendTestNotification: "Send Test Notification",
@@ -1638,6 +1638,7 @@ export const en: Translation = {
     disconnected: "Telegram successfully disconnected",
     confirmDisconnect: "Are you sure you want to disconnect your Telegram account?",
     disconnectWarning: "You will no longer receive notifications or updates via Telegram.",
+    commandCopied: "Command copied to clipboard",
   },
 
   messages: {
@@ -2479,8 +2480,8 @@ export const ru: Translation = {
     notConnected: "Не подключено к Telegram",
     generateLink: "Сгенерировать код подключения",
     linkInstructions: "Чтобы подключить Telegram, выполните следующие шаги:",
-    openBot: "1. Откройте Telegram и найдите нашего бота",
-    sendCommand: "2. Отправьте боту команду /connect {code}",
+    openBot: "Откройте Telegram и найдите нашего бота",
+    sendCommand: "Отправьте боту команду /link {code}",
     afterLink: "После подключения вы будете получать уведомления и обновления через Telegram",
     receiveNotifications: "Вы будете получать уведомления о ваших подписках и обновлениях",
     sendTestNotification: "Отправить тестовое уведомление",
@@ -2489,6 +2490,7 @@ export const ru: Translation = {
     disconnected: "Telegram успешно отключен",
     confirmDisconnect: "Вы уверены, что хотите отключить ваш аккаунт Telegram?",
     disconnectWarning: "Вы больше не будете получать уведомления или обновления через Telegram.",
+    commandCopied: "Команда скопирована в буфер обмена",
   },
 
   messages: {
