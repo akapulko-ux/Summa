@@ -49,16 +49,16 @@ export function FileUpload({
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
 
-      // Создаем FormData для отправки файла
+      // Create FormData for file upload
       const formData = new FormData();
       formData.append("icon", file);
       
-      // Если есть ID сервиса, добавляем его в запрос
+      // If service ID exists, add it to the request
       if (serviceId) {
         formData.append("serviceId", serviceId.toString());
       }
 
-      // Отправляем файл на сервер
+      // Send the file to the server
       const response = await fetch("/api/upload/icon", {
         method: "POST",
         body: formData,
@@ -71,7 +71,7 @@ export function FileUpload({
       const data = await response.json();
       setPreviewUrl(data.iconUrl);
       
-      // Передаем все данные обратно в родительский компонент
+      // Pass all data back to the parent component
       onUpload({
         iconUrl: data.iconUrl,
         iconData: data.iconData,
@@ -87,16 +87,16 @@ export function FileUpload({
 
   const handleRemove = async () => {
     try {
-      // Проверяем, есть ли ID сервиса (обязательно для удаления)
+      // Check if service ID exists (required for deletion)
       if (!serviceId) {
         setError("Cannot delete icon without service ID");
         return;
       }
       
-      // Параметры для запроса на удаление
+      // Parameters for the deletion request
       const url = `/api/upload/icon?serviceId=${serviceId}`;
       
-      // Удаляем иконку из базы данных
+      // Delete the icon from the database
       const response = await fetch(url, {
         method: 'DELETE',
       });
@@ -105,7 +105,7 @@ export function FileUpload({
         throw new Error(`Deletion error: ${response.statusText}`);
       }
       
-      // Очищаем URL и данные в родительском компоненте
+      // Clear URL and data in parent component
       setPreviewUrl(null);
       onUpload({ 
         iconUrl: "",
@@ -113,7 +113,7 @@ export function FileUpload({
         iconMimeType: "" 
       });
       
-      // Сбрасываем поле ввода файла
+      // Reset the file input field
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
