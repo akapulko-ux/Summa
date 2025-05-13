@@ -187,6 +187,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {t('nav.users')}
                   </span>
                 </Link>
+                <Link href="/admin/tools">
+                  <span className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary hover:font-bold",
+                    location === "/admin/tools" ? "text-primary font-bold dark:text-primary-foreground" : "text-muted-foreground"
+                  )}>
+                    Инструменты
+                  </span>
+                </Link>
               </>
             )}
           </nav>
