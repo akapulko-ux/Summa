@@ -886,7 +886,7 @@ export default function BackupsPage() {
               </div>
             ) : isError ? (
               <div className="text-center py-8 text-muted-foreground">
-                {t('common.error')}
+                {language === 'ru' ? "Ошибка" : "Error"}
               </div>
             ) : !backups || backups.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
@@ -995,10 +995,10 @@ export default function BackupsPage() {
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>
-                                      {t('backups.restoreBackup')}
+                                      {language === 'ru' ? "Восстановление из резервной копии" : "Restore from Backup"}
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      {t('backups.confirmRestore')}
+                                      {language === 'ru' ? "Вы уверены, что хотите восстановить базу данных из этой резервной копии? Это действие заменит все текущие данные." : "Are you sure you want to restore the database from this backup? This action will replace all current data."}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
@@ -1034,17 +1034,17 @@ export default function BackupsPage() {
                                   >
                                     <Trash2 className="h-4 w-4" />
                                     <span className="sr-only">
-                                      {t('common.delete')}
+                                      {language === 'ru' ? "Удалить" : "Delete"}
                                     </span>
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>
-                                      {t('backups.deleteBackup')}
+                                      {language === 'ru' ? "Удаление резервной копии" : "Delete Backup"}
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      {t('backups.confirmDelete')}
+                                      {language === 'ru' ? "Вы уверены, что хотите удалить эту резервную копию? Это действие нельзя отменить." : "Are you sure you want to delete this backup? This action cannot be undone."}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
