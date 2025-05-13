@@ -237,13 +237,13 @@ function BackupMetadataDialog({ backupName }: { backupName: string }) {
                     };
                     
                     return (
-                      <Badge key={index} variant="secondary">
+                      <Badge key={index} variant="outline" className="bg-background text-foreground">
                         {getTableDisplayName(table)}
                       </Badge>
                     );
                   })}
                   {metadata.tables.length > 10 && (
-                    <Badge variant="secondary">
+                    <Badge variant="outline" className="bg-background text-foreground">
                       +{metadata.tables.length - 10} {language === 'ru' ? "еще" : "more"}
                     </Badge>
                   )}
@@ -271,7 +271,7 @@ function BackupMetadataDialog({ backupName }: { backupName: string }) {
                     };
                     
                     return (
-                      <Badge key={index} variant="outline">
+                      <Badge key={index} variant="outline" className="bg-background text-foreground">
                         {getSchemaDisplayName(schema)}
                       </Badge>
                     );
