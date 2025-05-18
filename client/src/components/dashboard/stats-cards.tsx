@@ -49,7 +49,7 @@ export function StatsCards() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t('users.title')}</h3>
+                <h3 className="tracking-tight text-sm font-medium">{t('dashboard.totalUsers')}</h3>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
               {isAdminLoading ? (
