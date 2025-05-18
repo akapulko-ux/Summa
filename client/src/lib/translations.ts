@@ -2264,6 +2264,7 @@ export const ru: Translation = {
     loginId: "Логин",
     serviceName: "Название сервиса",
     otherCustom: "Другое (Свой)",
+    renewalAmount: "Сумма продления",
     enterTitle: "Введите название подписки",
     enterDomain: "Введите домен",
     login: "Логин",
