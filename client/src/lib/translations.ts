@@ -2417,7 +2417,7 @@ export const ru: Translation = {
       selectStatus: "Выберите статус",
       statusAll: "Все",
       statusActive: "Активные",
-      statusPending: "В ожидании",
+      statusPending: "Заканчивается",
       statusExpired: "Истекшие",
       statusCanceled: "Отмененные",
       periodAll: "Все периоды",
