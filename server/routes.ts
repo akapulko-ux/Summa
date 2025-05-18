@@ -15,7 +15,7 @@ import { setupMonitoringRoutes } from "./routes/monitoring-routes";
 import { registerReportsRoutes } from "./reports/reports-routes";
 import { setupUploadRoutes } from "./routes/uploads";
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { users, services, subscriptions } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -52,11 +52,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         result.users.map(async (user) => {
           // Получаем количество подписок пользователя
           const subscriptionResult = await db
-            .select({ count: db.fn.count() })
+            .select({ count: sql`count(*)` })
             .from(subscriptions)
             .where(eq(subscriptions.userId, user.id));
           
-          const subscriptionCount = parseInt(subscriptionResult[0].count as string, 10);
+          const subscriptionCount = parseInt(subscriptionResult[0].count.toString(), 10);
           
           // Remove passwordHash from users
           const { passwordHash, ...userData } = user;
