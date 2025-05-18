@@ -42,8 +42,7 @@ export type SubscriptionColumnVisibility = {
   company: boolean;
   price: boolean;
   period: boolean;
-  startDate: boolean;
-  endDate: boolean;
+  paidUntil: boolean;
   status: boolean;
   actions: boolean;
 }
@@ -60,10 +59,8 @@ export type SubscriptionFilters = {
   priceMax: string;
   sortBy: string;
   sortOrder: "asc" | "desc";
-  startDateFrom: string;
-  startDateTo: string;
-  endDateFrom: string;
-  endDateTo: string;
+  paidUntilFrom: string;
+  paidUntilTo: string;
 }
 
 type SubscriptionFiltersProps = {
@@ -115,10 +112,8 @@ export function SubscriptionFilters({
       priceMax: "",
       sortBy: "createdAt",
       sortOrder: "desc",
-      startDateFrom: "",
-      startDateTo: "",
-      endDateFrom: "",
-      endDateTo: "",
+      paidUntilFrom: "",
+      paidUntilTo: "",
     };
     setLocalFilters(defaultFilters);
     onChange(defaultFilters);
@@ -134,8 +129,7 @@ export function SubscriptionFilters({
       company: true,
       price: true,
       period: true,
-      startDate: true,
-      endDate: true,
+      paidUntil: true,
       status: true,
       actions: true,
     };
@@ -306,62 +300,32 @@ export function SubscriptionFilters({
               </div>
             </div>
 
-            {/* Дата начала (от) */}
+            {/* Оплачено до (от) */}
             <div className="space-y-2">
-              <Label htmlFor="startDateFrom">{t('subscriptions.filters.startDateFrom')}</Label>
+              <Label htmlFor="paidUntilFrom">{t('subscriptions.filters.paidUntilFrom')}</Label>
               <div className="relative">
                 <CalendarIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  id="startDateFrom"
+                  id="paidUntilFrom"
                   type="date"
                   className="pl-8"
-                  value={localFilters.startDateFrom}
-                  onChange={(e) => handleFilterChange("startDateFrom", e.target.value)}
+                  value={localFilters.paidUntilFrom}
+                  onChange={(e) => handleFilterChange("paidUntilFrom", e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Дата начала (до) */}
+            {/* Оплачено до (до) */}
             <div className="space-y-2">
-              <Label htmlFor="startDateTo">{t('subscriptions.filters.startDateTo')}</Label>
+              <Label htmlFor="paidUntilTo">{t('subscriptions.filters.paidUntilTo')}</Label>
               <div className="relative">
                 <CalendarIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  id="startDateTo"
+                  id="paidUntilTo"
                   type="date"
                   className="pl-8"
-                  value={localFilters.startDateTo}
-                  onChange={(e) => handleFilterChange("startDateTo", e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Дата окончания (от) */}
-            <div className="space-y-2">
-              <Label htmlFor="endDateFrom">{t('subscriptions.filters.endDateFrom')}</Label>
-              <div className="relative">
-                <CalendarIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="endDateFrom"
-                  type="date"
-                  className="pl-8"
-                  value={localFilters.endDateFrom}
-                  onChange={(e) => handleFilterChange("endDateFrom", e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Дата окончания (до) */}
-            <div className="space-y-2">
-              <Label htmlFor="endDateTo">{t('subscriptions.filters.endDateTo')}</Label>
-              <div className="relative">
-                <CalendarIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="endDateTo"
-                  type="date"
-                  className="pl-8"
-                  value={localFilters.endDateTo}
-                  onChange={(e) => handleFilterChange("endDateTo", e.target.value)}
+                  value={localFilters.paidUntilTo}
+                  onChange={(e) => handleFilterChange("paidUntilTo", e.target.value)}
                 />
               </div>
             </div>

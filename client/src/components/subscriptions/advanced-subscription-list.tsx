@@ -80,8 +80,7 @@ const initialColumnVisibility: SubscriptionColumnVisibility = {
   company: true,
   price: true,
   period: true,
-  startDate: true,
-  endDate: true,
+  paidUntil: true,
   status: true,
   actions: true,
 };
@@ -510,8 +509,7 @@ export function AdvancedSubscriptionList({
                 {columnVisibility.company && <TableHead>{t('users.userCompany')}</TableHead>}
                 {columnVisibility.price && <TableHead>{t('subscriptions.paymentAmount')}</TableHead>}
                 {columnVisibility.period && <TableHead>{t('subscriptions.paymentPeriod')}</TableHead>}
-                {columnVisibility.startDate && <TableHead>{t('subscriptions.startDate')}</TableHead>}
-                {columnVisibility.endDate && <TableHead>{t('subscriptions.endDate')}</TableHead>}
+                {columnVisibility.paidUntil && <TableHead>{t('subscriptions.paidUntil')}</TableHead>}
                 {columnVisibility.status && <TableHead>{t('subscriptions.status')}</TableHead>}
                 {columnVisibility.actions && <TableHead className="text-right">{t('common.actions')}</TableHead>}
               </TableRow>
@@ -581,13 +579,7 @@ export function AdvancedSubscriptionList({
                       </TableCell>
                     )}
                     
-                    {columnVisibility.startDate && (
-                      <TableCell>
-                        {formatDate(subscription.startDate)}
-                      </TableCell>
-                    )}
-                    
-                    {columnVisibility.endDate && (
+                    {columnVisibility.paidUntil && (
                       <TableCell>
                         {formatDate(subscription.paidUntil)}
                       </TableCell>
