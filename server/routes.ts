@@ -478,6 +478,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Forbidden" });
       }
       
+      // Проверяем и обновляем статус подписки на основе даты оплаты
+      const correctStatus = checkSubscriptionStatus(subscription);
+      
+      // Если статус изменился, обновляем его в базе данных
+      if (correctStatus !== subscription.status) {
+        console.log(`Updating subscription ${id} status from ${subscription.status} to ${correctStatus}`);
+        await storage.updateSubscription(id, { status: correctStatus });
+        subscription.status = correctStatus;
+      }
+      
       res.json(subscription);
     } catch (error) {
       console.error("Error fetching subscription:", error);
