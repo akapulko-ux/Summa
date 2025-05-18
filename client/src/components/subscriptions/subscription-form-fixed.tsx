@@ -128,8 +128,8 @@ export function SubscriptionForm({
       const transformedData: any = {
         title: data.title,
         userId: userId || user?.id, // Используем переданный userId, если он есть, иначе текущего пользователя
-        domain: null, // Удалено по требованию
-        loginId: null, // Удалено по требованию
+        domain: "", // Пустая строка вместо null
+        loginId: "", // Пустая строка вместо null
         paymentPeriod: data.paymentPeriod || "monthly",
         licensesCount: 1, // Удалено по требованию
         usersCount: 1, // Удалено по требованию
@@ -255,8 +255,8 @@ export function SubscriptionForm({
       // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
       const transformedData: any = {
         title: data.title,
-        domain: null, // Удалено по требованию
-        loginId: null, // Удалено по требованию
+        domain: "", // Пустая строка вместо null
+        loginId: "", // Пустая строка вместо null
         paymentPeriod: data.paymentPeriod || "monthly",
         licensesCount: 1, // Удалено по требованию
         usersCount: 1, // Удалено по требованию
