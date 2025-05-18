@@ -418,7 +418,7 @@ export function AdvancedSubscriptionList({
       // Преобразуем в число, если передана строка
       const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
       if (isNaN(numAmount)) return amount;
-      return `$${numAmount.toFixed(2)}`;
+      return `₽${numAmount.toFixed(2)}`;
     } catch (e) {
       console.warn('Error formatting money:', e);
       return amount;
