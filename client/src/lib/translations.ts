@@ -831,6 +831,7 @@ export const en: Translation = {
     current_balance: "Current Balance",
     earned_cashback: "Earned Cashback",
     current_cashback_balance: "Current cashback balance",
+    current_cashback_balance_detailed: "Your current cashback balance that you can spend",
   },
   customFields: {
     title: "Custom Fields",

@@ -163,7 +163,7 @@ export function StatsCards() {
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t('cashback.earned_cashback')}</h3>
+                <h3 className="tracking-tight text-sm font-medium">{t('cashback.cashback_balance')}</h3>
                 <Wallet className="h-4 w-4 text-muted-foreground" />
               </div>
               {isUserLoading ? (
@@ -174,7 +174,7 @@ export function StatsCards() {
                     {cashbackBalance?.balance ? `${cashbackBalance.balance.toFixed(2)} ₽` : '0.00 ₽'}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t('cashback.current_cashback_balance')}
+                    {t('cashback.current_cashback_balance_detailed')}
                   </p>
                 </>
               )}
