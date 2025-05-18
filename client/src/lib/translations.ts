@@ -1458,13 +1458,15 @@ export const en: Translation = {
     nextPayment: "Next payment",
     periodValues: {
       monthly: "Monthly",
-      quarterly: "Quarterly",
-      yearly: "Yearly"
+      quarterly: "Long Term",
+      yearly: "Balance Top-up",
+      other: "Other"
     },
     periods: {
       monthly: "Monthly",
-      quarterly: "Quarterly",
-      yearly: "Yearly"
+      quarterly: "Long Term",
+      yearly: "Balance Top-up",
+      other: "Other"
     },
     statuses: {
       active: "Active",
@@ -2279,6 +2281,10 @@ export const ru: Translation = {
     selectPlan: "Выберите тариф",
     paymentPeriod: "Период оплаты",
     monthly: "Ежемесячно",
+    monthlyNew: "Ежемесячно",
+    longTerm: "Длительный срок",
+    topUp: "Пополнение баланса",
+    other: "Другое",
     quarterly: "Ежеквартально",
     yearly: "Ежегодно",
     paymentAmount: "Сумма оплаты",
@@ -2321,13 +2327,15 @@ export const ru: Translation = {
     selectStatus: "Выберите статус",
     periods: {
       monthly: "Ежемесячно",
-      quarterly: "Ежеквартально",
-      yearly: "Ежегодно"
+      quarterly: "Длительный срок",
+      yearly: "Пополнение баланса",
+      other: "Другое"
     },
     periodValues: {
       monthly: "Ежемесячно",
-      quarterly: "Ежеквартально",
-      yearly: "Ежегодно"
+      quarterly: "Длительный срок",
+      yearly: "Пополнение баланса",
+      other: "Другое"
     },
     statuses: {
       active: "Активна",
