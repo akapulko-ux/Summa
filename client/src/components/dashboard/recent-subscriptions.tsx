@@ -15,6 +15,12 @@ interface Subscription {
   status: string;
   createdAt: string;
   userName?: string;
+  paymentAmount?: number;
+  paidUntil?: string;
+  serviceData?: {
+    id: number;
+    title: string;
+  };
 }
 
 export function RecentSubscriptions() {
@@ -57,10 +63,10 @@ export function RecentSubscriptions() {
                   {t('subscriptions.service')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  {t('users.title')}
+                  {t('subscriptions.renewalAmount')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  {t('common.date')}
+                  {t('subscriptions.paidUntil')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                   {t('subscriptions.status')}
@@ -93,15 +99,16 @@ export function RecentSubscriptions() {
                     key={sub.id}
                     className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                   >
-                    <td className="p-4 align-middle">{sub.title}</td>
                     <td className="p-4 align-middle">
-                      {sub.userName || `${t('users.title')} #${sub.userId}`}
+                      {sub.serviceData?.title || sub.title}
                     </td>
                     <td className="p-4 align-middle">
-                      {formatDistanceToNow(new Date(sub.createdAt), {
-                        addSuffix: true,
-                        locale: language === 'ru' ? ru : undefined
-                      })}
+                      {sub.paymentAmount ? `${sub.paymentAmount.toLocaleString()} ₽` : '-'}
+                    </td>
+                    <td className="p-4 align-middle">
+                      {sub.paidUntil 
+                        ? new Date(sub.paidUntil).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US') 
+                        : '-'}
                     </td>
                     <td className="p-4 align-middle">
                       <Badge variant={getBadgeVariant(sub.status)}>
