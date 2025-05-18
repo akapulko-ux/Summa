@@ -358,8 +358,7 @@ export function SubscriptionFilters({
                     <SelectItem value="domain">{t('subscriptions.filters.sortDomain')}</SelectItem>
                     <SelectItem value="status">{t('subscriptions.filters.sortStatus')}</SelectItem>
                     <SelectItem value="paymentAmount">{t('subscriptions.filters.sortPrice')}</SelectItem>
-                    <SelectItem value="startDate">{t('subscriptions.filters.sortStartDate')}</SelectItem>
-                    <SelectItem value="endDate">{t('subscriptions.filters.sortEndDate')}</SelectItem>
+                    <SelectItem value="paidUntil">{t('subscriptions.filters.sortPaidUntil')}</SelectItem>
                     <SelectItem value="createdAt">{t('subscriptions.filters.sortCreatedAt')}</SelectItem>
                   </SelectContent>
                 </Select>
@@ -487,27 +486,14 @@ export function SubscriptionFilters({
               
               <div className="flex items-center space-x-2">
                 <Checkbox 
-                  id="column-startDate" 
-                  checked={localColumnVisibility.startDate}
+                  id="column-paidUntil" 
+                  checked={localColumnVisibility.paidUntil}
                   onCheckedChange={(checked) => 
-                    handleColumnVisibilityChange("startDate", checked === true)
+                    handleColumnVisibilityChange("paidUntil", checked === true)
                   }
                 />
-                <Label htmlFor="column-startDate" className="cursor-pointer">
-                  {t('subscriptions.startDate')}
-                </Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="column-endDate" 
-                  checked={localColumnVisibility.endDate}
-                  onCheckedChange={(checked) => 
-                    handleColumnVisibilityChange("endDate", checked === true)
-                  }
-                />
-                <Label htmlFor="column-endDate" className="cursor-pointer">
-                  {t('subscriptions.endDate')}
+                <Label htmlFor="column-paidUntil" className="cursor-pointer">
+                  {t('subscriptions.paidUntil')}
                 </Label>
               </div>
               
