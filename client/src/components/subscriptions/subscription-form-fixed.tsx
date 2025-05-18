@@ -581,9 +581,10 @@ export function SubscriptionForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="monthly">{t("subscriptions.monthly")}</SelectItem>
-                      <SelectItem value="quarterly">{t("subscriptions.quarterly")}</SelectItem>
-                      <SelectItem value="yearly">{t("subscriptions.yearly")}</SelectItem>
+                      <SelectItem value="monthly">{t("subscriptions.monthlyNew")}</SelectItem>
+                      <SelectItem value="quarterly">{t("subscriptions.longTerm")}</SelectItem>
+                      <SelectItem value="yearly">{t("subscriptions.topUp")}</SelectItem>
+                      <SelectItem value="other">{t("subscriptions.other")}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
