@@ -35,9 +35,7 @@ import { Separator } from "@/components/ui/separator";
 import { useTranslations } from "@/hooks/use-translations";
 
 export type SubscriptionColumnVisibility = {
-  title: boolean;
   service: boolean;
-  domain: boolean;
   user: boolean;
   company: boolean;
   price: boolean;
@@ -122,9 +120,7 @@ export function SubscriptionFilters({
   // Сброс настроек видимости столбцов
   const resetColumnVisibility = () => {
     const defaultColumnVisibility: SubscriptionColumnVisibility = {
-      title: true,
       service: true,
-      domain: true,
       user: true,
       company: true,
       price: true,
@@ -395,19 +391,6 @@ export function SubscriptionFilters({
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex items-center space-x-2">
                 <Checkbox 
-                  id="column-title" 
-                  checked={localColumnVisibility.title}
-                  onCheckedChange={(checked) => 
-                    handleColumnVisibilityChange("title", checked === true)
-                  }
-                />
-                <Label htmlFor="column-title" className="cursor-pointer">
-                  {t('subscriptions.subscriptionTitle')}
-                </Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox 
                   id="column-service" 
                   checked={localColumnVisibility.service}
                   onCheckedChange={(checked) => 
@@ -416,19 +399,6 @@ export function SubscriptionFilters({
                 />
                 <Label htmlFor="column-service" className="cursor-pointer">
                   {t('subscriptions.service')}
-                </Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="column-domain" 
-                  checked={localColumnVisibility.domain}
-                  onCheckedChange={(checked) => 
-                    handleColumnVisibilityChange("domain", checked === true)
-                  }
-                />
-                <Label htmlFor="column-domain" className="cursor-pointer">
-                  {t('subscriptions.domain')}
                 </Label>
               </div>
               

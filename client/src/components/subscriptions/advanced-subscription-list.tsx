@@ -292,9 +292,7 @@ const initialFilters: SubscriptionFilters = {
 
 // Начальные значения видимости столбцов
 const initialColumnVisibility: SubscriptionColumnVisibility = {
-  title: false, // Убираем "Название подписки"
   service: true,
-  domain: false, // Убираем "Домен"
   user: true,
   company: true,
   price: true,
