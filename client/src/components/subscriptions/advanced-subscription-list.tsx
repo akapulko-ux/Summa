@@ -801,7 +801,7 @@ export function AdvancedSubscriptionList({
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                                    <Settings className="h-3.5 w-3.5" />
+                                    <Pencil className="h-3.5 w-3.5" />
                                     <span className="sr-only">{t('users.actions')}</span>
                                   </Button>
                                 </DropdownMenuTrigger>
