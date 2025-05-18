@@ -38,7 +38,8 @@ import {
   FileText,
   Settings,
   Filter,
-  CreditCard
+  CreditCard,
+  Wallet
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -49,13 +50,219 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { SubscriptionForm } from "./subscription-form-fixed";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
+import { useToast } from "@/hooks/use-toast";
 import { SubscriptionFilters, SubscriptionColumnVisibility } from "../filters/subscription-filters";
 import { UserForm } from "../users/user-form";
 import { UserSubscriptions } from "../subscriptions/user-subscriptions";
 import { UserCustomFields } from "../custom-fields/user-custom-fields";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Компонент для отображения баланса кэшбэка пользователя
+function CashbackBalance({ userId }: { userId: number }) {
+  const { t } = useTranslations();
+  const { data, isLoading } = useQuery({
+    queryKey: [`/api/users/${userId}/cashback/balance`],
+    enabled: !!userId
+  });
+
+  if (isLoading) {
+    return <span className="text-muted-foreground">{t('common.loading')}...</span>;
+  }
+
+  return (
+    <span className="text-lg font-bold">
+      {data?.balance !== undefined ? Math.floor(data.balance) : 0} ₽
+    </span>
+  );
+}
+
+// Компонент для управления кэшбэком пользователя
+function CashbackForm({ userId, onSuccess }: { userId: number, onSuccess: () => void }) {
+  const { t } = useTranslations();
+  const { toast } = useToast();
+  
+  // Схема для валидации формы
+  const cashbackFormSchema = z.object({
+    amount: z.coerce.number().positive({
+      message: t('cashback.amount_must_be_positive'),
+    }),
+    description: z.string().min(3, {
+      message: t('cashback.description_min_length'),
+    }),
+    type: z.enum(['add', 'subtract']),
+  });
+
+  type CashbackFormValues = z.infer<typeof cashbackFormSchema>;
+
+  // Состояние для формы
+  const form = useForm<CashbackFormValues>({
+    resolver: zodResolver(cashbackFormSchema),
+    defaultValues: {
+      amount: undefined,
+      description: '',
+      type: 'add',
+    },
+  });
+
+  // Запрос баланса кэшбэка
+  const { data: balanceData } = useQuery<{ balance: number }>({
+    queryKey: [`/api/users/${userId}/cashback/balance`],
+    enabled: !!userId,
+  });
+
+  // Мутация для управления кэшбэком
+  const mutation = useMutation({
+    mutationFn: async (values: CashbackFormValues) => {
+      return await apiRequest('POST', `/api/users/${userId}/cashback`, values);
+    },
+    onSuccess: (data) => {
+      toast({
+        title: t('cashback.success'),
+        description: form.watch('type') === 'add' 
+          ? t('cashback.cashback_added_success') 
+          : t('cashback.cashback_subtracted_success'),
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${userId}/cashback/balance`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${userId}/cashback`] });
+      form.reset();
+      if (onSuccess) onSuccess();
+    },
+    onError: (error: any) => {
+      // Проверяем, является ли ошибка недостаточным балансом
+      if (error?.response?.data?.message === "Insufficient balance") {
+        const currentBalance = error?.response?.data?.currentBalance || 0;
+        const amount = form.getValues('amount');
+        toast({
+          title: t('cashback.error'),
+          description: t('cashback.insufficient_balance_with_amount', { 
+            amount: amount,
+            balance: currentBalance
+          }),
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: t('cashback.error'),
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    }
+  });
+
+  const onSubmit = (values: CashbackFormValues) => {
+    mutation.mutate(values);
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>{t('cashback.operation_type')}</FormLabel>
+              <FormControl>
+                <div className="flex space-x-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      className="form-radio h-4 w-4 text-primary"
+                      value="add"
+                      checked={field.value === 'add'}
+                      onChange={() => field.onChange('add')}
+                    />
+                    <span>{t('cashback.add')}</span>
+                  </label>
+                  <label className={`flex items-center space-x-2 ${balanceData?.balance === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                    <input
+                      type="radio"
+                      className="form-radio h-4 w-4 text-destructive"
+                      value="subtract"
+                      checked={field.value === 'subtract'}
+                      onChange={() => field.onChange('subtract')}
+                      disabled={balanceData?.balance === 0}
+                    />
+                    <span>{t('cashback.subtract')}</span>
+                  </label>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('cashback.amount')}</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    {...field}
+                    onChange={(e) => {
+                      // Преобразуем ввод в число и обновляем поле
+                      const value = e.target.value === '' ? undefined : parseFloat(e.target.value);
+                      field.onChange(value);
+                    }}
+                  />
+                  <span className="absolute right-3 top-2">₽</span>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('cashback.description')}</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder={t('cashback.cashback_description_placeholder')}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-end space-x-4 pt-4">
+          <Button type="button" variant="outline" onClick={() => form.reset()}>
+            {t('common.cancel')}
+          </Button>
+          <Button 
+            type="submit"
+            disabled={mutation.isPending}
+            variant={form.watch('type') === 'subtract' ? "destructive" : "default"}
+          >
+            {mutation.isPending
+              ? t('cashback.processing')
+              : form.watch('type') === 'subtract'
+                ? t('cashback.subtract')
+                : t('cashback.add')}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
 
 // Начальные значения фильтров
 const initialFilters = {
