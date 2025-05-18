@@ -2488,6 +2488,7 @@ export const ru: Translation = {
     userRole: "Роль",
     roleAdmin: "Администратор",
     roleClient: "Клиент",
+    searchCompany: "Поиск по компании",
     status: "Статус",
     statusActive: "Активен",
     statusInactive: "Неактивен",
