@@ -53,7 +53,7 @@ export function RecentSubscriptions() {
       case "active":
         return "success"; // Зеленый для активных
       case "pending":
-        return "secondary"; // Желтый для "Заканчивается"
+        return "warning"; // Желтый для "Заканчивается"
       case "expired":
       case "canceled":
         return "destructive"; // Красный для истекших и отмененных
