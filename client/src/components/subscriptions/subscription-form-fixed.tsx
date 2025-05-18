@@ -35,8 +35,9 @@ import { CustomFieldInputs } from "@/components/custom-fields/custom-field-input
 const subscriptionFormSchema = z.object({
   title: z.string().optional(),
   serviceId: z.string().optional(),
-  domain: z.string().optional(),
-  loginId: z.string().optional(),
+  // Удаленные поля обозначены как необязательные с дефолтным значением null
+  domain: z.any().optional().default(null),
+  loginId: z.any().optional().default(null),
   paymentPeriod: z.enum(["monthly", "quarterly", "yearly"]).default("monthly"),
   paidUntil: z.string()
     .refine(val => !val || !isNaN(new Date(val).getTime()), {
@@ -44,8 +45,9 @@ const subscriptionFormSchema = z.object({
     })
     .optional(),
   paymentAmount: z.string().transform((val) => val ? parseFloat(val) : undefined).optional(),
-  licensesCount: z.string().transform((val) => val ? parseInt(val) : 1).default("1"),
-  usersCount: z.string().transform((val) => val ? parseInt(val) : 1).default("1"),
+  // Удаленные поля получают дефолтное значение 1
+  licensesCount: z.any().optional().default(1),
+  usersCount: z.any().optional().default(1),
   status: z.enum(["active", "pending", "expired", "canceled"]).default("active"),
   userId: z.number().optional(), // Добавляем поле userId для серверной валидации
   customFields: z.record(z.any()).optional(), // Добавляем поле для кастомных полей
@@ -122,15 +124,15 @@ export function SubscriptionForm({
       console.log("Creating subscription with data:", data);
       
       // Преобразуем данные в формат, который ожидает сервер
-      // Создаем базовую структуру данных
+      // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
       const transformedData: any = {
         title: data.title,
         userId: userId || user?.id, // Используем переданный userId, если он есть, иначе текущего пользователя
-        domain: data.domain || undefined,
-        loginId: data.loginId || undefined,
+        domain: null, // Удалено по требованию
+        loginId: null, // Удалено по требованию
         paymentPeriod: data.paymentPeriod || "monthly",
-        licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
-        usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
+        licensesCount: 1, // Удалено по требованию
+        usersCount: 1, // Удалено по требованию
         status: data.status || "active",
         customFields: data.customFields || {} // Добавляем пользовательские поля
       };
