@@ -51,12 +51,12 @@ export function RecentSubscriptions() {
   const getBadgeVariant = (status: string) => {
     switch (status) {
       case "active":
-        return "outline";
+        return "success"; // Зеленый для активных
       case "pending":
-        return "secondary";
+        return "secondary"; // Желтый для "Заканчивается"
       case "expired":
       case "canceled":
-        return "destructive";
+        return "destructive"; // Красный для истекших и отмененных
       default:
         return "outline";
     }

@@ -15,7 +15,7 @@ import { setupMonitoringRoutes } from "./routes/monitoring-routes";
 import { registerReportsRoutes } from "./reports/reports-routes";
 import { setupUploadRoutes } from "./routes/uploads";
 import { db } from "./db";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, asc, sql } from "drizzle-orm";
 import { users, services, subscriptions } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
