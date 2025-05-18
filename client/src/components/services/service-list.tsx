@@ -248,11 +248,11 @@ export function ServiceList() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         {service.iconUrl ? (
-                          <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center overflow-hidden">
+                          <div className="w-10 h-10 rounded-md overflow-hidden">
                             <img 
                               src={service.iconUrl} 
                               alt={service.title} 
-                              className="w-8 h-8 object-contain"
+                              className="w-full h-full object-cover"
                             />
                           </div>
                         ) : (
