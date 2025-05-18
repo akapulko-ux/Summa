@@ -250,14 +250,14 @@ export function SubscriptionForm({
       console.log("Updating subscription with data:", data);
       
       // Преобразуем данные в формат, который ожидает сервер
-      // Создаем базовую структуру данных
+      // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
       const transformedData: any = {
         title: data.title,
-        domain: data.domain || undefined,
-        loginId: data.loginId || undefined,
+        domain: null, // Удалено по требованию
+        loginId: null, // Удалено по требованию
         paymentPeriod: data.paymentPeriod || "monthly",
-        licensesCount: data.licensesCount ? parseInt(data.licensesCount) : 1,
-        usersCount: data.usersCount ? parseInt(data.usersCount) : 1,
+        licensesCount: 1, // Удалено по требованию
+        usersCount: 1, // Удалено по требованию
         status: data.status || "active",
         customFields: data.customFields || {} // Добавляем пользовательские поля
       };
@@ -559,35 +559,7 @@ export function SubscriptionForm({
           
           {/* Поле "Название подписки" удалено по требованию */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="domain"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("subscriptions.domain")}</FormLabel>
-                  <FormControl>
-                    <Input disabled={isSubmitting} placeholder={t("subscriptions.enterDomain")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="loginId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("subscriptions.login")}</FormLabel>
-                  <FormControl>
-                    <Input disabled={isSubmitting} placeholder={t("subscriptions.enterLogin")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {/* Поля "Домен" и "Логин" удалены по требованию */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
@@ -651,47 +623,7 @@ export function SubscriptionForm({
             )}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="licensesCount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("subscriptions.licensesCount")}</FormLabel>
-                  <FormControl>
-                    <Input 
-                      disabled={isSubmitting} 
-                      placeholder={t("subscriptions.enterLicensesCount")} 
-                      type="number" 
-                      min="1" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="usersCount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("subscriptions.usersCount")}</FormLabel>
-                  <FormControl>
-                    <Input 
-                      disabled={isSubmitting} 
-                      placeholder={t("subscriptions.enterUsersCount")} 
-                      type="number" 
-                      min="1" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {/* Поля "Количество лицензий" и "Количество пользователей" удалены по требованию */}
 
           <FormField
             control={form.control}
