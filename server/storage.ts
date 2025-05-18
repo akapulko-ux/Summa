@@ -397,11 +397,41 @@ export class DatabaseStorage implements IStorage {
     search?: string,
     sortBy: string = "createdAt",
     sortOrder: "asc" | "desc" = "desc"
-  ): Promise<{ subscriptions: Subscription[], total: number }> {
+  ): Promise<{ subscriptions: any[], total: number }> {
     return dbOptimizer.executeQuery(async () => {
       const offset = (page - 1) * limit;
       
-      let query = db.select().from(subscriptions);
+      // Строим базовый запрос с объединением таблиц subscriptions и services
+      let query = db.select({
+        // Поля подписки
+        id: subscriptions.id,
+        userId: subscriptions.userId,
+        serviceId: subscriptions.serviceId,
+        title: subscriptions.title,
+        domain: subscriptions.domain,
+        loginId: subscriptions.loginId,
+        paymentPeriod: subscriptions.paymentPeriod,
+        paidUntil: subscriptions.paidUntil,
+        paymentAmount: subscriptions.paymentAmount,
+        licensesCount: subscriptions.licensesCount,
+        usersCount: subscriptions.usersCount,
+        status: subscriptions.status,
+        customFields: subscriptions.customFields,
+        createdAt: subscriptions.createdAt,
+        updatedAt: subscriptions.updatedAt,
+        // Добавляем данные сервиса как вложенный объект
+        service: {
+          id: services.id,
+          title: services.title,
+          cashback: services.cashback,
+          commission: services.commission,
+          iconUrl: services.iconUrl,
+          description: services.description,
+        }
+      })
+      .from(subscriptions)
+      .leftJoin(services, eq(subscriptions.serviceId, services.id));
+      
       let countQuery = db.select({ count: sql<number>`count(*)` }).from(subscriptions);
       
       // Apply filters
