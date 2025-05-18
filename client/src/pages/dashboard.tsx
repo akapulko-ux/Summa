@@ -127,10 +127,12 @@ export default function Dashboard() {
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
               <h3 className="text-lg font-semibold mb-2">{t('dashboard.accountSettings')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {t('profile.updateProfile')}
+                {t('dashboard.messageUs')}
               </p>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/profile">{t('dashboard.viewProfile')}</Link>
+                <a href="https://t.me/saasly_bot" target="_blank" rel="noopener noreferrer">
+                  {t('dashboard.viewProfile')}
+                </a>
               </Button>
             </div>
           </div>
