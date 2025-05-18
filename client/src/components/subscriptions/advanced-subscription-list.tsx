@@ -274,22 +274,20 @@ function CashbackForm({ userId, onSuccess, onCancel }: { userId: number, onSucce
 }
 
 // Начальные значения фильтров
-const initialFilters = {
+const initialFilters: SubscriptionFilters = {
   search: "",
   service: "",
   user: "",
   domain: "",
   company: "",
-  status: "all" as const,
-  period: "all" as const,
+  status: "all",
+  period: "all",
   priceMin: "",
   priceMax: "",
   sortBy: "createdAt",
-  sortOrder: "asc" as const,
-  startDateFrom: "",
-  startDateTo: "",
-  endDateFrom: "",
-  endDateTo: "",
+  sortOrder: "asc",
+  paidUntilFrom: "",
+  paidUntilTo: ""
 };
 
 // Начальные значения видимости столбцов
@@ -312,6 +310,11 @@ type SubscriptionWithExtras = Subscription & {
   userName?: string;
   userEmail?: string;
   companyName?: string;
+  paymentAmount?: number;
+  service?: {
+    title: string;
+    iconUrl?: string;
+  }
 };
 
 export interface AdvancedSubscriptionListProps {
@@ -529,23 +532,16 @@ export function AdvancedSubscriptionList({
       const priceMaxMatches = !filters.priceMax || 
         (sub.paymentAmount && sub.paymentAmount <= parseFloat(filters.priceMax));
       
-      // Фильтрация по дате начала
-      const startDateFromMatches = !filters.startDateFrom || 
-        (sub.startDate && new Date(sub.startDate) >= new Date(filters.startDateFrom));
-      const startDateToMatches = !filters.startDateTo || 
-        (sub.startDate && new Date(sub.startDate) <= new Date(filters.startDateTo));
-      
-      // Фильтрация по дате окончания
-      const endDateFromMatches = !filters.endDateFrom || 
-        (sub.paidUntil && new Date(sub.paidUntil) >= new Date(filters.endDateFrom));
-      const endDateToMatches = !filters.endDateTo || 
-        (sub.paidUntil && new Date(sub.paidUntil) <= new Date(filters.endDateTo));
+      // Фильтрация по дате оплаты до
+      const paidUntilFromMatches = !filters.paidUntilFrom || 
+        (sub.paidUntil && new Date(sub.paidUntil) >= new Date(filters.paidUntilFrom));
+      const paidUntilToMatches = !filters.paidUntilTo || 
+        (sub.paidUntil && new Date(sub.paidUntil) <= new Date(filters.paidUntilTo));
       
       return searchMatches && serviceMatches && userMatches && domainMatches &&
         companyMatches && statusMatches && periodMatches && 
         priceMinMatches && priceMaxMatches &&
-        startDateFromMatches && startDateToMatches &&
-        endDateFromMatches && endDateToMatches;
+        paidUntilFromMatches && paidUntilToMatches;
     });
   };
   
