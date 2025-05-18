@@ -33,7 +33,7 @@ import { CustomFieldInputs } from "@/components/custom-fields/custom-field-input
 
 // Form schema
 const subscriptionFormSchema = z.object({
-  title: z.string().min(1, { message: "Title is required" }),
+  title: z.string().optional(),
   serviceId: z.string().optional(),
   domain: z.string().optional(),
   loginId: z.string().optional(),
