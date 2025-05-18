@@ -785,24 +785,10 @@ export function AdvancedSubscriptionList({
           <Table>
             <TableHeader>
               <TableRow>
-                {columnVisibility.title && (
-                  <TableHead>
-                    <SortableHeader field="title">
-                      {t('subscriptions.subscriptionTitle')}
-                    </SortableHeader>
-                  </TableHead>
-                )}
                 {columnVisibility.service && (
                   <TableHead>
                     <SortableHeader field="serviceName">
                       {t('subscriptions.service')}
-                    </SortableHeader>
-                  </TableHead>
-                )}
-                {columnVisibility.domain && (
-                  <TableHead>
-                    <SortableHeader field="domain">
-                      {t('subscriptions.domain')}
                     </SortableHeader>
                   </TableHead>
                 )}
@@ -869,11 +855,7 @@ export function AdvancedSubscriptionList({
               ) : (
                 processedData.map((subscription) => (
                   <TableRow key={subscription.id}>
-                    {columnVisibility.title && (
-                      <TableCell className="font-medium">
-                        {subscription.service?.title || subscription.title}
-                      </TableCell>
-                    )}
+
                     
                     {columnVisibility.service && (
                       <TableCell>
@@ -881,11 +863,7 @@ export function AdvancedSubscriptionList({
                       </TableCell>
                     )}
                     
-                    {columnVisibility.domain && (
-                      <TableCell>
-                        {subscription.domain || t('common.notAvailable')}
-                      </TableCell>
-                    )}
+
                     
                     {columnVisibility.user && (
                       <TableCell>
