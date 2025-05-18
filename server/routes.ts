@@ -810,7 +810,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/users/:userId/cashback", isAdmin, async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const { amount, description } = req.body;
+      const { amount, description, type } = req.body;
       
       // Проверяем существование пользователя
       const user = await storage.getUser(userId);
@@ -823,18 +823,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Amount must be a positive number" });
       }
       
-      // Создаем транзакцию
-      const transaction = await storage.addCashbackTransaction({
-        userId,
-        amount,
-        description,
-        createdBy: req.user.id
-      });
-      
-      res.status(201).json(transaction);
+      // Если это списание кэшбэка, проверяем баланс
+      if (type === 'subtract') {
+        const currentBalance = await storage.getUserCashbackBalance(userId);
+        if (currentBalance < amount) {
+          return res.status(400).json({ 
+            message: "Insufficient balance", 
+            currentBalance 
+          });
+        }
+        
+        // Создаем транзакцию со списанием (отрицательной суммой)
+        const transaction = await storage.addCashbackTransaction({
+          userId,
+          amount: -amount, // Отрицательная сумма для списания
+          description,
+          createdBy: req.user.id
+        });
+        
+        res.status(201).json(transaction);
+      } else {
+        // Стандартное добавление кэшбэка
+        const transaction = await storage.addCashbackTransaction({
+          userId,
+          amount,
+          description,
+          createdBy: req.user.id
+        });
+        
+        res.status(201).json(transaction);
+      }
     } catch (error) {
-      console.error("Error adding cashback:", error);
-      res.status(500).json({ message: "Failed to add cashback" });
+      console.error("Error managing cashback:", error);
+      res.status(500).json({ message: "Failed to manage cashback" });
     }
   });
   

@@ -45,7 +45,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-// Схема для валидации формы начисления кэшбэка
+// Схема для валидации формы управления кэшбэком
 const cashbackFormSchema = z.object({
   amount: z.coerce.number().positive({
     message: "Amount must be a positive number",
@@ -53,6 +53,7 @@ const cashbackFormSchema = z.object({
   description: z.string().min(3, {
     message: "Description must be at least 3 characters",
   }),
+  type: z.enum(['add', 'subtract']),
 });
 
 type CashbackFormValues = z.infer<typeof cashbackFormSchema>;
