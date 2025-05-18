@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Loader2 } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -346,6 +347,7 @@ export function UserManagementTable() {
                 <TableHead>{t('users.columns.company')}</TableHead>
                 <TableHead>{t('users.columns.status')}</TableHead>
                 <TableHead>{t('users.columns.subscriptions')}</TableHead>
+                <TableHead>{t('users.columns.cashback')}</TableHead>
                 <TableHead>{t('users.columns.actions')}</TableHead>
               </TableRow>
             </TableHeader>
@@ -367,18 +369,19 @@ export function UserManagementTable() {
                     <TableCell><Skeleton className="h-5 w-32" /></TableCell>
                     <TableCell><Skeleton className="h-5 w-16" /></TableCell>
                     <TableCell><Skeleton className="h-5 w-8" /></TableCell>
+                    <TableCell><Skeleton className="h-5 w-16" /></TableCell>
                     <TableCell><Skeleton className="h-9 w-20" /></TableCell>
                   </TableRow>
                 ))
               ) : isError ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
                     {t('users.errorLoading')}
                   </TableCell>
                 </TableRow>
               ) : data?.users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
                     {t('users.noUsersFound')}
                   </TableCell>
                 </TableRow>
@@ -414,6 +417,9 @@ export function UserManagementTable() {
                     <TableCell>{renderStatusBadge(user.isActive)}</TableCell>
                     <TableCell>
                       {user.subscriptionCount || 0}
+                    </TableCell>
+                    <TableCell>
+                      <CashbackBalance userId={user.id} />
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
