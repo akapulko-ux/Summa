@@ -447,14 +447,39 @@ export class DatabaseStorage implements IStorage {
         countQuery = countQuery.where(sql`(${subscriptions.title} ILIKE ${searchTerm})`);
       }
       
-      // Apply sorting
-      const sortColumn = subscriptions[sortBy as keyof typeof subscriptions] || subscriptions.createdAt;
+      // Применяем сортировку
+      let result;
       
-      // Execute query with sorting
-      const result = await query
-        .limit(limit)
-        .offset(offset)
-        .orderBy(sortOrder === "asc" ? asc(sortColumn) : desc(sortColumn));
+      // Проверяем, относится ли поле сортировки к связанной таблице service
+      if (sortBy.startsWith('service.')) {
+        const serviceField = sortBy.split('.')[1]; // Получаем имя поля сервиса после точки
+        
+        // Обрабатываем сортировку по полям сервиса
+        if (serviceField === 'cashback') {
+          result = await query
+            .limit(limit)
+            .offset(offset)
+            .orderBy(sortOrder === "asc" ? asc(services.cashback) : desc(services.cashback));
+        } else if (serviceField === 'title') {
+          result = await query
+            .limit(limit)
+            .offset(offset)
+            .orderBy(sortOrder === "asc" ? asc(services.title) : desc(services.title));
+        } else {
+          // По умолчанию сортируем по дате создания подписки
+          result = await query
+            .limit(limit)
+            .offset(offset)
+            .orderBy(sortOrder === "asc" ? asc(subscriptions.createdAt) : desc(subscriptions.createdAt));
+        }
+      } else {
+        // Стандартная сортировка по полям подписки
+        const sortColumn = subscriptions[sortBy as keyof typeof subscriptions] || subscriptions.createdAt;
+        result = await query
+          .limit(limit)
+          .offset(offset)
+          .orderBy(sortOrder === "asc" ? asc(sortColumn) : desc(sortColumn));
+      }
       
       const [{ count }] = await countQuery;
       

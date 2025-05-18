@@ -167,10 +167,14 @@ export function SubscriptionList() {
                     {renderSortIndicator("title")}
                   </div>
                 </TableHead>
-                {/* Столбец "Кэшбэк" */}
-                <TableHead>
+                {/* Столбец "Кэшбэк" с сортировкой */}
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleSort("service.cashback")}
+                >
                   <div className="flex items-center">
                     {t('subscriptions.cashback')}
+                    {renderSortIndicator("service.cashback")}
                   </div>
                 </TableHead>
                 {/* Столбец "Домен" удален по требованию */}
