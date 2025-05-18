@@ -589,8 +589,13 @@ export function UserManagementTable() {
                 <Button 
                   type="submit"
                   disabled={addCashbackMutation.isPending}
+                  variant={cashbackForm.watch('type') === 'subtract' ? "destructive" : "default"}
                 >
-                  {addCashbackMutation.isPending ? t('cashback.processing') : t('cashback.add_cashback')}
+                  {addCashbackMutation.isPending 
+                    ? t('cashback.processing') 
+                    : cashbackForm.watch('type') === 'subtract' 
+                      ? t('cashback.subtract') 
+                      : t('cashback.add')}
                 </Button>
               </div>
             </form>
