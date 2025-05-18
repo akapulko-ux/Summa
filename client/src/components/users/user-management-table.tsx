@@ -681,6 +681,68 @@ export function UserManagementTable() {
               </div>
             </form>
           </Form>
+          
+          {/* История операций кэшбэка */}
+          <div className="mt-8">
+            <h3 className="text-lg font-medium mb-2">{t('cashback.transaction_history')}</h3>
+            <div className="border rounded-md overflow-hidden">
+              {isLoadingCashbackHistory ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  <span className="animate-pulse">{t('common.loading')}...</span>
+                </div>
+              ) : cashbackHistoryData?.transactions && cashbackHistoryData.transactions.length > 0 ? (
+                <div className="max-h-40 overflow-y-auto">
+                  <table className="w-full">
+                    <thead className="bg-muted border-b">
+                      <tr>
+                        <th className="py-2 px-4 text-left text-xs font-medium text-muted-foreground">
+                          {t('cashback.transaction_date')}
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-medium text-muted-foreground">
+                          {t('cashback.transaction_amount')}
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-medium text-muted-foreground">
+                          {t('cashback.transaction_description')}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cashbackHistoryData.transactions.map((transaction) => {
+                        const date = new Date(transaction.createdAt);
+                        const formattedDate = new Intl.DateTimeFormat(language === 'ru' ? 'ru-RU' : 'en-US', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }).format(date);
+                        
+                        return (
+                          <tr key={transaction.id} className="border-b last:border-0 hover:bg-muted/50">
+                            <td className="py-2 px-4 text-sm">
+                              {formattedDate}
+                            </td>
+                            <td className="py-2 px-4 text-sm">
+                              <span className={transaction.amount > 0 ? "text-green-600" : "text-red-600"}>
+                                {transaction.amount > 0 ? '+' : ''}{transaction.amount.toFixed(2)} ₽
+                              </span>
+                            </td>
+                            <td className="py-2 px-4 text-sm">
+                              {transaction.description}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="p-4 text-center text-muted-foreground">
+                  {t('cashback.no_transactions')}
+                </div>
+              )}
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </Card>
