@@ -34,11 +34,15 @@ export function RecentSubscriptions() {
   console.log("Recent subscriptions data:", data);
   
   // Сортируем подписки по дате окончания на стороне клиента
+  // Выводим только подписки со статусами "active" и "pending" ("Активна" и "Заканчивается")
   const sortedSubscriptions = useMemo(() => {
     if (!data?.subscriptions) return [];
     
     return [...data.subscriptions]
-      .filter(sub => sub.paidUntil && sub.status !== "canceled")
+      .filter(sub => 
+        sub.paidUntil && 
+        (sub.status === "active" || sub.status === "pending")
+      )
       .sort((a, b) => {
         if (!a.paidUntil) return 1;
         if (!b.paidUntil) return -1;
