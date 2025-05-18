@@ -112,8 +112,8 @@ export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
   userId: z.number(),
   serviceId: z.number().optional(),
   title: z.string().min(1),
-  domain: z.string().optional(),
-  loginId: z.string().optional(),
+  domain: z.string().nullable().optional(),
+  loginId: z.string().nullable().optional(),
   paymentPeriod: z.enum(['monthly', 'quarterly', 'yearly']).default('monthly'),
   paidUntil: z.string().optional().transform(val => {
     if (!val) return undefined;
@@ -127,8 +127,8 @@ export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
     }
   }),
   paymentAmount: z.number().optional(),
-  licensesCount: z.number().default(1),
-  usersCount: z.number().default(1),
+  licensesCount: z.number().default(1).optional(),
+  usersCount: z.number().default(1).optional(),
   status: z.enum(['active', 'pending', 'expired', 'canceled']).default('active'),
   customFields: z.record(z.any()).optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true });
