@@ -27,7 +27,7 @@ interface Subscription {
 export function RecentSubscriptions() {
   const { t, language } = useTranslations();
   const { data, isLoading } = useQuery<{ subscriptions: Subscription[] }>({
-    queryKey: ["/api/subscriptions", { limit: 20 }]
+    queryKey: ["/api/subscriptions", { limit: 20, currentUser: true }]
   });
   
   // Отладочный код для проверки данных
