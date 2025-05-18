@@ -1697,6 +1697,7 @@ export const ru: Translation = {
     current_balance: "Текущий баланс",
     earned_cashback: "Начисленный кэшбэк",
     current_cashback_balance: "Текущий баланс кэшбэка",
+    current_cashback_balance_detailed: "Ваш текущий баланс кэшбэка, который можно потратить",
   },
   customFields: {
     title: "Пользовательские поля",
