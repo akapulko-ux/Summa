@@ -318,6 +318,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string || '';
+      const sortBy = req.query.sortBy as string || 'createdAt';
+      const sortOrder = (req.query.sortOrder as string || 'desc') === 'asc' ? 'asc' : 'desc';
       
       let userId: number | undefined = undefined;
       
@@ -328,7 +331,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId = parseInt(req.query.userId as string);
       }
       
-      const result = await storage.listSubscriptions(userId, page, limit);
+      const result = await storage.listSubscriptions(
+        userId, 
+        page, 
+        limit, 
+        search, 
+        sortBy, 
+        sortOrder as 'asc' | 'desc'
+      );
       
       res.json({ subscriptions: result.subscriptions, total: result.total });
     } catch (error) {

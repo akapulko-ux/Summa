@@ -390,19 +390,42 @@ export class DatabaseStorage implements IStorage {
     return result.count > 0;
   }
 
-  async listSubscriptions(userId?: number, page = 1, limit = 10): Promise<{ subscriptions: Subscription[], total: number }> {
+  async listSubscriptions(
+    userId?: number, 
+    page = 1, 
+    limit = 10, 
+    search?: string,
+    sortBy: string = "createdAt",
+    sortOrder: "asc" | "desc" = "desc"
+  ): Promise<{ subscriptions: Subscription[], total: number }> {
     return dbOptimizer.executeQuery(async () => {
       const offset = (page - 1) * limit;
       
       let query = db.select().from(subscriptions);
       let countQuery = db.select({ count: sql<number>`count(*)` }).from(subscriptions);
       
+      // Apply filters
       if (userId) {
         query = query.where(eq(subscriptions.userId, userId));
         countQuery = countQuery.where(eq(subscriptions.userId, userId));
       }
       
-      const result = await query.limit(limit).offset(offset).orderBy(desc(subscriptions.createdAt));
+      // Apply search if provided
+      if (search && search.trim() !== '') {
+        const searchTerm = `%${search.trim()}%`;
+        query = query.where(sql`(${subscriptions.title} ILIKE ${searchTerm})`);
+        countQuery = countQuery.where(sql`(${subscriptions.title} ILIKE ${searchTerm})`);
+      }
+      
+      // Apply sorting
+      const sortColumn = subscriptions[sortBy as keyof typeof subscriptions] || subscriptions.createdAt;
+      
+      // Execute query with sorting
+      const result = await query
+        .limit(limit)
+        .offset(offset)
+        .orderBy(sortOrder === "asc" ? asc(sortColumn) : desc(sortColumn));
+      
       const [{ count }] = await countQuery;
       
       return { subscriptions: result, total: count };
