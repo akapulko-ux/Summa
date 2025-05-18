@@ -153,19 +153,31 @@ export function UserManagementTable() {
     },
     onError: (error: any) => {
       console.error("Error managing cashback:", error);
+      // Детальное логирование для отладки
+      console.log("Error response:", error?.response);
+      console.log("Error data:", error?.response?.data);
+      console.log("Error status:", error?.response?.status);
       
       // Проверяем, была ли ошибка связана с недостаточным балансом
       let errorTitle = t('cashback.error');
       let errorMessage = t('cashback.cashback_error');
       let errorVariant: "destructive" | "default" = "destructive";
       
-      if (error?.response?.data?.message === "Insufficient balance") {
+      // Проверяем, есть ли сообщение об ошибке
+      const errorResponseMessage = error?.response?.data?.message;
+      console.log("Error message:", errorResponseMessage);
+      
+      if (errorResponseMessage === "Insufficient balance") {
         errorTitle = t('cashback.insufficient_balance');
+        
         // Если сервер вернул текущий баланс, включаем его в сообщение
-        const currentBalance = error.response?.data?.currentBalance;
+        const currentBalance = error?.response?.data?.currentBalance;
+        console.log("Current balance from server:", currentBalance);
         
         // Получаем введенную сумму из формы
-        const enteredAmount = parseFloat(cashbackForm.getValues().amount || '0');
+        const amount = cashbackForm.getValues().amount;
+        const enteredAmount = parseFloat(amount || '0');
+        console.log("Entered amount:", enteredAmount);
         
         if (currentBalance !== undefined) {
           errorMessage = t('cashback.insufficient_balance_with_amount', { 
@@ -173,7 +185,15 @@ export function UserManagementTable() {
             balance: currentBalance.toFixed(2) 
           });
         } else {
-          errorMessage = t('cashback.insufficient_balance_detailed');
+          // Если баланс не передан, используем текущий баланс из состояния
+          if (currentUserBalance !== null) {
+            errorMessage = t('cashback.insufficient_balance_with_amount', { 
+              amount: enteredAmount.toString(), 
+              balance: currentUserBalance.toFixed(2) 
+            });
+          } else {
+            errorMessage = t('cashback.insufficient_balance_detailed');
+          }
         }
         // Используем более мягкий вариант для уведомления о недостаточном балансе
         errorVariant = "default";
