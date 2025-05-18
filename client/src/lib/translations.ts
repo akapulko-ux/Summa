@@ -1593,6 +1593,7 @@ export const en: Translation = {
     userRole: "Role",
     roleAdmin: "Admin",
     roleClient: "Client",
+    searchCompany: "Search by company",
     status: "Status",
     statusActive: "Active",
     statusInactive: "Inactive",
