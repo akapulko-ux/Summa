@@ -724,7 +724,7 @@ export function UserManagementTable() {
                             </td>
                             <td className="py-2 px-4 text-sm">
                               <span className={transaction.amount > 0 ? "text-green-600" : "text-red-600"}>
-                                {transaction.amount > 0 ? '+' : ''}{Math.floor(Math.abs(transaction.amount))} ₽
+                                {transaction.amount > 0 ? '+' : '-'}{Math.floor(Math.abs(transaction.amount))} ₽
                               </span>
                             </td>
                             <td className="py-2 px-4 text-sm">
