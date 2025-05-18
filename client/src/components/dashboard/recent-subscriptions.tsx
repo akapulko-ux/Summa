@@ -17,7 +17,7 @@ interface Subscription {
   userName?: string;
   paymentAmount?: number;
   paidUntil?: string;
-  serviceData?: {
+  service?: {
     id: number;
     title: string;
   };
@@ -26,7 +26,7 @@ interface Subscription {
 export function RecentSubscriptions() {
   const { t, language } = useTranslations();
   const { data, isLoading } = useQuery<{ subscriptions: Subscription[] }>({
-    queryKey: ["/api/subscriptions", { limit: 5 }],
+    queryKey: ["/api/subscriptions", { limit: 5 }]
   });
 
   // Helper function to get badge variant based on subscription status
@@ -66,7 +66,7 @@ export function RecentSubscriptions() {
                   {t('subscriptions.renewalAmount')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  {t('subscriptions.paidUntil')}
+                  {t('subscriptions.endDate')}
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                   {t('subscriptions.status')}
@@ -100,7 +100,7 @@ export function RecentSubscriptions() {
                     className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                   >
                     <td className="p-4 align-middle">
-                      {sub.serviceData?.title || sub.title}
+                      {sub.service?.title || sub.title}
                     </td>
                     <td className="p-4 align-middle">
                       {sub.paymentAmount ? `${sub.paymentAmount.toLocaleString()} ₽` : '-'}
