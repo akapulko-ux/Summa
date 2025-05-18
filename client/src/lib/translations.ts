@@ -2346,7 +2346,7 @@ export const ru: Translation = {
     cashback: "Кэшбэк",
     status: "Статус",
     statusActive: "Активна",
-    statusPending: "Ожидание",
+    statusPending: "Заканчивается",
     statusExpired: "Истекла",
     statusCanceled: "Отменена",
     createSubscription: "Создать подписку",
@@ -2388,7 +2388,7 @@ export const ru: Translation = {
     },
     statuses: {
       active: "Активна",
-      pending: "Ожидание",
+      pending: "Заканчивается",
       expired: "Истекла",
       canceled: "Отменена"
     },
