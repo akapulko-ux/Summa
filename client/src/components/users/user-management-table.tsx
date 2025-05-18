@@ -91,6 +91,23 @@ export function UserManagementTable() {
   // Обработка отправки формы управления кэшбэком
   const onCashbackSubmit = (values: CashbackFormValues) => {
     if (selectedUserId) {
+      // Проверяем, достаточно ли средств для списания
+      if (values.type === 'subtract' && userCashbackData?.balance !== undefined) {
+        if (values.amount > userCashbackData.balance) {
+          // Показываем уведомление об ошибке
+          toast({
+            title: t('cashback.insufficient_balance'),
+            description: t('cashback.insufficient_balance_with_amount', {
+              amount: values.amount.toString(),
+              balance: userCashbackData.balance.toString()
+            }),
+            variant: "destructive",
+          });
+          return; // Прерываем выполнение функции
+        }
+      }
+      
+      // Если проверка пройдена или операция - начисление, продолжаем
       addCashbackMutation.mutate({
         userId: selectedUserId,
         amount: values.amount,
