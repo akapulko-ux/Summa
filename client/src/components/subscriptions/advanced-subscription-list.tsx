@@ -401,13 +401,14 @@ export function AdvancedSubscriptionList({
     }
   };
   
-  const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return t('common.notAvailable');
+  const formatDate = (date: string | Date | null | undefined) => {
+    if (!date) return t('common.notAvailable');
     try {
-      return format(new Date(dateString), 'dd.MM.yyyy');
+      const dateObj = date instanceof Date ? date : new Date(date);
+      return format(dateObj, 'dd.MM.yyyy');
     } catch (e) {
-      console.warn('Error formatting date:', e);
-      return dateString;
+      console.warn('Error formatting date:', e, date);
+      return String(date);
     }
   };
   
