@@ -22,7 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { SearchIcon, Pencil, Trash, ChevronLeft, ChevronRight, MoreHorizontal, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -40,6 +40,8 @@ export function SubscriptionList() {
   const [limit] = useState(10);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<string>("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const { user } = useAuth();
 
   const {
@@ -47,7 +49,7 @@ export function SubscriptionList() {
     isLoading,
     isError,
   } = useQuery<{ subscriptions: Subscription[], total: number }>({
-    queryKey: ["/api/subscriptions", { page, limit, search: searchQuery }],
+    queryKey: ["/api/subscriptions", { page, limit, search: searchQuery, sortBy, sortOrder }],
   });
 
   const deleteSubscriptionMutation = useMutation({
@@ -107,6 +109,30 @@ export function SubscriptionList() {
     if (!dateString) return t('common.notAvailable');
     return new Date(dateString).toLocaleDateString();
   };
+  
+  // Handle column sort
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      // Toggle sort order if same column is clicked
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // Set new sort column and default to ascending order
+      setSortBy(column);
+      setSortOrder("asc");
+    }
+    // Reset to first page when sort changes
+    setPage(1);
+  };
+  
+  // Render sort indicator for column header
+  const renderSortIndicator = (column: string) => {
+    if (sortBy !== column) {
+      return <ArrowUpDown className="ml-1 h-4 w-4" />;
+    }
+    return sortOrder === "asc" ? 
+      <ArrowUp className="ml-1 h-4 w-4" /> : 
+      <ArrowDown className="ml-1 h-4 w-4" />;
+  };
 
   return (
     <Card>
@@ -132,11 +158,43 @@ export function SubscriptionList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('subscriptions.service')}</TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleSort("title")}
+                >
+                  <div className="flex items-center">
+                    {t('subscriptions.service')}
+                    {renderSortIndicator("title")}
+                  </div>
+                </TableHead>
                 {/* Столбец "Домен" удален по требованию */}
-                <TableHead>{t('subscriptions.paymentAmount')}</TableHead>
-                <TableHead>{t('subscriptions.paidUntil')}</TableHead>
-                <TableHead>{t('subscriptions.status')}</TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleSort("paymentAmount")}
+                >
+                  <div className="flex items-center">
+                    {t('subscriptions.paymentAmount')}
+                    {renderSortIndicator("paymentAmount")}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleSort("paidUntil")}
+                >
+                  <div className="flex items-center">
+                    {t('subscriptions.paidUntil')}
+                    {renderSortIndicator("paidUntil")}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleSort("status")}
+                >
+                  <div className="flex items-center">
+                    {t('subscriptions.status')}
+                    {renderSortIndicator("status")}
+                  </div>
+                </TableHead>
                 <TableHead className="text-right">{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
