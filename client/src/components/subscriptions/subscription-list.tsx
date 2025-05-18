@@ -167,6 +167,12 @@ export function SubscriptionList() {
                     {renderSortIndicator("title")}
                   </div>
                 </TableHead>
+                {/* Столбец "Кэшбэк" */}
+                <TableHead>
+                  <div className="flex items-center">
+                    {t('subscriptions.cashback')}
+                  </div>
+                </TableHead>
                 {/* Столбец "Домен" удален по требованию */}
                 <TableHead 
                   className="cursor-pointer hover:bg-muted/50"
@@ -226,6 +232,11 @@ export function SubscriptionList() {
                 data?.subscriptions.map((subscription) => (
                   <TableRow key={subscription.id}>
                     <TableCell className="font-medium">{subscription.service?.title || subscription.title}</TableCell>
+                    <TableCell>
+                      {subscription.service?.cashbackPercent 
+                        ? `${subscription.service.cashbackPercent}%` 
+                        : t('common.notAvailable')}
+                    </TableCell>
                     {/* Столбец "Домен" удален по требованию */}
                     <TableCell>
                       {subscription.paymentAmount 

@@ -2302,6 +2302,7 @@ export const ru: Translation = {
     customFields: "Пользовательские поля",
     advancedFields: "Расширенные поля",
     showCustomFields: "Показать дополнительные поля",
+    cashback: "Кэшбэк",
     status: "Статус",
     statusActive: "Активна",
     statusPending: "Ожидание",
