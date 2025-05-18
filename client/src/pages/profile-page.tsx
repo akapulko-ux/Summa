@@ -27,8 +27,9 @@ import { TelegramConnect } from "@/components/profile/telegram-connect";
 const profileFormSchema = z.object({
   name: z.string().optional(),
   email: z.string().email({ message: "Please enter a valid email address" }),
-  companyName: z.string().optional(),
   phone: z.string().optional(),
+  companyName: z.string().optional(),
+  inn: z.string().optional(),
 });
 
 // Password form schema
@@ -55,8 +56,9 @@ export default function ProfilePage() {
     defaultValues: {
       name: user?.name || "",
       email: user?.email || "",
-      companyName: user?.companyName || "",
       phone: user?.phone || "",
+      companyName: user?.companyName || "",
+      inn: user?.inn || "",
     },
   });
 
@@ -187,6 +189,20 @@ export default function ProfilePage() {
                     <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4 mt-4">
                       <FormField
                         control={profileForm.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t('auth.name')}</FormLabel>
+                            <FormControl>
+                              <Input placeholder={t('auth.namePlaceholder')} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={profileForm.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
@@ -204,12 +220,12 @@ export default function ProfilePage() {
                       
                       <FormField
                         control={profileForm.control}
-                        name="name"
+                        name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t('auth.name')}</FormLabel>
+                            <FormLabel>{t('auth.phone')}</FormLabel>
                             <FormControl>
-                              <Input placeholder={t('auth.namePlaceholder')} {...field} />
+                              <Input placeholder={t('auth.phonePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -232,12 +248,12 @@ export default function ProfilePage() {
                       
                       <FormField
                         control={profileForm.control}
-                        name="phone"
+                        name="inn"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t('auth.phone')}</FormLabel>
+                            <FormLabel>{t('auth.inn') || "ИНН"}</FormLabel>
                             <FormControl>
-                              <Input placeholder={t('auth.phonePlaceholder')} {...field} />
+                              <Input placeholder={t('auth.innPlaceholder') || "Введите ИНН"} {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
