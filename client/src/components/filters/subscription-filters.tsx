@@ -101,7 +101,6 @@ export function SubscriptionFilters({
       search: "",
       service: "",
       user: "",
-      domain: "",
       company: "",
       status: "all",
       period: "all",
