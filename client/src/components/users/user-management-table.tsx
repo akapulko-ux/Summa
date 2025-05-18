@@ -155,15 +155,30 @@ export function UserManagementTable() {
       console.error("Error managing cashback:", error);
       
       // Проверяем, была ли ошибка связана с недостаточным балансом
+      let errorTitle = t('cashback.error');
       let errorMessage = t('cashback.cashback_error');
+      let errorVariant: "destructive" | "default" = "destructive";
+      
       if (error.response?.data?.message === "Insufficient balance") {
-        errorMessage = t('cashback.insufficient_balance');
+        errorTitle = t('cashback.insufficient_balance');
+        // Если сервер вернул текущий баланс, включаем его в сообщение
+        const currentBalance = error.response?.data?.currentBalance;
+        if (currentBalance !== undefined) {
+          errorMessage = t('cashback.insufficient_balance_with_amount', { 
+            amount: cashbackForm.getValues().amount, 
+            balance: currentBalance.toFixed(2) 
+          });
+        } else {
+          errorMessage = t('cashback.insufficient_balance_detailed');
+        }
+        // Используем более мягкий вариант для уведомления о недостаточном балансе
+        errorVariant = "default";
       }
       
       toast({
-        title: t('cashback.error'),
+        title: errorTitle,
         description: errorMessage,
-        variant: "destructive",
+        variant: errorVariant,
       });
     }
   });
