@@ -1413,6 +1413,7 @@ export const en: Translation = {
     loginId: "Login ID",
     serviceName: "Service Name",
     otherCustom: "Other (Custom)",
+    renewalAmount: "Renewal Amount",
     enterTitle: "Enter subscription title",
     enterDomain: "Enter domain",
     login: "Login",
