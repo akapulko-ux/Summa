@@ -534,7 +534,7 @@ export function AdvancedSubscriptionList({
                   <TableRow key={subscription.id}>
                     {columnVisibility.title && (
                       <TableCell className="font-medium">
-                        {subscription.title}
+                        {subscription.service?.title || subscription.title}
                       </TableCell>
                     )}
                     
