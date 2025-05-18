@@ -209,6 +209,8 @@ export function AdvancedSubscriptionList({
         
         // Поля оплаты
         paymentAmount: sub.amount || sub.paymentAmount || sub.price || 0,
+        // Явно копируем поле paidUntil
+        paidUntil: sub.paidUntil || null,
       };
       
       console.log("Enriched subscription:", result);
@@ -404,11 +406,26 @@ export function AdvancedSubscriptionList({
   const formatDate = (date: string | Date | null | undefined) => {
     if (!date) return t('common.notAvailable');
     try {
+      // Добавляем подробное логирование для отладки
+      console.log('Форматирование даты, оригинальное значение:', date);
+      console.log('Тип данных:', typeof date);
+      if (date instanceof Date) {
+        console.log('Это объект Date');
+      }
+      
       const dateObj = date instanceof Date ? date : new Date(date);
+      console.log('Преобразованная дата:', dateObj);
+      console.log('Дата валидна:', !isNaN(dateObj.getTime()));
+      
+      if (isNaN(dateObj.getTime())) {
+        console.warn('Невалидная дата:', date);
+        return t('common.notAvailable');
+      }
+      
       return format(dateObj, 'dd.MM.yyyy');
     } catch (e) {
       console.warn('Error formatting date:', e, date);
-      return String(date);
+      return t('common.notAvailable');
     }
   };
   
