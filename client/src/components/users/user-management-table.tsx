@@ -572,7 +572,7 @@ export function UserManagementTable() {
             <div className="flex justify-between items-center">
               <span className="font-medium">{t('cashback.current_balance')}:</span>
               {userCashbackData?.balance !== undefined ? (
-                <span className="text-lg font-bold">{userCashbackData.balance.toFixed(2)} ₽</span>
+                <span className="text-lg font-bold">{Math.floor(userCashbackData.balance)} ₽</span>
               ) : (
                 <span className="text-muted-foreground">{t('common.loading')}...</span>
               )}
@@ -724,7 +724,7 @@ export function UserManagementTable() {
                             </td>
                             <td className="py-2 px-4 text-sm">
                               <span className={transaction.amount > 0 ? "text-green-600" : "text-red-600"}>
-                                {transaction.amount > 0 ? '+' : ''}{transaction.amount.toFixed(2)} ₽
+                                {transaction.amount > 0 ? '+' : ''}{Math.floor(Math.abs(transaction.amount))} ₽
                               </span>
                             </td>
                             <td className="py-2 px-4 text-sm">
