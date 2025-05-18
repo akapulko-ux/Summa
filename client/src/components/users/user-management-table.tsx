@@ -78,22 +78,24 @@ export function UserManagementTable() {
   const [isAddCashbackDialogOpen, setIsAddCashbackDialogOpen] = useState(false);
   const [currentUserBalance, setCurrentUserBalance] = useState<number | null>(null);
   
-  // Инициализация формы для начисления кэшбэка
+  // Инициализация формы для управления кэшбэком
   const cashbackForm = useForm<CashbackFormValues>({
     resolver: zodResolver(cashbackFormSchema),
     defaultValues: {
       amount: 0,
       description: "",
+      type: 'add',
     },
   });
   
-  // Обработка отправки формы начисления кэшбэка
+  // Обработка отправки формы управления кэшбэком
   const onCashbackSubmit = (values: CashbackFormValues) => {
     if (selectedUserId) {
       addCashbackMutation.mutate({
         userId: selectedUserId,
         amount: values.amount,
         description: values.description,
+        type: values.type,
       });
     }
   };
@@ -127,15 +129,16 @@ export function UserManagementTable() {
     }
   });
   
-  // Мутация для начисления кэшбэка
+  // Мутация для управления кэшбэком
   const addCashbackMutation = useMutation({
-    mutationFn: async ({ userId, amount, description }: { userId: number, amount: number, description: string }) => {
-      return await apiRequest("POST", `/api/users/${userId}/cashback`, { amount, description });
+    mutationFn: async ({ userId, amount, description, type }: { userId: number, amount: number, description: string, type: 'add' | 'subtract' }) => {
+      return await apiRequest("POST", `/api/users/${userId}/cashback`, { amount, description, type });
     },
     onSuccess: (data) => {
+      const isAdd = cashbackForm.getValues().type === 'add';
       toast({
         title: t('cashback.success'),
-        description: t('cashback.cashback_added_success'),
+        description: isAdd ? t('cashback.cashback_added_success') : t('cashback.cashback_subtracted_success'),
         variant: "default",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
@@ -148,11 +151,18 @@ export function UserManagementTable() {
       cashbackForm.reset(); // Очищаем форму
       setCurrentUserBalance(null); // Сбрасываем текущий баланс
     },
-    onError: (error) => {
-      console.error("Error adding cashback:", error);
+    onError: (error: any) => {
+      console.error("Error managing cashback:", error);
+      
+      // Проверяем, была ли ошибка связана с недостаточным балансом
+      let errorMessage = t('cashback.cashback_error');
+      if (error.response?.data?.message === "Insufficient balance") {
+        errorMessage = t('cashback.insufficient_balance');
+      }
+      
       toast({
         title: t('cashback.error'),
-        description: t('cashback.cashback_add_error'),
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -369,7 +379,7 @@ export function UserManagementTable() {
                               }}
                             >
                               <span className="h-4 w-4 mr-2 flex items-center justify-center text-sm">₽</span>
-                              {t('cashback.add_cashback')}
+                              {t('cashback.manage_cashback')}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
@@ -476,7 +486,7 @@ export function UserManagementTable() {
       }}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>{t('cashback.add_cashback')}</DialogTitle>
+            <DialogTitle>{t('cashback.manage_cashback')}</DialogTitle>
             <DialogDescription>
               {t('cashback.cashback_admin_description')}
             </DialogDescription>
@@ -487,7 +497,7 @@ export function UserManagementTable() {
             <div className="flex justify-between items-center">
               <span className="font-medium">{t('cashback.current_balance')}:</span>
               {userCashbackData?.balance !== undefined ? (
-                <span className="text-lg font-bold">{userCashbackData.balance.toFixed(2)}</span>
+                <span className="text-lg font-bold">{userCashbackData.balance.toFixed(2)} ₽</span>
               ) : (
                 <span className="text-muted-foreground">{t('common.loading')}...</span>
               )}
@@ -496,6 +506,42 @@ export function UserManagementTable() {
           
           <Form {...cashbackForm}>
             <form onSubmit={cashbackForm.handleSubmit(onCashbackSubmit)} className="space-y-6">
+              {/* Переключатель типа операции с кэшбэком */}
+              <FormField
+                control={cashbackForm.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>{t('cashback.operation_type')}</FormLabel>
+                    <FormControl>
+                      <div className="flex space-x-4">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-primary"
+                            value="add"
+                            checked={field.value === 'add'}
+                            onChange={() => field.onChange('add')}
+                          />
+                          <span>{t('cashback.add')}</span>
+                        </label>
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            className="form-radio h-4 w-4 text-destructive"
+                            value="subtract"
+                            checked={field.value === 'subtract'}
+                            onChange={() => field.onChange('subtract')}
+                          />
+                          <span>{t('cashback.subtract')}</span>
+                        </label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
               <FormField
                 control={cashbackForm.control}
                 name="amount"
