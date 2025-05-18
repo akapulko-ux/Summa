@@ -2441,7 +2441,9 @@ export const ru: Translation = {
       startDateFrom: "Дата начала (с)",
       startDateTo: "Дата начала (по)",
       endDateFrom: "Дата окончания (с)",
-      endDateTo: "Дата окончания (по)"
+      endDateTo: "Дата окончания (по)",
+      paidUntilFrom: "Оплачено до (с)",
+      paidUntilTo: "Оплачено до (по)"
     },
     columns: {
       service: "Сервис",
