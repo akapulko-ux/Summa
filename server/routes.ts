@@ -943,70 +943,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Получение подписок с ближайшими датами окончания для дашборда
   app.get("/api/subscriptions/ending-soon", isAuthenticated, async (req, res) => {
     try {
+      // Если пользователь не аутентифицирован
+      if (!req.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
       const limit = parseInt(req.query.limit as string) || 10;
-      const userId = req.user.role !== "admin" ? req.user.id : undefined;
       
-      // Простой запрос с основными параметрами подписок
-      const subscriptionsQuery = db
-        .select()
+      // Для обычных пользователей показываем только их подписки
+      const whereClause = req.user.role !== "admin" 
+        ? eq(subscriptions.userId, req.user.id) 
+        : undefined;
+      
+      // Получаем все подписки через drizzle
+      const query = db
+        .select({
+          id: subscriptions.id,
+          userId: subscriptions.userId,
+          serviceId: subscriptions.serviceId,
+          title: subscriptions.title,
+          status: subscriptions.status,
+          paymentPeriod: subscriptions.paymentPeriod,
+          paymentAmount: subscriptions.paymentAmount,
+          domain: subscriptions.domain,
+          createdAt: subscriptions.createdAt,
+          paidUntil: subscriptions.paidUntil,
+          serviceName: services.title,
+          userName: users.name
+        })
         .from(subscriptions)
-        .where(
-          userId ? eq(subscriptions.userId, userId) : undefined
-        )
+        .leftJoin(services, eq(subscriptions.serviceId, services.id))
+        .leftJoin(users, eq(subscriptions.userId, users.id))
+        .where(whereClause)
+        .orderBy(asc(subscriptions.paidUntil))
         .limit(limit);
+        
+      const subs = await query;
       
-      const allSubscriptions = await subscriptionsQuery;
-      
-      // Сначала фильтруем подписки с непустыми датами окончания
-      const filteredSubscriptions = allSubscriptions.filter(sub => 
-        sub.paidUntil !== null && sub.status !== "canceled"
-      );
-      
-      // Сортируем по возрастанию даты окончания (сначала ближайшие)
-      filteredSubscriptions.sort((a, b) => {
-        if (!a.paidUntil) return 1;
-        if (!b.paidUntil) return -1;
-        return new Date(a.paidUntil).getTime() - new Date(b.paidUntil).getTime();
-      });
-      
-      // Берем первые N записей после сортировки
-      const limitedSubscriptions = filteredSubscriptions.slice(0, limit);
-      
-      // Обновляем статусы и обогащаем данные
-      const processedSubscriptions = await Promise.all(
-        limitedSubscriptions.map(async (sub) => {
-          // Получаем данные о сервисе
-          let serviceName = sub.title;
-          if (sub.serviceId) {
-            const serviceData = await db
-              .select()
-              .from(services)
-              .where(eq(services.id, sub.serviceId))
-              .limit(1);
-            
-            if (serviceData.length > 0) {
-              serviceName = serviceData[0].title;
-            }
-          }
-          
+      // Обрабатываем результаты, проверяя и обновляя статусы
+      const processedSubscriptions = subs
+        .filter(sub => sub.paidUntil !== null)
+        .map(sub => {
           // Проверяем и обновляем статус подписки на основе даты оплаты
           const correctStatus = checkSubscriptionStatus(sub);
           
-          // Если статус изменился, обновляем его в базе данных
+          // Если статус изменился, помечаем для обновления в базе данных
           if (correctStatus !== sub.status) {
-            console.log(`Updating dashboard subscription ${sub.id} status from ${sub.status} to ${correctStatus}`);
-            storage.updateSubscription(sub.id, { status: correctStatus }).catch(err => 
-              console.error(`Failed to update subscription ${sub.id} status:`, err)
-            );
+            console.log(`Updating subscription ${sub.id} status from ${sub.status} to ${correctStatus}`);
+            
+            // Обновляем статус асинхронно (не ждем завершения)
+            if (sub.id) {
+              storage.updateSubscription(sub.id, { status: correctStatus }).catch(err => 
+                console.error(`Failed to update subscription ${sub.id} status:`, err)
+              );
+            }
           }
+          
+          // Формируем название сервиса
+          const displayServiceName = sub.serviceName || sub.title || "Без названия";
           
           return {
             ...sub,
-            serviceName,
+            serviceName: displayServiceName,
             status: correctStatus
           };
-        })
-      );
+        });
       
       res.json({ subscriptions: processedSubscriptions });
     } catch (error) {
