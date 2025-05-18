@@ -22,6 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { 
   Pencil, 
@@ -29,14 +30,15 @@ import {
   ChevronLeft, 
   ChevronRight, 
   MoreHorizontal,
-  User,
+  User as UserIcon,
   CalendarIcon,
   Building,
   MessageCircle,
   Plus,
   FileText,
   Settings,
-  Filter
+  Filter,
+  CreditCard
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -48,6 +50,9 @@ import { SubscriptionForm } from "./subscription-form-fixed";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
 import { SubscriptionFilters, SubscriptionColumnVisibility } from "../filters/subscription-filters";
+import { UserForm } from "../users/user-form";
+import { UserSubscriptions } from "../subscriptions/user-subscriptions";
+import { UserCustomFields } from "../custom-fields/user-custom-fields";
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -117,6 +122,13 @@ export function AdvancedSubscriptionList({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null);
+  
+  // Состояния для управления пользователями
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [isUserEditDialogOpen, setIsUserEditDialogOpen] = useState(false);
+  const [isUserSubscriptionsDialogOpen, setIsUserSubscriptionsDialogOpen] = useState(false);
+  const [isUserCustomFieldsDialogOpen, setIsUserCustomFieldsDialogOpen] = useState(false);
+  const [isUserCashbackDialogOpen, setIsUserCashbackDialogOpen] = useState(false);
   
   // Состояние для фильтров и видимости столбцов
   const [filters, setFilters] = useState({...initialFilters, status: defaultView === 'all' ? 'all' : defaultView});
@@ -569,7 +581,55 @@ export function AdvancedSubscriptionList({
                     {columnVisibility.user && (
                       <TableCell>
                         <div className="flex flex-col">
-                          <span>{subscription.userName || t('common.notAvailable')}</span>
+                          <div className="flex items-center space-x-1">
+                            <span>{subscription.userName || t('common.notAvailable')}</span>
+                            {user?.role === 'admin' && subscription.userId && (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                    <Settings className="h-3.5 w-3.5" />
+                                    <span className="sr-only">{t('users.actions')}</span>
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => {
+                                    setIsUserEditDialogOpen(true);
+                                    setSelectedUserId(subscription.userId);
+                                  }}>
+                                    <Pencil className="h-4 w-4 mr-2" />
+                                    {t('users.edit')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={() => {
+                                      setIsUserSubscriptionsDialogOpen(true);
+                                      setSelectedUserId(subscription.userId);
+                                    }}
+                                  >
+                                    <CreditCard className="h-4 w-4 mr-2" />
+                                    {t('users.manageSubscriptions')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={() => {
+                                      setIsUserCustomFieldsDialogOpen(true);
+                                      setSelectedUserId(subscription.userId);
+                                    }}
+                                  >
+                                    <UserIcon className="h-4 w-4 mr-2" />
+                                    {t('users.manageCustomFields')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={() => {
+                                      setIsUserCashbackDialogOpen(true);
+                                      setSelectedUserId(subscription.userId);
+                                    }}
+                                  >
+                                    <span className="h-4 w-4 mr-2 flex items-center justify-center text-sm">₽</span>
+                                    {t('cashback.manage_cashback')}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            )}
+                          </div>
                           {subscription.userEmail && (
                             <span className="text-xs text-muted-foreground">
                               {subscription.userEmail}
