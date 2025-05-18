@@ -1443,6 +1443,7 @@ export const en: Translation = {
     customFields: "Custom Fields",
     advancedFields: "Advanced Fields",
     showCustomFields: "Show Custom Fields",
+    cashback: "Cashback",
     status: "Status",
     statusActive: "Active",
     statusPending: "Pending",
