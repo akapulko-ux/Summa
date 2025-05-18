@@ -29,6 +29,8 @@ import {
   Trash, 
   ChevronLeft, 
   ChevronRight, 
+  ChevronUp,
+  ChevronDown,
   MoreHorizontal,
   User as UserIcon,
   CalendarIcon,
@@ -345,7 +347,10 @@ export function AdvancedSubscriptionList({
   const [isUserCashbackDialogOpen, setIsUserCashbackDialogOpen] = useState(false);
   
   // Состояние для фильтров и видимости столбцов
-  const [filters, setFilters] = useState({...initialFilters, status: defaultView === 'all' ? 'all' : defaultView});
+  const [filters, setFilters] = useState<SubscriptionFilters>({
+    ...initialFilters, 
+    status: defaultView === 'all' ? 'all' : defaultView as "all" | "active" | "pending" | "expired" | "canceled"
+  });
   const [columnVisibility, setColumnVisibility] = useState(initialColumnVisibility);
   
   // Расчет количества примененных фильтров
@@ -356,6 +361,46 @@ export function AdvancedSubscriptionList({
       if (value && value !== 'all' && value !== '') count++;
     }
     return count;
+  };
+  
+  // Функция для обработки клика по заголовку столбца для сортировки
+  const handleSortClick = (field: string) => {
+    setFilters(prev => {
+      const newSortOrder = prev.sortBy === field && prev.sortOrder === 'asc' ? 'desc' : 'asc';
+      return { ...prev, sortBy: field, sortOrder: newSortOrder as 'asc' | 'desc' };
+    });
+  };
+  
+  // Компонент для отображения сортируемого заголовка столбца
+  const SortableHeader = ({ 
+    field, 
+    children 
+  }: { 
+    field: string, 
+    children: React.ReactNode 
+  }) => {
+    return (
+      <div 
+        className="flex items-center space-x-1 cursor-pointer select-none" 
+        onClick={() => handleSortClick(field)}
+      >
+        <span>{children}</span>
+        <span className="inline-flex flex-col h-4 w-4 justify-center">
+          {filters.sortBy === field ? (
+            filters.sortOrder === 'asc' ? (
+              <ChevronUp className="h-3 w-3" />
+            ) : (
+              <ChevronDown className="h-3 w-3" />
+            )
+          ) : (
+            <>
+              <ChevronUp className="h-2 w-2 opacity-30" />
+              <ChevronDown className="h-2 w-2 opacity-30" />
+            </>
+          )}
+        </span>
+      </div>
+    );
   };
   
   // Получение всех подписок
@@ -746,16 +791,72 @@ export function AdvancedSubscriptionList({
           <Table>
             <TableHeader>
               <TableRow>
-                {columnVisibility.title && <TableHead>{t('subscriptions.subscriptionTitle')}</TableHead>}
-                {columnVisibility.service && <TableHead>{t('subscriptions.service')}</TableHead>}
-                {columnVisibility.domain && <TableHead>{t('subscriptions.domain')}</TableHead>}
-                {columnVisibility.user && <TableHead>{t('users.title')}</TableHead>}
-                {columnVisibility.company && <TableHead>{t('users.userCompany')}</TableHead>}
-                {columnVisibility.price && <TableHead>{t('subscriptions.paymentAmount')}</TableHead>}
-                {columnVisibility.period && <TableHead>{t('subscriptions.paymentPeriod')}</TableHead>}
-                {columnVisibility.paidUntil && <TableHead>{t('subscriptions.paidUntil')}</TableHead>}
-                {columnVisibility.status && <TableHead>{t('subscriptions.status')}</TableHead>}
-                {columnVisibility.actions && <TableHead className="text-right">{t('common.actions')}</TableHead>}
+                {columnVisibility.title && (
+                  <TableHead>
+                    <SortableHeader field="title">
+                      {t('subscriptions.subscriptionTitle')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.service && (
+                  <TableHead>
+                    <SortableHeader field="serviceName">
+                      {t('subscriptions.service')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.domain && (
+                  <TableHead>
+                    <SortableHeader field="domain">
+                      {t('subscriptions.domain')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.user && (
+                  <TableHead>
+                    <SortableHeader field="userName">
+                      {t('users.title')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.company && (
+                  <TableHead>
+                    <SortableHeader field="companyName">
+                      {t('users.userCompany')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.price && (
+                  <TableHead>
+                    <SortableHeader field="paymentAmount">
+                      {t('subscriptions.paymentAmount')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.period && (
+                  <TableHead>
+                    <SortableHeader field="paymentPeriod">
+                      {t('subscriptions.paymentPeriod')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.paidUntil && (
+                  <TableHead>
+                    <SortableHeader field="paidUntil">
+                      {t('subscriptions.paidUntil')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.status && (
+                  <TableHead>
+                    <SortableHeader field="status">
+                      {t('subscriptions.status')}
+                    </SortableHeader>
+                  </TableHead>
+                )}
+                {columnVisibility.actions && (
+                  <TableHead className="text-right">{t('common.actions')}</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
