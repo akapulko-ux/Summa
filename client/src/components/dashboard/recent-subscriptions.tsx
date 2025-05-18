@@ -7,6 +7,7 @@ import { ru } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import { useTranslations } from "@/hooks/use-translations";
+import { useMemo } from "react";
 
 interface Subscription {
   id: number;
@@ -26,11 +27,25 @@ interface Subscription {
 export function RecentSubscriptions() {
   const { t, language } = useTranslations();
   const { data, isLoading } = useQuery<{ subscriptions: Subscription[] }>({
-    queryKey: ["/api/subscriptions/ending-soon", { limit: 10 }]
+    queryKey: ["/api/subscriptions", { limit: 20 }]
   });
   
   // Отладочный код для проверки данных
   console.log("Recent subscriptions data:", data);
+  
+  // Сортируем подписки по дате окончания на стороне клиента
+  const sortedSubscriptions = useMemo(() => {
+    if (!data?.subscriptions) return [];
+    
+    return [...data.subscriptions]
+      .filter(sub => sub.paidUntil && sub.status !== "canceled")
+      .sort((a, b) => {
+        if (!a.paidUntil) return 1;
+        if (!b.paidUntil) return -1;
+        return new Date(a.paidUntil).getTime() - new Date(b.paidUntil).getTime();
+      })
+      .slice(0, 10);
+  }, [data?.subscriptions]);
 
   // Helper function to get badge variant based on subscription status
   const getBadgeVariant = (status: string) => {
@@ -96,8 +111,8 @@ export function RecentSubscriptions() {
                       </td>
                     </tr>
                   ))
-              ) : data?.subscriptions?.length ? (
-                data.subscriptions.map((sub) => (
+              ) : sortedSubscriptions.length > 0 ? (
+                sortedSubscriptions.map((sub) => (
                   <tr
                     key={sub.id}
                     className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
