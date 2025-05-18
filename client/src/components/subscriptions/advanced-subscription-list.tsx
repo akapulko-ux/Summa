@@ -45,7 +45,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Subscription, Service, User as UserType } from "@shared/schema";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { SubscriptionForm } from "./subscription-form-fixed";
 import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
@@ -766,6 +766,76 @@ export function AdvancedSubscriptionList({
             }}
             userId={userId}
           />
+        </DialogContent>
+      </Dialog>
+      
+      {/* Диалог редактирования пользователя */}
+      <Dialog open={isUserEditDialogOpen} onOpenChange={setIsUserEditDialogOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{t('users.editUser')}</DialogTitle>
+          </DialogHeader>
+          {selectedUserId && (
+            <UserForm 
+              userId={selectedUserId}
+              onSuccess={() => {
+                setIsUserEditDialogOpen(false);
+                queryClient.invalidateQueries({ queryKey });
+              }}
+              onCancel={() => setIsUserEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Диалог управления подписками пользователя */}
+      <Dialog open={isUserSubscriptionsDialogOpen} onOpenChange={setIsUserSubscriptionsDialogOpen}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('users.manageSubscriptions')}</DialogTitle>
+            <DialogDescription>{t('users.manageSubscriptionsDescription')}</DialogDescription>
+          </DialogHeader>
+          {selectedUserId && (
+            <UserSubscriptions userId={selectedUserId} />
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Диалог управления пользовательскими полями */}
+      <Dialog open={isUserCustomFieldsDialogOpen} onOpenChange={setIsUserCustomFieldsDialogOpen}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('users.manageCustomFields')}</DialogTitle>
+            <DialogDescription>{t('users.manageCustomFieldsDescription')}</DialogDescription>
+          </DialogHeader>
+          {selectedUserId && (
+            <UserCustomFields userId={selectedUserId} />
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Диалог управления кэшбэком */}
+      <Dialog open={isUserCashbackDialogOpen} onOpenChange={setIsUserCashbackDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t('cashback.manage_cashback')}</DialogTitle>
+            <DialogDescription>
+              {t('cashback.cashback_admin_description')}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUserId && (
+            <div className="py-4">
+              <div className="flex items-center justify-between mb-6 p-4 border rounded-md bg-muted">
+                <span className="font-medium">{t('cashback.current_balance')}:</span>
+                <div className="text-lg font-bold">
+                  {/* Здесь будет отображаться баланс кэшбэка */}
+                  <span className="loading-spinner inline-block mr-2" />
+                </div>
+              </div>
+              
+              {/* Здесь должен быть компонент формы управления кэшбэком */}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </Card>
