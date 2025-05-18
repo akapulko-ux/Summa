@@ -1351,7 +1351,7 @@ export const en: Translation = {
     totalCashback: "Total Cashback",
     totalCashbackDescription: "Sum of all cashbacks from your subscriptions",
     totalCashbackAmount: "Total Cashback Amount",
-    totalCashbackAmountDescription: "Total monetary value of all cashbacks received",
+    totalCashbackAmountDescription: "Total amount of all cashbacks received",
     // New fields for service details view
     details: "Details",
     clients: "Clients",
@@ -2216,7 +2216,7 @@ export const ru: Translation = {
     totalCashback: "Общий кэшбэк",
     totalCashbackDescription: "Сумма всех кэшбэков от ваших подписок",
     totalCashbackAmount: "Общая сумма кэшбэка",
-    totalCashbackAmountDescription: "Общая денежная стоимость всех полученных кэшбэков",
+    totalCashbackAmountDescription: "Общая сумма всех полученных кэшбэков",
     добавитьВПодписки: "Добавить в подписки",
     купить: "Купить",
     оставитьЗаявку: "Оставить заявку",
