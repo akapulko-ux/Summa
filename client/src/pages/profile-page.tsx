@@ -151,9 +151,12 @@ export default function ProfilePage() {
                 <div className="text-center">
                   <h3 className="text-lg font-medium">{user?.name || "User"}</h3>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {t('profile.role')}: {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : t('users.roleClient')}
-                  </p>
+                  {/* Убрали отображение роли для клиентов */}
+                  {user?.role === "admin" && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {t('profile.role')}: {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
