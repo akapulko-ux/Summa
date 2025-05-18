@@ -278,7 +278,6 @@ const initialFilters: SubscriptionFilters = {
   search: "",
   service: "",
   user: "",
-  domain: "",
   company: "",
   status: "all",
   period: "all",
@@ -495,10 +494,8 @@ export function AdvancedSubscriptionList({
     return subscriptions.filter(sub => {
       // Фильтрация по поисковому запросу
       const searchMatches = !filters.search || 
-        (sub.title && sub.title.toLowerCase().includes(filters.search.toLowerCase())) ||
         (sub.serviceName && sub.serviceName.toLowerCase().includes(filters.search.toLowerCase())) ||
         (sub.userName && sub.userName.toLowerCase().includes(filters.search.toLowerCase())) ||
-        (sub.domain && sub.domain.toLowerCase().includes(filters.search.toLowerCase())) ||
         (sub.userEmail && sub.userEmail.toLowerCase().includes(filters.search.toLowerCase()));
       
       // Фильтрация по сервису
@@ -510,9 +507,8 @@ export function AdvancedSubscriptionList({
         (sub.userName && sub.userName.toLowerCase().includes(filters.user.toLowerCase())) ||
         (sub.userEmail && sub.userEmail.toLowerCase().includes(filters.user.toLowerCase()));
       
-      // Фильтрация по домену
-      const domainMatches = !filters.domain || 
-        (sub.domain && sub.domain.toLowerCase().includes(filters.domain.toLowerCase()));
+      // Домен больше не используется
+      const domainMatches = true;
       
       // Фильтрация по компании
       const companyMatches = !filters.company || 

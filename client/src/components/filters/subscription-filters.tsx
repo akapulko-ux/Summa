@@ -49,7 +49,6 @@ export type SubscriptionFilters = {
   search: string;
   service: string;
   user: string;
-  domain: string;
   company: string;
   status: "all" | "active" | "pending" | "expired" | "canceled";
   period: "all" | "monthly" | "quarterly" | "yearly";
@@ -203,16 +202,7 @@ export function SubscriptionFilters({
               />
             </div>
 
-            {/* Домен */}
-            <div className="space-y-2">
-              <Label htmlFor="domain">{t('subscriptions.domain')}</Label>
-              <Input
-                id="domain"
-                placeholder={t('subscriptions.searchDomain')}
-                value={localFilters.domain}
-                onChange={(e) => handleFilterChange("domain", e.target.value)}
-              />
-            </div>
+
 
             {/* Компания */}
             <div className="space-y-2">
