@@ -33,7 +33,7 @@ export function AppLayout({ children, title, backUrl, actions }: AppLayoutProps)
                 </Link>
               </Button>
             )}
-            <h1 className="text-2xl md:text-3xl font-bold ml-1">{title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold ml-1" style={{ height: "1.2em", lineHeight: "1.2" }}>{title}</h1>
           </div>
           {actions && (
             <div className="mt-3 md:mt-0 space-x-2 flex flex-wrap gap-2">
