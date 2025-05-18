@@ -132,8 +132,8 @@ export function SubscriptionList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('subscriptions.subscriptionTitle')}</TableHead>
-                <TableHead>{t('subscriptions.domain')}</TableHead>
+                <TableHead>{t('subscriptions.service')}</TableHead>
+                {/* Столбец "Домен" удален по требованию */}
                 <TableHead>{t('subscriptions.paymentAmount')}</TableHead>
                 <TableHead>{t('subscriptions.paidUntil')}</TableHead>
                 <TableHead>{t('subscriptions.status')}</TableHead>
@@ -142,11 +142,10 @@ export function SubscriptionList() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                // Loading state
+                // Loading state - удален столбец домена
                 Array(5).fill(0).map((_, i) => (
                   <TableRow key={i}>
                     <TableCell><Skeleton className="h-5 w-36" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-24" /></TableCell>
                     <TableCell><Skeleton className="h-5 w-20" /></TableCell>
                     <TableCell><Skeleton className="h-5 w-24" /></TableCell>
                     <TableCell><Skeleton className="h-5 w-16" /></TableCell>
@@ -155,13 +154,13 @@ export function SubscriptionList() {
                 ))
               ) : isError ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
                     {t('subscriptions.errorLoading')}
                   </TableCell>
                 </TableRow>
               ) : data?.subscriptions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
                     {t('subscriptions.noSubscriptions')}
                   </TableCell>
                 </TableRow>
@@ -169,10 +168,10 @@ export function SubscriptionList() {
                 data?.subscriptions.map((subscription) => (
                   <TableRow key={subscription.id}>
                     <TableCell className="font-medium">{subscription.service?.title || subscription.title}</TableCell>
-                    <TableCell>{subscription.domain || "N/A"}</TableCell>
+                    {/* Столбец "Домен" удален по требованию */}
                     <TableCell>
                       {subscription.paymentAmount 
-                        ? `$${subscription.paymentAmount.toFixed(2)} / ${formatPaymentPeriod(subscription.paymentPeriod)}`
+                        ? `₽${subscription.paymentAmount.toFixed(2)} / ${formatPaymentPeriod(subscription.paymentPeriod)}`
                         : formatPaymentPeriod(subscription.paymentPeriod)}
                     </TableCell>
                     <TableCell>{formatDate(subscription.paidUntil)}</TableCell>
