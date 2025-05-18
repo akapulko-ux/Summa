@@ -952,13 +952,13 @@ export function AdvancedSubscriptionList({
                     
                     {columnVisibility.company && (
                       <TableCell>
-                        {subscription.companyName || subscription.company || t('common.notAvailable')}
+                        {subscription.companyName || t('common.notAvailable')}
                       </TableCell>
                     )}
                     
                     {columnVisibility.price && (
                       <TableCell>
-                        {formatMoney(subscription.amount || subscription.paymentAmount)}
+                        {formatMoney(subscription.paymentAmount || 0)}
                       </TableCell>
                     )}
                     
