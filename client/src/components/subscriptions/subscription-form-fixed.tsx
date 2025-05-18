@@ -449,6 +449,20 @@ export function SubscriptionForm({
     console.log("Form submission data:", JSON.stringify(data, null, 2));
     console.log("Custom fields data:", JSON.stringify(data.customFields, null, 2));
     
+    // Используем название сервиса как название подписки
+    // Если выбран существующий сервис, берём его название
+    // Если выбран "other", используем введённое значение
+    if (data.serviceId && data.serviceId !== "other") {
+      const service = (externalServices || (servicesData?.services || [])).find(
+        (s: any) => String(s.id) === data.serviceId
+      );
+      if (service) {
+        data.title = service.title;
+      }
+    } else if (isCustomService && selectedServiceName) {
+      data.title = selectedServiceName;
+    }
+    
     // Если предоставлен внешний обработчик, используем его
     if (externalSubmit) {
       externalSubmit(data);
@@ -543,19 +557,7 @@ export function SubscriptionForm({
             )}
           </FormItem>
           
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("subscriptions.title")}</FormLabel>
-                <FormControl>
-                  <Input disabled={isSubmitting} placeholder={t("subscriptions.enterTitle")} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Поле "Название подписки" удалено по требованию */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField

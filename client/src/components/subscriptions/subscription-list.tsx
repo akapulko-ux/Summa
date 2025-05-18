@@ -168,7 +168,7 @@ export function SubscriptionList() {
               ) : (
                 data?.subscriptions.map((subscription) => (
                   <TableRow key={subscription.id}>
-                    <TableCell className="font-medium">{subscription.title}</TableCell>
+                    <TableCell className="font-medium">{subscription.service?.title || subscription.title}</TableCell>
                     <TableCell>{subscription.domain || "N/A"}</TableCell>
                     <TableCell>
                       {subscription.paymentAmount 
