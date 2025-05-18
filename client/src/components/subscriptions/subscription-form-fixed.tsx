@@ -628,33 +628,36 @@ export function SubscriptionForm({
 
           {/* Поля "Количество лицензий" и "Количество пользователей" удалены по требованию */}
 
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("subscriptions.status")}</FormLabel>
-                <Select
-                  disabled={isSubmitting}
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("subscriptions.selectStatus")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="active">{t("subscriptions.statusActive")}</SelectItem>
-                    <SelectItem value="pending">{t("subscriptions.statusPending")}</SelectItem>
-                    <SelectItem value="expired">{t("subscriptions.statusExpired")}</SelectItem>
-                    <SelectItem value="canceled">{t("subscriptions.statusCanceled")}</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Поле "Статус" видимо только для администраторов */}
+          {user?.role === "admin" && (
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.status")}</FormLabel>
+                  <Select
+                    disabled={isSubmitting}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("subscriptions.selectStatus")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="active">{t("subscriptions.statusActive")}</SelectItem>
+                      <SelectItem value="pending">{t("subscriptions.statusPending")}</SelectItem>
+                      <SelectItem value="expired">{t("subscriptions.statusExpired")}</SelectItem>
+                      <SelectItem value="canceled">{t("subscriptions.statusCanceled")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {/* Кастомные поля сервиса - отображаются только если выбран сервис и это не опция "другой" */}
           {form.watch("serviceId") && form.watch("serviceId") !== "other" && (
