@@ -1034,13 +1034,16 @@ export function AdvancedSubscriptionList({
             <div className="py-4">
               <div className="flex items-center justify-between mb-6 p-4 border rounded-md bg-muted">
                 <span className="font-medium">{t('cashback.current_balance')}:</span>
-                <div className="text-lg font-bold">
-                  {/* Здесь будет отображаться баланс кэшбэка */}
-                  <span className="loading-spinner inline-block mr-2" />
-                </div>
+                <CashbackBalance userId={selectedUserId} />
               </div>
               
-              {/* Здесь должен быть компонент формы управления кэшбэком */}
+              <CashbackForm 
+                userId={selectedUserId} 
+                onSuccess={() => {
+                  // После успешного обновления кэшбэка обновляем данные
+                  queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+                }}
+              />
             </div>
           )}
         </DialogContent>
