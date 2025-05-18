@@ -12,18 +12,18 @@ export function zValidationErrorToMessage(error: ZodError): string {
 
 /**
  * Проверяет и определяет корректный статус подписки на основе даты "Оплачено до"
- * @param subscription Объект подписки
- * @returns Корректный статус подписки ("active", "pending", "expired")
+ * @param subscription Объект подписки (может быть разного формата в зависимости от запроса)
+ * @returns Корректный статус подписки ("active", "pending", "expired", "canceled")
  */
-export function checkSubscriptionStatus(subscription: Subscription): string {
+export function checkSubscriptionStatus(subscription: any): "active" | "pending" | "expired" | "canceled" {
   // Если статус уже "canceled", не меняем его
   if (subscription.status === "canceled") {
     return "canceled";
   }
   
-  // Если нет даты "Оплачено до", оставляем текущий статус
+  // Если нет даты "Оплачено до", оставляем текущий статус или возвращаем active по умолчанию
   if (!subscription.paidUntil) {
-    return subscription.status || "active";
+    return (subscription.status as "active" | "pending" | "expired" | "canceled") || "active";
   }
   
   const now = new Date();

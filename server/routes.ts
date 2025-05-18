@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema, insertServiceLeadSchema, serviceLeads } from "@shared/schema";
 import { ZodError } from "zod";
-import { zValidationErrorToMessage } from "./utils";
+import { zValidationErrorToMessage, checkSubscriptionStatus } from "./utils";
 import backupRoutes from "./backup/backup-routes";
 import { setupTelegramRoutes } from "./telegram/telegram-routes";
 import { cacheManager } from "./cache";
@@ -388,17 +388,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .leftJoin(users, eq(subscriptions.userId, users.id))
       .orderBy(desc(subscriptions.createdAt));
       
-      // Process results to handle custom services
+      // Process results to handle custom services and check subscription statuses
       const processedSubscriptions = allSubscriptions.map(sub => {
         // If subscription has title but no service name (custom service case),
         // use the subscription title as the service name
+        let updatedSub = sub;
         if (!sub.serviceName && sub.title) {
-          return {
+          updatedSub = {
             ...sub,
             serviceName: sub.title
           };
         }
-        return sub;
+        
+        // Проверяем и обновляем статус подписки на основе даты оплаты
+        const correctStatus = checkSubscriptionStatus(sub);
+        
+        // Если статус изменился, помечаем для обновления в базе данных
+        if (correctStatus !== sub.status) {
+          console.log(`Updating subscription ${sub.id} status from ${sub.status} to ${correctStatus}`);
+          // Обновляем статус асинхронно (не ждем завершения)
+          storage.updateSubscription(sub.id, { status: correctStatus }).catch(err => 
+            console.error(`Failed to update subscription ${sub.id} status:`, err)
+          );
+          
+          // Возвращаем сразу с обновленным статусом
+          return {
+            ...updatedSub,
+            status: correctStatus
+          };
+        }
+        
+        return updatedSub;
       });
       
       res.json(processedSubscriptions);
@@ -443,15 +463,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .leftJoin(services, eq(subscriptions.serviceId, services.id))
       .orderBy(desc(subscriptions.createdAt));
       
-      // Process results to handle custom services (same logic as in /subscriptions/all)
+      // Process results to handle custom services and check subscription statuses
       const processedSubscriptions = userSubscriptions.map(sub => {
+        // Обработка пользовательских сервисов
+        let updatedSub = sub;
         if (!sub.serviceName && sub.title) {
-          return {
+          updatedSub = {
             ...sub,
             serviceName: sub.title
           };
         }
-        return sub;
+        
+        // Проверяем и обновляем статус подписки на основе даты оплаты
+        const correctStatus = checkSubscriptionStatus(sub);
+        
+        // Если статус изменился, помечаем для обновления в базе данных
+        if (correctStatus !== sub.status) {
+          console.log(`Updating user subscription ${sub.id} status from ${sub.status} to ${correctStatus}`);
+          // Обновляем статус асинхронно (не ждем завершения)
+          storage.updateSubscription(sub.id, { status: correctStatus }).catch(err => 
+            console.error(`Failed to update subscription ${sub.id} status:`, err)
+          );
+          
+          // Возвращаем сразу с обновленным статусом
+          return {
+            ...updatedSub,
+            status: correctStatus
+          };
+        }
+        
+        return updatedSub;
       });
       
       res.json(processedSubscriptions);
