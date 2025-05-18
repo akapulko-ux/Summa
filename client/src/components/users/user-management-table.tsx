@@ -159,13 +159,17 @@ export function UserManagementTable() {
       let errorMessage = t('cashback.cashback_error');
       let errorVariant: "destructive" | "default" = "destructive";
       
-      if (error.response?.data?.message === "Insufficient balance") {
+      if (error?.response?.data?.message === "Insufficient balance") {
         errorTitle = t('cashback.insufficient_balance');
         // Если сервер вернул текущий баланс, включаем его в сообщение
         const currentBalance = error.response?.data?.currentBalance;
+        
+        // Получаем введенную сумму из формы
+        const enteredAmount = parseFloat(cashbackForm.getValues().amount || '0');
+        
         if (currentBalance !== undefined) {
           errorMessage = t('cashback.insufficient_balance_with_amount', { 
-            amount: cashbackForm.getValues().amount, 
+            amount: enteredAmount.toString(), 
             balance: currentBalance.toFixed(2) 
           });
         } else {
