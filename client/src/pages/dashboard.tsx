@@ -72,7 +72,9 @@ export default function Dashboard() {
       </div>
 
       {/* Stats cards */}
-      <StatsCards />
+      <div className="mt-6">
+        <StatsCards />
+      </div>
 
       {/* Recent Activity Section */}
       <div className="grid gap-4 grid-cols-1">
