@@ -940,6 +940,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Получение подписок с ближайшими датами окончания для дашборда
+  app.get("/api/subscriptions/ending-soon", isAuthenticated, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      let userId: number | undefined = undefined;
+      
+      // Для обычных пользователей показываем только их подписки
+      if (req.user.role !== "admin") {
+        userId = req.user.id;
+      }
+      
+      // Получаем подписки, у которых есть дата окончания (paidUntil)
+      // Сортируем по возрастанию даты окончания (сначала ближайшие)
+      const query = db.select({
+        id: subscriptions.id,
+        userId: subscriptions.userId,
+        serviceId: subscriptions.serviceId,
+        title: subscriptions.title,
+        status: subscriptions.status,
+        paymentPeriod: subscriptions.paymentPeriod,
+        paymentAmount: subscriptions.paymentAmount,
+        domain: subscriptions.domain,
+        createdAt: subscriptions.createdAt,
+        paidUntil: subscriptions.paidUntil,
+        // Информация о сервисе
+        serviceName: services.title,
+        // Информация о пользователе
+        userName: users.name, 
+        userEmail: users.email
+      })
+      .from(subscriptions)
+      .where(
+        // Выбираем только подписки, у которых есть дата окончания и она не прошла
+        and(
+          ...[
+            sql`${subscriptions.paidUntil} IS NOT NULL`,
+            sql`${subscriptions.paidUntil} >= CURRENT_DATE`,
+            // Если указан userId, фильтруем по нему
+            ...(userId ? [eq(subscriptions.userId, userId)] : [])
+          ]
+        )
+      )
+      .leftJoin(services, eq(subscriptions.serviceId, services.id))
+      .leftJoin(users, eq(subscriptions.userId, users.id))
+      .orderBy(sql`${subscriptions.paidUntil} ASC`) // Ближайшие даты окончания сначала
+      .limit(limit);
+      
+      const endingSoonSubscriptions = await query;
+      
+      // Обрабатываем результаты, проверяя и обновляя статусы
+      const processedSubscriptions = endingSoonSubscriptions.map(sub => {
+        // Обработка пользовательских сервисов
+        let updatedSub = sub;
+        if (!sub.serviceName && sub.title) {
+          updatedSub = {
+            ...sub,
+            serviceName: sub.title
+          };
+        }
+        
+        // Проверяем и обновляем статус подписки на основе даты оплаты
+        const correctStatus = checkSubscriptionStatus(sub);
+        
+        // Если статус изменился, помечаем для обновления в базе данных
+        if (correctStatus !== sub.status) {
+          console.log(`Updating dashboard subscription ${sub.id} status from ${sub.status} to ${correctStatus}`);
+          // Обновляем статус асинхронно (не ждем завершения)
+          storage.updateSubscription(sub.id, { status: correctStatus }).catch(err => 
+            console.error(`Failed to update subscription ${sub.id} status:`, err)
+          );
+          
+          // Возвращаем сразу с обновленным статусом
+          return {
+            ...updatedSub,
+            status: correctStatus
+          };
+        }
+        
+        return updatedSub;
+      });
+      
+      res.json({ subscriptions: processedSubscriptions });
+    } catch (error) {
+      console.error("Error fetching ending soon subscriptions:", error);
+      res.status(500).json({ message: "Failed to fetch ending soon subscriptions" });
+    }
+  });
+
   // Получение истории кэшбэка для пользователя
   app.get("/api/users/:userId/cashback", isAuthenticated, async (req, res) => {
     try {
