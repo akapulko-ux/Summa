@@ -361,6 +361,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         price: subscriptions.paymentAmount,
         domain: subscriptions.domain,
         createdAt: subscriptions.createdAt,
+        paidUntil: subscriptions.paidUntil, // Добавляем поле paidUntil
         // Add service name from services table
         serviceName: services.title,
         // Add user info from users table
