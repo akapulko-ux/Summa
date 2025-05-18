@@ -28,6 +28,9 @@ export function RecentSubscriptions() {
   const { data, isLoading } = useQuery<{ subscriptions: Subscription[] }>({
     queryKey: ["/api/subscriptions", { limit: 5 }]
   });
+  
+  // Отладочный код для проверки данных
+  console.log("Recent subscriptions data:", data);
 
   // Helper function to get badge variant based on subscription status
   const getBadgeVariant = (status: string) => {
