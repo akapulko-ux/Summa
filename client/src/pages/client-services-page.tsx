@@ -60,11 +60,11 @@ export default function ClientServicesPage() {
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3">
               {service.iconUrl ? (
-                <div className="w-12 h-12 rounded-md overflow-hidden flex items-center justify-center bg-muted">
+                <div className="w-12 h-12 rounded-md overflow-hidden">
                   <img 
                     src={service.iconUrl} 
                     alt={service.title} 
-                    className="w-10 h-10 object-contain" 
+                    className="w-full h-full object-cover" 
                   />
                 </div>
               ) : (
@@ -157,11 +157,11 @@ export default function ClientServicesPage() {
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
             {service.iconUrl ? (
-              <div className="w-10 h-10 rounded-md overflow-hidden flex items-center justify-center bg-muted shrink-0">
+              <div className="w-10 h-10 rounded-md overflow-hidden shrink-0">
                 <img 
                   src={service.iconUrl} 
                   alt={service.title} 
-                  className="w-8 h-8 object-contain" 
+                  className="w-full h-full object-cover" 
                 />
               </div>
             ) : (
