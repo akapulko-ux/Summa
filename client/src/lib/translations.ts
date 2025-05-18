@@ -207,6 +207,7 @@ export type Translation = {
     name: string;
     company: string;
     phone: string;
+    inn: string;
     loginAction: string;
     registerAction: string;
     logoutAction: string;
@@ -218,6 +219,7 @@ export type Translation = {
     namePlaceholder: string;
     companyPlaceholder: string;
     phonePlaceholder: string;
+    innPlaceholder: string;
     sendMagicLink: string;
     magicLinkSent: string;
     createAccount: string;
@@ -1206,6 +1208,7 @@ export const en: Translation = {
     name: "Full Name",
     company: "Company Name",
     phone: "Phone Number",
+    inn: "Taxpayer ID",
     loginAction: "Sign In",
     registerAction: "Sign Up",
     logoutAction: "Sign Out",
@@ -1217,6 +1220,7 @@ export const en: Translation = {
     namePlaceholder: "John Doe",
     companyPlaceholder: "Acme Inc.",
     phonePlaceholder: "+1 (555) 123-4567",
+    innPlaceholder: "1234567890",
     sendMagicLink: "Send Magic Link",
     magicLinkSent: "Magic link sent! Check your email for login instructions.",
     createAccount: "Create Account",
