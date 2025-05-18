@@ -248,16 +248,16 @@ export function ServiceList() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         {service.iconUrl ? (
-                          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center overflow-hidden">
                             <img 
                               src={service.iconUrl} 
                               alt={service.title} 
-                              className="w-6 h-6 object-contain"
+                              className="w-8 h-8 object-contain"
                             />
                           </div>
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                            <span className="text-white text-sm font-bold">
+                          <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
+                            <span className="text-sm font-bold">
                               {service.title.substring(0, 2).toUpperCase()}
                             </span>
                           </div>
