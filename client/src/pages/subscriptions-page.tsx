@@ -17,7 +17,7 @@ export default function SubscriptionsPage() {
 
   return (
     <AppLayout title={t('subscriptions.title')}>
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 px-4">
         <div>
           <p className="text-muted-foreground">
             {t('subscriptions.manageSubscriptions')}
