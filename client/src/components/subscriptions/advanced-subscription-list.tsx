@@ -84,7 +84,7 @@ function CashbackBalance({ userId }: { userId: number }) {
 }
 
 // Компонент для управления кэшбэком пользователя
-function CashbackForm({ userId, onSuccess }: { userId: number, onSuccess: () => void }) {
+function CashbackForm({ userId, onSuccess, onCancel }: { userId: number, onSuccess: () => void, onCancel?: () => void }) {
   const { t } = useTranslations();
   const { toast } = useToast();
   
@@ -244,7 +244,14 @@ function CashbackForm({ userId, onSuccess }: { userId: number, onSuccess: () => 
         />
 
         <div className="flex justify-end space-x-4 pt-4">
-          <Button type="button" variant="outline" onClick={() => form.reset()}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => {
+              form.reset();
+              if (onCancel) onCancel();
+            }}
+          >
             {t('common.cancel')}
           </Button>
           <Button 
@@ -1042,6 +1049,10 @@ export function AdvancedSubscriptionList({
                 onSuccess={() => {
                   // После успешного обновления кэшбэка обновляем данные
                   queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+                }}
+                onCancel={() => {
+                  // Закрываем диалоговое окно при отмене
+                  setIsUserCashbackDialogOpen(false);
                 }}
               />
             </div>
