@@ -59,6 +59,27 @@ const cashbackFormSchema = z.object({
 
 type CashbackFormValues = z.infer<typeof cashbackFormSchema>;
 
+// Компонент для отображения баланса кэшбэка пользователя
+function CashbackBalance({ userId }: { userId: number }) {
+  const { t } = useTranslations();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: [`/api/users/${userId}/cashback/balance`],
+    refetchOnWindowFocus: false
+  });
+
+  if (isLoading) {
+    return <div className="flex items-center"><Loader2 className="h-4 w-4 animate-spin mr-2" />{t('common.loading')}</div>;
+  }
+
+  if (isError) {
+    return <span className="text-destructive">—</span>;
+  }
+
+  return (
+    <span className="font-medium">{Math.floor(data?.balance || 0)} ₽</span>
+  );
+}
+
 export function UserManagementTable() {
   const { t, language } = useTranslations();
   const { toast } = useToast();

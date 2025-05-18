@@ -1622,6 +1622,7 @@ export const en: Translation = {
       status: "Status",
       role: "Role",
       subscriptions: "Subscriptions",
+      cashback: "Cashback Balance",
       actions: "Actions"
     },
     filters: {
@@ -2527,6 +2528,7 @@ export const ru: Translation = {
       company: "Компания",
       status: "Статус",
       subscriptions: "Подписки",
+      cashback: "Баланс кэшбэка",
       actions: "Действия"
     }
   },
