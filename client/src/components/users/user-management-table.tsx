@@ -564,15 +564,21 @@ export function UserManagementTable() {
                           />
                           <span>{t('cashback.add')}</span>
                         </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
+                        <label className={`flex items-center space-x-2 ${userCashbackData?.balance === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
                           <input
                             type="radio"
                             className="form-radio h-4 w-4 text-destructive"
                             value="subtract"
                             checked={field.value === 'subtract'}
                             onChange={() => field.onChange('subtract')}
+                            disabled={userCashbackData?.balance === 0}
                           />
                           <span>{t('cashback.subtract')}</span>
+                          {userCashbackData?.balance === 0 && (
+                            <span className="text-xs text-destructive ml-1">
+                              ({t('cashback.insufficient_balance')})
+                            </span>
+                          )}
                         </label>
                       </div>
                     </FormControl>
