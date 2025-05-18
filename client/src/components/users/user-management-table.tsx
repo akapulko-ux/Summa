@@ -78,6 +78,16 @@ export function UserManagementTable() {
   const [isAddCashbackDialogOpen, setIsAddCashbackDialogOpen] = useState(false);
   const [currentUserBalance, setCurrentUserBalance] = useState<number | null>(null);
   
+  // Тип для истории операций кэшбэка
+  type CashbackTransaction = {
+    id: number;
+    userId: number;
+    amount: number;
+    description: string;
+    createdAt: string;
+    type: 'add' | 'subtract';
+  };
+  
   // Инициализация формы для управления кэшбэком
   const cashbackForm = useForm<CashbackFormValues>({
     resolver: zodResolver(cashbackFormSchema),
@@ -144,6 +154,15 @@ export function UserManagementTable() {
     onSuccess: (data) => {
       setCurrentUserBalance(data.balance);
     }
+  });
+  
+  // Запрос для получения истории операций кэшбэка пользователя
+  const {
+    data: cashbackHistoryData,
+    isLoading: isLoadingCashbackHistory
+  } = useQuery<{ transactions: CashbackTransaction[], total: number }>({
+    queryKey: [`/api/users/${selectedUserId}/cashback`],
+    enabled: !!selectedUserId && isAddCashbackDialogOpen
   });
   
   // Мутация для управления кэшбэком
