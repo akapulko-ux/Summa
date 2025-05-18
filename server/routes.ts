@@ -47,13 +47,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const result = await storage.listUsers(page, limit, search);
       
-      // Remove passwordHash from users
-      const users = result.users.map(user => {
-        const { passwordHash, ...userData } = user;
-        return userData;
-      });
+      // Получаем количество подписок для каждого пользователя
+      const usersWithSubscriptionCount = await Promise.all(
+        result.users.map(async (user) => {
+          // Получаем количество подписок пользователя
+          const subscriptionResult = await db
+            .select({ count: db.fn.count() })
+            .from(subscriptions)
+            .where(eq(subscriptions.userId, user.id));
+          
+          const subscriptionCount = parseInt(subscriptionResult[0].count as string, 10);
+          
+          // Remove passwordHash from users
+          const { passwordHash, ...userData } = user;
+          
+          return {
+            ...userData,
+            subscriptionCount
+          };
+        })
+      );
       
-      res.json({ users, total: result.total });
+      res.json({ users: usersWithSubscriptionCount, total: result.total });
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ message: "Failed to fetch users" });

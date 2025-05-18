@@ -327,8 +327,7 @@ export function UserManagementTable() {
                     <TableCell>{user.companyName || "-"}</TableCell>
                     <TableCell>{renderStatusBadge(user.isActive)}</TableCell>
                     <TableCell>
-                      {/* This could be replaced with actual subscription count */}
-                      0
+                      {user.subscriptionCount || 0}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
