@@ -219,42 +219,6 @@ export function StatsCards() {
               )}
             </CardContent>
           </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium">{t('services.totalCashback')}</h3>
-                <Percent className="h-4 w-4 text-muted-foreground" />
-              </div>
-              {isUserLoading ? (
-                <Skeleton className="h-8 w-24 my-1" />
-              ) : (
-                <>
-                  <div className="text-2xl font-bold text-green-500">
-                    {(() => {
-                      // Получаем все подписки пользователя
-                      const subscriptions = userSubscriptions?.subscriptions || [];
-                      // Суммируем проценты кешбека из всех сервисов
-                      let totalCashbackPercent = 0;
-                      
-                      subscriptions.forEach(subscription => {
-                        // Добавляем проценты кешбека из каждой подписки
-                        if (subscription.serviceData?.cashbackPercent) {
-                          totalCashbackPercent += Number(subscription.serviceData.cashbackPercent);
-                        }
-                      });
-                      
-                      // Форматируем как процент
-                      return `${totalCashbackPercent.toFixed(2)}%`;
-                    })()}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t('services.totalCashbackDescription')}
-                  </p>
-                </>
-              )}
-            </CardContent>
-          </Card>
 
           <Card>
             <CardContent className="p-6">
