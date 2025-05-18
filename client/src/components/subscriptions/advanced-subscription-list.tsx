@@ -830,7 +830,7 @@ export function AdvancedSubscriptionList({
                                       setSelectedUserId(subscription.userId);
                                     }}
                                   >
-                                    <span className="h-4 w-4 mr-2 flex items-center justify-center text-sm">₽</span>
+                                    <Wallet className="h-4 w-4 mr-2" />
                                     {t('cashback.manage_cashback')}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
