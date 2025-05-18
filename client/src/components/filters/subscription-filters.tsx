@@ -27,7 +27,7 @@ import {
   CalendarIcon,
   User,
   Building,
-  Ruble
+  DollarSign
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -257,7 +257,7 @@ export function SubscriptionFilters({
             <div className="space-y-2">
               <Label htmlFor="priceMin">{t('subscriptions.filters.priceMin')}</Label>
               <div className="relative">
-                <Ruble className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="priceMin"
                   type="number"
@@ -273,7 +273,7 @@ export function SubscriptionFilters({
             <div className="space-y-2">
               <Label htmlFor="priceMax">{t('subscriptions.filters.priceMax')}</Label>
               <div className="relative">
-                <Ruble className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <DollarSign className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="priceMax"
                   type="number"
