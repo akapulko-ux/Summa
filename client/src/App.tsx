@@ -19,6 +19,7 @@ import BackupsPage from "@/pages/backups-page";
 import AnalyticsPage from "@/pages/analytics-page-v3";
 import ReportsPage from "@/pages/reports-page";
 import PerformanceMonitoring from "@/pages/performance-monitoring";
+import AdminToolsPage from "@/pages/admin-tools-page";
 // @ts-ignore - импортируем провайдер темы
 import { ThemeProvider } from "./providers/theme-provider";
 
@@ -39,6 +40,7 @@ function Router() {
       <AdminRoute path="/admin/analytics" component={AnalyticsPage} />
       <AdminRoute path="/admin/reports" component={ReportsPage} />
       <AdminRoute path="/admin/monitoring" component={PerformanceMonitoring} />
+      <AdminRoute path="/admin/tools" component={AdminToolsPage} />
       
       {/* Страница аутентификации (доступна для всех) */}
       <Route path="/auth" component={AuthPage} />
