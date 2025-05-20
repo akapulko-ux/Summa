@@ -337,33 +337,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortBy = req.query.sortBy as string || 'createdAt';
       const sortOrder = (req.query.sortOrder as string || 'desc') === 'asc' ? 'asc' : 'desc';
       
+      console.log("============ НАЧАЛО ЗАПРОСА ПОДПИСОК ============");
+      console.log(`Пользователь: ${req.user!.id} (${req.user!.email}), роль: ${req.user!.role}`);
+      
       // КРИТИЧЕСКИ ВАЖНО: для обычных пользователей всегда запрашиваем только их собственные подписки
-      let userId: number = req.user!.id;
+      // Всегда берём ID напрямую из объекта req.user
+      const currentUserId = req.user!.id;
+      let targetUserId = currentUserId;
       
-      // Администраторы могут запросить подписки конкретного пользователя
+      // Только администраторы могут запросить подписки конкретного пользователя
       if (req.user!.role === "admin" && req.query.userId) {
-        userId = parseInt(req.query.userId as string);
+        targetUserId = parseInt(req.query.userId as string);
+        console.log(`Администратор запрашивает подписки пользователя с ID: ${targetUserId}`);
+      } else {
+        console.log(`Обычный пользователь запрашивает свои подписки (ID: ${targetUserId})`);
       }
       
-      console.log(`Запрос подписок для пользователя с ID: ${userId}, роль: ${req.user!.role}, текущий пользователь: ${req.user!.id}`);
-      
-      // Двойная проверка: если пользователь не администратор, ещё раз проверим, что он запрашивает только свои подписки
-      if (req.user!.role !== "admin" && userId !== req.user!.id) {
-        console.error(`НАРУШЕНИЕ БЕЗОПАСНОСТИ: Пользователь ${req.user!.id} пытается получить подписки пользователя ${userId}`);
-        userId = req.user!.id; // Принудительно устанавливаем ID текущего пользователя
+      // СТРОГАЯ ПРОВЕРКА БЕЗОПАСНОСТИ: если пользователь не администратор, 
+      // он может видеть ТОЛЬКО свои подписки
+      if (req.user!.role !== "admin" && targetUserId !== currentUserId) {
+        console.error(`!!! НАРУШЕНИЕ БЕЗОПАСНОСТИ: Пользователь ${currentUserId} пытается получить подписки пользователя ${targetUserId}`);
+        // Сбрасываем на ID текущего пользователя, игнорируя запрошенный ID
+        targetUserId = currentUserId;
+        console.log(`Принудительно установлен userId=${targetUserId} (текущий пользователь)`);
       }
       
-      // Проверим, какие подписки есть для этого пользователя напрямую из базы данных
+      // ОТЛАДКА: Проверим, какие подписки есть для этого пользователя напрямую из базы данных
       const allUserSubscriptions = await db
-        .select()
+        .select({
+          id: subscriptions.id,
+          userId: subscriptions.userId,
+          title: subscriptions.title
+        })
         .from(subscriptions)
-        .where(eq(subscriptions.userId, userId));
+        .where(eq(subscriptions.userId, targetUserId));
       
-      console.log(`Всего у пользователя ${userId} найдено подписок в базе: ${allUserSubscriptions.length}`);
+      console.log(`ПРОВЕРКА: У пользователя ${targetUserId} найдено подписок в базе: ${allUserSubscriptions.length}`);
+      if (allUserSubscriptions.length > 0) {
+        console.log(`ID подписок: ${allUserSubscriptions.map(s => s.id).join(', ')}`);
+        console.log(`Titles подписок: ${allUserSubscriptions.map(s => s.title).join(', ')}`);
+      }
       
       // Получаем результаты с правильной фильтрацией
       const result = await storage.listSubscriptions(
-        userId, 
+        targetUserId, 
         page, 
         limit, 
         search, 
@@ -371,7 +388,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sortOrder as 'asc' | 'desc'
       );
       
-      console.log(`Возвращено подписок через storage: ${result.subscriptions.length}, total: ${result.total}`);
+      console.log(`РЕЗУЛЬТАТ: Возвращено подписок через storage: ${result.subscriptions.length}, total: ${result.total}`);
+      if (result.subscriptions.length > 0) {
+        console.log(`ID найденных подписок: ${result.subscriptions.map(s => s.id).join(', ')}`);
+      }
+      console.log("============ КОНЕЦ ЗАПРОСА ПОДПИСОК ============");
       
       res.json({ subscriptions: result.subscriptions, total: result.total });
     } catch (error) {
