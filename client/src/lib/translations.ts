@@ -2408,6 +2408,8 @@ export const ru: Translation = {
     viewDetails: "Просмотр деталей",
     viewUser: "Просмотр пользователя",
     errorLoadingSubscriptions: "Ошибка загрузки подписок",
+    user: "Пользователь",
+    select_user: "Выберите пользователя",
     filterDescription: "Фильтруйте и сортируйте список подписок",
     searchHelp: "Поиск по сервисам, пользователям и доменам",
     columnVisibility: "Отображение столбцов",
