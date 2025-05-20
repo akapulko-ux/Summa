@@ -477,11 +477,18 @@ export function AdvancedSubscriptionList({
     );
   };
   
-  // Получение всех подписок
-  const queryKey = userId 
-    ? ["/api/subscriptions", userId] 
-    : ["/api/subscriptions/all"];
-    
+  // Получение подписок с учетом прав доступа
+  // Если пользователь администратор и userId не указан - получаем все подписки
+  // В остальных случаях получаем только подписки текущего пользователя
+  const isAdmin = user?.role === 'admin';
+  
+  // Определяем правильный ключ запроса и URL в зависимости от роли и параметров
+  const queryKey = isAdmin && !userId
+    ? ["/api/subscriptions/all"] // Админ просматривает все подписки
+    : isAdmin && userId
+      ? ["/api/subscriptions", userId] // Админ просматривает подписки конкретного пользователя
+      : ["/api/subscriptions"]; // Обычный пользователь видит только свои подписки
+  
   const { 
     data: subscriptionsData, 
     isLoading,
@@ -490,9 +497,21 @@ export function AdvancedSubscriptionList({
   } = useQuery({
     queryKey,
     queryFn: async () => {
-      const url = userId 
-        ? `/api/subscriptions?userId=${userId}` 
-        : '/api/subscriptions/all';
+      // Определяем URL в зависимости от роли и параметров
+      let url = '/api/subscriptions';
+      
+      if (isAdmin) {
+        if (userId) {
+          // Админ просматривает подписки конкретного пользователя
+          url = `/api/subscriptions?userId=${userId}`;
+        } else {
+          // Админ просматривает все подписки
+          url = '/api/subscriptions/all';
+        }
+      }
+      
+      // Для обычных пользователей никогда не передаем userId в запросе,
+      // так как они должны видеть только свои подписки
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch subscriptions");
