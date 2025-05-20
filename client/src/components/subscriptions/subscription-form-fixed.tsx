@@ -590,9 +590,9 @@ export function SubscriptionForm({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.subscription_title") || "Название подписки"}</FormLabel>
+                <FormLabel>Название подписки</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("subscriptions.enter_title") || "Введите название"} {...field} disabled={isSubmitting} />
+                  <Input placeholder="Введите название" {...field} disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -631,11 +631,11 @@ export function SubscriptionForm({
             name="paymentAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.payment_amount") || "Сумма оплаты"}</FormLabel>
+                <FormLabel>Сумма оплаты</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
-                    placeholder={t("subscriptions.enter_amount") || "Введите сумму"} 
+                    placeholder="Введите сумму" 
                     {...field} 
                     disabled={isSubmitting} 
                   />
@@ -651,7 +651,7 @@ export function SubscriptionForm({
             name="paidUntil"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.paid_until") || "Оплачено до"}</FormLabel>
+                <FormLabel>Оплачено до</FormLabel>
                 <FormControl>
                   <Input 
                     type="date" 
@@ -677,13 +677,13 @@ export function SubscriptionForm({
                   value={field.value}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("subscriptions.select_status") || "Выберите статус"} />
+                    <SelectValue placeholder="Выберите статус" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">{t("subscriptions.active") || "Активна"}</SelectItem>
-                    <SelectItem value="pending">{t("subscriptions.pending") || "Ожидает оплаты"}</SelectItem>
-                    <SelectItem value="expired">{t("subscriptions.expired") || "Истекла"}</SelectItem>
-                    <SelectItem value="canceled">{t("subscriptions.canceled") || "Отменена"}</SelectItem>
+                    <SelectItem value="active">Активна</SelectItem>
+                    <SelectItem value="pending">Ожидает оплаты</SelectItem>
+                    <SelectItem value="expired">Истекла</SelectItem>
+                    <SelectItem value="canceled">Отменена</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
