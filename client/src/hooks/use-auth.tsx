@@ -78,7 +78,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
+      // Очищаем кэш пользовательских данных
       queryClient.setQueryData(["/api/user"], null);
+      
+      // Очищаем кэш всех критических данных, чтобы предотвратить
+      // утечку информации между пользователями
+      queryClient.invalidateQueries({queryKey: ["/api/subscriptions"]});
+      queryClient.invalidateQueries({queryKey: ["/api/cashback"]});
+      queryClient.invalidateQueries({queryKey: ["/api/users"]});
+      queryClient.invalidateQueries({queryKey: ["/api/services"]});
+      queryClient.invalidateQueries({queryKey: ["/api/stats"]});
+      
+      // Полная очистка кэша (радикальное решение, гарантирует безопасность)
+      queryClient.clear();
+      
       toast({
         title: "Logged out",
         description: "You have been logged out successfully.",
