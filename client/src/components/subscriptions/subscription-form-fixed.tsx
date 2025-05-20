@@ -677,13 +677,13 @@ export function SubscriptionForm({
                   value={field.value}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("subscriptions.selectStatus")} />
+                    <SelectValue placeholder={t("subscriptions.filters.selectStatus")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Активна</SelectItem>
-                    <SelectItem value="pending">Ожидает оплаты</SelectItem>
-                    <SelectItem value="expired">Истекла</SelectItem>
-                    <SelectItem value="canceled">Отменена</SelectItem>
+                    <SelectItem value="active">{t("subscriptions.status.active")}</SelectItem>
+                    <SelectItem value="pending">{t("subscriptions.status.pending")}</SelectItem>
+                    <SelectItem value="expired">{t("subscriptions.status.expired")}</SelectItem>
+                    <SelectItem value="canceled">{t("subscriptions.status.canceled")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
