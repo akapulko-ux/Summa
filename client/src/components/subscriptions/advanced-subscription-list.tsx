@@ -1124,6 +1124,15 @@ export function AdvancedSubscriptionList({
                   setIsUserCashbackDialogOpen(false);
                 }}
               />
+
+              {/* История операций кэшбэка */}
+              <div className="mt-8">
+                <h3 className="text-lg font-medium mb-2">{t('cashback.transaction_history')}</h3>
+                <div className="border rounded-md overflow-hidden">
+                  {/* Получаем историю операций кэшбэка для отображения */}
+                  <CashbackHistory userId={selectedUserId} />
+                </div>
+              </div>
             </div>
           )}
         </DialogContent>
