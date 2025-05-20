@@ -76,7 +76,7 @@ function CashbackBalance({ userId }: { userId: number }) {
   }
 
   return (
-    <span className="font-medium">{Math.floor(data?.balance || 0)} ₽</span>
+    <span className="font-medium">{Number(data?.balance || 0).toLocaleString('ru-RU', {maximumFractionDigits: 0})} ₽</span>
   );
 }
 
