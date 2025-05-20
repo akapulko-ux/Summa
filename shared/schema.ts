@@ -5,7 +5,7 @@ import { z } from "zod";
 // Enums
 export const userRoleEnum = pgEnum('user_role', ['admin', 'client']);
 export const subscriptionStatusEnum = pgEnum('subscription_status', ['active', 'pending', 'expired', 'canceled']);
-export const paymentPeriodEnum = pgEnum('payment_period', ['monthly', 'quarterly', 'yearly']);
+export const paymentPeriodEnum = pgEnum('payment_period', ['monthly', 'quarterly', 'yearly', 'other', 'balance_replenishment']);
 export const fieldTypeEnum = pgEnum('field_type', ['text', 'number', 'boolean', 'date', 'select']);
 
 // Users table

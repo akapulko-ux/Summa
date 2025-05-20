@@ -584,6 +584,8 @@ export type Translation = {
     service_name: string;
     enter_service_name: string;
     custom: string;
+    created: string;
+    created_desc: string;
     periods: {
       monthly: string;
       quarterly: string;
@@ -1482,6 +1484,8 @@ export const en: Translation = {
     subscriptionCreated: "Subscription created successfully",
     subscriptionUpdated: "Subscription updated successfully",
     subscriptionDeleted: "Subscription deleted successfully",
+    created: "Subscription created",
+    created_desc: "Your subscription has been created successfully",
     mySubscriptions: "My Subscriptions",
     active: "Active",
     activeUntil: "Active until",
