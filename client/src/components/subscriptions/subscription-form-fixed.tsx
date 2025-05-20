@@ -584,20 +584,7 @@ export function SubscriptionForm({
             </FormItem>
           )}
 
-          {/* Title field */}
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("subscriptions.subscriptionTitle")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("subscriptions.enterTitle")} {...field} disabled={isSubmitting} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Поле названия подписки удалено, т.к. подписки определяются выбранным сервисом */}
 
           {/* Payment Period */}
           <FormField
