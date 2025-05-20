@@ -579,6 +579,11 @@ export type Translation = {
     selectStatus: string;
     optional: string;
     pickDate: string;
+    user: string;
+    select_user: string;
+    service_name: string;
+    enter_service_name: string;
+    custom: string;
     periods: {
       monthly: string;
       quarterly: string;
