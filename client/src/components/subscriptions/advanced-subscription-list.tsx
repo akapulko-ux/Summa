@@ -477,14 +477,11 @@ export function AdvancedSubscriptionList({
     );
   };
   
-  // Определяем правильный ключ запроса в зависимости от роли и параметров
-  // Восстанавливаем оригинальную логику с улучшениями безопасности
-  const queryKey = user?.role === 'admin' && !userId 
-    ? ["/api/subscriptions/all"] 
-    : user?.role === 'admin' && userId 
-      ? ["/api/subscriptions", { userId }] 
-      : ["/api/subscriptions"];
-  
+  // Получение всех подписок
+  const queryKey = userId 
+    ? ["/api/subscriptions", userId] 
+    : ["/api/subscriptions/all"];
+    
   const { 
     data: subscriptionsData, 
     isLoading,
@@ -493,40 +490,15 @@ export function AdvancedSubscriptionList({
   } = useQuery({
     queryKey,
     queryFn: async () => {
-      let url;
-      
-      // Для админов без указанного userId - получаем все подписки
-      if (user?.role === 'admin' && !userId) {
-        url = '/api/subscriptions/all';
-      } 
-      // Для админов с указанным userId - получаем подписки конкретного пользователя
-      else if (user?.role === 'admin' && userId) {
-        url = `/api/subscriptions?userId=${userId}`;
-      } 
-      // Для обычных пользователей - получаем только их подписки
-      else {
-        url = '/api/subscriptions';
-      }
-      
-      console.log("Fetching subscriptions from URL:", url);
-      
+      const url = userId 
+        ? `/api/subscriptions?userId=${userId}` 
+        : '/api/subscriptions/all';
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch subscriptions");
       }
-      
       const data = await response.json();
-      console.log("Subscription data received:", data);
-      
-      // Обработка различных форматов ответа
-      if (Array.isArray(data)) {
-        return data;
-      } else if (data.subscriptions) {
-        return data.subscriptions;
-      } else {
-        console.error("Unexpected response format:", data);
-        return [];
-      }
+      return Array.isArray(data) ? data : data.subscriptions || [];
     },
   });
   
