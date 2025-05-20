@@ -1536,6 +1536,8 @@ export const en: Translation = {
     viewDetails: "View details",
     viewUser: "View user",
     errorLoadingSubscriptions: "Error loading subscriptions",
+    user: "User",
+    select_user: "Select user",
     columns: {
       service: "Service",
       user: "User",
