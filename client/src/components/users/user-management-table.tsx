@@ -599,7 +599,7 @@ export function UserManagementTable() {
             <div className="flex justify-between items-center">
               <span className="font-medium">{t('cashback.current_balance')}:</span>
               {userCashbackData?.balance !== undefined ? (
-                <span className="text-lg font-bold">{Math.floor(userCashbackData.balance)} ₽</span>
+                <span className="text-lg font-bold">{Number(userCashbackData.balance).toLocaleString('ru-RU', {maximumFractionDigits: 0})} ₽</span>
               ) : (
                 <span className="text-muted-foreground">{t('common.loading')}...</span>
               )}
