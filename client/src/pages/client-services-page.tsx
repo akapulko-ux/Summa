@@ -54,13 +54,13 @@ export default function ClientServicesPage() {
     const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
     
     return (
-      <Card className="overflow-hidden relative group flex flex-col aspect-square max-h-[250px]">
+      <Card className="overflow-hidden relative group flex flex-col h-[230px]">
         {/* Заголовок с иконкой и названием сервиса */}
-        <CardHeader className="p-3 pb-0 space-y-2">
+        <CardHeader className="p-3 pb-0 space-y-1">
           <div className="flex flex-col items-center text-center">
             {/* Иконка сервиса */}
             {service.iconUrl ? (
-              <div className="w-14 h-14 rounded-md overflow-hidden mb-2">
+              <div className="w-12 h-12 rounded-md overflow-hidden mb-1">
                 <img 
                   src={service.iconUrl} 
                   alt={service.title} 
@@ -68,22 +68,22 @@ export default function ClientServicesPage() {
                 />
               </div>
             ) : (
-              <div className="w-14 h-14 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-lg mb-2">
+              <div className="w-12 h-12 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-md mb-1">
                 {service.title.substring(0, 2).toUpperCase()}
               </div>
             )}
             {/* Название сервиса */}
-            <CardTitle className="text-base line-clamp-1">{service.title}</CardTitle>
+            <CardTitle className="text-sm mb-1 line-clamp-1">{service.title}</CardTitle>
             
             {/* Бейджи кэшбэка и комиссии */}
-            <div className="flex flex-wrap justify-center gap-1 mt-1">
+            <div className="flex flex-wrap justify-center gap-1">
               {service.cashback && (
-                <Badge variant="outline" className="text-xs px-2 py-0">
+                <Badge variant="outline" className="text-xs px-2 py-0 h-5">
                   {t('services.cashback')}: {service.cashback}
                 </Badge>
               )}
               {service.commission && (
-                <Badge variant="outline" className="bg-amber-50 text-xs px-2 py-0">
+                <Badge variant="outline" className="bg-amber-50 text-xs px-2 py-0 h-5">
                   {t('services.commission')}: {service.commission}
                 </Badge>
               )}
@@ -92,27 +92,27 @@ export default function ClientServicesPage() {
         </CardHeader>
         
         {/* Описание сервиса */}
-        <CardContent className="px-3 pb-1 pt-0 flex-grow overflow-auto">
+        <CardContent className="px-3 py-1 flex-grow">
           {service.description && (
-            <CardDescription className="text-center text-xs line-clamp-2">
+            <CardDescription className="text-center text-xs line-clamp-2 h-10 overflow-hidden">
               {service.description}
             </CardDescription>
           )}
         </CardContent>
         
         {/* Кнопки действий */}
-        <CardFooter className="p-3 pt-1 gap-1 flex-col mt-auto">
+        <CardFooter className="p-2 gap-1 flex-col">
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full h-8 text-xs"
+            className="w-full h-7 text-xs"
             onClick={() => setShowSubscriptionForm(true)}
           >
             {language === 'ru' ? 'Добавить в подписки' : 'Add to subscriptions'}
           </Button>
           <Button 
             size="sm" 
-            className="w-full h-8 text-xs"
+            className="w-full h-7 text-xs"
             onClick={() => setShowLeadForm(true)}
           >
             {language === 'ru' ? 'Купить' : 'Buy'}
