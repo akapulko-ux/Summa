@@ -548,10 +548,10 @@ export function SubscriptionForm({
                   <SelectContent>
                     {filteredServices?.map((service: any) => (
                       <SelectItem key={service.id} value={service.id.toString()}>
-                        {service.title} {service.isCustom ? `(${t("subscriptions.custom") || "Кастомный"})` : ''}
+                        {service.title} {service.isCustom ? "(Кастомный)" : ''}
                       </SelectItem>
                     ))}
-                    <SelectItem value="other">{t("subscriptions.other_custom") || "Другой (кастомный)"}</SelectItem>
+                    <SelectItem value="other">Другой (кастомный)</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -562,9 +562,9 @@ export function SubscriptionForm({
           {/* Custom service name field */}
           {watchedServiceId === "other" && (
             <FormItem>
-              <FormLabel>{t("subscriptions.service_name") || "Название сервиса"}</FormLabel>
+              <FormLabel>Название сервиса</FormLabel>
               <Input
-                placeholder={t("subscriptions.enter_service_name") || "Введите название сервиса"}
+                placeholder="Введите название сервиса"
                 value={selectedServiceName || ""}
                 onChange={(e) => setSelectedServiceName(e.target.value)}
                 disabled={isSubmitting}
@@ -575,7 +575,7 @@ export function SubscriptionForm({
           {/* Service name display field when service is selected */}
           {watchedServiceId && watchedServiceId !== "other" && watchedServiceId !== "" && (
             <FormItem>
-              <FormLabel>{t("subscriptions.service_name") || "Название сервиса"}</FormLabel>
+              <FormLabel>Название сервиса</FormLabel>
               <Input
                 value={selectedServiceName || ""}
                 disabled={true}
@@ -605,19 +605,19 @@ export function SubscriptionForm({
             name="paymentPeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.payment_period") || "Период оплаты"}</FormLabel>
+                <FormLabel>Период оплаты</FormLabel>
                 <Select
                   disabled={isSubmitting}
                   onValueChange={field.onChange}
                   value={field.value}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("subscriptions.select_period") || "Выберите период"} />
+                    <SelectValue placeholder="Выберите период" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="monthly">{t("subscriptions.monthly") || "Ежемесячно"}</SelectItem>
-                    <SelectItem value="quarterly">{t("subscriptions.quarterly") || "Ежеквартально"}</SelectItem>
-                    <SelectItem value="yearly">{t("subscriptions.yearly") || "Ежегодно"}</SelectItem>
+                    <SelectItem value="monthly">Ежемесячно</SelectItem>
+                    <SelectItem value="quarterly">Ежеквартально</SelectItem>
+                    <SelectItem value="yearly">Ежегодно</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
