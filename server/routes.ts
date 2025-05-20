@@ -337,62 +337,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortBy = req.query.sortBy as string || 'createdAt';
       const sortOrder = (req.query.sortOrder as string || 'desc') === 'asc' ? 'asc' : 'desc';
       
-      console.log("============ НАЧАЛО ЗАПРОСА ПОДПИСОК ============");
-      console.log(`Пользователь: ${req.user!.id} (${req.user!.email}), роль: ${req.user!.role}`);
+      let userId: number | undefined = undefined;
       
-      // КРИТИЧЕСКИ ВАЖНО: для обычных пользователей всегда запрашиваем только их собственные подписки
-      // Всегда берём ID напрямую из объекта req.user
-      const currentUserId = req.user!.id;
-      let targetUserId = currentUserId;
-      
-      // Только администраторы могут запросить подписки конкретного пользователя
-      if (req.user!.role === "admin" && req.query.userId) {
-        targetUserId = parseInt(req.query.userId as string);
-        console.log(`Администратор запрашивает подписки пользователя с ID: ${targetUserId}`);
-      } else {
-        console.log(`Обычный пользователь запрашивает свои подписки (ID: ${targetUserId})`);
+      // Regular users can only see their own subscriptions
+      if (req.user.role !== "admin") {
+        userId = req.user.id;
+      } else if (req.query.userId) {
+        userId = parseInt(req.query.userId as string);
       }
       
-      // СТРОГАЯ ПРОВЕРКА БЕЗОПАСНОСТИ: если пользователь не администратор, 
-      // он может видеть ТОЛЬКО свои подписки
-      if (req.user!.role !== "admin" && targetUserId !== currentUserId) {
-        console.error(`!!! НАРУШЕНИЕ БЕЗОПАСНОСТИ: Пользователь ${currentUserId} пытается получить подписки пользователя ${targetUserId}`);
-        // Сбрасываем на ID текущего пользователя, игнорируя запрошенный ID
-        targetUserId = currentUserId;
-        console.log(`Принудительно установлен userId=${targetUserId} (текущий пользователь)`);
-      }
-      
-      // ОТЛАДКА: Проверим, какие подписки есть для этого пользователя напрямую из базы данных
-      const allUserSubscriptions = await db
-        .select({
-          id: subscriptions.id,
-          userId: subscriptions.userId,
-          title: subscriptions.title
-        })
-        .from(subscriptions)
-        .where(eq(subscriptions.userId, targetUserId));
-      
-      console.log(`ПРОВЕРКА: У пользователя ${targetUserId} найдено подписок в базе: ${allUserSubscriptions.length}`);
-      if (allUserSubscriptions.length > 0) {
-        console.log(`ID подписок: ${allUserSubscriptions.map(s => s.id).join(', ')}`);
-        console.log(`Titles подписок: ${allUserSubscriptions.map(s => s.title).join(', ')}`);
-      }
-      
-      // Получаем результаты с правильной фильтрацией
       const result = await storage.listSubscriptions(
-        targetUserId, 
+        userId, 
         page, 
         limit, 
         search, 
         sortBy, 
         sortOrder as 'asc' | 'desc'
       );
-      
-      console.log(`РЕЗУЛЬТАТ: Возвращено подписок через storage: ${result.subscriptions.length}, total: ${result.total}`);
-      if (result.subscriptions.length > 0) {
-        console.log(`ID найденных подписок: ${result.subscriptions.map(s => s.id).join(', ')}`);
-      }
-      console.log("============ КОНЕЦ ЗАПРОСА ПОДПИСОК ============");
       
       res.json({ subscriptions: result.subscriptions, total: result.total });
     } catch (error) {

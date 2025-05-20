@@ -403,30 +403,9 @@ export class DatabaseStorage implements IStorage {
     sortOrder: "asc" | "desc" = "desc"
   ): Promise<{ subscriptions: any[], total: number }> {
     return dbOptimizer.executeQuery(async () => {
-      console.log(`Storage.listSubscriptions: ЗАПУСК ФУНКЦИИ с параметрами: userId=${userId}, page=${page}, limit=${limit}`);
       const offset = (page - 1) * limit;
       
-      // Если userId не указан, это ошибка - всегда должен быть передан userId
-      if (userId === undefined) {
-        console.error("КРИТИЧЕСКАЯ ОШИБКА: userId не передан, возвращаем пустой список!");
-        return { subscriptions: [], total: 0 };
-      }
-      
-      // Проверим существование пользователя
-      const userExists = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-      if (userExists.length === 0) {
-        console.error(`КРИТИЧЕСКАЯ ОШИБКА: Пользователь с ID=${userId} не существует!`);
-        return { subscriptions: [], total: 0 };
-      }
-      
-      console.log(`Storage.listSubscriptions: ПРОВЕРКА ПОДПИСОК в базе напрямую для userId=${userId}`);
-      
-      // Проверяем напрямую какие подписки есть у пользователя
-      const directCheck = await db.select().from(subscriptions).where(eq(subscriptions.userId, userId));
-      console.log(`Storage.listSubscriptions: Напрямую найдено ${directCheck.length} подписок, ID: ${directCheck.map(s => s.id).join(', ')}`);
-      
       // Строим базовый запрос с объединением таблиц subscriptions и services
-      // Строго фильтруем по userId
       let query = db.select({
         // Поля подписки
         id: subscriptions.id,
@@ -455,12 +434,15 @@ export class DatabaseStorage implements IStorage {
         }
       })
       .from(subscriptions)
-      .leftJoin(services, eq(subscriptions.serviceId, services.id))
-      .where(eq(subscriptions.userId, userId)); // Строго фильтруем по userId
+      .leftJoin(services, eq(subscriptions.serviceId, services.id));
       
-      let countQuery = db.select({ count: sql<number>`count(*)` })
-        .from(subscriptions)
-        .where(eq(subscriptions.userId, userId));
+      let countQuery = db.select({ count: sql<number>`count(*)` }).from(subscriptions);
+      
+      // Apply filters
+      if (userId) {
+        query = query.where(eq(subscriptions.userId, userId));
+        countQuery = countQuery.where(eq(subscriptions.userId, userId));
+      }
       
       // Apply search if provided
       if (search && search.trim() !== '') {
