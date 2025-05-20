@@ -403,6 +403,7 @@ export class DatabaseStorage implements IStorage {
     sortOrder: "asc" | "desc" = "desc"
   ): Promise<{ subscriptions: any[], total: number }> {
     return dbOptimizer.executeQuery(async () => {
+      console.log(`Storage.listSubscriptions: Запрос для userId=${userId}, page=${page}, limit=${limit}`);
       const offset = (page - 1) * limit;
       
       // Строим базовый запрос с объединением таблиц subscriptions и services
@@ -438,8 +439,9 @@ export class DatabaseStorage implements IStorage {
       
       let countQuery = db.select({ count: sql<number>`count(*)` }).from(subscriptions);
       
-      // Apply filters
-      if (userId) {
+      // Apply filters - убедимся, что userId точно передается
+      if (userId !== undefined) {
+        console.log(`Storage.listSubscriptions: Фильтрация по userId=${userId}`);
         query = query.where(eq(subscriptions.userId, userId));
         countQuery = countQuery.where(eq(subscriptions.userId, userId));
       }
