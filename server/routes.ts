@@ -338,11 +338,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortOrder = (req.query.sortOrder as string || 'desc') === 'asc' ? 'asc' : 'desc';
       
       let userId: number | undefined = undefined;
+      let currentUserOnly: boolean = false;
       
-      // Regular users can only see their own subscriptions
-      if (req.user.role !== "admin") {
+      // Параметр currentUser=true позволяет получить только подписки текущего пользователя
+      // (даже для администратора)
+      if (req.query.currentUser === 'true') {
         userId = req.user.id;
-      } else if (req.query.userId) {
+        currentUserOnly = true;
+      } 
+      // Если не администратор - всегда видны только свои подписки
+      else if (req.user.role !== "admin") {
+        userId = req.user.id;
+        currentUserOnly = true;
+      } 
+      // Если администратор и указан параметр userId - фильтруем по этому пользователю
+      else if (req.query.userId) {
         userId = parseInt(req.query.userId as string);
       }
       
@@ -352,7 +362,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         limit, 
         search, 
         sortBy, 
-        sortOrder as 'asc' | 'desc'
+        sortOrder as 'asc' | 'desc',
+        currentUserOnly
       );
       
       res.json({ subscriptions: result.subscriptions, total: result.total });

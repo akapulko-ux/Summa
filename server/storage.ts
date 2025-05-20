@@ -59,7 +59,15 @@ export interface IStorage {
   createSubscription(subscription: InsertSubscription): Promise<Subscription>;
   updateSubscription(id: number, subscription: Partial<InsertSubscription>): Promise<Subscription | undefined>;
   deleteSubscription(id: number): Promise<boolean>;
-  listSubscriptions(userId?: number, page?: number, limit?: number): Promise<{ subscriptions: Subscription[], total: number }>;
+  listSubscriptions(
+    userId?: number, 
+    page?: number, 
+    limit?: number, 
+    search?: string,
+    sortBy?: string,
+    sortOrder?: 'asc' | 'desc',
+    currentUserOnly?: boolean
+  ): Promise<{ subscriptions: Subscription[], total: number }>;
   
   // Custom fields operations
   getCustomField(id: number): Promise<CustomField | undefined>;
@@ -400,7 +408,8 @@ export class DatabaseStorage implements IStorage {
     limit = 10, 
     search?: string,
     sortBy: string = "createdAt",
-    sortOrder: "asc" | "desc" = "desc"
+    sortOrder: "asc" | "desc" = "desc",
+    currentUserOnly: boolean = false
   ): Promise<{ subscriptions: any[], total: number }> {
     return dbOptimizer.executeQuery(async () => {
       const offset = (page - 1) * limit;
