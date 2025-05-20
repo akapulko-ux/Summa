@@ -590,9 +590,9 @@ export function SubscriptionForm({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Название подписки</FormLabel>
+                <FormLabel>{t("subscriptions.subscriptionTitle")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Введите название" {...field} disabled={isSubmitting} />
+                  <Input placeholder={t("subscriptions.enterTitle")} {...field} disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -605,19 +605,19 @@ export function SubscriptionForm({
             name="paymentPeriod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Период оплаты</FormLabel>
+                <FormLabel>{t("subscriptions.paymentPeriod")}</FormLabel>
                 <Select
                   disabled={isSubmitting}
                   onValueChange={field.onChange}
                   value={field.value}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Выберите период" />
+                    <SelectValue placeholder={t("subscriptions.selectPeriod")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="monthly">Ежемесячно</SelectItem>
-                    <SelectItem value="quarterly">Ежеквартально</SelectItem>
-                    <SelectItem value="yearly">Ежегодно</SelectItem>
+                    <SelectItem value="monthly">{t("subscriptions.monthly")}</SelectItem>
+                    <SelectItem value="quarterly">{t("subscriptions.quarterly")}</SelectItem>
+                    <SelectItem value="yearly">{t("subscriptions.yearly")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -631,11 +631,11 @@ export function SubscriptionForm({
             name="paymentAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Сумма оплаты</FormLabel>
+                <FormLabel>{t("subscriptions.paymentAmount")}</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
-                    placeholder="Введите сумму" 
+                    placeholder={t("subscriptions.enterAmount")} 
                     {...field} 
                     disabled={isSubmitting} 
                   />
@@ -651,7 +651,7 @@ export function SubscriptionForm({
             name="paidUntil"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Оплачено до</FormLabel>
+                <FormLabel>{t("subscriptions.paidUntil")}</FormLabel>
                 <FormControl>
                   <Input 
                     type="date" 
@@ -677,7 +677,7 @@ export function SubscriptionForm({
                   value={field.value}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Выберите статус" />
+                    <SelectValue placeholder={t("subscriptions.selectStatus")} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="active">Активна</SelectItem>
