@@ -36,7 +36,11 @@ export function RecentSubscriptions() {
   // Сортируем подписки по дате окончания на стороне клиента
   // Выводим только подписки со статусами "active" и "pending" ("Активна" и "Заканчивается")
   const sortedSubscriptions = useMemo(() => {
-    if (!data?.subscriptions) return [];
+    // Проверяем наличие данных
+    if (!data?.subscriptions || !Array.isArray(data.subscriptions)) return [];
+    
+    // Отладочное сообщение
+    console.log("Получено подписок для пользователя:", data.subscriptions.length);
     
     return [...data.subscriptions]
       .filter(sub => 
