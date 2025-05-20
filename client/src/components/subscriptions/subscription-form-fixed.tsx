@@ -536,7 +536,7 @@ export function SubscriptionForm({
             name="serviceId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Сервис</FormLabel>
+                <FormLabel>{t("subscriptions.service")}</FormLabel>
                 <Select
                   disabled={isSubmitting}
                   onValueChange={field.onChange}
