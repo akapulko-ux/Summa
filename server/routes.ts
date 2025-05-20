@@ -336,11 +336,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const search = req.query.search as string || '';
       const sortBy = req.query.sortBy as string || 'createdAt';
       const sortOrder = (req.query.sortOrder as string || 'desc') === 'asc' ? 'asc' : 'desc';
+      const currentUser = req.query.currentUser === 'true';
       
       let userId: number | undefined = undefined;
       
       // Regular users can only see their own subscriptions
-      if (req.user.role !== "admin") {
+      if (req.user.role !== "admin" || currentUser) {
         userId = req.user.id;
       } else if (req.query.userId) {
         userId = parseInt(req.query.userId as string);
