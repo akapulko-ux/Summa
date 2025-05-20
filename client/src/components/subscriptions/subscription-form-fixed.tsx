@@ -38,7 +38,7 @@ const subscriptionFormSchema = z.object({
   // Удаленные поля обозначены как необязательные с дефолтным значением null
   domain: z.any().optional().default(null),
   loginId: z.any().optional().default(null),
-  paymentPeriod: z.enum(["monthly", "quarterly", "yearly"]).default("monthly"),
+  paymentPeriod: z.enum(["monthly", "quarterly", "yearly", "other"]).default("monthly"),
   paidUntil: z.string()
     .refine(val => !val || !isNaN(new Date(val).getTime()), {
       message: "Invalid date format"
