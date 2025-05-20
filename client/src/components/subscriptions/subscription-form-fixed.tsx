@@ -692,12 +692,11 @@ export function SubscriptionForm({
           />
 
           {/* Custom fields */}
-          {selectedService && selectedService.customFields && Object.keys(selectedService.customFields).length > 0 && (
+          {selectedService && selectedService.id && (
             <CustomFieldInputs
-              fields={selectedService.customFields}
-              values={form.getValues().customFields || {}}
-              onChange={(values) => form.setValue("customFields", values)}
-              readonly={isSubmitting}
+              serviceId={selectedService.id.toString()}
+              form={form}
+              disabled={isSubmitting}
             />
           )}
         </div>
