@@ -48,38 +48,38 @@ export default function ClientServicesPage() {
       (service.description && service.description.toLowerCase().includes(search.toLowerCase()))
   );
 
-  // Компонент для отображения карточки сервиса в сетке
+  // Компонент для отображения карточки сервиса в сетке (квадратный формат)
   const ServiceGridCard = ({ service }: { service: Service }) => {
     const [showLeadForm, setShowLeadForm] = useState(false);
     const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
     
     return (
-      <Card className="overflow-hidden relative group">
-        <CardHeader className="p-4 pb-0">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-3">
-              {service.iconUrl ? (
-                <div className="w-12 h-12 rounded-md overflow-hidden">
-                  <img 
-                    src={service.iconUrl} 
-                    alt={service.title} 
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
-              ) : (
-                <div className="w-12 h-12 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-lg">
-                  {service.title.substring(0, 2).toUpperCase()}
-                </div>
-              )}
-              <div>
-                <CardTitle className="text-base">{service.title}</CardTitle>
+      <Card className="overflow-hidden relative group flex flex-col h-[300px]">
+        <CardHeader className="p-4 pb-2">
+          <div className="flex flex-col items-center text-center">
+            {service.iconUrl ? (
+              <div className="w-16 h-16 rounded-md overflow-hidden mb-3">
+                <img 
+                  src={service.iconUrl} 
+                  alt={service.title} 
+                  className="w-full h-full object-cover" 
+                />
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-xl mb-3">
+                {service.title.substring(0, 2).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <CardTitle className="text-base">{service.title}</CardTitle>
+              <div className="flex flex-wrap justify-center gap-2 mt-2">
                 {service.cashback && (
-                  <Badge variant="outline" className="mt-1">
+                  <Badge variant="outline">
                     {t('services.cashback')}: {service.cashback}
                   </Badge>
                 )}
                 {service.commission && (
-                  <Badge variant="outline" className="mt-1 bg-amber-50">
+                  <Badge variant="outline" className="bg-amber-50">
                     {t('services.commission')}: {service.commission}
                   </Badge>
                 )}
@@ -87,10 +87,10 @@ export default function ClientServicesPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4 pt-3">
-          {service.description && <CardDescription>{service.description}</CardDescription>}
+        <CardContent className="p-4 pt-2 flex-grow overflow-auto">
+          {service.description && <CardDescription className="text-center">{service.description}</CardDescription>}
         </CardContent>
-        <CardFooter className="p-4 pt-0 gap-2 flex-col">
+        <CardFooter className="p-4 pt-0 gap-2 flex-col mt-auto">
           <Button 
             variant="outline" 
             size="sm" 
