@@ -79,6 +79,12 @@ export function SubscriptionForm({
   const { t } = useTranslations();
   const [selectedServiceName, setSelectedServiceName] = useState<string | null>(null);
   const [isCustomService, setIsCustomService] = useState<boolean>(false);
+  
+  // Определяем, является ли текущий пользователь администратором
+  const isAdmin = user?.role === "admin";
+  
+  // Для администратора, если userId не предоставлен, создаем состояние для выбора пользователя
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>(userId);
 
   // Fetch subscription data if editing
   const { data: subscriptionData, isLoading: isLoadingSubscription } = useQuery({
@@ -98,6 +104,24 @@ export function SubscriptionForm({
         return data;
       } catch (error) {
         console.error("Error fetching services:", error);
+        throw error;
+      }
+    },
+  });
+  
+  // Только для администраторов - загружаем список пользователей
+  const { data: usersData, isLoading: isLoadingUsers } = useQuery({
+    queryKey: ["/api/users"],
+    enabled: isAdmin, // Запрос делается только если пользователь администратор
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/users?limit=100");
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const data = await res.json();
+        console.log("API fetched users:", data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching users:", error);
         throw error;
       }
     },
@@ -494,6 +518,45 @@ export function SubscriptionForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-2">
         <div className="grid grid-cols-1 gap-4">
+          {/* Поле выбора пользователя (только для админов) */}
+          {isAdmin && (
+            <FormField
+              control={form.control}
+              name="userId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.user") || "Пользователь"}</FormLabel>
+                  <Select
+                    disabled={isSubmitting || !!subscriptionId}
+                    onValueChange={(value) => {
+                      const userId = parseInt(value);
+                      field.onChange(userId);
+                      setSelectedUserId(userId);
+                    }}
+                    value={selectedUserId?.toString() || ""}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("subscriptions.selectUser") || "Выберите пользователя"} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {usersData?.users?.map((user: any) => (
+                        <SelectItem key={user.id} value={user.id.toString()}>
+                          {user.name || user.email}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    {t("subscriptions.userDescription") || "Выберите пользователя, для которого создаётся подписка"}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+          
           <FormField
             control={form.control}
             name="serviceId"
