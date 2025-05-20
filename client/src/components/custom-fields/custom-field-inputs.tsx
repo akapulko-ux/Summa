@@ -105,9 +105,6 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
   if (isLoading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle>{t('subscriptions.customFields')}</CardTitle>
-        </CardHeader>
         <CardContent>
           <div className="flex justify-center py-4">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
