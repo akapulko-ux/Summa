@@ -245,7 +245,7 @@ export function SubscriptionList() {
                     {/* Столбец "Домен" удален по требованию */}
                     <TableCell>
                       {subscription.paymentAmount 
-                        ? `₽${subscription.paymentAmount.toFixed(2)} / ${formatPaymentPeriod(subscription.paymentPeriod)}`
+                        ? `${Number(subscription.paymentAmount).toLocaleString('ru-RU', {maximumFractionDigits: 0})} ₽ / ${formatPaymentPeriod(subscription.paymentPeriod)}`
                         : formatPaymentPeriod(subscription.paymentPeriod)}
                     </TableCell>
                     <TableCell>{formatDate(subscription.paidUntil)}</TableCell>
