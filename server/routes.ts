@@ -396,7 +396,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // If subscription has title but no service name (custom service case),
         // use the subscription title as the service name
         let updatedSub = sub;
-        if (!sub.serviceName && sub.title) {
+        // Проверяем отсутствие serviceName (null, undefined или пустая строка)
+        if ((!sub.serviceName || sub.serviceName === '') && sub.title) {
           updatedSub = {
             ...sub,
             serviceName: sub.title
