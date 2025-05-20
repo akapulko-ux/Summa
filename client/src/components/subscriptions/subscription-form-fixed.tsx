@@ -602,9 +602,10 @@ export function SubscriptionForm({
                     <SelectValue placeholder={t("subscriptions.selectPeriod")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="monthly">{t("subscriptions.monthly")}</SelectItem>
-                    <SelectItem value="quarterly">{t("subscriptions.quarterly")}</SelectItem>
-                    <SelectItem value="yearly">{t("subscriptions.yearly")}</SelectItem>
+                    <SelectItem value="monthly">{t("subscriptions.periods.monthly")}</SelectItem>
+                    <SelectItem value="quarterly">{t("subscriptions.periods.quarterly")}</SelectItem>
+                    <SelectItem value="yearly">{t("subscriptions.periods.yearly")}</SelectItem>
+                    <SelectItem value="other">{t("subscriptions.periods.other")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
