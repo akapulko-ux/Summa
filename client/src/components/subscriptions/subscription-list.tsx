@@ -49,7 +49,7 @@ export function SubscriptionList() {
     isLoading,
     isError,
   } = useQuery<{ subscriptions: Subscription[], total: number }>({
-    queryKey: ["/api/subscriptions", { page, limit, search: searchQuery, sortBy, sortOrder }],
+    queryKey: ["/api/subscriptions", { page, limit, search: searchQuery, sortBy, sortOrder, currentUser: true }],
   });
 
   const deleteSubscriptionMutation = useMutation({
