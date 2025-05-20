@@ -78,7 +78,7 @@ export default function ClientServicesPage() {
             {/* Бейджи кэшбэка и комиссии */}
             <div className="flex flex-wrap justify-center gap-1">
               {service.cashback && (
-                <Badge variant="outline" className="text-xs px-2 py-0 h-5">
+                <Badge variant="outline" className="text-xs px-2 py-0 h-5 bg-red-50 text-red-600 border-red-200">
                   {t('services.cashback')}: {service.cashback}
                 </Badge>
               )}
