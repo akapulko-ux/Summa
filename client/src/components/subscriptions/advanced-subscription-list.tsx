@@ -85,6 +85,80 @@ function CashbackBalance({ userId }: { userId: number }) {
   );
 }
 
+// Компонент для отображения истории операций кэшбэка
+function CashbackHistory({ userId }: { userId: number }) {
+  const { t } = useTranslations();
+  
+  const { data: cashbackHistoryData, isLoading: isLoadingCashbackHistory } = useQuery({
+    queryKey: [`/api/users/${userId}/cashback`],
+    enabled: !!userId
+  });
+  
+  if (isLoadingCashbackHistory) {
+    return (
+      <div className="p-4 text-center text-muted-foreground">
+        <span className="animate-pulse">{t('common.loading')}...</span>
+      </div>
+    );
+  }
+  
+  if (!cashbackHistoryData?.transactions || cashbackHistoryData.transactions.length === 0) {
+    return (
+      <div className="p-4 text-center text-muted-foreground">
+        {t('cashback.no_transactions')}
+      </div>
+    );
+  }
+  
+  return (
+    <div className="max-h-40 overflow-y-auto">
+      <table className="w-full">
+        <thead className="bg-muted border-b">
+          <tr>
+            <th className="py-2 px-4 text-left text-xs font-medium text-muted-foreground">
+              {t('cashback.transaction_date')}
+            </th>
+            <th className="py-2 px-4 text-left text-xs font-medium text-muted-foreground">
+              {t('cashback.transaction_amount')}
+            </th>
+            <th className="py-2 px-4 text-left text-xs font-medium text-muted-foreground">
+              {t('cashback.transaction_description')}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {cashbackHistoryData.transactions.map((transaction: any) => {
+            const date = new Date(transaction.createdAt);
+            const formattedDate = new Intl.DateTimeFormat('ru-RU', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }).format(date);
+            
+            return (
+              <tr key={transaction.id} className="border-b last:border-0 hover:bg-muted/50">
+                <td className="py-2 px-4 text-sm">
+                  {formattedDate}
+                </td>
+                <td className="py-2 px-4 text-sm">
+                  <span className={transaction.amount > 0 ? "text-green-600" : "text-red-600"}>
+                    {transaction.amount > 0 ? '+' : '-'}{Math.floor(Math.abs(transaction.amount))} ₽
+                  </span>
+                </td>
+                <td className="py-2 px-4 text-sm">
+                  {transaction.description}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 // Компонент для управления кэшбэком пользователя
 function CashbackForm({ userId, onSuccess, onCancel }: { userId: number, onSuccess: () => void, onCancel?: () => void }) {
   const { t } = useTranslations();
