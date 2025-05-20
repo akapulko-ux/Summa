@@ -347,6 +347,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId = parseInt(req.query.userId as string);
       }
       
+      console.log(`Запрос подписок для пользователя с ID: ${userId}, роль: ${req.user.role}`);
+      
+      // Проверим, какие подписки есть для этого пользователя напрямую из базы данных
+      const allUserSubscriptions = await db
+        .select()
+        .from(subscriptions)
+        .where(eq(subscriptions.userId, userId || 0));
+      
+      console.log(`Всего у пользователя ${userId} найдено подписок в базе: ${allUserSubscriptions.length}`);
+      console.log(`Подписки в базе:`, JSON.stringify(allUserSubscriptions.map(s => ({ id: s.id, title: s.title, serviceId: s.serviceId })), null, 2));
+      
       const result = await storage.listSubscriptions(
         userId, 
         page, 
@@ -355,6 +366,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sortBy, 
         sortOrder as 'asc' | 'desc'
       );
+      
+      console.log(`Возвращено подписок через storage: ${result.subscriptions.length}, total: ${result.total}`);
       
       res.json({ subscriptions: result.subscriptions, total: result.total });
     } catch (error) {
