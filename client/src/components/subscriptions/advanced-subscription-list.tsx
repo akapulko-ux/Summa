@@ -477,14 +477,11 @@ export function AdvancedSubscriptionList({
     );
   };
   
-  const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
-  
   // Определяем правильный ключ запроса в зависимости от роли и параметров
-  // Восстанавливаем оригинальную логику с небольшими улучшениями безопасности
-  const queryKey = isAdmin && !userId 
+  // Восстанавливаем оригинальную логику с улучшениями безопасности
+  const queryKey = user?.role === 'admin' && !userId 
     ? ["/api/subscriptions/all"] 
-    : isAdmin && userId 
+    : user?.role === 'admin' && userId 
       ? ["/api/subscriptions", { userId }] 
       : ["/api/subscriptions"];
   
@@ -499,11 +496,11 @@ export function AdvancedSubscriptionList({
       let url;
       
       // Для админов без указанного userId - получаем все подписки
-      if (isAdmin && !userId) {
+      if (user?.role === 'admin' && !userId) {
         url = '/api/subscriptions/all';
       } 
       // Для админов с указанным userId - получаем подписки конкретного пользователя
-      else if (isAdmin && userId) {
+      else if (user?.role === 'admin' && userId) {
         url = `/api/subscriptions?userId=${userId}`;
       } 
       // Для обычных пользователей - получаем только их подписки
