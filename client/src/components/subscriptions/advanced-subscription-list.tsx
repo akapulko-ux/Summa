@@ -477,17 +477,16 @@ export function AdvancedSubscriptionList({
     );
   };
   
-  // Получение подписок с учетом прав доступа
-  // Если пользователь администратор и userId не указан - получаем все подписки
-  // В остальных случаях получаем только подписки текущего пользователя
+  const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
   
-  // Определяем правильный ключ запроса и URL в зависимости от роли и параметров
-  const queryKey = isAdmin && !userId
-    ? ["/api/subscriptions/all"] // Админ просматривает все подписки
-    : isAdmin && userId
-      ? ["/api/subscriptions", userId] // Админ просматривает подписки конкретного пользователя
-      : ["/api/subscriptions"]; // Обычный пользователь видит только свои подписки
+  // Определяем правильный ключ запроса в зависимости от роли и параметров
+  // Восстанавливаем оригинальную логику с небольшими улучшениями безопасности
+  const queryKey = isAdmin && !userId 
+    ? ["/api/subscriptions/all"] 
+    : isAdmin && userId 
+      ? ["/api/subscriptions", { userId }] 
+      : ["/api/subscriptions"];
   
   const { 
     data: subscriptionsData, 
@@ -497,27 +496,40 @@ export function AdvancedSubscriptionList({
   } = useQuery({
     queryKey,
     queryFn: async () => {
-      // Определяем URL в зависимости от роли и параметров
-      let url = '/api/subscriptions';
+      let url;
       
-      if (isAdmin) {
-        if (userId) {
-          // Админ просматривает подписки конкретного пользователя
-          url = `/api/subscriptions?userId=${userId}`;
-        } else {
-          // Админ просматривает все подписки
-          url = '/api/subscriptions/all';
-        }
+      // Для админов без указанного userId - получаем все подписки
+      if (isAdmin && !userId) {
+        url = '/api/subscriptions/all';
+      } 
+      // Для админов с указанным userId - получаем подписки конкретного пользователя
+      else if (isAdmin && userId) {
+        url = `/api/subscriptions?userId=${userId}`;
+      } 
+      // Для обычных пользователей - получаем только их подписки
+      else {
+        url = '/api/subscriptions';
       }
       
-      // Для обычных пользователей никогда не передаем userId в запросе,
-      // так как они должны видеть только свои подписки
+      console.log("Fetching subscriptions from URL:", url);
+      
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch subscriptions");
       }
+      
       const data = await response.json();
-      return Array.isArray(data) ? data : data.subscriptions || [];
+      console.log("Subscription data received:", data);
+      
+      // Обработка различных форматов ответа
+      if (Array.isArray(data)) {
+        return data;
+      } else if (data.subscriptions) {
+        return data.subscriptions;
+      } else {
+        console.error("Unexpected response format:", data);
+        return [];
+      }
     },
   });
   
