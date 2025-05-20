@@ -1036,6 +1036,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch cashback transactions" });
     }
   });
+  
+  // Получение текущего баланса кэшбэка пользователя
+  app.get("/api/users/:userId/cashback/balance", isAuthenticated, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Только админы могут просматривать кэшбэк других пользователей
+      if (req.user.id !== userId && req.user.role !== "admin") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const balance = await storage.getUserCashbackBalance(userId);
+      res.json({ balance });
+    } catch (error) {
+      console.error("Error fetching user cashback balance:", error);
+      res.status(500).json({ message: "Failed to fetch cashback balance" });
+    }
+  });
+  
+  // Получение общей суммы всех начисленных кэшбэков для пользователя
+  app.get("/api/users/:userId/cashback/total", isAuthenticated, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Только админы могут просматривать кэшбэк других пользователей
+      if (req.user.id !== userId && req.user.role !== "admin") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      // Получаем общую сумму всех положительных транзакций кэшбэка
+      const total = await storage.getUserTotalCashbackAmount(userId);
+      res.json({ total });
+    } catch (error) {
+      console.error("Error fetching user total cashback amount:", error);
+      res.status(500).json({ message: "Failed to fetch total cashback amount" });
+    }
+  });
+  
+  // API для получения текущего баланса кэшбэка авторизованного пользователя
+  app.get("/api/cashback/balance", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const balance = await storage.getUserCashbackBalance(userId);
+      res.json({ balance });
+    } catch (error) {
+      console.error("Error fetching cashback balance:", error);
+      res.status(500).json({ message: "Failed to fetch cashback balance" });
+    }
+  });
+  
+  // API для получения общей суммы всех начисленных кэшбэков авторизованного пользователя
+  app.get("/api/cashback/total", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const total = await storage.getUserTotalCashbackAmount(userId);
+      res.json({ total });
+    } catch (error) {
+      console.error("Error fetching total cashback amount:", error);
+      res.status(500).json({ message: "Failed to fetch total cashback amount" });
+    }
+  });
 
   // API для получения статистики активных/неактивных клиентов
   app.get("/api/stats/clients-activity", isAdmin, async (req, res) => {

@@ -50,6 +50,10 @@ export interface IStorage {
   ): Promise<{ services: Service[], total: number }>;
   getServiceClients(serviceId: number): Promise<User[]>;
   
+  // Cashback operations
+  getUserCashbackBalance(userId: number): Promise<number>;
+  getUserTotalCashbackAmount(userId: number): Promise<number>;
+  
   // Subscription operations
   getSubscription(id: number): Promise<Subscription | undefined>;
   createSubscription(subscription: InsertSubscription): Promise<Subscription>;
@@ -869,6 +873,23 @@ export class DatabaseStorage implements IStorage {
     
     // Возвращаем текущий баланс или 0, если транзакций нет
     return lastTransaction?.balanceAfter || 0;
+  }
+  
+  /**
+   * Получить общую сумму всех начисленных кэшбэков пользователя
+   * @param userId ID пользователя
+   * @returns Общая сумма всех положительных транзакций кэшбэка
+   */
+  async getUserTotalCashbackAmount(userId: number): Promise<number> {
+    // Выбираем только положительные транзакции (начисления) и суммируем их
+    const [result] = await db
+      .select({
+        total: sql`COALESCE(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END), 0)`.mapWith(Number)
+      })
+      .from(cashbackTransactions)
+      .where(eq(cashbackTransactions.userId, userId));
+    
+    return result.total || 0;
   }
   
   /**

@@ -37,9 +37,15 @@ export function StatsCards() {
     queryKey: ["/api/cashback/balance"],
     enabled: !isAdmin && !!user?.id, // Только для обычных пользователей
   });
+  
+  // Запрос общей суммы всех начисленных кэшбэков пользователя
+  const { data: totalCashbackAmount, isLoading: loadingTotalCashbackAmount } = useQuery({
+    queryKey: ["/api/cashback/total"],
+    enabled: !isAdmin && !!user?.id, // Только для обычных пользователей
+  });
 
   const isAdminLoading = isAdmin && (loadingUserStats || loadingSubStats || loadingServiceStats);
-  const isUserLoading = loadingUserSubscriptions || loadingCashbackBalance;
+  const isUserLoading = loadingUserSubscriptions || loadingCashbackBalance || loadingTotalCashbackAmount;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -192,25 +198,9 @@ export function StatsCards() {
               ) : (
                 <>
                   <div className="text-2xl font-bold text-green-500">
-                    {(() => {
-                      // Получаем все подписки пользователя
-                      const subscriptions = userSubscriptions?.subscriptions || [];
-                      // Суммируем денежные суммы кешбека из всех сервисов
-                      let totalCashbackAmount = 0;
-                      
-                      subscriptions.forEach(subscription => {
-                        // Рассчитываем кешбек в денежном эквиваленте
-                        if (subscription.serviceData?.cashbackPercent && subscription.paymentAmount) {
-                          const cashbackPercent = Number(subscription.serviceData.cashbackPercent);
-                          const paymentAmount = Number(subscription.paymentAmount);
-                          const cashbackAmount = (paymentAmount * cashbackPercent) / 100;
-                          totalCashbackAmount += cashbackAmount;
-                        }
-                      });
-                      
-                      // Форматируем как денежную сумму в рублях
-                      return `${totalCashbackAmount.toFixed(2)} ₽`;
-                    })()}
+                    {totalCashbackAmount?.total 
+                      ? `${totalCashbackAmount.total.toFixed(2)} ₽` 
+                      : '0.00 ₽'}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('services.totalCashbackAmountDescription')}
