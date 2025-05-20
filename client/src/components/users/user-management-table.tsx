@@ -439,6 +439,9 @@ export function UserManagementTable() {
                     <TableCell>{user.companyName || "-"}</TableCell>
                     <TableCell>{renderStatusBadge(user.isActive)}</TableCell>
                     <TableCell>
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US') : "-"}
+                    </TableCell>
+                    <TableCell>
                       {user.subscriptionCount || 0}
                     </TableCell>
                     <TableCell>

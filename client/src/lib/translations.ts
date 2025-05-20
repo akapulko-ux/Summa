@@ -2533,6 +2533,7 @@ export const ru: Translation = {
       email: "Email",
       company: "Компания",
       status: "Статус",
+      registration_date: "Дата регистрации",
       subscriptions: "Подписки",
       cashback: "Баланс кэшбэка",
       actions: "Действия"
