@@ -1486,6 +1486,9 @@ export const en: Translation = {
     active: "Active",
     activeUntil: "Active until",
     nextPayment: "Next payment",
+    service_name: "Service Name",
+    enter_service_name: "Enter Service Name",
+    custom: "Custom",
     periodValues: {
       monthly: "Monthly",
       quarterly: "Long Term",
@@ -2385,6 +2388,9 @@ export const ru: Translation = {
     selectPeriod: "Выберите период",
     amount: "Сумма",
     selectStatus: "Выберите статус",
+    service_name: "Название сервиса",
+    enter_service_name: "Введите название сервиса",
+    custom: "Свой",
     periods: {
       monthly: "Ежемесячно",
       quarterly: "Длительный срок",
