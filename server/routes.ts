@@ -1090,7 +1090,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/cashback/total", isAuthenticated, async (req, res) => {
     try {
       const userId = req.user.id;
+      console.log(`Fetching total cashback amount for user ID: ${userId}`);
       const total = await storage.getUserTotalCashbackAmount(userId);
+      console.log(`Total cashback amount for user ID ${userId}: ${total}`);
       res.json({ total });
     } catch (error) {
       console.error("Error fetching total cashback amount:", error);
