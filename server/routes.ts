@@ -336,24 +336,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const search = req.query.search as string || '';
       const sortBy = req.query.sortBy as string || 'createdAt';
       const sortOrder = (req.query.sortOrder as string || 'desc') === 'asc' ? 'asc' : 'desc';
-      const currentUser = req.query.currentUser === 'true';
       
-      let userId: number | undefined = undefined;
+      // Для обычных пользователей всегда запрашиваем только их собственные подписки
+      let userId: number = req.user.id;
       
-      // Regular users can only see their own subscriptions
-      if (req.user.role !== "admin" || currentUser) {
-        userId = req.user.id;
-      } else if (req.query.userId) {
+      // Администраторы могут запросить подписки конкретного пользователя
+      if (req.user.role === "admin" && req.query.userId) {
         userId = parseInt(req.query.userId as string);
       }
       
-      console.log(`Запрос подписок для пользователя с ID: ${userId}, роль: ${req.user.role}`);
+      console.log(`Запрос подписок для пользователя с ID: ${userId}, роль: ${req.user.role}, текущий пользователь: ${req.user.id}`);
       
       // Проверим, какие подписки есть для этого пользователя напрямую из базы данных
       const allUserSubscriptions = await db
         .select()
         .from(subscriptions)
-        .where(eq(subscriptions.userId, userId || 0));
+        .where(eq(subscriptions.userId, userId));
       
       console.log(`Всего у пользователя ${userId} найдено подписок в базе: ${allUserSubscriptions.length}`);
       console.log(`Подписки в базе:`, JSON.stringify(allUserSubscriptions.map(s => ({ id: s.id, title: s.title, serviceId: s.serviceId })), null, 2));
