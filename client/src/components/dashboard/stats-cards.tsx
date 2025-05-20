@@ -177,7 +177,7 @@ export function StatsCards() {
               ) : (
                 <>
                   <div className="text-2xl font-bold text-green-500">
-                    {cashbackBalance?.balance ? `${cashbackBalance.balance.toFixed(2)} ₽` : '0.00 ₽'}
+                    {cashbackBalance?.balance !== undefined ? `${Number(cashbackBalance.balance).toLocaleString('ru-RU', {maximumFractionDigits: 0})} ₽` : '0 ₽'}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('cashback.current_cashback_balance_detailed')}
@@ -198,9 +198,9 @@ export function StatsCards() {
               ) : (
                 <>
                   <div className="text-2xl font-bold text-green-500">
-                    {totalCashbackAmount?.total 
-                      ? `${totalCashbackAmount.total.toFixed(2)} ₽` 
-                      : '0.00 ₽'}
+                    {totalCashbackAmount?.total !== undefined 
+                      ? `${Number(totalCashbackAmount.total).toLocaleString('ru-RU', {maximumFractionDigits: 0})} ₽` 
+                      : '0 ₽'}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('services.totalCashbackAmountDescription')}
