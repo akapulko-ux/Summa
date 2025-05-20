@@ -519,7 +519,7 @@ export function SubscriptionForm({
                     <SelectContent>
                       {usersData?.users?.map((u: any) => (
                         <SelectItem key={u.id} value={u.id.toString()}>
-                          {u.username} ({u.email})
+                          {u.name || "Без имени"} ({u.email})
                         </SelectItem>
                       ))}
                     </SelectContent>
