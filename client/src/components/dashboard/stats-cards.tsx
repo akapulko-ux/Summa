@@ -109,7 +109,9 @@ export function StatsCards() {
               ) : (
                 <>
                   <div className="text-2xl font-bold">
-                    {subStats?.totalRevenue?.toFixed(2) || "0.00"} ₽
+                    {subStats?.totalRevenue !== undefined
+                      ? `${Number(subStats.totalRevenue).toLocaleString('ru-RU', {maximumFractionDigits: 0})} ₽`
+                      : "0 ₽"}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('subscriptions.title')}
