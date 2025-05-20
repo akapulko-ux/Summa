@@ -175,11 +175,14 @@ export function SubscriptionForm({
       }
       // Если выбран "other" и указано кастомное название сервиса
       else if (data.serviceId === "other" && selectedServiceName && selectedServiceName.trim() !== "") {
+        // Определяем ID пользователя, для которого создаем сервис
+        const targetUserId = isAdmin && selectedUserId ? selectedUserId : (userId || user?.id);
+        
         // Сначала проверим, существует ли уже кастомный сервис с таким именем
         let existingCustomService = null;
         if (servicesData?.services) {
           existingCustomService = servicesData.services.find(
-            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === (userId || user?.id)
+            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === targetUserId
           );
         }
         
@@ -196,7 +199,7 @@ export function SubscriptionForm({
               description: "Custom service",
               isCustom: true,
               isActive: true,
-              ownerId: (userId || user?.id)
+              ownerId: targetUserId
             });
             
             const serviceData = await serviceRes.json();
@@ -211,68 +214,44 @@ export function SubscriptionForm({
           }
         }
         
-        // Устанавливаем ID сервиса (существующего или нового)
         if (serviceId) {
           transformedData.serviceId = serviceId;
         }
       }
       
-      // ИСПРАВЛЕНО: Правильная обработка даты
-      if (data.paidUntil && data.paidUntil.trim() !== '') {
-        try {
-          // Правильно преобразуем дату в ISO формат для базы данных
-          const dateObj = new Date(data.paidUntil);
-          if (!isNaN(dateObj.getTime())) {
-            // Используем toISOString для правильного форматирования
-            transformedData.paidUntil = dateObj.toISOString();
-            console.log("Converted date:", transformedData.paidUntil);
-          } else {
-            console.warn("Invalid date format received:", data.paidUntil);
-          }
-        } catch (e) {
-          console.error("Error processing date:", e);
-        }
+      // Добавляем остальные поля
+      if (data.paidUntil) {
+        transformedData.paidUntil = data.paidUntil;
       }
       
       if (data.paymentAmount) {
         transformedData.paymentAmount = parseFloat(data.paymentAmount);
       }
       
-      // Добавляем кастомные поля, если они есть
-      if (data.customFields) {
-        transformedData.customFields = data.customFields;
-      }
+      console.log("Transformed data:", transformedData);
       
-      console.log("Transformed data for API:", transformedData);
-      
-      try {
-        if (!transformedData.userId) {
-          throw new Error("User must be logged in to create a subscription");
-        }
-        
-        const res = await apiRequest("POST", "/api/subscriptions", transformedData);
-        const jsonResponse = await res.json();
-        console.log("Subscription created successfully:", jsonResponse);
-        return jsonResponse;
-      } catch (error) {
-        console.error("Error creating subscription:", error);
-        throw error;
+      // Отправляем запрос на создание подписки
+      const res = await apiRequest("POST", "/api/subscriptions", transformedData);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to create subscription");
       }
+      return res.json();
     },
     onSuccess: (data) => {
-      console.log("Mutation onSuccess triggered with data:", data);
+      console.log("Subscription created:", data);
       toast({
-        title: "Subscription created",
-        description: "New subscription has been created successfully",
+        title: t("subscriptions.created") || "Subscription created",
+        description: t("subscriptions.created_desc") || "Your subscription has been created successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
-      if (onSuccess) onSuccess();
+      onSuccess?.();
     },
     onError: (error: any) => {
-      console.error("Mutation onError triggered:", error);
+      console.error("Error creating subscription:", error);
       toast({
-        title: "Error creating subscription",
-        description: error.message || "Failed to create subscription. See console for details.", 
+        title: t("subscriptions.error") || "Error",
+        description: error.message || t("subscriptions.error_desc") || "Failed to create subscription",
         variant: "destructive",
       });
     }
@@ -284,14 +263,12 @@ export function SubscriptionForm({
       console.log("Updating subscription with data:", data);
       
       // Преобразуем данные в формат, который ожидает сервер
-      // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
+      // Для обновления подписки мы сохраняем большинство полей без изменений
       const transformedData: any = {
         title: data.title,
         domain: "", // Пустая строка вместо null
         loginId: "", // Пустая строка вместо null
         paymentPeriod: data.paymentPeriod || "monthly",
-        licensesCount: 1, // Удалено по требованию
-        usersCount: 1, // Удалено по требованию
         status: data.status || "active",
         customFields: data.customFields || {} // Добавляем пользовательские поля
       };
@@ -302,11 +279,14 @@ export function SubscriptionForm({
       }
       // Если выбран "other" и указано кастомное название сервиса
       else if (data.serviceId === "other" && selectedServiceName && selectedServiceName.trim() !== "") {
+        // Определяем ID пользователя, для которого создаем сервис
+        const targetUserId = isAdmin && selectedUserId ? selectedUserId : (userId || user?.id);
+        
         // Сначала проверим, существует ли уже кастомный сервис с таким именем
         let existingCustomService = null;
         if (servicesData?.services) {
           existingCustomService = servicesData.services.find(
-            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === (userId || user?.id)
+            (s: Service) => s.isCustom && s.title.toLowerCase() === selectedServiceName.toLowerCase() && s.ownerId === targetUserId
           );
         }
         
@@ -323,7 +303,7 @@ export function SubscriptionForm({
               description: "Custom service",
               isCustom: true,
               isActive: true,
-              ownerId: (userId || user?.id)
+              ownerId: targetUserId
             });
             
             const serviceData = await serviceRes.json();
@@ -338,64 +318,45 @@ export function SubscriptionForm({
           }
         }
         
-        // Устанавливаем ID сервиса (существующего или нового)
         if (serviceId) {
           transformedData.serviceId = serviceId;
         }
       }
       
-      // ИСПРАВЛЕНО: Правильная обработка даты при обновлении
-      if (data.paidUntil && data.paidUntil.trim() !== '') {
-        try {
-          // Правильно преобразуем дату в ISO формат для базы данных
-          const dateObj = new Date(data.paidUntil);
-          if (!isNaN(dateObj.getTime())) {
-            // Используем toISOString для правильного форматирования
-            transformedData.paidUntil = dateObj.toISOString();
-            console.log("Converted date for update:", transformedData.paidUntil);
-          } else {
-            console.warn("Invalid date format received for update:", data.paidUntil);
-          }
-        } catch (e) {
-          console.error("Error processing date for update:", e);
-        }
+      // Добавляем остальные поля
+      if (data.paidUntil) {
+        transformedData.paidUntil = data.paidUntil;
       }
       
       if (data.paymentAmount) {
         transformedData.paymentAmount = parseFloat(data.paymentAmount);
       }
       
-      // Добавляем кастомные поля, если они есть
-      if (data.customFields) {
-        transformedData.customFields = data.customFields;
-      }
+      console.log("Transformed data for update:", transformedData);
       
-      console.log("Transformed data for API:", transformedData);
-      
-      try {
-        const res = await apiRequest("PATCH", `/api/subscriptions/${subscriptionId}`, transformedData);
-        const jsonResponse = await res.json();
-        console.log("Subscription updated successfully:", jsonResponse);
-        return jsonResponse;
-      } catch (error) {
-        console.error("Error updating subscription:", error);
-        throw error;
+      // Отправляем запрос на обновление подписки
+      const res = await apiRequest("PATCH", `/api/subscriptions/${subscriptionId}`, transformedData);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to update subscription");
       }
+      return res.json();
     },
     onSuccess: (data) => {
-      console.log("Update mutation onSuccess triggered with data:", data);
+      console.log("Subscription updated:", data);
       toast({
-        title: "Subscription updated",
-        description: "Subscription has been updated successfully",
+        title: t("subscriptions.updated") || "Subscription updated",
+        description: t("subscriptions.updated_desc") || "Your subscription has been updated successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
-      if (onSuccess) onSuccess();
+      queryClient.invalidateQueries({ queryKey: [`/api/subscriptions/${subscriptionId}`] });
+      onSuccess?.();
     },
     onError: (error: any) => {
-      console.error("Update mutation onError triggered:", error);
+      console.error("Error updating subscription:", error);
       toast({
-        title: "Error updating subscription",
-        description: error.message || "Failed to update subscription. See console for details.", 
+        title: t("subscriptions.error") || "Error",
+        description: error.message || t("subscriptions.error_desc") || "Failed to update subscription",
         variant: "destructive",
       });
     }
@@ -412,96 +373,106 @@ export function SubscriptionForm({
       paymentPeriod: "monthly",
       paidUntil: "",
       paymentAmount: "",
-      licensesCount: "1",
-      usersCount: "1",
       status: "active",
+      customFields: {}
     },
   });
 
-  // Update form values when subscription data is loaded or initialData is provided
+  // Watch for changes in the serviceId field
+  const watchedServiceId = form.watch("serviceId");
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  
+  // Следим за изменением пользователя (для админов)
+  const watchedUserId = form.watch("userId");
+  
+  // Обновляем выбранного пользователя при изменении поля формы
   useEffect(() => {
-    // Предпочитаем initialData, если он предоставлен, иначе используем subscriptionData
-    const data = initialData || subscriptionData;
-    
-    if (data) {
-      const paidUntil = data.paidUntil 
-        ? new Date(data.paidUntil).toISOString().split('T')[0]
-        : "";
-        
+    if (isAdmin && watchedUserId) {
+      setSelectedUserId(parseInt(watchedUserId.toString()));
+    }
+  }, [watchedUserId, isAdmin]);
+
+  // Обновляем данные формы при изменении внешних данных
+  useEffect(() => {
+    if (initialData) {
+      // Обновляем форму данными, предоставленными извне
       form.reset({
-        title: data.title,
-        serviceId: data.serviceId ? String(data.serviceId) : "other",
-        domain: data.domain || "",
-        loginId: data.loginId || "",
-        paymentPeriod: data.paymentPeriod || "monthly",
-        paidUntil,
-        paymentAmount: data.paymentAmount ? String(data.paymentAmount) : "",
-        licensesCount: String(data.licensesCount || "1"),
-        usersCount: String(data.usersCount || "1"),
-        status: data.status || "active",
-        userId: userId || user?.id,  // Используем переданный userId или текущего пользователя
-        customFields: data.customFields || {} // Добавляем сохраненные кастомные поля
+        ...initialData,
+        // Преобразуем строковую цену в число и форматируем для отображения
+        paymentAmount: initialData.paymentAmount?.toString() || "",
+        // Для нестандартного serviceId (Other) - оставляем поле пустым, но устанавливаем selectedServiceName
+        serviceId: initialData.serviceId?.toString() || ""
       });
       
-      // Получаем доступные сервисы из экстернальных сервисов или из запроса API
-      const availableServices = externalServices && externalServices.length > 0 
-        ? externalServices 
-        : (servicesData && servicesData.services ? servicesData.services : []);
-      
-      // Устанавливаем имя сервиса при загрузке данных подписки
-      if (data.serviceId && availableServices.length > 0) {
-        // Ищем сервис среди всех сервисов, не только фильтрованных,
-        // так как это может быть кастомный сервис другого пользователя или админа
-        const service = availableServices.find((s: Service) => s.id === data.serviceId);
+      // Если есть сервис, найдем его и установим selectedServiceName
+      if (initialData.serviceId && servicesArray.length > 0) {
+        const service = servicesArray.find((s: Service) => s.id === initialData.serviceId);
         if (service) {
           setSelectedServiceName(service.title);
-          // Проверяем сервис - если это не кастомный сервис или это кастомный сервис
-          // текущего пользователя, то устанавливаем поле как нередактируемое (isCustomService = false)
-          // В противном случае (кастомный сервис другого пользователя) - делаем поле редактируемым
-          setIsCustomService(service.isCustom && service.ownerId !== (userId || user?.id));
-          
-          // Для отладки: выводим информацию о пользовательских полях
-          console.log("Loading subscription with customFields:", data.customFields);
-          if (data.customFields && Object.keys(data.customFields).length > 0) {
-            console.log("Found non-empty customFields for subscription:", data.customFields);
-          }
-        } else {
-          setSelectedServiceName("");
-          setIsCustomService(true);
+          setSelectedService(service);
+          setIsCustomService(service.isCustom);
         }
-      } else if (data.serviceId === null || data.serviceId === undefined) {
-        // Если serviceId не указан, это, вероятно, "other"
-        setSelectedServiceName("");
-        setIsCustomService(true);
+      }
+    } else if (subscriptionData && !initialData) {
+      console.log("Setting form data from API:", subscriptionData);
+      
+      // Обновляем форму из полученных данных API
+      form.reset({
+        title: subscriptionData.title || "",
+        serviceId: subscriptionData.serviceId?.toString() || "",
+        paymentPeriod: subscriptionData.paymentPeriod || "monthly",
+        paidUntil: subscriptionData.paidUntil ? new Date(subscriptionData.paidUntil).toISOString().split('T')[0] : "",
+        paymentAmount: subscriptionData.paymentAmount?.toString() || "",
+        status: subscriptionData.status || "active",
+        customFields: subscriptionData.customFields || {},
+        userId: subscriptionData.userId
+      });
+      
+      // Если есть сервис, найдем его и установим selectedServiceName
+      if (subscriptionData.serviceId && servicesArray.length > 0) {
+        const service = servicesArray.find((s: Service) => s.id === subscriptionData.serviceId);
+        if (service) {
+          setSelectedServiceName(service.title);
+          setSelectedService(service);
+          setIsCustomService(service.isCustom);
+        }
+      }
+      
+      // Для админов устанавливаем выбранного пользователя
+      if (isAdmin && subscriptionData.userId) {
+        setSelectedUserId(subscriptionData.userId);
       }
     }
-  }, [initialData, subscriptionData, form, servicesData, externalServices, userId, user?.id]);
+  }, [initialData, subscriptionData, servicesArray, form, isAdmin]);
 
-  // Form submission handler
-  function onSubmit(data: SubscriptionFormValues) {
-    // Логируем данные формы для отладки
-    console.log("Form submission data:", JSON.stringify(data, null, 2));
-    console.log("Custom fields data:", JSON.stringify(data.customFields, null, 2));
-    
-    // Используем название сервиса как название подписки
-    // Если выбран существующий сервис, берём его название
-    // Если выбран "other", используем введённое значение
-    if (data.serviceId && data.serviceId !== "other") {
-      const service = (externalServices || (servicesData?.services || [])).find(
-        (s: any) => String(s.id) === data.serviceId
-      );
+  // Update selected service when serviceId changes
+  useEffect(() => {
+    if (watchedServiceId && watchedServiceId !== "other" && servicesArray.length > 0) {
+      const serviceId = parseInt(watchedServiceId);
+      const service = servicesArray.find((s: Service) => s.id === serviceId);
+      
       if (service) {
-        data.title = service.title;
+        console.log("Selected service changed:", service);
+        setSelectedServiceName(service.title);
+        setSelectedService(service);
+        setIsCustomService(service.isCustom);
+      } else {
+        setSelectedService(null);
+        setIsCustomService(false);
       }
-    } else if (isCustomService && selectedServiceName) {
-      data.title = selectedServiceName;
+    } else if (watchedServiceId === "other") {
+      setSelectedService(null);
+      setIsCustomService(true);
     }
-    
-    // Если предоставлен внешний обработчик, используем его
+  }, [watchedServiceId, servicesArray]);
+
+  function onSubmit(data: SubscriptionFormValues) {
     if (externalSubmit) {
       externalSubmit(data);
-    } else if (subscriptionId) {
-      // Иначе используем встроенную логику
+      return;
+    }
+
+    if (subscriptionId) {
       updateMutation.mutate(data);
     } else {
       createMutation.mutate(data);
@@ -537,159 +508,136 @@ export function SubscriptionForm({
                   <Select
                     disabled={isSubmitting || !!subscriptionId}
                     onValueChange={(value) => {
-                      const userId = parseInt(value);
-                      field.onChange(userId);
-                      setSelectedUserId(userId);
+                      field.onChange(parseInt(value));
+                      setSelectedUserId(parseInt(value));
                     }}
-                    value={selectedUserId?.toString() || ""}
+                    value={field.value?.toString()}
                   >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("subscriptions.selectUser") || "Выберите пользователя"} />
-                      </SelectTrigger>
-                    </FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("subscriptions.select_user") || "Выберите пользователя"} />
+                    </SelectTrigger>
                     <SelectContent>
-                      {usersData?.users?.map((user: any) => (
-                        <SelectItem key={user.id} value={user.id.toString()}>
-                          {user.name || user.email}
+                      {usersData?.users?.map((u: any) => (
+                        <SelectItem key={u.id} value={u.id.toString()}>
+                          {u.username} ({u.email})
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    {t("subscriptions.userDescription") || "Выберите пользователя, для которого создаётся подписка"}
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           )}
-          
+
+          {/* Service selection field */}
           <FormField
             control={form.control}
             name="serviceId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.service")}</FormLabel>
+                <FormLabel>{t("subscriptions.service") || "Сервис"}</FormLabel>
                 <Select
                   disabled={isSubmitting}
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    
-                    // Если выбран "other" или ничего не выбрано, разрешаем редактировать имя сервиса
-                    if (value === "other" || !value) {
-                      setIsCustomService(true);
-                      setSelectedServiceName("");
-                    } else {
-                      // Иначе находим имя выбранного сервиса
-                      const service = filteredServices.find((s) => String(s.id) === value);
-                      if (service) {
-                        setSelectedServiceName(service.title);
-                        setIsCustomService(false);
-                        
-                        // При выборе сервиса, очищаем предыдущие значения кастомных полей
-                        form.setValue('customFields', {});
-                      }
-                    }
-                  }}
-                  value={field.value || ""}
+                  onValueChange={field.onChange}
+                  value={field.value}
                 >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("subscriptions.selectService")} />
-                    </SelectTrigger>
-                  </FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("subscriptions.select_service") || "Выберите сервис"} />
+                  </SelectTrigger>
                   <SelectContent>
-                    {filteredServices.map((service) => (
-                      <SelectItem key={service.id} value={String(service.id)}>
-                        {service.title}
+                    {filteredServices?.map((service: any) => (
+                      <SelectItem key={service.id} value={service.id.toString()}>
+                        {service.title} {service.isCustom ? `(${t("subscriptions.custom") || "Кастомный"})` : ''}
                       </SelectItem>
                     ))}
-                    <SelectItem value="other">{t("subscriptions.otherCustom")}</SelectItem>
+                    <SelectItem value="other">{t("subscriptions.other_custom") || "Другой (кастомный)"}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          {/* Название выбранного сервиса */}
-          <FormItem>
-            <FormLabel>{t("subscriptions.serviceName")}</FormLabel>
-            {isCustomService ? (
+
+          {/* Custom service name field */}
+          {watchedServiceId === "other" && (
+            <FormItem>
+              <FormLabel>{t("subscriptions.service_name") || "Название сервиса"}</FormLabel>
               <Input
-                disabled={isSubmitting}
-                placeholder={t("subscriptions.enterServiceName")}
+                placeholder={t("subscriptions.enter_service_name") || "Введите название сервиса"}
                 value={selectedServiceName || ""}
                 onChange={(e) => setSelectedServiceName(e.target.value)}
+                disabled={isSubmitting}
               />
-            ) : (
-              <FormItem className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground">
-                {selectedServiceName || t("subscriptions.noServiceSelected")}
+            </FormItem>
+          )}
+
+          {/* Service name display field when service is selected */}
+          {watchedServiceId && watchedServiceId !== "other" && watchedServiceId !== "" && (
+            <FormItem>
+              <FormLabel>{t("subscriptions.service_name") || "Название сервиса"}</FormLabel>
+              <Input
+                value={selectedServiceName || ""}
+                disabled={true}
+                readOnly
+              />
+            </FormItem>
+          )}
+
+          {/* Title field */}
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("subscriptions.subscription_title") || "Название подписки"}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("subscriptions.enter_title") || "Введите название"} {...field} disabled={isSubmitting} />
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
-          </FormItem>
-          
-          {/* Поле "Название подписки" удалено по требованию */}
+          />
 
-          {/* Поля "Домен" и "Логин" удалены по требованию */}
+          {/* Payment Period */}
+          <FormField
+            control={form.control}
+            name="paymentPeriod"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("subscriptions.payment_period") || "Период оплаты"}</FormLabel>
+                <Select
+                  disabled={isSubmitting}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("subscriptions.select_period") || "Выберите период"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="monthly">{t("subscriptions.monthly") || "Ежемесячно"}</SelectItem>
+                    <SelectItem value="quarterly">{t("subscriptions.quarterly") || "Ежеквартально"}</SelectItem>
+                    <SelectItem value="yearly">{t("subscriptions.yearly") || "Ежегодно"}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="paymentPeriod"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("subscriptions.paymentPeriod")}</FormLabel>
-                  <Select
-                    disabled={isSubmitting}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("subscriptions.selectPeriod")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="monthly">{t("subscriptions.monthlyNew")}</SelectItem>
-                      <SelectItem value="quarterly">{t("subscriptions.longTerm")}</SelectItem>
-                      <SelectItem value="yearly">{t("subscriptions.topUp")}</SelectItem>
-                      <SelectItem value="other">{t("subscriptions.other")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="paidUntil"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("subscriptions.paidUntil")}</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
+          {/* Payment Amount */}
           <FormField
             control={form.control}
             name="paymentAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("subscriptions.paymentAmount")}</FormLabel>
+                <FormLabel>{t("subscriptions.payment_amount") || "Сумма оплаты"}</FormLabel>
                 <FormControl>
                   <Input 
-                    disabled={isSubmitting} 
-                    placeholder={t("subscriptions.enterAmount")} 
                     type="number" 
+                    placeholder={t("subscriptions.enter_amount") || "Введите сумму"} 
                     {...field} 
+                    disabled={isSubmitting} 
                   />
                 </FormControl>
                 <FormMessage />
@@ -697,51 +645,64 @@ export function SubscriptionForm({
             )}
           />
 
-          {/* Поля "Количество лицензий" и "Количество пользователей" удалены по требованию */}
+          {/* Paid Until */}
+          <FormField
+            control={form.control}
+            name="paidUntil"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("subscriptions.paid_until") || "Оплачено до"}</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="date" 
+                    {...field} 
+                    disabled={isSubmitting} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          {/* Поле "Статус" видимо только для администраторов */}
-          {user?.role === "admin" && (
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("subscriptions.status")}</FormLabel>
-                  <Select
-                    disabled={isSubmitting}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("subscriptions.selectStatus")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="active">{t("subscriptions.statusActive")}</SelectItem>
-                      <SelectItem value="pending">{t("subscriptions.statusPending")}</SelectItem>
-                      <SelectItem value="expired">{t("subscriptions.statusExpired")}</SelectItem>
-                      <SelectItem value="canceled">{t("subscriptions.statusCanceled")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
+          {/* Status */}
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("subscriptions.status") || "Статус"}</FormLabel>
+                <Select
+                  disabled={isSubmitting}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("subscriptions.select_status") || "Выберите статус"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">{t("subscriptions.active") || "Активна"}</SelectItem>
+                    <SelectItem value="pending">{t("subscriptions.pending") || "Ожидает оплаты"}</SelectItem>
+                    <SelectItem value="expired">{t("subscriptions.expired") || "Истекла"}</SelectItem>
+                    <SelectItem value="canceled">{t("subscriptions.canceled") || "Отменена"}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          {/* Кастомные поля сервиса - отображаются только если выбран сервис и это не опция "другой" */}
-          {form.watch("serviceId") && form.watch("serviceId") !== "other" && (
-            <CustomFieldInputs 
-              serviceId={form.watch("serviceId")} 
-              form={form} 
-              disabled={isSubmitting}
-              key={form.watch("serviceId")} // Для обновления компонента при смене сервиса
+          {/* Custom fields */}
+          {selectedService && selectedService.customFields && Object.keys(selectedService.customFields).length > 0 && (
+            <CustomFieldInputs
+              fields={selectedService.customFields}
+              values={form.getValues().customFields || {}}
+              onChange={(values) => form.setValue("customFields", values)}
+              readonly={isSubmitting}
             />
           )}
         </div>
 
-        <Button disabled={isSubmitting} type="submit" className="w-full">
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {buttonText}
         </Button>
