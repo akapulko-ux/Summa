@@ -504,7 +504,7 @@ export function SubscriptionForm({
               name="userId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Пользователь</FormLabel>
+                  <FormLabel>{t("subscriptions.user")}</FormLabel>
                   <Select
                     disabled={isSubmitting || !!subscriptionId}
                     onValueChange={(value) => {
@@ -514,7 +514,7 @@ export function SubscriptionForm({
                     value={field.value?.toString()}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Выберите пользователя" />
+                      <SelectValue placeholder={t("subscriptions.select_user")} />
                     </SelectTrigger>
                     <SelectContent>
                       {usersData?.users?.map((u: any) => (
@@ -543,15 +543,15 @@ export function SubscriptionForm({
                   value={field.value}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Выберите сервис" />
+                    <SelectValue placeholder={t("subscriptions.selectService")} />
                   </SelectTrigger>
                   <SelectContent>
                     {filteredServices?.map((service: any) => (
                       <SelectItem key={service.id} value={service.id.toString()}>
-                        {service.title} {service.isCustom ? "(Кастомный)" : ''}
+                        {service.title} {service.isCustom ? `(${t("subscriptions.custom")})` : ''}
                       </SelectItem>
                     ))}
-                    <SelectItem value="other">Другой (кастомный)</SelectItem>
+                    <SelectItem value="other">{t("subscriptions.otherCustom")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -562,9 +562,9 @@ export function SubscriptionForm({
           {/* Custom service name field */}
           {watchedServiceId === "other" && (
             <FormItem>
-              <FormLabel>Название сервиса</FormLabel>
+              <FormLabel>{t("subscriptions.service_name")}</FormLabel>
               <Input
-                placeholder="Введите название сервиса"
+                placeholder={t("subscriptions.enter_service_name")}
                 value={selectedServiceName || ""}
                 onChange={(e) => setSelectedServiceName(e.target.value)}
                 disabled={isSubmitting}
@@ -575,7 +575,7 @@ export function SubscriptionForm({
           {/* Service name display field when service is selected */}
           {watchedServiceId && watchedServiceId !== "other" && watchedServiceId !== "" && (
             <FormItem>
-              <FormLabel>Название сервиса</FormLabel>
+              <FormLabel>{t("subscriptions.service_name")}</FormLabel>
               <Input
                 value={selectedServiceName || ""}
                 disabled={true}
