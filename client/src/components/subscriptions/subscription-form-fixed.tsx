@@ -252,8 +252,8 @@ export function SubscriptionForm({
     onSuccess: (data) => {
       console.log("Subscription created:", data);
       toast({
-        title: t("subscriptions.created") || "Subscription created",
-        description: t("subscriptions.created_desc") || "Your subscription has been created successfully.",
+        title: t("subscriptions.subscriptionCreated") || "Subscription created",
+        description: t("subscriptions.addSuccessDescription") || "Your subscription has been created successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
       onSuccess?.();
