@@ -656,7 +656,9 @@ export type Translation = {
       email: string;
       company: string;
       status: string;
+      registration_date: string;
       subscriptions: string;
+      cashback: string;
       actions: string;
     };
   };
