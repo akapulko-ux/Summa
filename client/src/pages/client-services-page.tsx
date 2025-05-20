@@ -54,11 +54,13 @@ export default function ClientServicesPage() {
     const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
     
     return (
-      <Card className="overflow-hidden relative group flex flex-col h-[210px]">
-        <CardHeader className="p-3 pb-1">
+      <Card className="overflow-hidden relative group flex flex-col aspect-square max-h-[250px]">
+        {/* Заголовок с иконкой и названием сервиса */}
+        <CardHeader className="p-3 pb-0 space-y-2">
           <div className="flex flex-col items-center text-center">
+            {/* Иконка сервиса */}
             {service.iconUrl ? (
-              <div className="w-12 h-12 rounded-md overflow-hidden mb-2">
+              <div className="w-14 h-14 rounded-md overflow-hidden mb-2">
                 <img 
                   src={service.iconUrl} 
                   alt={service.title} 
@@ -66,42 +68,51 @@ export default function ClientServicesPage() {
                 />
               </div>
             ) : (
-              <div className="w-12 h-12 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-md mb-2">
+              <div className="w-14 h-14 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-lg mb-2">
                 {service.title.substring(0, 2).toUpperCase()}
               </div>
             )}
-            <div>
-              <CardTitle className="text-base">{service.title}</CardTitle>
-              <div className="flex flex-wrap justify-center gap-2 mt-2">
-                {service.cashback && (
-                  <Badge variant="outline">
-                    {t('services.cashback')}: {service.cashback}
-                  </Badge>
-                )}
-                {service.commission && (
-                  <Badge variant="outline" className="bg-amber-50">
-                    {t('services.commission')}: {service.commission}
-                  </Badge>
-                )}
-              </div>
+            {/* Название сервиса */}
+            <CardTitle className="text-base line-clamp-1">{service.title}</CardTitle>
+            
+            {/* Бейджи кэшбэка и комиссии */}
+            <div className="flex flex-wrap justify-center gap-1 mt-1">
+              {service.cashback && (
+                <Badge variant="outline" className="text-xs px-2 py-0">
+                  {t('services.cashback')}: {service.cashback}
+                </Badge>
+              )}
+              {service.commission && (
+                <Badge variant="outline" className="bg-amber-50 text-xs px-2 py-0">
+                  {t('services.commission')}: {service.commission}
+                </Badge>
+              )}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4 pt-2 flex-grow overflow-auto">
-          {service.description && <CardDescription className="text-center">{service.description}</CardDescription>}
+        
+        {/* Описание сервиса */}
+        <CardContent className="px-3 pb-1 pt-0 flex-grow overflow-auto">
+          {service.description && (
+            <CardDescription className="text-center text-xs line-clamp-2">
+              {service.description}
+            </CardDescription>
+          )}
         </CardContent>
-        <CardFooter className="p-4 pt-0 gap-2 flex-col mt-auto">
+        
+        {/* Кнопки действий */}
+        <CardFooter className="p-3 pt-1 gap-1 flex-col mt-auto">
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full"
+            className="w-full h-8 text-xs"
             onClick={() => setShowSubscriptionForm(true)}
           >
             {language === 'ru' ? 'Добавить в подписки' : 'Add to subscriptions'}
           </Button>
           <Button 
             size="sm" 
-            className="w-full"
+            className="w-full h-8 text-xs"
             onClick={() => setShowLeadForm(true)}
           >
             {language === 'ru' ? 'Купить' : 'Buy'}
@@ -302,7 +313,7 @@ export default function ClientServicesPage() {
       ) : (
         <>
           {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {filteredServices?.map((service) => (
                 <ServiceGridCard key={service.id} service={service} />
               ))}
