@@ -157,8 +157,19 @@ export function SubscriptionForm({
       
       // Преобразуем данные в формат, который ожидает сервер
       // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
+      // Используем название сервиса в качестве title для подписки
+      let serviceTitle = selectedServiceName || "";
+      
+      // Если выбран сервис из списка, найдем его название
+      if (data.serviceId && data.serviceId !== "other" && servicesArray.length) {
+        const selectedService = servicesArray.find((s: Service) => s.id.toString() === data.serviceId);
+        if (selectedService) {
+          serviceTitle = selectedService.title;
+        }
+      }
+      
       const transformedData: any = {
-        title: data.title,
+        title: serviceTitle || "Subscription", // Используем название сервиса или дефолтное значение
         userId: isAdmin && selectedUserId ? selectedUserId : (userId || user?.id), // Для админов используем выбранного пользователя, иначе как раньше
         domain: "", // Пустая строка вместо null
         loginId: "", // Пустая строка вместо null
