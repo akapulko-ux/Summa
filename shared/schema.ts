@@ -116,7 +116,7 @@ export const insertSubscriptionSchema = createInsertSchema(subscriptions, {
   title: z.string().min(1),
   domain: z.union([z.string(), z.null()]).optional(),
   loginId: z.union([z.string(), z.null()]).optional(),
-  paymentPeriod: z.enum(['monthly', 'quarterly', 'yearly']).default('monthly'),
+  paymentPeriod: z.enum(['monthly', 'quarterly', 'yearly', 'other']).default('monthly'),
   paidUntil: z.string().optional().transform(val => {
     if (!val) return undefined;
     try {
