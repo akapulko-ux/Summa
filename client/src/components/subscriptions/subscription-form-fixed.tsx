@@ -272,6 +272,7 @@ export function SubscriptionForm({
       // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
       const transformedData: any = {
         title: data.title,
+        userId: data.userId ? parseInt(data.userId) : (userId || user?.id), // Добавляем поддержку выбора пользователя для администраторов
         domain: "", // Пустая строка вместо null
         loginId: "", // Пустая строка вместо null
         paymentPeriod: data.paymentPeriod || "monthly",
