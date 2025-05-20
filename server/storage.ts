@@ -406,6 +406,14 @@ export class DatabaseStorage implements IStorage {
       console.log(`Storage.listSubscriptions: Запрос для userId=${userId}, page=${page}, limit=${limit}`);
       const offset = (page - 1) * limit;
       
+      // Если userId не указан, это ошибка - всегда должен быть передан userId
+      if (userId === undefined) {
+        console.error("КРИТИЧЕСКАЯ ОШИБКА: userId не передан, возвращаем пустой список!");
+        return { subscriptions: [], total: 0 };
+      }
+      
+      console.log(`Storage.listSubscriptions: Фильтрация по userId=${userId}`);
+      
       // Строим базовый запрос с объединением таблиц subscriptions и services
       let query = db.select({
         // Поля подписки
@@ -435,16 +443,12 @@ export class DatabaseStorage implements IStorage {
         }
       })
       .from(subscriptions)
-      .leftJoin(services, eq(subscriptions.serviceId, services.id));
+      .leftJoin(services, eq(subscriptions.serviceId, services.id))
+      .where(eq(subscriptions.userId, userId)); // Всегда фильтруем по userId
       
-      let countQuery = db.select({ count: sql<number>`count(*)` }).from(subscriptions);
-      
-      // Apply filters - убедимся, что userId точно передается
-      if (userId !== undefined) {
-        console.log(`Storage.listSubscriptions: Фильтрация по userId=${userId}`);
-        query = query.where(eq(subscriptions.userId, userId));
-        countQuery = countQuery.where(eq(subscriptions.userId, userId));
-      }
+      let countQuery = db.select({ count: sql<number>`count(*)` })
+        .from(subscriptions)
+        .where(eq(subscriptions.userId, userId));
       
       // Apply search if provided
       if (search && search.trim() !== '') {

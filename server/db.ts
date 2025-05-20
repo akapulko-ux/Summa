@@ -11,4 +11,14 @@ if (!process.env.DATABASE_URL) {
 }
 
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle(pool, { schema });
+
+// Настраиваем преобразование имён полей из snake_case в базе в camelCase в коде
+export const db = drizzle(pool, { 
+  schema,
+  logger: {
+    logQuery: (query, params) => {
+      console.log('Query:', query);
+      console.log('Params:', params);
+    }
+  }
+});

@@ -337,15 +337,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortBy = req.query.sortBy as string || 'createdAt';
       const sortOrder = (req.query.sortOrder as string || 'desc') === 'asc' ? 'asc' : 'desc';
       
-      // Для обычных пользователей всегда запрашиваем только их собственные подписки
-      let userId: number = req.user.id;
+      // КРИТИЧЕСКИ ВАЖНО: для обычных пользователей всегда запрашиваем только их собственные подписки
+      let userId: number = req.user!.id;
       
       // Администраторы могут запросить подписки конкретного пользователя
-      if (req.user.role === "admin" && req.query.userId) {
+      if (req.user!.role === "admin" && req.query.userId) {
         userId = parseInt(req.query.userId as string);
       }
       
-      console.log(`Запрос подписок для пользователя с ID: ${userId}, роль: ${req.user.role}, текущий пользователь: ${req.user.id}`);
+      console.log(`Запрос подписок для пользователя с ID: ${userId}, роль: ${req.user!.role}, текущий пользователь: ${req.user!.id}`);
+      
+      // Двойная проверка: если пользователь не администратор, ещё раз проверим, что он запрашивает только свои подписки
+      if (req.user!.role !== "admin" && userId !== req.user!.id) {
+        console.error(`НАРУШЕНИЕ БЕЗОПАСНОСТИ: Пользователь ${req.user!.id} пытается получить подписки пользователя ${userId}`);
+        userId = req.user!.id; // Принудительно устанавливаем ID текущего пользователя
+      }
       
       // Проверим, какие подписки есть для этого пользователя напрямую из базы данных
       const allUserSubscriptions = await db
@@ -354,8 +360,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(eq(subscriptions.userId, userId));
       
       console.log(`Всего у пользователя ${userId} найдено подписок в базе: ${allUserSubscriptions.length}`);
-      console.log(`Подписки в базе:`, JSON.stringify(allUserSubscriptions.map(s => ({ id: s.id, title: s.title, serviceId: s.serviceId })), null, 2));
       
+      // Получаем результаты с правильной фильтрацией
       const result = await storage.listSubscriptions(
         userId, 
         page, 
