@@ -54,11 +54,11 @@ export default function ClientServicesPage() {
     const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
     
     return (
-      <Card className="overflow-hidden relative group flex flex-col h-[300px]">
-        <CardHeader className="p-4 pb-2">
+      <Card className="overflow-hidden relative group flex flex-col h-[210px]">
+        <CardHeader className="p-3 pb-1">
           <div className="flex flex-col items-center text-center">
             {service.iconUrl ? (
-              <div className="w-16 h-16 rounded-md overflow-hidden mb-3">
+              <div className="w-12 h-12 rounded-md overflow-hidden mb-2">
                 <img 
                   src={service.iconUrl} 
                   alt={service.title} 
@@ -66,7 +66,7 @@ export default function ClientServicesPage() {
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-xl mb-3">
+              <div className="w-12 h-12 rounded-md flex items-center justify-center bg-primary/10 text-primary font-semibold text-md mb-2">
                 {service.title.substring(0, 2).toUpperCase()}
               </div>
             )}
@@ -302,7 +302,7 @@ export default function ClientServicesPage() {
       ) : (
         <>
           {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {filteredServices?.map((service) => (
                 <ServiceGridCard key={service.id} service={service} />
               ))}
