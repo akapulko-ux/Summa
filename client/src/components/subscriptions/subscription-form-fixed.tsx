@@ -504,7 +504,7 @@ export function SubscriptionForm({
               name="userId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("subscriptions.user")}</FormLabel>
+                  <FormLabel>{t("subscriptions.user", "Пользователь")}</FormLabel>
                   <Select
                     disabled={isSubmitting || !!subscriptionId}
                     onValueChange={(value) => {
@@ -514,7 +514,7 @@ export function SubscriptionForm({
                     value={field.value?.toString()}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t("subscriptions.select_user")} />
+                      <SelectValue placeholder={t("subscriptions.select_user", "Выберите пользователя")} />
                     </SelectTrigger>
                     <SelectContent>
                       {usersData?.users?.map((u: any) => (
