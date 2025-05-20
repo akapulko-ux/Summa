@@ -1000,6 +1000,13 @@ export class DatabaseStorage implements IStorage {
         return false;
       }
       
+      // Перед удалением пользователя, удаляем все связанные записи
+      // Удаляем все транзакции кэшбэка пользователя
+      await db.delete(cashbackTransactions).where(eq(cashbackTransactions.userId, id));
+      
+      // Удаляем все подписки пользователя
+      await db.delete(subscriptions).where(eq(subscriptions.userId, id));
+      
       // Удаляем пользователя
       const result = await db.delete(users).where(eq(users.id, id));
       
