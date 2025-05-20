@@ -680,10 +680,10 @@ export function SubscriptionForm({
                     <SelectValue placeholder={t("subscriptions.filters.selectStatus")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">{t("subscriptions.status.active")}</SelectItem>
-                    <SelectItem value="pending">{t("subscriptions.status.pending")}</SelectItem>
-                    <SelectItem value="expired">{t("subscriptions.status.expired")}</SelectItem>
-                    <SelectItem value="canceled">{t("subscriptions.status.canceled")}</SelectItem>
+                    <SelectItem value="active">{t("subscriptions.statuses.active")}</SelectItem>
+                    <SelectItem value="pending">{t("subscriptions.statuses.pending")}</SelectItem>
+                    <SelectItem value="expired">{t("subscriptions.statuses.expired")}</SelectItem>
+                    <SelectItem value="canceled">{t("subscriptions.statuses.canceled")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
