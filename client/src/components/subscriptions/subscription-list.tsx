@@ -240,7 +240,7 @@ export function SubscriptionList() {
                     <TableCell>
                       {subscription.service?.cashback 
                         ? `${subscription.service.cashback}` 
-                        : t('common.notAvailable')}
+                        : "-"}
                     </TableCell>
                     {/* Столбец "Домен" удален по требованию */}
                     <TableCell>
