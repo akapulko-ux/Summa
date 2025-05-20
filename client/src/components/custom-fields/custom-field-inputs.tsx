@@ -289,9 +289,6 @@ export function CustomFieldInputs({ serviceId, form, disabled = false }: CustomF
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('subscriptions.advancedFields')}</CardTitle>
-      </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {customFields.map((field: CustomField) => (
