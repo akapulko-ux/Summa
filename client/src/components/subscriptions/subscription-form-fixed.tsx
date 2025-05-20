@@ -256,6 +256,7 @@ export function SubscriptionForm({
         description: t("common.success") || "Your subscription has been created successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/all"] });
       onSuccess?.();
     },
     onError: (error: any) => {
