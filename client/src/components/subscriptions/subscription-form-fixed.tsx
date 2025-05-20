@@ -135,10 +135,18 @@ export function SubscriptionForm({
       ? servicesData.services 
       : []);
       
-  const filteredServices = servicesArray.filter((service: Service) => 
-    !service.isCustom || // стандартные сервисы
-    (service.isCustom && service.ownerId === (userId || user?.id)) // кастомные сервисы текущего/указанного пользователя
-  );
+  const filteredServices = servicesArray.filter((service: Service) => {
+    // Стандартные сервисы всегда видны
+    if (!service.isCustom) return true;
+    
+    // Для админов показываем кастомные сервисы выбранного пользователя
+    if (isAdmin && selectedUserId) {
+      return service.isCustom && service.ownerId === selectedUserId;
+    }
+    
+    // В остальных случаях показываем кастомные сервисы текущего пользователя
+    return service.isCustom && service.ownerId === (userId || user?.id);
+  });
       
 
 
@@ -151,7 +159,7 @@ export function SubscriptionForm({
       // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
       const transformedData: any = {
         title: data.title,
-        userId: userId || user?.id, // Используем переданный userId, если он есть, иначе текущего пользователя
+        userId: isAdmin && selectedUserId ? selectedUserId : (userId || user?.id), // Для админов используем выбранного пользователя, иначе как раньше
         domain: "", // Пустая строка вместо null
         loginId: "", // Пустая строка вместо null
         paymentPeriod: data.paymentPeriod || "monthly",
