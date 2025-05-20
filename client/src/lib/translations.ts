@@ -1623,6 +1623,7 @@ export const en: Translation = {
       email: "Email",
       company: "Company",
       status: "Status",
+      registration_date: "Registration Date",
       role: "Role",
       subscriptions: "Subscriptions",
       cashback: "Cashback Balance",
