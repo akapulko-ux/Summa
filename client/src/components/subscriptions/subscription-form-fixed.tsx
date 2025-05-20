@@ -49,7 +49,7 @@ const subscriptionFormSchema = z.object({
   licensesCount: z.any().optional().default(1),
   usersCount: z.any().optional().default(1),
   status: z.enum(["active", "pending", "expired", "canceled"]).default("active"),
-  userId: z.number().optional(), // Добавляем поле userId для серверной валидации
+  userId: z.string().optional(), // Изменим тип на string, чтобы работать с селектом
   customFields: z.record(z.any()).optional(), // Добавляем поле для кастомных полей
 });
 
@@ -103,6 +103,23 @@ export function SubscriptionForm({
     },
   });
   
+  // Fetch users list (only for admins)
+  const { data: usersData, isLoading: isLoadingUsers } = useQuery({
+    queryKey: ["/api/users"],
+    enabled: user?.role === "admin", // Загружаем список пользователей только для администраторов
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/users");
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        throw error;
+      }
+    },
+  });
+  
   // Используем внешние сервисы, если они предоставлены, иначе фильтруем сервисы из API
   // Проверяем данные сервисов и преобразуем их при необходимости
   const servicesArray = externalServices && externalServices.length > 0 
@@ -127,7 +144,7 @@ export function SubscriptionForm({
       // Создаем базовую структуру данных с значениями по умолчанию для удаленных полей
       const transformedData: any = {
         title: data.title,
-        userId: userId || user?.id, // Используем переданный userId, если он есть, иначе текущего пользователя
+        userId: data.userId ? parseInt(data.userId) : (userId || user?.id), // Используем выбранный userId (для админа) или переданный userId, или текущего пользователя
         domain: "", // Пустая строка вместо null
         loginId: "", // Пустая строка вместо null
         paymentPeriod: data.paymentPeriod || "monthly",
@@ -558,6 +575,49 @@ export function SubscriptionForm({
               </FormItem>
             )}
           </FormItem>
+          
+          {/* Поле выбора пользователя (только для администраторов) */}
+          {user?.role === "admin" && (
+            <FormField
+              control={form.control}
+              name="userId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("subscriptions.user")}</FormLabel>
+                  <Select
+                    disabled={isSubmitting || isLoadingUsers}
+                    onValueChange={field.onChange}
+                    value={field.value || (userId ? String(userId) : String(user?.id || ""))}
+                    defaultValue={userId ? String(userId) : String(user?.id || "")}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("subscriptions.selectUser")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {isLoadingUsers ? (
+                        <SelectItem value="loading" disabled>
+                          {t("common.loading")}
+                        </SelectItem>
+                      ) : usersData?.users ? (
+                        usersData.users.map((user: any) => (
+                          <SelectItem key={user.id} value={String(user.id)}>
+                            {user.name || user.email}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="noUsers" disabled>
+                          {t("users.noUsers")}
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           
           {/* Поле "Название подписки" удалено по требованию */}
 
