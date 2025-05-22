@@ -90,6 +90,8 @@ export class TelegramBotManager implements ITelegramBotManager {
       const chatId = msg.chat.id;
       const linkCode = match?.[1];
       
+      console.log(`[TELEGRAM] Received /link command from chat ${chatId} with code: ${linkCode}`);
+      
       if (!linkCode) {
         this.bot.sendMessage(chatId, 'Пожалуйста, укажите код привязки. Пример: /link ABC123');
         return;
@@ -242,20 +244,24 @@ export class TelegramBotManager implements ITelegramBotManager {
    * @returns Результат привязки
    */
   async linkUserAccount(linkCode: string, telegramChatId: number): Promise<boolean> {
+    console.log(`[TELEGRAM] Attempting to link account with code: ${linkCode}, chatId: ${telegramChatId}`);
+    
     const linkInfo = this.linkCodes.get(linkCode);
     
     if (!linkInfo) {
-      console.log(`Link code ${linkCode} does not exist`);
+      console.log(`[TELEGRAM] Link code ${linkCode} does not exist. Available codes:`, Array.from(this.linkCodes.keys()));
       return false;
     }
     
     if (linkInfo.expires < new Date()) {
-      console.log(`Link code ${linkCode} has expired`);
+      console.log(`[TELEGRAM] Link code ${linkCode} has expired`);
       this.linkCodes.delete(linkCode);
       return false;
     }
     
     try {
+      console.log(`[TELEGRAM] Updating user ${linkInfo.userId} with Telegram chat ID: ${telegramChatId}`);
+      
       // Обновить пользователя, добавив telegramChatId
       await db.update(users)
         .set({ telegramChatId: telegramChatId.toString() })
@@ -264,9 +270,10 @@ export class TelegramBotManager implements ITelegramBotManager {
       // Удалить использованный код
       this.linkCodes.delete(linkCode);
       
+      console.log(`[TELEGRAM] Successfully linked user ${linkInfo.userId} with Telegram chat ID: ${telegramChatId}`);
       return true;
     } catch (error) {
-      console.error('Error linking user account:', error);
+      console.error('[TELEGRAM] Error linking user account:', error);
       return false;
     }
   }
@@ -298,6 +305,9 @@ export class TelegramBotManager implements ITelegramBotManager {
     expires.setHours(expires.getHours() + 24);
     
     this.linkCodes.set(code, { userId, expires });
+    
+    console.log(`[TELEGRAM] Generated link code ${code} for user ${userId}, expires: ${expires}`);
+    console.log(`[TELEGRAM] Current link codes in memory:`, Array.from(this.linkCodes.keys()));
     
     return code;
   }
