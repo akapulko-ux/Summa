@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema, insertServiceLeadSchema, insertNotificationTemplateSchema, serviceLeads } from "@shared/schema";
+import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema, insertServiceLeadSchema, serviceLeads } from "@shared/schema";
 import { ZodError } from "zod";
 import { zValidationErrorToMessage, checkSubscriptionStatus } from "./utils";
 import backupRoutes from "./backup/backup-routes";
@@ -1181,31 +1181,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/notification-templates", isAdmin, async (req, res) => {
-    try {
-      const { triggerType, title, template, isActive = true } = req.body;
-      
-      // Простая валидация без Zod
-      if (!triggerType || !title || !template) {
-        return res.status(400).json({ message: "Missing required fields: triggerType, title, template" });
-      }
-      
-      const [created] = await db.insert(notificationTemplates)
-        .values({
-          triggerType,
-          title,
-          template,
-          isActive
-        })
-        .returning();
-
-      res.status(201).json(created);
-    } catch (error) {
-      console.error("Error creating notification template:", error);
-      res.status(500).json({ message: "Failed to create notification template" });
-    }
-  });
-
   app.patch("/api/notification-templates/:id", isAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -1229,38 +1204,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating notification template:", error);
       res.status(500).json({ message: "Failed to update notification template" });
-    }
-  });
-
-  // API для создания нового шаблона уведомлений
-  app.post("/api/notification-templates", isAdmin, async (req, res) => {
-    try {
-      const { triggerType, title, messageRu, messageEn, isActive } = req.body;
-      
-      // Validate required fields
-      if (!triggerType || !title || !messageRu || !messageEn) {
-        return res.status(400).json({ message: "Missing required fields" });
-      }
-
-      // Create template text with both languages
-      const template = JSON.stringify({
-        ru: messageRu,
-        en: messageEn
-      });
-
-      const [newTemplate] = await db.insert(notificationTemplates)
-        .values({
-          triggerType,
-          title,
-          template,
-          isActive: isActive !== undefined ? isActive : true
-        })
-        .returning();
-
-      res.status(201).json(newTemplate);
-    } catch (error) {
-      console.error("Error creating notification template:", error);
-      res.status(500).json({ message: "Failed to create notification template" });
     }
   });
 

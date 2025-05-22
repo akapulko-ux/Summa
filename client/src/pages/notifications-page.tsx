@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Bell, Edit2, Send, History, Save, RefreshCw, Play, Plus } from 'lucide-react';
+import { Bell, Edit2, Send, History, Save, RefreshCw, Play } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 
 interface NotificationTemplate {
@@ -20,8 +20,6 @@ interface NotificationTemplate {
   triggerType: string;
   title: string;
   template: string;
-  messageRu: string;
-  messageEn: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -72,30 +70,8 @@ export default function NotificationsPage() {
   const [selectedSubscription, setSelectedSubscription] = useState<string>('');
 
   // Загрузка шаблонов уведомлений
-  const { data: rawTemplates, isLoading: templatesLoading } = useQuery({
+  const { data: templates, isLoading: templatesLoading } = useQuery({
     queryKey: ['/api/notification-templates']
-  });
-
-  // Преобразование шаблонов с парсингом JSON
-  const templates = rawTemplates?.map((template: any) => {
-    let messageRu = '';
-    let messageEn = '';
-    
-    try {
-      const parsedTemplate = JSON.parse(template.template);
-      messageRu = parsedTemplate.ru || '';
-      messageEn = parsedTemplate.en || '';
-    } catch (e) {
-      // Если template не JSON, используем как есть
-      messageRu = template.template || '';
-      messageEn = template.template || '';
-    }
-    
-    return {
-      ...template,
-      messageRu,
-      messageEn
-    };
   });
 
   // Загрузка логов уведомлений
@@ -129,39 +105,6 @@ export default function NotificationsPage() {
       toast({
         title: language === 'ru' ? "Ошибка" : "Error",
         description: language === 'ru' ? "Не удалось обновить шаблон" : "Failed to update template",
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Мутация для создания нового шаблона
-  const createTemplateMutation = useMutation({
-    mutationFn: (data: { triggerType: string; title: string; messageRu: string; messageEn: string; isActive: boolean }) => {
-      const payload = {
-        triggerType: data.triggerType,
-        title: data.title,
-        template: JSON.stringify({
-          ru: data.messageRu,
-          en: data.messageEn
-        }),
-        isActive: data.isActive
-      };
-      console.log('Отправляем данные на сервер:', payload);
-      return apiRequest('POST', '/api/notification-templates', payload);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/notification-templates'] });
-      toast({
-        title: language === 'ru' ? "Успешно" : "Success",
-        description: language === 'ru' ? "Шаблон создан" : "Template created"
-      });
-      setIsDialogOpen(false);
-      setEditingTemplate(null);
-    },
-    onError: () => {
-      toast({
-        title: language === 'ru' ? "Ошибка" : "Error",
-        description: language === 'ru' ? "Не удалось создать шаблон" : "Failed to create template",
         variant: "destructive"
       });
     }
@@ -224,48 +167,14 @@ export default function NotificationsPage() {
   const handleSaveTemplate = () => {
     if (!editingTemplate) return;
     
-    // Проверяем обязательные поля
-    if (!editingTemplate.title.trim()) {
-      toast({
-        title: language === 'ru' ? "Ошибка" : "Error",
-        description: language === 'ru' ? "Пожалуйста, введите название шаблона" : "Please enter template title",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!editingTemplate.messageRu.trim()) {
-      toast({
-        title: language === 'ru' ? "Ошибка" : "Error",
-        description: language === 'ru' ? "Пожалуйста, введите текст сообщения на русском языке" : "Please enter message text in Russian",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (editingTemplate.id === 0) {
-      // Создание нового шаблона
-      createTemplateMutation.mutate({
-        triggerType: editingTemplate.triggerType,
+    updateTemplateMutation.mutate({
+      id: editingTemplate.id,
+      data: {
         title: editingTemplate.title,
-        messageRu: editingTemplate.messageRu,
-        messageEn: editingTemplate.messageEn,
+        template: editingTemplate.template,
         isActive: editingTemplate.isActive
-      });
-    } else {
-      // Обновление существующего шаблона
-      updateTemplateMutation.mutate({
-        id: editingTemplate.id,
-        data: {
-          title: editingTemplate.title,
-          template: JSON.stringify({
-            ru: editingTemplate.messageRu,
-            en: editingTemplate.messageEn
-          }),
-          isActive: editingTemplate.isActive
-        }
-      });
-    }
+      }
+    });
   };
 
   const handleTestTemplate = (template: NotificationTemplate) => {
@@ -336,31 +245,6 @@ export default function NotificationsPage() {
         </TabsList>
 
         <TabsContent value="templates" className="space-y-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">
-              {language === 'ru' ? 'Шаблоны уведомлений' : 'Notification Templates'}
-            </h3>
-            <Button
-              onClick={() => {
-                setEditingTemplate({
-                  id: 0,
-                  triggerType: 'week_before',
-                  title: '',
-                  template: '',
-                  messageRu: '',
-                  messageEn: '',
-                  isActive: true,
-                  createdAt: '',
-                  updatedAt: ''
-                });
-                setIsDialogOpen(true);
-              }}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              {language === 'ru' ? 'Добавить шаблон' : 'Add Template'}
-            </Button>
-          </div>
           <div className="grid gap-4">
             {templates?.map((template: NotificationTemplate) => (
               <Card key={template.id}>
@@ -461,10 +345,7 @@ export default function NotificationsPage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {editingTemplate?.id === 0 
-                ? (language === 'ru' ? 'Создать шаблон' : 'Create Template')
-                : (language === 'ru' ? 'Редактировать шаблон' : 'Edit Template')
-              }
+              {language === 'ru' ? 'Редактировать шаблон' : 'Edit Template'}
             </DialogTitle>
             <DialogDescription>
               {language === 'ru' 
@@ -491,16 +372,16 @@ export default function NotificationsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="messageRu">
-                  {language === 'ru' ? 'Текст сообщения' : 'Message Text'}
+                <Label htmlFor="template">
+                  {language === 'ru' ? 'Шаблон сообщения' : 'Message Template'}
                 </Label>
                 <Textarea
-                  id="messageRu"
+                  id="template"
                   rows={6}
-                  value={editingTemplate.messageRu}
+                  value={editingTemplate.template}
                   onChange={(e) => setEditingTemplate({
                     ...editingTemplate,
-                    messageRu: e.target.value
+                    template: e.target.value
                   })}
                 />
                 <p className="text-xs text-muted-foreground">
