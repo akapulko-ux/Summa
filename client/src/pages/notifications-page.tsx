@@ -66,14 +66,12 @@ export default function NotificationsPage() {
 
   // Загрузка шаблонов уведомлений
   const { data: templates, isLoading: templatesLoading } = useQuery({
-    queryKey: ['/api/notification-templates'],
-    queryFn: () => apiRequest('/api/notification-templates')
+    queryKey: ['/api/notification-templates']
   });
 
   // Загрузка логов уведомлений
   const { data: logsData, isLoading: logsLoading } = useQuery({
-    queryKey: ['/api/notification-logs'],
-    queryFn: () => apiRequest('/api/notification-logs')
+    queryKey: ['/api/notification-logs']
   });
 
   // Мутация для обновления шаблона
