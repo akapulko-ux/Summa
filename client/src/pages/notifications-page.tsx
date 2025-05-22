@@ -112,11 +112,7 @@ export default function NotificationsPage() {
   // Мутация для тестовой отправки
   const testNotificationMutation = useMutation({
     mutationFn: (data: { subscriptionId: number; triggerType: string }) =>
-      apiRequest('/api/notification-test', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      }),
+      apiRequest('/api/notification-test', 'POST', data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/notification-logs'] });
       toast({
