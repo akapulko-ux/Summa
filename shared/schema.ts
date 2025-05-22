@@ -234,6 +234,58 @@ export type InsertBackupMetadata = z.infer<typeof insertBackupMetadataSchema>;
 export type CashbackTransaction = typeof cashbackTransactions.$inferSelect;
 export type InsertCashbackTransaction = z.infer<typeof insertCashbackTransactionSchema>;
 
+// Notification templates table
+export const notificationTriggerEnum = pgEnum('notification_trigger', [
+  'month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 
+  'three_days_before', 'day_before', 'expiry_day', 'renewed'
+]);
+
+export const notificationChannelEnum = pgEnum('notification_channel', ['telegram', 'email']);
+
+export const notificationTemplates = pgTable('notification_templates', {
+  id: serial('id').primaryKey(),
+  triggerType: notificationTriggerEnum('trigger_type').notNull(),
+  title: text('title').notNull(),
+  template: text('template').notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Notification logs table
+export const notificationLogs = pgTable('notification_logs', {
+  id: serial('id').primaryKey(),
+  subscriptionId: integer('subscription_id').references(() => subscriptions.id).notNull(),
+  triggerType: notificationTriggerEnum('trigger_type').notNull(),
+  channel: notificationChannelEnum('channel').default('telegram').notNull(),
+  status: text('status').default('sent').notNull(), // sent, failed, pending
+  message: text('message'),
+  errorMessage: text('error_message'),
+  sentAt: timestamp('sent_at').defaultNow().notNull(),
+});
+
+export const insertNotificationTemplateSchema = createInsertSchema(notificationTemplates, {
+  triggerType: z.enum(['month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 'three_days_before', 'day_before', 'expiry_day', 'renewed']),
+  title: z.string().min(1),
+  template: z.string().min(1),
+  isActive: z.boolean().default(true),
+}).omit({ id: true, createdAt: true, updatedAt: true });
+
+export const insertNotificationLogSchema = createInsertSchema(notificationLogs, {
+  subscriptionId: z.number(),
+  triggerType: z.enum(['month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 'three_days_before', 'day_before', 'expiry_day', 'renewed']),
+  channel: z.enum(['telegram', 'email']).default('telegram'),
+  status: z.string().default('sent'),
+  message: z.string().optional(),
+  errorMessage: z.string().optional(),
+}).omit({ id: true, sentAt: true });
+
+export type NotificationTemplate = typeof notificationTemplates.$inferSelect;
+export type InsertNotificationTemplate = z.infer<typeof insertNotificationTemplateSchema>;
+
+export type NotificationLog = typeof notificationLogs.$inferSelect;
+export type InsertNotificationLog = z.infer<typeof insertNotificationLogSchema>;
+
 // Leads table
 export const serviceLeads = pgTable('service_leads', {
   id: serial('id').primaryKey(),

@@ -137,7 +137,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Sheet>
           <Link href="/">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold">Сумма</span>
+              <span className="text-xl font-bold">Summa</span>
             </div>
           </Link>
           <nav className="ml-8 hidden md:flex gap-6 items-center">
