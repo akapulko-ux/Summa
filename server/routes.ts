@@ -1181,6 +1181,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/notification-templates", isAdmin, async (req, res) => {
+    try {
+      const validatedData = insertNotificationTemplateSchema.parse(req.body);
+      
+      const [created] = await db.insert(notificationTemplates)
+        .values(validatedData)
+        .returning();
+
+      res.status(201).json(created);
+    } catch (error) {
+      console.error("Error creating notification template:", error);
+      if (error.name === 'ZodError') {
+        return res.status(400).json({ message: "Missing required fields", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create notification template" });
+    }
+  });
+
   app.patch("/api/notification-templates/:id", isAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
