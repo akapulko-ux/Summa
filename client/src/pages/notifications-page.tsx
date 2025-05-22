@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from '@/hooks/use-translations';
+import { AppLayout } from '@/components/layout/app-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -140,28 +141,30 @@ export default function NotificationsPage() {
 
   if (templatesLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <RefreshCw className="h-8 w-8 animate-spin" />
-      </div>
+      <AppLayout title={language === 'ru' ? 'Управление уведомлениями' : 'Notification Management'}>
+        <div className="flex items-center justify-center h-64">
+          <RefreshCw className="h-8 w-8 animate-spin" />
+        </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Bell className="h-8 w-8 text-primary" />
-        <div>
-          <h1 className="text-3xl font-bold">
-            {language === 'ru' ? 'Управление уведомлениями' : 'Notification Management'}
-          </h1>
-          <p className="text-muted-foreground">
+    <AppLayout 
+      title={language === 'ru' ? 'Управление уведомлениями' : 'Notification Management'}
+      actions={
+        <div className="flex items-center gap-2">
+          <Bell className="h-5 w-5 text-primary" />
+          <span className="text-sm text-muted-foreground">
             {language === 'ru' 
-              ? 'Настройте шаблоны уведомлений для Telegram бота' 
-              : 'Configure notification templates for Telegram bot'
+              ? 'Настройка Telegram уведомлений' 
+              : 'Telegram notifications setup'
             }
-          </p>
+          </span>
         </div>
-      </div>
+      }
+    >
+      <div className="space-y-6">
 
       <Tabs defaultValue="templates" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -343,6 +346,7 @@ export default function NotificationsPage() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
