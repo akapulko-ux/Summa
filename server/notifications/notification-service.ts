@@ -1,7 +1,7 @@
 import { db } from "../db";
 import { notificationTemplates, notificationLogs, subscriptions, services, users } from "@shared/schema";
 import { eq, and, gte, lte, sql } from "drizzle-orm";
-import { telegramBot } from "../telegram/telegram-bot";
+import { telegramBotManager } from "../telegram/telegram-bot";
 
 export type NotificationTrigger = 'month_before' | 'two_weeks_before' | 'ten_days_before' | 'week_before' | 'three_days_before' | 'day_before' | 'expiry_day' | 'renewed';
 
@@ -84,9 +84,7 @@ export class NotificationService {
       const message = this.replaceTemplateVariables(template.template, context);
 
       // Отправляем через Telegram бот
-      const success = await telegramBot.sendMessage(subscription.user.telegramChatId, message, {
-        parse_mode: 'Markdown'
-      });
+      const success = await telegramBotManager.sendNotificationToUser(subscription.user.id, message);
 
       // Логируем результат
       await this.logNotification(
