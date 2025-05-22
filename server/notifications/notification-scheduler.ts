@@ -209,6 +209,14 @@ export class NotificationScheduler {
       nextCheck: this.intervalId ? 'Running every hour' : 'Not scheduled'
     };
   }
+
+  /**
+   * Запустить проверку уведомлений вручную
+   */
+  async runManualCheck() {
+    console.log('Manual notification check triggered');
+    return await this.checkAndSendNotifications();
+  }
 }
 
 export const notificationScheduler = new NotificationScheduler();

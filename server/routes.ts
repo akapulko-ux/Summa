@@ -1281,6 +1281,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to send test notification" });
     }
   });
+
+  // API для ручного запуска проверки автоматических уведомлений
+  app.post("/api/notification-check", isAdmin, async (req, res) => {
+    try {
+      console.log("Manual notification check triggered by admin");
+      
+      // Импортируем планировщик уведомлений
+      const { notificationScheduler } = await import("./notifications/notification-scheduler");
+      
+      // Запускаем ручную проверку
+      await notificationScheduler.runManualCheck();
+      
+      res.json({ 
+        success: true, 
+        message: "Notification check completed successfully. Check server logs for details." 
+      });
+    } catch (error) {
+      console.error("Error running manual notification check:", error);
+      res.status(500).json({ message: "Failed to run notification check" });
+    }
+  });
   
   // Включаем мониторинг запросов в режиме production
   if (process.env.NODE_ENV === 'production') {
