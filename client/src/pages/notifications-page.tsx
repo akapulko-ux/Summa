@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Bell, Edit2, Send, History, Save, RefreshCw, Play } from 'lucide-react';
+import { Bell, Edit2, Send, History, Save, RefreshCw, Play, Plus } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 
 interface NotificationTemplate {
@@ -245,6 +245,28 @@ export default function NotificationsPage() {
         </TabsList>
 
         <TabsContent value="templates" className="space-y-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">
+              {language === 'ru' ? 'Шаблоны уведомлений' : 'Notification Templates'}
+            </h3>
+            <Button
+              onClick={() => {
+                setEditingTemplate({
+                  id: 0,
+                  triggerType: 'week_before',
+                  title: '',
+                  messageRu: '',
+                  messageEn: '',
+                  isActive: true
+                });
+                setIsDialogOpen(true);
+              }}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {language === 'ru' ? 'Добавить шаблон' : 'Add Template'}
+            </Button>
+          </div>
           <div className="grid gap-4">
             {templates?.map((template: NotificationTemplate) => (
               <Card key={template.id}>
