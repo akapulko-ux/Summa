@@ -32,7 +32,8 @@ interface NotificationLog {
     triggerType: string;
     message: string;
     sentAt: string;
-    success: boolean;
+    status: string; // 'sent', 'failed', 'pending'
+    errorMessage?: string;
   };
   subscription: {
     id: number;
@@ -301,9 +302,11 @@ export default function NotificationsPage() {
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <Badge variant={logEntry.log.success ? "default" : "destructive"}>
-                            {logEntry.log.success 
+                          <Badge variant={logEntry.log.status === 'sent' ? "default" : logEntry.log.status === 'pending' ? "secondary" : "destructive"}>
+                            {logEntry.log.status === 'sent' 
                               ? (language === 'ru' ? 'Отправлено' : 'Sent')
+                              : logEntry.log.status === 'pending'
+                              ? (language === 'ru' ? 'В процессе' : 'Pending')
                               : (language === 'ru' ? 'Ошибка' : 'Failed')
                             }
                           </Badge>
@@ -317,6 +320,11 @@ export default function NotificationsPage() {
                         <p className="text-sm text-muted-foreground">
                           {language === 'ru' ? 'Сервис:' : 'Service:'} {logEntry.service?.title}
                         </p>
+                        {logEntry.log.status === 'failed' && logEntry.log.errorMessage && (
+                          <p className="text-sm text-red-600">
+                            {language === 'ru' ? 'Ошибка:' : 'Error:'} {logEntry.log.errorMessage}
+                          </p>
+                        )}
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-muted-foreground">
