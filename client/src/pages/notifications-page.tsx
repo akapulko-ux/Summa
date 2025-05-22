@@ -234,10 +234,10 @@ export default function NotificationsPage() {
       return;
     }
     
-    if (!editingTemplate.messageRu.trim() && !editingTemplate.messageEn.trim()) {
+    if (!editingTemplate.messageRu.trim()) {
       toast({
         title: language === 'ru' ? "Ошибка" : "Error",
-        description: language === 'ru' ? "Пожалуйста, введите текст хотя бы для одного языка" : "Please enter message text for at least one language",
+        description: language === 'ru' ? "Пожалуйста, введите текст сообщения на русском языке" : "Please enter message text in Russian",
         variant: "destructive"
       });
       return;
@@ -491,16 +491,16 @@ export default function NotificationsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="template">
-                  {language === 'ru' ? 'Шаблон сообщения' : 'Message Template'}
+                <Label htmlFor="messageRu">
+                  {language === 'ru' ? 'Текст сообщения' : 'Message Text'}
                 </Label>
                 <Textarea
-                  id="template"
+                  id="messageRu"
                   rows={6}
-                  value={editingTemplate.template}
+                  value={editingTemplate.messageRu}
                   onChange={(e) => setEditingTemplate({
                     ...editingTemplate,
-                    template: e.target.value
+                    messageRu: e.target.value
                   })}
                 />
                 <p className="text-xs text-muted-foreground">
