@@ -9,7 +9,7 @@ export class NotificationScheduler {
 
   /**
    * Запустить планировщик уведомлений
-   * Проверяет подписки каждый час и отправляет уведомления по расписанию
+   * Проверяет подписки ежедневно в 10:00 утра по московскому времени
    */
   start() {
     if (this.isRunning) {
@@ -17,16 +17,41 @@ export class NotificationScheduler {
       return;
     }
 
-    console.log('Starting notification scheduler...');
+    console.log('Starting notification scheduler (daily at 10:00 MSK)...');
     this.isRunning = true;
 
-    // Запускаем немедленно при старте
-    this.checkAndSendNotifications();
+    // Планируем следующий запуск в 10:00 МСК
+    this.scheduleNextRun();
+  }
 
-    // Устанавливаем интервал проверки каждый час
-    this.intervalId = setInterval(() => {
+  /**
+   * Запланировать следующий запуск в 10:00 МСК
+   */
+  private scheduleNextRun() {
+    const now = new Date();
+    const moscowTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Moscow"}));
+    
+    // Создаем дату для 10:00 сегодня в МСК
+    const targetTime = new Date(moscowTime);
+    targetTime.setHours(10, 0, 0, 0);
+    
+    // Если 10:00 уже прошло сегодня, планируем на завтра
+    if (moscowTime.getTime() >= targetTime.getTime()) {
+      targetTime.setDate(targetTime.getDate() + 1);
+    }
+    
+    // Вычисляем разность во времени
+    const delay = targetTime.getTime() - moscowTime.getTime();
+    
+    console.log(`Next notification check scheduled for: ${targetTime.toLocaleString('ru-RU', {timeZone: 'Europe/Moscow'})} MSK`);
+    
+    this.intervalId = setTimeout(() => {
       this.checkAndSendNotifications();
-    }, 60 * 60 * 1000); // 1 час
+      // После выполнения планируем следующий запуск через 24 часа
+      this.intervalId = setInterval(() => {
+        this.checkAndSendNotifications();
+      }, 24 * 60 * 60 * 1000); // 24 часа
+    }, delay);
   }
 
   /**
@@ -204,9 +229,26 @@ export class NotificationScheduler {
    * Получить статус планировщика
    */
   getStatus() {
+    if (!this.isRunning) {
+      return {
+        isRunning: false,
+        nextCheck: 'Not scheduled'
+      };
+    }
+
+    // Вычисляем время следующего запуска (10:00 МСК)
+    const now = new Date();
+    const moscowTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Moscow"}));
+    const targetTime = new Date(moscowTime);
+    targetTime.setHours(10, 0, 0, 0);
+    
+    if (moscowTime.getTime() >= targetTime.getTime()) {
+      targetTime.setDate(targetTime.getDate() + 1);
+    }
+
     return {
       isRunning: this.isRunning,
-      nextCheck: this.intervalId ? 'Running every hour' : 'Not scheduled'
+      nextCheck: `Daily at 10:00 MSK (next: ${targetTime.toLocaleString('ru-RU', {timeZone: 'Europe/Moscow'})})`
     };
   }
 
