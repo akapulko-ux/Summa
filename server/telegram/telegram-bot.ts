@@ -41,9 +41,35 @@ export class TelegramBotManager implements ITelegramBotManager {
   private linkCodes: Map<string, { userId: number, expires: Date }> = new Map();
   
   constructor() {
-    this.bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, {
-      polling: true // Включаем polling для получения обновлений
-    });
+    try {
+      this.bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, {
+        polling: {
+          interval: 1000,
+          autoStart: true,
+          params: {
+            timeout: 10
+          }
+        }
+      });
+      
+      // Обработчик ошибок polling
+      this.bot.on('polling_error', (error) => {
+        console.log('[TELEGRAM] Polling error:', error.message);
+        if (error.message.includes('409 Conflict')) {
+          console.log('[TELEGRAM] Bot conflict detected, stopping polling...');
+          this.bot.stopPolling();
+          
+          // Пауза и повторный запуск
+          setTimeout(() => {
+            console.log('[TELEGRAM] Restarting polling...');
+            this.bot.startPolling();
+          }, 5000);
+        }
+      });
+      
+    } catch (error) {
+      console.error('[TELEGRAM] Error initializing bot:', error);
+    }
   }
   
   /**
