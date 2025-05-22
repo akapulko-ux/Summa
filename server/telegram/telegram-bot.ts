@@ -42,10 +42,7 @@ export class TelegramBotManager implements ITelegramBotManager {
   
   constructor() {
     this.bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, {
-      polling: {
-        interval: 300,
-        autoStart: false
-      }
+      polling: true // Включаем polling для получения обновлений
     });
   }
   
@@ -53,13 +50,6 @@ export class TelegramBotManager implements ITelegramBotManager {
    * Инициализация бота и настройка обработчиков
    */
   init(): void {
-    console.log('[TELEGRAM] Starting bot with controlled polling...');
-    
-    // Запускаем polling вручную с задержкой
-    setTimeout(() => {
-      this.bot.startPolling();
-      console.log('[TELEGRAM] Bot polling started successfully');
-    }, 2000);
     // Обработка команды /start с параметрами и без
     this.bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
       const chatId = msg.chat.id;
