@@ -137,7 +137,15 @@ export default function NotificationsPage() {
   // Мутация для создания нового шаблона
   const createTemplateMutation = useMutation({
     mutationFn: (data: { triggerType: string; title: string; messageRu: string; messageEn: string; isActive: boolean }) =>
-      apiRequest('POST', '/api/notification-templates', data),
+      apiRequest('POST', '/api/notification-templates', {
+        triggerType: data.triggerType,
+        title: data.title,
+        template: JSON.stringify({
+          ru: data.messageRu,
+          en: data.messageEn
+        }),
+        isActive: data.isActive
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/notification-templates'] });
       toast({
@@ -316,9 +324,12 @@ export default function NotificationsPage() {
                   id: 0,
                   triggerType: 'week_before',
                   title: '',
+                  template: '',
                   messageRu: '',
                   messageEn: '',
-                  isActive: true
+                  isActive: true,
+                  createdAt: '',
+                  updatedAt: ''
                 });
                 setIsDialogOpen(true);
               }}
@@ -428,7 +439,10 @@ export default function NotificationsPage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {language === 'ru' ? 'Редактировать шаблон' : 'Edit Template'}
+              {editingTemplate?.id === 0 
+                ? (language === 'ru' ? 'Создать шаблон' : 'Create Template')
+                : (language === 'ru' ? 'Редактировать шаблон' : 'Edit Template')
+              }
             </DialogTitle>
             <DialogDescription>
               {language === 'ru' 
