@@ -16,7 +16,7 @@ import { registerReportsRoutes } from "./reports/reports-routes";
 import { setupUploadRoutes } from "./routes/uploads";
 import { db } from "./db";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
-import { users, services, subscriptions } from "@shared/schema";
+import { users, services, subscriptions, notificationTemplates, notificationLogs } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -1153,6 +1153,134 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Подключаем маршруты для Telegram бота
   setupTelegramRoutes(app);
+
+  // API для управления шаблонами уведомлений
+  app.get("/api/notification-templates", isAdmin, async (req, res) => {
+    try {
+      const templates = await db.select().from(notificationTemplates).orderBy(asc(notificationTemplates.triggerType));
+      res.json(templates);
+    } catch (error) {
+      console.error("Error fetching notification templates:", error);
+      res.status(500).json({ message: "Failed to fetch notification templates" });
+    }
+  });
+
+  app.get("/api/notification-templates/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const [template] = await db.select().from(notificationTemplates).where(eq(notificationTemplates.id, id));
+      
+      if (!template) {
+        return res.status(404).json({ message: "Notification template not found" });
+      }
+      
+      res.json(template);
+    } catch (error) {
+      console.error("Error fetching notification template:", error);
+      res.status(500).json({ message: "Failed to fetch notification template" });
+    }
+  });
+
+  app.patch("/api/notification-templates/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { title, template, isActive } = req.body;
+      
+      const [updated] = await db.update(notificationTemplates)
+        .set({ 
+          title: title || undefined,
+          template: template || undefined, 
+          isActive: isActive !== undefined ? isActive : undefined,
+          updatedAt: new Date()
+        })
+        .where(eq(notificationTemplates.id, id))
+        .returning();
+
+      if (!updated) {
+        return res.status(404).json({ message: "Notification template not found" });
+      }
+
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating notification template:", error);
+      res.status(500).json({ message: "Failed to update notification template" });
+    }
+  });
+
+  // API для получения логов уведомлений
+  app.get("/api/notification-logs", isAdmin, async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = (page - 1) * limit;
+
+      const logs = await db.select({
+        log: notificationLogs,
+        subscription: subscriptions,
+        service: services,
+        user: users
+      })
+      .from(notificationLogs)
+      .leftJoin(subscriptions, eq(notificationLogs.subscriptionId, subscriptions.id))
+      .leftJoin(services, eq(subscriptions.serviceId, services.id))
+      .leftJoin(users, eq(subscriptions.userId, users.id))
+      .orderBy(desc(notificationLogs.sentAt))
+      .limit(limit)
+      .offset(offset);
+
+      res.json({ logs, page, limit });
+    } catch (error) {
+      console.error("Error fetching notification logs:", error);
+      res.status(500).json({ message: "Failed to fetch notification logs" });
+    }
+  });
+
+  // API для тестовой отправки уведомления
+  app.post("/api/notification-test", isAdmin, async (req, res) => {
+    try {
+      const { subscriptionId, triggerType } = req.body;
+      
+      if (!subscriptionId || !triggerType) {
+        return res.status(400).json({ message: "subscriptionId and triggerType are required" });
+      }
+
+      // Получаем данные подписки
+      const [subscriptionData] = await db.select({
+        subscription: subscriptions,
+        service: services,
+        user: users
+      })
+      .from(subscriptions)
+      .leftJoin(services, eq(subscriptions.serviceId, services.id))
+      .leftJoin(users, eq(subscriptions.userId, users.id))
+      .where(eq(subscriptions.id, subscriptionId));
+
+      if (!subscriptionData || !subscriptionData.service || !subscriptionData.user) {
+        return res.status(404).json({ message: "Subscription, service, or user not found" });
+      }
+
+      const { subscription, service, user } = subscriptionData;
+
+      // Импортируем сервис уведомлений
+      const { notificationService } = await import("./notifications/notification-service");
+
+      // Подготавливаем контекст
+      const context = {
+        service_name: service.title,
+        end_date: subscription.paidUntil ? notificationService.formatDate(subscription.paidUntil) : 'N/A',
+        amount: notificationService.formatAmount(subscription.paymentAmount || 0),
+        user_name: user.name || user.email
+      };
+
+      // Отправляем тестовое уведомление
+      const success = await notificationService.sendNotification(subscriptionId, triggerType, context);
+
+      res.json({ success, message: success ? "Test notification sent successfully" : "Failed to send test notification" });
+    } catch (error) {
+      console.error("Error sending test notification:", error);
+      res.status(500).json({ message: "Failed to send test notification" });
+    }
+  });
   
   // Включаем мониторинг запросов в режиме production
   if (process.env.NODE_ENV === 'production') {
