@@ -20,6 +20,8 @@ interface NotificationTemplate {
   triggerType: string;
   title: string;
   template: string;
+  messageRu: string;
+  messageEn: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -70,8 +72,30 @@ export default function NotificationsPage() {
   const [selectedSubscription, setSelectedSubscription] = useState<string>('');
 
   // Загрузка шаблонов уведомлений
-  const { data: templates, isLoading: templatesLoading } = useQuery({
+  const { data: rawTemplates, isLoading: templatesLoading } = useQuery({
     queryKey: ['/api/notification-templates']
+  });
+
+  // Преобразование шаблонов с парсингом JSON
+  const templates = rawTemplates?.map((template: any) => {
+    let messageRu = '';
+    let messageEn = '';
+    
+    try {
+      const parsedTemplate = JSON.parse(template.template);
+      messageRu = parsedTemplate.ru || '';
+      messageEn = parsedTemplate.en || '';
+    } catch (e) {
+      // Если template не JSON, используем как есть
+      messageRu = template.template || '';
+      messageEn = template.template || '';
+    }
+    
+    return {
+      ...template,
+      messageRu,
+      messageEn
+    };
   });
 
   // Загрузка логов уведомлений
@@ -113,11 +137,7 @@ export default function NotificationsPage() {
   // Мутация для создания нового шаблона
   const createTemplateMutation = useMutation({
     mutationFn: (data: { triggerType: string; title: string; messageRu: string; messageEn: string; isActive: boolean }) =>
-      apiRequest('/api/notification-templates', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      }),
+      apiRequest('POST', '/api/notification-templates', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/notification-templates'] });
       toast({
