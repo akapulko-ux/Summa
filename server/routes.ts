@@ -1183,23 +1183,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/notification-templates", isAdmin, async (req, res) => {
     try {
-      console.log("Request body:", req.body);
-      console.log("Schema validation starting...");
+      const { triggerType, title, template, isActive = true } = req.body;
       
-      const validatedData = insertNotificationTemplateSchema.parse(req.body);
-      console.log("Validated data:", validatedData);
+      // Простая валидация без Zod
+      if (!triggerType || !title || !template) {
+        return res.status(400).json({ message: "Missing required fields: triggerType, title, template" });
+      }
       
       const [created] = await db.insert(notificationTemplates)
-        .values(validatedData)
+        .values({
+          triggerType,
+          title,
+          template,
+          isActive
+        })
         .returning();
 
       res.status(201).json(created);
     } catch (error) {
       console.error("Error creating notification template:", error);
-      console.error("Error details:", error.errors || error.message);
-      if (error.name === 'ZodError') {
-        return res.status(400).json({ message: "Missing required fields", errors: error.errors });
-      }
       res.status(500).json({ message: "Failed to create notification template" });
     }
   });
