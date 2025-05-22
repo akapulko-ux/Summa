@@ -224,6 +224,25 @@ export default function NotificationsPage() {
   const handleSaveTemplate = () => {
     if (!editingTemplate) return;
     
+    // Проверяем обязательные поля
+    if (!editingTemplate.title.trim()) {
+      toast({
+        title: language === 'ru' ? "Ошибка" : "Error",
+        description: language === 'ru' ? "Пожалуйста, введите название шаблона" : "Please enter template title",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!editingTemplate.messageRu.trim() && !editingTemplate.messageEn.trim()) {
+      toast({
+        title: language === 'ru' ? "Ошибка" : "Error",
+        description: language === 'ru' ? "Пожалуйста, введите текст хотя бы для одного языка" : "Please enter message text for at least one language",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (editingTemplate.id === 0) {
       // Создание нового шаблона
       createTemplateMutation.mutate({
