@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Bell, Edit2, Send, History, Save, RefreshCw } from 'lucide-react';
+import { Bell, Edit2, Send, History, Save, RefreshCw, Play } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 
 interface NotificationTemplate {
@@ -64,6 +64,9 @@ export default function NotificationsPage() {
   const queryClient = useQueryClient();
   const [editingTemplate, setEditingTemplate] = useState<NotificationTemplate | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [testDialogOpen, setTestDialogOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<NotificationTemplate | null>(null);
+  const [selectedSubscription, setSelectedSubscription] = useState<string>('');
 
   // Загрузка шаблонов уведомлений
   const { data: templates, isLoading: templatesLoading } = useQuery({
@@ -73,6 +76,11 @@ export default function NotificationsPage() {
   // Загрузка логов уведомлений
   const { data: logsData, isLoading: logsLoading } = useQuery({
     queryKey: ['/api/notification-logs']
+  });
+
+  // Загрузка списка подписок для тестирования
+  const { data: subscriptionsData } = useQuery({
+    queryKey: ['/api/subscriptions/all']
   });
 
   // Мутация для обновления шаблона
@@ -118,6 +126,15 @@ export default function NotificationsPage() {
           : (language === 'ru' ? "Не удалось отправить уведомление" : "Failed to send notification"),
         variant: data.success ? "default" : "destructive"
       });
+      setTestDialogOpen(false);
+      setSelectedSubscription('');
+    },
+    onError: () => {
+      toast({
+        title: language === 'ru' ? "Ошибка" : "Error",
+        description: language === 'ru' ? "Не удалось отправить тестовое уведомление" : "Failed to send test notification",
+        variant: "destructive"
+      });
     }
   });
 
@@ -136,6 +153,20 @@ export default function NotificationsPage() {
         template: editingTemplate.template,
         isActive: editingTemplate.isActive
       }
+    });
+  };
+
+  const handleTestTemplate = (template: NotificationTemplate) => {
+    setSelectedTemplate(template);
+    setTestDialogOpen(true);
+  };
+
+  const handleSendTestNotification = () => {
+    if (!selectedTemplate || !selectedSubscription) return;
+    
+    testNotificationMutation.mutate({
+      subscriptionId: parseInt(selectedSubscription),
+      triggerType: selectedTemplate.triggerType
     });
   };
 
@@ -200,6 +231,14 @@ export default function NotificationsPage() {
                       onClick={() => handleEditTemplate(template)}
                     >
                       <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleTestTemplate(template)}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      <Play className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardHeader>
@@ -344,6 +383,76 @@ export default function NotificationsPage() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Диалог тестирования уведомлений */}
+      <Dialog open={testDialogOpen} onOpenChange={setTestDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {language === 'ru' ? 'Тестовое уведомление' : 'Test Notification'}
+            </DialogTitle>
+            <DialogDescription>
+              {language === 'ru' 
+                ? 'Выберите подписку для тестирования шаблона уведомления'
+                : 'Select a subscription to test the notification template'
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedTemplate && (
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium text-sm">
+                  {language === 'ru' ? 'Шаблон:' : 'Template:'} {selectedTemplate.title}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {triggerTypeNames[selectedTemplate.triggerType]?.[language] || selectedTemplate.triggerType}
+                </p>
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {language === 'ru' ? 'Выберите подписку:' : 'Select subscription:'}
+              </label>
+              <select
+                value={selectedSubscription}
+                onChange={(e) => setSelectedSubscription(e.target.value)}
+                className="w-full p-2 border rounded-md text-sm"
+              >
+                <option value="">
+                  {language === 'ru' ? 'Выберите подписку...' : 'Select subscription...'}
+                </option>
+                {subscriptionsData?.map((subscription: any) => (
+                  <option key={subscription.id} value={subscription.id}>
+                    {subscription.serviceName || subscription.serviceTitle} - {subscription.userName} ({subscription.userEmail})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-3 mt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setTestDialogOpen(false);
+                setSelectedSubscription('');
+              }}
+            >
+              {language === 'ru' ? 'Отмена' : 'Cancel'}
+            </Button>
+            <Button 
+              onClick={handleSendTestNotification}
+              disabled={!selectedSubscription || testNotificationMutation.isPending}
+            >
+              {testNotificationMutation.isPending && (
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              )}
+              {language === 'ru' ? 'Отправить' : 'Send'}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
       </div>
