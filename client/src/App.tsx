@@ -38,6 +38,7 @@ function Router() {
       <AdminRoute path="/admin/services" component={ServicesPage} />
       <AdminRoute path="/admin/users" component={UserManagement} />
       <AdminRoute path="/admin/backups" component={BackupsPage} />
+      <AdminRoute path="/admin/notifications" component={NotificationsPage} />
       <AdminRoute path="/admin/analytics" component={AnalyticsPage} />
       <AdminRoute path="/admin/reports" component={ReportsPage} />
       <AdminRoute path="/admin/monitoring" component={PerformanceMonitoring} />
