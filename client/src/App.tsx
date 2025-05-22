@@ -18,6 +18,7 @@ import UserManagement from "@/pages/user-management";
 import BackupsPage from "@/pages/backups-page";
 import AnalyticsPage from "@/pages/analytics-page-v3";
 import ReportsPage from "@/pages/reports-page";
+import NotificationsPage from "@/pages/notifications-page";
 import PerformanceMonitoring from "@/pages/performance-monitoring";
 import AdminToolsPage from "@/pages/admin-tools-page";
 // @ts-ignore - импортируем провайдер темы

@@ -1279,6 +1279,7 @@ export const en: Translation = {
     help: "Help & Support",
     reports: "Reports",
     backups: "Backups",
+    notifications: "Notifications",
     monitoring: "Monitoring",
   },
 
@@ -2188,6 +2189,7 @@ export const ru: Translation = {
     help: "Помощь и поддержка",
     reports: "Отчеты",
     backups: "Резервные копии",
+    notifications: "Уведомления",
     monitoring: "Мониторинг",
   },
 

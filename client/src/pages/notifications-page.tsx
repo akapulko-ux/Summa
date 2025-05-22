@@ -1,0 +1,350 @@
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from '@/hooks/use-translations';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { Bell, Edit2, Send, History, Save, RefreshCw } from 'lucide-react';
+import { apiRequest } from '@/lib/queryClient';
+
+interface NotificationTemplate {
+  id: number;
+  triggerType: string;
+  title: string;
+  template: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface NotificationLog {
+  log: {
+    id: number;
+    subscriptionId: number;
+    triggerType: string;
+    message: string;
+    sentAt: string;
+    success: boolean;
+  };
+  subscription: {
+    id: number;
+    title: string;
+  } | null;
+  service: {
+    title: string;
+  } | null;
+  user: {
+    name: string | null;
+    email: string;
+  } | null;
+}
+
+const triggerTypeNames: Record<string, { en: string; ru: string }> = {
+  month_before: { en: "1 Month Before", ru: "За месяц" },
+  two_weeks_before: { en: "2 Weeks Before", ru: "За 2 недели" },
+  ten_days_before: { en: "10 Days Before", ru: "За 10 дней" },
+  week_before: { en: "1 Week Before", ru: "За неделю" },
+  three_days_before: { en: "3 Days Before", ru: "За 3 дня" },
+  day_before: { en: "1 Day Before", ru: "За день" },
+  expiry_day: { en: "Expiry Day", ru: "День окончания" },
+  renewed: { en: "Renewed", ru: "Продлено" }
+};
+
+export default function NotificationsPage() {
+  const { t, language } = useTranslations();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [editingTemplate, setEditingTemplate] = useState<NotificationTemplate | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Загрузка шаблонов уведомлений
+  const { data: templates, isLoading: templatesLoading } = useQuery({
+    queryKey: ['/api/notification-templates'],
+    queryFn: () => apiRequest('/api/notification-templates')
+  });
+
+  // Загрузка логов уведомлений
+  const { data: logsData, isLoading: logsLoading } = useQuery({
+    queryKey: ['/api/notification-logs'],
+    queryFn: () => apiRequest('/api/notification-logs')
+  });
+
+  // Мутация для обновления шаблона
+  const updateTemplateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<NotificationTemplate> }) =>
+      apiRequest(`/api/notification-templates/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notification-templates'] });
+      toast({
+        title: language === 'ru' ? "Успешно" : "Success",
+        description: language === 'ru' ? "Шаблон обновлен" : "Template updated"
+      });
+      setIsDialogOpen(false);
+      setEditingTemplate(null);
+    },
+    onError: () => {
+      toast({
+        title: language === 'ru' ? "Ошибка" : "Error",
+        description: language === 'ru' ? "Не удалось обновить шаблон" : "Failed to update template",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Мутация для тестовой отправки
+  const testNotificationMutation = useMutation({
+    mutationFn: (data: { subscriptionId: number; triggerType: string }) =>
+      apiRequest('/api/notification-test', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notification-logs'] });
+      toast({
+        title: language === 'ru' ? "Уведомление отправлено" : "Notification Sent",
+        description: data.success 
+          ? (language === 'ru' ? "Тестовое уведомление успешно отправлено" : "Test notification sent successfully")
+          : (language === 'ru' ? "Не удалось отправить уведомление" : "Failed to send notification"),
+        variant: data.success ? "default" : "destructive"
+      });
+    }
+  });
+
+  const handleEditTemplate = (template: NotificationTemplate) => {
+    setEditingTemplate({...template});
+    setIsDialogOpen(true);
+  };
+
+  const handleSaveTemplate = () => {
+    if (!editingTemplate) return;
+    
+    updateTemplateMutation.mutate({
+      id: editingTemplate.id,
+      data: {
+        title: editingTemplate.title,
+        template: editingTemplate.template,
+        isActive: editingTemplate.isActive
+      }
+    });
+  };
+
+  if (templatesLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Bell className="h-8 w-8 text-primary" />
+        <div>
+          <h1 className="text-3xl font-bold">
+            {language === 'ru' ? 'Управление уведомлениями' : 'Notification Management'}
+          </h1>
+          <p className="text-muted-foreground">
+            {language === 'ru' 
+              ? 'Настройте шаблоны уведомлений для Telegram бота' 
+              : 'Configure notification templates for Telegram bot'
+            }
+          </p>
+        </div>
+      </div>
+
+      <Tabs defaultValue="templates" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="templates">
+            {language === 'ru' ? 'Шаблоны' : 'Templates'}
+          </TabsTrigger>
+          <TabsTrigger value="logs">
+            {language === 'ru' ? 'Логи отправки' : 'Delivery Logs'}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="templates" className="space-y-4">
+          <div className="grid gap-4">
+            {templates?.map((template: NotificationTemplate) => (
+              <Card key={template.id}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <div>
+                    <CardTitle className="text-lg">
+                      {triggerTypeNames[template.triggerType]?.[language] || template.triggerType}
+                    </CardTitle>
+                    <CardDescription>{template.title}</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={template.isActive ? "default" : "secondary"}>
+                      {template.isActive 
+                        ? (language === 'ru' ? 'Активен' : 'Active')
+                        : (language === 'ru' ? 'Неактивен' : 'Inactive')
+                      }
+                    </Badge>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditTemplate(template)}
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {template.template}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="logs" className="space-y-4">
+          {logsLoading ? (
+            <div className="flex items-center justify-center h-32">
+              <RefreshCw className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {logsData?.logs?.map((logEntry: NotificationLog, index: number) => (
+                <Card key={logEntry.log.id || index}>
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Badge variant={logEntry.log.success ? "default" : "destructive"}>
+                            {logEntry.log.success 
+                              ? (language === 'ru' ? 'Отправлено' : 'Sent')
+                              : (language === 'ru' ? 'Ошибка' : 'Failed')
+                            }
+                          </Badge>
+                          <span className="text-sm font-medium">
+                            {triggerTypeNames[logEntry.log.triggerType]?.[language] || logEntry.log.triggerType}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {language === 'ru' ? 'Пользователь:' : 'User:'} {logEntry.user?.name || logEntry.user?.email}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {language === 'ru' ? 'Сервис:' : 'Service:'} {logEntry.service?.title}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(logEntry.log.sentAt).toLocaleString(language === 'ru' ? 'ru-RU' : 'en-US')}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Диалог редактирования шаблона */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {language === 'ru' ? 'Редактировать шаблон' : 'Edit Template'}
+            </DialogTitle>
+            <DialogDescription>
+              {language === 'ru' 
+                ? 'Измените содержимое и настройки шаблона уведомления'
+                : 'Modify the content and settings of the notification template'
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          {editingTemplate && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">
+                  {language === 'ru' ? 'Название' : 'Title'}
+                </Label>
+                <Input
+                  id="title"
+                  value={editingTemplate.title}
+                  onChange={(e) => setEditingTemplate({
+                    ...editingTemplate,
+                    title: e.target.value
+                  })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="template">
+                  {language === 'ru' ? 'Шаблон сообщения' : 'Message Template'}
+                </Label>
+                <Textarea
+                  id="template"
+                  rows={6}
+                  value={editingTemplate.template}
+                  onChange={(e) => setEditingTemplate({
+                    ...editingTemplate,
+                    template: e.target.value
+                  })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {language === 'ru' 
+                    ? 'Доступные переменные: {service_name}, {end_date}, {amount}, {user_name}'
+                    : 'Available variables: {service_name}, {end_date}, {amount}, {user_name}'
+                  }
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="active"
+                  checked={editingTemplate.isActive}
+                  onCheckedChange={(checked) => setEditingTemplate({
+                    ...editingTemplate,
+                    isActive: checked
+                  })}
+                />
+                <Label htmlFor="active">
+                  {language === 'ru' ? 'Активен' : 'Active'}
+                </Label>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
+                  {language === 'ru' ? 'Отмена' : 'Cancel'}
+                </Button>
+                <Button
+                  onClick={handleSaveTemplate}
+                  disabled={updateTemplateMutation.isPending}
+                >
+                  {updateTemplateMutation.isPending ? (
+                    <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
+                  )}
+                  {language === 'ru' ? 'Сохранить' : 'Save'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
