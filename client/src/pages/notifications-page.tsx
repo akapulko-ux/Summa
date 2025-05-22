@@ -110,6 +110,32 @@ export default function NotificationsPage() {
     }
   });
 
+  // Мутация для создания нового шаблона
+  const createTemplateMutation = useMutation({
+    mutationFn: (data: { triggerType: string; title: string; messageRu: string; messageEn: string; isActive: boolean }) =>
+      apiRequest('/api/notification-templates', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notification-templates'] });
+      toast({
+        title: language === 'ru' ? "Успешно" : "Success",
+        description: language === 'ru' ? "Шаблон создан" : "Template created"
+      });
+      setIsDialogOpen(false);
+      setEditingTemplate(null);
+    },
+    onError: () => {
+      toast({
+        title: language === 'ru' ? "Ошибка" : "Error",
+        description: language === 'ru' ? "Не удалось создать шаблон" : "Failed to create template",
+        variant: "destructive"
+      });
+    }
+  });
+
   // Мутация для тестовой отправки
   const testNotificationMutation = useMutation({
     mutationFn: async (data: { subscriptionId: number; triggerType: string }) => {
@@ -167,14 +193,29 @@ export default function NotificationsPage() {
   const handleSaveTemplate = () => {
     if (!editingTemplate) return;
     
-    updateTemplateMutation.mutate({
-      id: editingTemplate.id,
-      data: {
+    if (editingTemplate.id === 0) {
+      // Создание нового шаблона
+      createTemplateMutation.mutate({
+        triggerType: editingTemplate.triggerType,
         title: editingTemplate.title,
-        template: editingTemplate.template,
+        messageRu: editingTemplate.messageRu,
+        messageEn: editingTemplate.messageEn,
         isActive: editingTemplate.isActive
-      }
-    });
+      });
+    } else {
+      // Обновление существующего шаблона
+      updateTemplateMutation.mutate({
+        id: editingTemplate.id,
+        data: {
+          title: editingTemplate.title,
+          template: JSON.stringify({
+            ru: editingTemplate.messageRu,
+            en: editingTemplate.messageEn
+          }),
+          isActive: editingTemplate.isActive
+        }
+      });
+    }
   };
 
   const handleTestTemplate = (template: NotificationTemplate) => {

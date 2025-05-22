@@ -1207,6 +1207,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API для создания нового шаблона уведомлений
+  app.post("/api/notification-templates", isAdmin, async (req, res) => {
+    try {
+      const { triggerType, title, messageRu, messageEn, isActive } = req.body;
+      
+      // Validate required fields
+      if (!triggerType || !title || !messageRu || !messageEn) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Create template text with both languages
+      const template = JSON.stringify({
+        ru: messageRu,
+        en: messageEn
+      });
+
+      const [newTemplate] = await db.insert(notificationTemplates)
+        .values({
+          triggerType,
+          title,
+          template,
+          isActive: isActive !== undefined ? isActive : true
+        })
+        .returning();
+
+      res.status(201).json(newTemplate);
+    } catch (error) {
+      console.error("Error creating notification template:", error);
+      res.status(500).json({ message: "Failed to create notification template" });
+    }
+  });
+
   // API для получения логов уведомлений
   app.get("/api/notification-logs", isAdmin, async (req, res) => {
     try {
