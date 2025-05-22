@@ -136,6 +136,28 @@ export default function NotificationsPage() {
     }
   });
 
+  // Мутация для ручного запуска проверки автоматических уведомлений
+  const manualCheckMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/notification-check', {});
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notification-logs'] });
+      toast({
+        title: language === 'ru' ? "Успешно" : "Success",
+        description: language === 'ru' ? "Проверка автоматических уведомлений выполнена" : "Automatic notification check completed"
+      });
+    },
+    onError: () => {
+      toast({
+        title: language === 'ru' ? "Ошибка" : "Error",
+        description: language === 'ru' ? "Не удалось запустить проверку уведомлений" : "Failed to run notification check",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleEditTemplate = (template: NotificationTemplate) => {
     setEditingTemplate({...template});
     setIsDialogOpen(true);
@@ -182,14 +204,30 @@ export default function NotificationsPage() {
     <AppLayout 
       title={language === 'ru' ? 'Управление уведомлениями' : 'Notification Management'}
       actions={
-        <div className="flex items-center gap-2">
-          <Bell className="h-5 w-5 text-primary" />
-          <span className="text-sm text-muted-foreground">
-            {language === 'ru' 
-              ? 'Настройка Telegram уведомлений' 
-              : 'Telegram notifications setup'
-            }
-          </span>
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => manualCheckMutation.mutate()}
+            disabled={manualCheckMutation.isPending}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            {manualCheckMutation.isPending ? (
+              <RefreshCw className="h-4 w-4 animate-spin" />
+            ) : (
+              <Bell className="h-4 w-4" />
+            )}
+            {language === 'ru' ? 'Проверить уведомления' : 'Check Notifications'}
+          </Button>
+          <div className="flex items-center gap-2">
+            <Bell className="h-5 w-5 text-primary" />
+            <span className="text-sm text-muted-foreground">
+              {language === 'ru' 
+                ? 'Настройка Telegram уведомлений' 
+                : 'Telegram notifications setup'
+              }
+            </span>
+          </div>
         </div>
       }
     >
