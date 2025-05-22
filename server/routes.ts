@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema, insertServiceLeadSchema, serviceLeads } from "@shared/schema";
+import { insertServiceSchema, insertSubscriptionSchema, insertCustomFieldSchema, insertServiceLeadSchema, insertNotificationTemplateSchema, serviceLeads } from "@shared/schema";
 import { ZodError } from "zod";
 import { zValidationErrorToMessage, checkSubscriptionStatus } from "./utils";
 import backupRoutes from "./backup/backup-routes";
@@ -1183,7 +1183,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/notification-templates", isAdmin, async (req, res) => {
     try {
+      console.log("Request body:", req.body);
+      console.log("Schema validation starting...");
+      
       const validatedData = insertNotificationTemplateSchema.parse(req.body);
+      console.log("Validated data:", validatedData);
       
       const [created] = await db.insert(notificationTemplates)
         .values(validatedData)
@@ -1192,6 +1196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(created);
     } catch (error) {
       console.error("Error creating notification template:", error);
+      console.error("Error details:", error.errors || error.message);
       if (error.name === 'ZodError') {
         return res.status(400).json({ message: "Missing required fields", errors: error.errors });
       }
