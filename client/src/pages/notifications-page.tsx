@@ -136,8 +136,8 @@ export default function NotificationsPage() {
 
   // Мутация для создания нового шаблона
   const createTemplateMutation = useMutation({
-    mutationFn: (data: { triggerType: string; title: string; messageRu: string; messageEn: string; isActive: boolean }) =>
-      apiRequest('POST', '/api/notification-templates', {
+    mutationFn: (data: { triggerType: string; title: string; messageRu: string; messageEn: string; isActive: boolean }) => {
+      const payload = {
         triggerType: data.triggerType,
         title: data.title,
         template: JSON.stringify({
@@ -145,7 +145,10 @@ export default function NotificationsPage() {
           en: data.messageEn
         }),
         isActive: data.isActive
-      }),
+      };
+      console.log('Отправляем данные на сервер:', payload);
+      return apiRequest('POST', '/api/notification-templates', payload);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/notification-templates'] });
       toast({
