@@ -84,7 +84,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="flex flex-col h-full">
                 <div className="flex items-center border-b p-4">
                   <div className="flex items-center">
-                    <h2 className="text-lg font-semibold">Сумма</h2>
+                    <h2 className="text-lg font-semibold">Summa</h2>
                   </div>
                 </div>
                 <nav className="flex-1 overflow-auto p-4">

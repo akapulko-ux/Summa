@@ -251,16 +251,16 @@ export function setupAuth(app: Express) {
       
       // Send email with the magic link
       await transporter.sendMail({
-        from: process.env.EMAIL_FROM || '"Сумма" <noreply@summa.com>',
+        from: process.env.EMAIL_FROM || '"Summa" <noreply@summa.com>',
         to: email,
         subject: "Your Magic Login Link",
         text: `Click this link to log in: ${magicLink} (valid for 10 minutes)`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #333;">Login to Сумма</h2>
+            <h2 style="color: #333;">Login to Summa</h2>
             <p>Click the button below to log in to your account. This link will expire in 10 minutes.</p>
             <a href="${magicLink}" style="display: inline-block; background-color: #7c3aed; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin: 15px 0;">
-              Login to Сумма
+              Login to Summa
             </a>
             <p style="color: #666; font-size: 0.9em;">If you didn't request this email, you can safely ignore it.</p>
           </div>
