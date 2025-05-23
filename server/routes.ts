@@ -762,9 +762,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const [service] = await db.select().from(services).where(eq(services.id, validatedData.serviceId));
         const serviceName = service ? service.title : `Service ID: ${validatedData.serviceId}`;
         
-        // Send lead to Telegram group using our bot manager
-        const { telegramBotManager } = await import('./telegram/telegram-bot');
-        await telegramBotManager.sendServiceLeadToGroup({
+        // Send lead to Telegram group using HTTP API
+        const { telegramHttpAPI } = await import('./telegram/telegram-http-api');
+        await telegramHttpAPI.sendServiceLeadToGroup({
           name: validatedData.name,
           phone: validatedData.phone,
           email: validatedData.email || undefined,
