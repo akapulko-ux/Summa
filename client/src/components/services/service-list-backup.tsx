@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Service } from "@shared/schema";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogDescription,
-  DialogTrigger 
-} from "@/components/ui/dialog";
-import {
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardContent,
+  CardFooter
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Service } from "@shared/schema";
+import { 
   Table,
   TableBody,
   TableCell,
@@ -21,8 +18,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Eye, Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
+import { SearchIcon, Pencil, Trash, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { ServiceForm } from "./service-form";
 import { ServiceDetailsView } from "./service-details";
 import { useAuth } from "@/hooks/use-auth";
@@ -50,6 +50,7 @@ export function ServiceList() {
   const isAdmin = user?.role === "admin";
   
   // Check if any filters are applied (not default)
+  // showCustom не учитывается в filtersApplied - это отдельный переключатель
   const filtersApplied = 
     filters.search !== "" || 
     filters.status !== "all" || 
@@ -71,25 +72,14 @@ export function ServiceList() {
     queryKey: ["/api/services", { page, limit, ...filters }],
   });
 
-  // Предзагрузка изображений сервисов для ускорения админского интерфейса
-  const services = data?.services || [];
-  const imageUrls = services.map(service => {
-    if (service.iconData && service.iconMimeType) {
-      return `data:${service.iconMimeType};base64,${service.iconData}`;
-    }
-    if (service.iconUrl) {
-      return service.iconUrl;
-    }
-    return `/api/service-icon/${service.id}`;
-  });
-  usePreloadImages(imageUrls);
-
   const deleteServiceMutation = useMutation({
     mutationFn: async (serviceId: number) => {
       await apiRequest("DELETE", `/api/services/${serviceId}`);
     },
     onSuccess: () => {
+      // Явно инвалидируем кеш для обновления списка сервисов
       queryClient.invalidateQueries({ queryKey: ["/api/services"] });
+      // Принудительно обновляем текущие данные
       refetch();
     },
     onError: (error) => {
@@ -111,7 +101,9 @@ export function ServiceList() {
   const handleDelete = (serviceId: number) => {
     if (window.confirm(t('services.confirmDelete'))) {
       deleteServiceMutation.mutate(serviceId);
+      // Вызываем рефреш для обновления данных немедленно
       setTimeout(() => {
+        // Используем setTimeout, чтобы дать мутации время выполнить запрос на удаление
         refetch();
       }, 300);
     }
@@ -129,13 +121,29 @@ export function ServiceList() {
     }
   };
 
+  // Предзагрузка изображений сервисов для ускорения админского интерфейса
+  const services = data?.services || [];
+  const imageUrls = services.map(service => {
+    if (service.iconData && service.iconMimeType) {
+      return `data:${service.iconMimeType};base64,${service.iconData}`;
+    }
+    if (service.iconUrl) {
+      return service.iconUrl;
+    }
+    return `/api/service-icon/${service.id}`;
+  });
+  usePreloadImages(imageUrls);
+
+  // Function to format cashback value for display
   const formatCashback = (cashback: string | null | undefined) => {
     if (!cashback) return language === 'ru' ? "Нет" : "None";
     
+    // Display as percentage if it ends with %
     if (cashback.endsWith("%")) {
       return cashback;
     }
     
+    // Otherwise display as currency
     return `${language === 'ru' ? '₽' : '$'}${cashback}`;
   };
 
@@ -173,7 +181,7 @@ export function ServiceList() {
                       ? t('services.addService')
                       : t('services.addCustomService')}
                   </DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription id="dialog-description">
                     {isAdmin 
                       ? t('services.serviceDescription')
                       : t('services.customServiceDescription')}
@@ -194,6 +202,7 @@ export function ServiceList() {
           sortOptions={sortOptions}
           onFilterChange={(newFilters) => {
             setFilters(newFilters);
+            // Reset to page 1 when filters change
             setPage(1);
           }}
           onResetFilters={() => {
@@ -202,7 +211,7 @@ export function ServiceList() {
               status: "all",
               sortBy: "title", 
               sortOrder: "asc",
-              showCustom: filters.showCustom
+              showCustom: filters.showCustom // Сохраняем текущее значение showCustom
             });
             setPage(1);
           }}
@@ -222,6 +231,7 @@ export function ServiceList() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
+                // Loading state
                 Array(5).fill(0).map((_, i) => (
                   <TableRow key={i}>
                     <TableCell>
@@ -386,3 +396,90 @@ export function ServiceList() {
     </Card>
   );
 }
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDelete(service.id)}>
+                              <Trash className="h-4 w-4" />
+                              <span className="sr-only">{language === 'ru' ? 'Удалить' : 'Delete'}</span>
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+      {data && (
+        <CardFooter className="border-t px-6 py-4">
+          <div className="flex items-center justify-between w-full">
+            <div className="text-sm text-muted-foreground">
+              {language === 'ru' 
+                ? `Показано ${data.services.length} из ${data.total} сервисов` 
+                : `Showing ${data.services.length} of ${data.total} services`}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePrevPage}
+                disabled={page === 1}
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                {t('common.prev')}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleNextPage}
+                disabled={page >= Math.ceil(data.total / limit)}
+              >
+                {t('common.next')}
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+        </CardFooter>
+      )}
+
+      {/* Edit Service Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t('services.editService')}</DialogTitle>
+            <DialogDescription id="dialog-description">{t('services.serviceDescription')}</DialogDescription>
+          </DialogHeader>
+          {selectedServiceId && (
+            <ServiceForm 
+              serviceId={selectedServiceId} 
+              onSuccess={() => {
+                // Явно инвалидируем кеш для обновления списка сервисов
+                queryClient.invalidateQueries({ queryKey: ["/api/services"] });
+                // Принудительно обновляем текущие данные
+                refetch();
+                setIsEditDialogOpen(false);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* View Service Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle>{t('services.serviceDetails')}</DialogTitle>
+            <DialogDescription id="dialog-description">{t('common.information')}</DialogDescription>
+          </DialogHeader>
+          {selectedServiceId && (
+            <ServiceDetailsView serviceId={selectedServiceId} />
+          )}
+        </DialogContent>
+      </Dialog>
+    </Card>
+  );
+}
+
+// Removed redundant ServiceDetails component as it's replaced by ServiceDetailsView
