@@ -284,7 +284,7 @@ export function ServiceList() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">
+                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
                         {formatCashback(service.cashback)}
                       </Badge>
                     </TableCell>
