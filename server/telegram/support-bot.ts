@@ -12,7 +12,8 @@ export class SupportBotManager {
   private supportChatId: string = '8184506267'; // Chat ID для @summa_help_bot
   
   constructor() {
-    this.bot = new TelegramBot(process.env.TELEGRAM_SUPPORT_BOT_TOKEN!, {
+    // Используем основной бот для отправки заявок в бот поддержки
+    this.bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, {
       polling: false // Не нужен polling для отправки сообщений
     });
   }
