@@ -130,7 +130,7 @@ export default function Dashboard() {
                 {t('dashboard.messageUs')}
               </p>
               <Button asChild variant="outline" className="w-full">
-                <a href="https://t.me/saasly_bot" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/summa_help_bot" target="_blank" rel="noopener noreferrer">
                   {t('dashboard.viewProfile')}
                 </a>
               </Button>
