@@ -9,7 +9,7 @@ if (!process.env.TELEGRAM_SUPPORT_BOT_TOKEN) {
  */
 export class SupportBotManager {
   private bot: TelegramBot;
-  private supportChatId: string = '@summa_help_bot'; // Можно настроить конкретный chat_id если нужно
+  private supportChatId: string = process.env.SUPPORT_CHAT_ID || '@summa_help_bot';
   
   constructor() {
     this.bot = new TelegramBot(process.env.TELEGRAM_SUPPORT_BOT_TOKEN!, {
