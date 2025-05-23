@@ -111,7 +111,55 @@ class CacheManager {
   setDefaultTTL(seconds: number): void {
     this.defaultTTL = seconds;
   }
+
+  /**
+   * Получить размер кэша
+   */
+  getSize(): number {
+    return this.cache.size;
+  }
+
+  /**
+   * Получить все ключи кэша
+   */
+  getKeys(): string[] {
+    return Array.from(this.cache.keys());
+  }
+
+  /**
+   * Проверить, существует ли ключ в кэше
+   */
+  has(key: string): boolean {
+    const item = this.cache.get(key);
+    if (!item) return false;
+    
+    if (Date.now() > item.expiry) {
+      this.cache.delete(key);
+      return false;
+    }
+    
+    return true;
+  }
 }
 
 // Экспортируем singleton инстанс кэш-менеджера
 export const cacheManager = new CacheManager();
+
+// Настройки кэширования для разных типов данных
+export const CACHE_KEYS = {
+  SERVICES: 'services:all',
+  USER_SERVICES: (userId: number) => `services:user:${userId}`,
+  USER_SUBSCRIPTIONS: (userId: number) => `subscriptions:user:${userId}`,
+  USER_CASHBACK_TOTAL: (userId: number) => `cashback:total:${userId}`,
+  USER_CASHBACK_BALANCE: (userId: number) => `cashback:balance:${userId}`,
+  USER_CASHBACK_TRANSACTIONS: (userId: number) => `cashback:transactions:${userId}`,
+  SYSTEM_STATS: 'stats:system',
+  NOTIFICATION_TEMPLATES: 'notifications:templates',
+};
+
+export const CACHE_TTL = {
+  SERVICES: 300, // 5 минут - сервисы редко меняются
+  USER_DATA: 60, // 1 минута - пользовательские данные
+  STATS: 120, // 2 минуты - статистика
+  TRANSACTIONS: 30, // 30 секунд - транзакции
+};
