@@ -130,7 +130,7 @@ export function TelegramConnect() {
     if (!linkCode) return null;
 
     // Формируем прямую ссылку для Telegram с командой
-    const directTelegramLink = `https://t.me/saasly_bot?start=link_${linkCode}`;
+    const directTelegramLink = `https://t.me/summa_not_bot?start=link_${linkCode}`;
 
     // Функция для копирования команды в буфер обмена
     const copyCommand = () => {
@@ -160,7 +160,7 @@ export function TelegramConnect() {
           
           <p className="text-sm text-muted-foreground mb-2">Или выполните эти шаги вручную:</p>
           
-          <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/saasly_bot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@saasly_bot</a></p>
+          <p className="mb-2">1. {t('telegram.openBot')}: <a href="https://t.me/summa_not_bot" target="_blank" rel="noopener noreferrer" className="text-primary underline">@summa_not_bot</a></p>
           <p className="mb-2 flex items-center">
             2. {t('telegram.sendCommand')}: 
             <code className="bg-muted px-2 py-1 rounded ml-1 mr-1">/link {linkCode}</code>
