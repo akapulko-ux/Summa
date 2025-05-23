@@ -14,6 +14,7 @@ import { scalingManager } from "./scaling";
 import { setupMonitoringRoutes } from "./routes/monitoring-routes";
 import { registerReportsRoutes } from "./reports/reports-routes";
 import { setupUploadRoutes } from "./routes/uploads";
+import { setupOptimizedRoutes } from "./optimized-routes";
 import { db } from "./db";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
 import { users, services, subscriptions, notificationTemplates, notificationLogs } from "@shared/schema";
@@ -1302,6 +1303,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to run notification check" });
     }
   });
+  
+  // Подключаем оптимизированные роуты с кэшированием
+  setupOptimizedRoutes(app);
   
   // Включаем мониторинг запросов в режиме production
   if (process.env.NODE_ENV === 'production') {
