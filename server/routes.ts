@@ -762,11 +762,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const [service] = await db.select().from(services).where(eq(services.id, validatedData.serviceId));
         const serviceName = service ? service.title : `Service ID: ${validatedData.serviceId}`;
         
-        // Format notification message
-        const message = `🔔 New service lead received!\n\nService: ${serviceName}\nName: ${validatedData.name}\nPhone: ${validatedData.phone}${validatedData.email ? '\nEmail: ' + validatedData.email : ''}`;
+        // Send lead to Telegram group using our bot manager
+        const { telegramBotManager } = await import('./telegram/telegram-bot');
+        await telegramBotManager.sendServiceLeadToGroup({
+          name: validatedData.name,
+          phone: validatedData.phone,
+          email: validatedData.email || undefined,
+          serviceName: serviceName
+        });
         
-        // Using the setupTelegramRoutes function from telegram-routes.ts which has a sendMessage method
-        console.log("Sending telegram notification:", message);
+        console.log("Service lead sent to Telegram group successfully");
       } catch (notifyError) {
         console.error("Failed to send notification:", notifyError);
         // Continue processing even if notification fails

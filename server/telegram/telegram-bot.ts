@@ -31,6 +31,9 @@ export interface ITelegramBotManager {
   
   // Получение информации о привязанных пользователях
   getLinkedUsers(): Promise<{ userId: number; telegramChatId: number; linkDate: Date }[]>;
+  
+  // Отправка заявки на услугу в группу
+  sendServiceLeadToGroup(leadData: { name: string; phone: string; email?: string; serviceName: string }): Promise<boolean>;
 }
 
 /**
@@ -369,6 +372,35 @@ export class TelegramBotManager implements ITelegramBotManager {
       telegramChatId: parseInt(user.telegramChatId || '0'),
       linkDate: user.updatedAt || new Date()
     }));
+  }
+  
+  /**
+   * Отправка заявки на услугу в группу
+   * @param leadData Данные заявки
+   * @returns Результат отправки
+   */
+  async sendServiceLeadToGroup(leadData: { name: string; phone: string; email?: string; serviceName: string }): Promise<boolean> {
+    try {
+      // ID группы для отправки заявок
+      const GROUP_CHAT_ID = -1002638718178;
+      
+      // Форматируем сообщение
+      const message = `🚀 Новая заявка на услугу!\n\n` +
+        `📋 Услуга: ${leadData.serviceName}\n` +
+        `👤 Имя: ${leadData.name}\n` +
+        `📞 Телефон: ${leadData.phone}` +
+        (leadData.email ? `\n📧 Email: ${leadData.email}` : '') +
+        `\n\n⏰ Дата: ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}`;
+      
+      // Отправляем сообщение в группу
+      await this.bot.sendMessage(GROUP_CHAT_ID, message);
+      
+      console.log('Service lead sent to Telegram group successfully');
+      return true;
+    } catch (error) {
+      console.error('Error sending service lead to Telegram group:', error);
+      return false;
+    }
   }
 }
 
