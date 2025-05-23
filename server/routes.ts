@@ -7,7 +7,6 @@ import { ZodError } from "zod";
 import { zValidationErrorToMessage, checkSubscriptionStatus } from "./utils";
 import backupRoutes from "./backup/backup-routes";
 import { setupTelegramRoutes } from "./telegram/telegram-routes";
-import { supportBotManager } from "./telegram/support-bot";
 import { cacheManager } from "./cache";
 import { cacheMiddleware, clearCacheMiddleware } from "./middleware/cache-middleware";
 import { dbOptimizer } from "./db-optimizer";
@@ -629,42 +628,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting subscription:", error);
       res.status(500).json({ message: "Failed to delete subscription" });
-    }
-  });
-
-  // Service leads route - Send service order requests to support bot
-  app.post("/api/leads", isAuthenticated, async (req, res) => {
-    try {
-      const validatedData = insertServiceLeadSchema.parse(req.body);
-      
-      // Get service details
-      const service = await storage.getService(validatedData.serviceId);
-      if (!service) {
-        return res.status(404).json({ message: "Service not found" });
-      }
-      
-      // Send lead to support bot
-      const success = await supportBotManager.sendServiceLead({
-        serviceName: service.title,
-        clientName: validatedData.name,
-        clientPhone: validatedData.phone,
-        clientEmail: validatedData.email || undefined
-      });
-      
-      if (!success) {
-        return res.status(500).json({ message: "Failed to send request to support" });
-      }
-      
-      res.status(200).json({ 
-        message: "Request sent successfully",
-        success: true 
-      });
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return res.status(400).json({ message: zValidationErrorToMessage(error) });
-      }
-      console.error("Error processing service lead:", error);
-      res.status(500).json({ message: "Failed to process request" });
     }
   });
 
