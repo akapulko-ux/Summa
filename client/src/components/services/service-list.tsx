@@ -29,6 +29,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTranslations } from "@/hooks/use-translations";
 import { ServiceFiltersComponent, type ServiceFilters, type ServiceSortOption } from "../filters/service-filters";
 import { ru } from "date-fns/locale";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { usePreloadImages } from "@/hooks/use-image-cache";
 
 export function ServiceList() {
   const [filters, setFilters] = useState<ServiceFilters>({
