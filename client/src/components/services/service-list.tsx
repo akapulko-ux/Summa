@@ -121,6 +121,19 @@ export function ServiceList() {
     }
   };
 
+  // Предзагрузка изображений сервисов для ускорения админского интерфейса
+  const services = data?.services || [];
+  const imageUrls = services.map(service => {
+    if (service.iconData && service.iconMimeType) {
+      return `data:${service.iconMimeType};base64,${service.iconData}`;
+    }
+    if (service.iconUrl) {
+      return service.iconUrl;
+    }
+    return `/api/service-icon/${service.id}`;
+  });
+  usePreloadImages(imageUrls);
+
   // Function to format cashback value for display
   const formatCashback = (cashback: string | null | undefined) => {
     if (!cashback) return language === 'ru' ? "Нет" : "None";
@@ -249,23 +262,140 @@ export function ServiceList() {
                   <TableRow key={service.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        {service.iconUrl ? (
-                          <div className="w-10 h-10 rounded-md overflow-hidden">
-                            <img 
-                              src={service.iconUrl} 
-                              alt={service.title} 
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-                            <span className="text-sm font-bold">
-                              {service.title.substring(0, 2).toUpperCase()}
-                            </span>
-                          </div>
-                        )}
+                        <OptimizedImage
+                          src={service.iconData && service.iconMimeType 
+                            ? `data:${service.iconMimeType};base64,${service.iconData}`
+                            : service.iconUrl || `/api/service-icon/${service.id}`}
+                          alt={`${service.title} icon`}
+                          className="w-10 h-10 rounded-md object-cover"
+                          fallback={
+                            <div className="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center">
+                              <span className="text-gray-500 text-xs font-semibold">
+                                {service.title.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          }
+                        />
                         <div className="flex flex-col">
                           <span className="font-medium">{service.title}</span>
+                          {service.isCustom && (
+                            <Badge variant="outline" className="text-xs">
+                              {t('services.custom')}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-xs">
+                        <p className="text-sm text-muted-foreground truncate">
+                          {service.description || "-"}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {formatCashback(service.cashback)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleView(service.id)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEdit(service.id)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(service.id)}
+                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+
+      {/* Pagination */}
+      {data && data.total > limit && (
+        <CardFooter className="flex justify-between items-center pt-6">
+          <div className="text-sm text-muted-foreground">
+            {t('common.showing')} {((page - 1) * limit) + 1} - {Math.min(page * limit, data.total)} {t('common.of')} {data.total} {t('services.services')}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrevPage}
+              disabled={page === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              {t('common.previous')}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={page >= Math.ceil(data.total / limit)}
+            >
+              {t('common.next')}
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardFooter>
+      )}
+
+      {/* Edit Service Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t('services.editService')}</DialogTitle>
+            <DialogDescription>{t('services.editServiceDescription')}</DialogDescription>
+          </DialogHeader>
+          {selectedServiceId && (
+            <ServiceForm 
+              serviceId={selectedServiceId} 
+              onSuccess={() => {
+                setIsEditDialogOpen(false);
+                queryClient.invalidateQueries({ queryKey: ["/api/services"] });
+              }} 
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* View Service Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{t('services.serviceDetails')}</DialogTitle>
+          </DialogHeader>
+          {selectedServiceId && (
+            <ServiceDetailsView serviceId={selectedServiceId} />
+          )}
+        </DialogContent>
+      </Dialog>
+    </Card>
+  );
+}
                           {service.isCustom && (
                             <Badge variant="outline" className="text-xs">
                               {t('services.customService')}
