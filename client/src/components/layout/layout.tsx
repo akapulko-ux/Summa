@@ -16,7 +16,8 @@ import {
   FileText,
   Workflow,
   X,
-  Bell
+  Bell,
+  Grid3x3
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import {
@@ -57,11 +58,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // Пункт "Сервисы" только для клиентов
   const clientNavigationItems = [
     ...navigationItems,
-    { title: t('nav.services'), path: '/services', icon: <Settings className="h-5 w-5 mr-2" /> },
+    { title: t('nav.services'), path: '/services', icon: <Grid3x3 className="h-5 w-5 mr-2" /> },
   ];
 
   const adminNavigationItems = [
-    { title: t('nav.services'), path: '/admin/services', icon: <Settings className="h-5 w-5 mr-2" /> },
+    { title: t('nav.services'), path: '/admin/services', icon: <Grid3x3 className="h-5 w-5 mr-2" /> },
     { title: t('nav.users'), path: '/admin/users', icon: <Users className="h-5 w-5 mr-2" /> },
     { title: t('nav.backups'), path: '/admin/backups', icon: <Database className="h-5 w-5 mr-2" /> },
     { title: t('nav.notifications'), path: '/admin/notifications', icon: <Bell className="h-5 w-5 mr-2" /> },
