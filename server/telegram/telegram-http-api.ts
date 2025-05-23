@@ -75,5 +75,5 @@ export class TelegramHttpAPI {
   }
 }
 
-// Создаем экземпляр HTTP API для Telegram
-export const telegramHttpAPI = new TelegramHttpAPI(process.env.TELEGRAM_BOT_TOKEN || '');
+// Создаем экземпляр HTTP API для Telegram с токеном @summa_help_bot
+export const telegramHttpAPI = new TelegramHttpAPI(process.env.SUMMA_HELP_BOT_TOKEN || '');
