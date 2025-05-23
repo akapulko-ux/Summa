@@ -764,11 +764,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Send lead to Telegram group using HTTP API
         const { telegramHttpAPI } = await import('./telegram/telegram-http-api');
+        
+        // Получаем информацию о пользователе, если он авторизован
+        let userInfo = undefined;
+        if (req.user) {
+          const user = req.user as any;
+          userInfo = {
+            userName: user.name || undefined,
+            userEmail: user.email || undefined,
+            userPhone: user.phone || undefined,
+            companyName: user.companyName || undefined
+          };
+        }
+        
         await telegramHttpAPI.sendServiceLeadToGroup({
           name: validatedData.name,
           phone: validatedData.phone,
           email: validatedData.email || undefined,
-          serviceName: serviceName
+          serviceName: serviceName,
+          userInfo: userInfo
         });
         
         console.log("Service lead sent to Telegram group successfully");

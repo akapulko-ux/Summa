@@ -43,20 +43,45 @@ export class TelegramHttpAPI {
     name: string; 
     phone: string; 
     email?: string; 
-    serviceName: string 
+    serviceName: string;
+    userInfo?: {
+      userName?: string;
+      userEmail?: string;
+      userPhone?: string;
+      companyName?: string;
+    }
   }): Promise<boolean> {
     try {
       // ID группы для отправки заявок
       const GROUP_CHAT_ID = -1002638718178;
       
       // Форматируем сообщение с HTML разметкой
-      const message = 
+      let message = 
         `🚀 <b>Новая заявка на услугу!</b>\n\n` +
-        `📋 <b>Услуга:</b> ${leadData.serviceName}\n` +
+        `📋 <b>Услуга:</b> ${leadData.serviceName}\n\n` +
+        `<b>Данные заявки:</b>\n` +
         `👤 <b>Имя:</b> ${leadData.name}\n` +
         `📞 <b>Телефон:</b> <code>${leadData.phone}</code>` +
-        (leadData.email ? `\n📧 <b>Email:</b> ${leadData.email}` : '') +
-        `\n\n⏰ <b>Дата:</b> ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}`;
+        (leadData.email ? `\n📧 <b>Email:</b> ${leadData.email}` : '');
+
+      // Добавляем информацию о пользователе из профиля, если она есть
+      if (leadData.userInfo) {
+        message += `\n\n<b>Профиль пользователя:</b>\n`;
+        if (leadData.userInfo.userName) {
+          message += `👤 <b>Имя в профиле:</b> ${leadData.userInfo.userName}\n`;
+        }
+        if (leadData.userInfo.userEmail) {
+          message += `📧 <b>Email профиля:</b> ${leadData.userInfo.userEmail}\n`;
+        }
+        if (leadData.userInfo.userPhone) {
+          message += `📱 <b>Телефон профиля:</b> <code>${leadData.userInfo.userPhone}</code>\n`;
+        }
+        if (leadData.userInfo.companyName) {
+          message += `🏢 <b>Компания:</b> ${leadData.userInfo.companyName}\n`;
+        }
+      }
+
+      message += `\n⏰ <b>Дата:</b> ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}`;
       
       // Отправляем сообщение в группу
       const success = await this.sendMessage(GROUP_CHAT_ID, message);
