@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/dialog";
 import { ServiceLeadForm } from "@/components/services/service-lead-form";
 import { SubscriptionForm } from "@/components/subscriptions/subscription-form-fixed";
+import { OptimizedServiceCard } from "@/components/services/optimized-service-card";
+import { usePreloadImages } from "@/hooks/use-image-cache";
 
 export default function ClientServicesPage() {
   const { t, language } = useTranslations();
@@ -47,6 +49,18 @@ export default function ClientServicesPage() {
       service.title.toLowerCase().includes(search.toLowerCase()) ||
       (service.description && service.description.toLowerCase().includes(search.toLowerCase()))
   );
+
+  // Предзагрузка изображений сервисов для ускорения
+  const imageUrls = services.map(service => {
+    if (service.iconData && service.iconMimeType) {
+      return `data:${service.iconMimeType};base64,${service.iconData}`;
+    }
+    if (service.iconUrl) {
+      return service.iconUrl;
+    }
+    return `/api/service-icon/${service.id}`;
+  });
+  usePreloadImages(imageUrls);
 
   // Компонент для отображения карточки сервиса в сетке (квадратный формат)
   const ServiceGridCard = ({ service }: { service: Service }) => {
