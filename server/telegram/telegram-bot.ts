@@ -45,7 +45,7 @@ export class TelegramBotManager implements ITelegramBotManager {
   
   constructor() {
     this.bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, {
-      polling: false // Отключаем polling для предотвращения конфликтов
+      polling: true // Включаем polling для @summa_not_bot (системные уведомления)
     });
   }
   
