@@ -87,11 +87,7 @@ export default function NotificationsPage() {
   // Мутация для обновления шаблона
   const updateTemplateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<NotificationTemplate> }) =>
-      apiRequest(`/api/notification-templates/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      }),
+      apiRequest('PATCH', `/api/notification-templates/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/notification-templates'] });
       toast({
