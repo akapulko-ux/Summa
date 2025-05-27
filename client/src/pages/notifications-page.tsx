@@ -56,7 +56,8 @@ const triggerTypeNames: Record<string, { en: string; ru: string }> = {
   three_days_before: { en: "3 Days Before", ru: "За 3 дня" },
   day_before: { en: "1 Day Before", ru: "За день" },
   expiry_day: { en: "Expiry Day", ru: "День окончания" },
-  renewed: { en: "Renewed", ru: "Продлено" }
+  renewed: { en: "Renewed", ru: "Продлено" },
+  custom: { en: "Custom Message", ru: "Произвольное сообщение" }
 };
 
 export default function NotificationsPage() {

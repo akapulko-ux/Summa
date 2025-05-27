@@ -237,7 +237,7 @@ export type InsertCashbackTransaction = z.infer<typeof insertCashbackTransaction
 // Notification templates table
 export const notificationTriggerEnum = pgEnum('notification_trigger', [
   'month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 
-  'three_days_before', 'day_before', 'expiry_day', 'renewed'
+  'three_days_before', 'day_before', 'expiry_day', 'renewed', 'custom'
 ]);
 
 export const notificationChannelEnum = pgEnum('notification_channel', ['telegram', 'email']);
@@ -265,7 +265,7 @@ export const notificationLogs = pgTable('notification_logs', {
 });
 
 export const insertNotificationTemplateSchema = createInsertSchema(notificationTemplates, {
-  triggerType: z.enum(['month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 'three_days_before', 'day_before', 'expiry_day', 'renewed']),
+  triggerType: z.enum(['month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 'three_days_before', 'day_before', 'expiry_day', 'renewed', 'custom']),
   title: z.string().min(1),
   template: z.string().min(1),
   isActive: z.boolean().default(true),
@@ -273,7 +273,7 @@ export const insertNotificationTemplateSchema = createInsertSchema(notificationT
 
 export const insertNotificationLogSchema = createInsertSchema(notificationLogs, {
   subscriptionId: z.number(),
-  triggerType: z.enum(['month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 'three_days_before', 'day_before', 'expiry_day', 'renewed']),
+  triggerType: z.enum(['month_before', 'two_weeks_before', 'ten_days_before', 'week_before', 'three_days_before', 'day_before', 'expiry_day', 'renewed', 'custom']),
   channel: z.enum(['telegram', 'email']).default('telegram'),
   status: z.string().default('sent'),
   message: z.string().optional(),

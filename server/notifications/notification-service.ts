@@ -3,7 +3,7 @@ import { notificationTemplates, notificationLogs, subscriptions, services, users
 import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { telegramBotManager } from "../telegram/telegram-bot";
 
-export type NotificationTrigger = 'month_before' | 'two_weeks_before' | 'ten_days_before' | 'week_before' | 'three_days_before' | 'day_before' | 'expiry_day' | 'renewed';
+export type NotificationTrigger = 'month_before' | 'two_weeks_before' | 'ten_days_before' | 'week_before' | 'three_days_before' | 'day_before' | 'expiry_day' | 'renewed' | 'custom';
 
 interface NotificationContext {
   service_name: string;
