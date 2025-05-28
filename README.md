@@ -254,7 +254,10 @@ The application uses PostgreSQL with Drizzle ORM. Key entities include:
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This software is licensed for personal, educational, or non-commercial use only.
+
+Commercial use, including integration in any commercial product or service,
+requires a paid license. Contact akapulko1983@gmail.com for licensing inquiries.
 
 ## 🆘 Support
 
@@ -272,3 +275,5 @@ For support and questions, please contact the development team or create an issu
 ---
 
 Built with ❤️ using modern web technologies on Replit.
+
+
