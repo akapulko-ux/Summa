@@ -23,18 +23,22 @@ import { useTranslations } from "@/hooks/use-translations";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
-// Form schema
-const userFormSchema = z.object({
+// Form schema - создаем функцию для создания схемы в зависимости от режима
+const createUserFormSchema = (isEditing: boolean) => z.object({
   email: z.string().email({ message: "Please enter a valid email" }),
   name: z.string().optional(),
   companyName: z.string().optional(),
   phone: z.string().optional(),
   role: z.enum(["admin", "client"]),
   isActive: z.boolean().default(true),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }).optional(),
+  password: isEditing 
+    ? z.string().optional().refine((val) => !val || val.length >= 6, {
+        message: "Password must be at least 6 characters"
+      })
+    : z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-type UserFormValues = z.infer<typeof userFormSchema>;
+type UserFormValues = z.infer<ReturnType<typeof createUserFormSchema>>;
 
 interface UserFormProps {
   userId?: number;
@@ -75,8 +79,9 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
   });
 
   // Setup form with default values
+  const isEditing = !!userId;
   const form = useForm<UserFormValues>({
-    resolver: zodResolver(userFormSchema),
+    resolver: zodResolver(createUserFormSchema(isEditing)),
     defaultValues: {
       email: "",
       name: "",
