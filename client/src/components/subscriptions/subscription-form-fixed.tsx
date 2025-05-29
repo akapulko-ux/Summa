@@ -71,7 +71,7 @@ export function SubscriptionForm({
   userId,
   onSuccess, 
   onSubmit: externalSubmit,
-  buttonText = "Save",
+  buttonText,
   services: externalServices
 }: SubscriptionFormProps) {
   const { user } = useAuth();
@@ -705,7 +705,7 @@ export function SubscriptionForm({
 
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {buttonText}
+          {buttonText || t('common.save')}
         </Button>
       </form>
     </Form>
