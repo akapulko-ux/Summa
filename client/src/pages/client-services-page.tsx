@@ -271,7 +271,7 @@ export default function ClientServicesPage() {
   };
 
   return (
-    <AppLayout title={t('services.availableServices')}>
+    <AppLayout title={t('services.clientServicesTitle')}>
       <div className="mb-4 flex flex-col md:flex-row md:items-center gap-4 justify-between">
         <div className="relative w-full md:w-64">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
