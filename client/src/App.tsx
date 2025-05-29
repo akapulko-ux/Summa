@@ -10,6 +10,7 @@ import { AdminRoute } from "@/lib/admin-route";
 import AuthPage from "@/pages/auth-page";
 import Dashboard from "@/pages/dashboard";
 import ProfilePage from "@/pages/profile-page";
+import HomeRedirect from "@/components/home-redirect";
 import ServicesPage from "@/pages/services-page";
 import ClientServicesPage from "@/pages/client-services-page";
 import SubscriptionsPage from "@/pages/subscriptions-page";
@@ -28,7 +29,8 @@ function Router() {
   return (
     <Switch>
       {/* Клиентские маршруты (доступны для всех аутентифицированных пользователей) */}
-      <ProtectedRoute path="/" component={Dashboard} />
+      <ProtectedRoute path="/" component={HomeRedirect} />
+      <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/subscriptions" component={SubscriptionsPage} />
       <ProtectedRoute path="/services" component={ClientServicesPage} />
