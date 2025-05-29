@@ -83,7 +83,7 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
         title: t('profile.profileUpdated'),
-        description: t('messages.welcomeBack'),
+        description: t('profile.profileUpdatedSuccess'),
       });
     },
     onError: (error) => {

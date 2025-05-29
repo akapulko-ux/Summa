@@ -692,6 +692,7 @@ export type Translation = {
     newPassword: string;
     confirmNewPassword: string;
     profileUpdated: string;
+    profileUpdatedSuccess: string;
     passwordUpdated: string;
     role: string;
     accountStatus: string;
@@ -1697,6 +1698,7 @@ export const en: Translation = {
     newPassword: "New Password",
     confirmNewPassword: "Confirm New Password",
     profileUpdated: "Profile updated successfully",
+    profileUpdatedSuccess: "Your profile information has been saved",
     passwordUpdated: "Password updated successfully",
     role: "Role",
     accountStatus: "Account Status",
@@ -2607,6 +2609,7 @@ export const ru: Translation = {
     newPassword: "Новый пароль",
     confirmNewPassword: "Подтвердить новый пароль",
     profileUpdated: "Профиль успешно обновлен",
+    profileUpdatedSuccess: "Информация профиля сохранена",
     passwordUpdated: "Пароль успешно обновлен",
     role: "Роль",
     accountStatus: "Статус аккаунта",
