@@ -137,9 +137,9 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('userManagement.columns.email')}</FormLabel>
+              <FormLabel>{t('users.userEmail')}</FormLabel>
               <FormControl>
-                <Input placeholder={t('userManagement.emailPlaceholder')} {...field} />
+                <Input placeholder={t('users.emailPlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

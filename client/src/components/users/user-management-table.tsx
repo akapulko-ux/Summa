@@ -309,9 +309,9 @@ export function UserManagementTable() {
   // Render badge based on user status
   const renderStatusBadge = (isActive: boolean) => {
     if (isActive) {
-      return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">Active</Badge>;
+      return <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">{t('users.statusActive')}</Badge>;
     }
-    return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">Inactive</Badge>;
+    return <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">{t('users.statusInactive')}</Badge>;
   };
 
   return (
