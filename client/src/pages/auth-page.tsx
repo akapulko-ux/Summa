@@ -330,27 +330,23 @@ export default function AuthPage() {
                           <div className="space-y-1 leading-none">
                             <FormLabel className="text-sm font-normal cursor-pointer">
                               {t('auth.agreeToTerms')}{" "}
-                              <button
-                                type="button"
+                              <a
+                                href="https://summapay.ru/agreement"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="text-primary underline hover:text-primary/80"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  // TODO: Open license agreement modal
-                                }}
                               >
                                 {t('auth.licenseAgreement')}
-                              </button>{" "}
+                              </a>{" "}
                               {t('auth.andConsentTo')}{" "}
-                              <button
-                                type="button"
+                              <a
+                                href="https://summapay.ru/confidence"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="text-primary underline hover:text-primary/80"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  // TODO: Open personal data processing modal
-                                }}
                               >
                                 {t('auth.personalData')}
-                              </button>
+                              </a>
                             </FormLabel>
                             <FormMessage />
                           </div>
