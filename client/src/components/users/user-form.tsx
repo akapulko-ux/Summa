@@ -19,6 +19,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslations } from "@/hooks/use-translations";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
@@ -43,6 +44,7 @@ interface UserFormProps {
 export function UserForm({ userId, onSuccess }: UserFormProps) {
   const { user: currentUser } = useAuth();
   const isAdmin = currentUser?.role === "admin";
+  const { t } = useTranslations();
 
   // Fetch user data if editing
   const { data: userData, isLoading: isLoadingUser } = useQuery<User>({
@@ -135,9 +137,9 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('userManagement.columns.email')}</FormLabel>
               <FormControl>
-                <Input placeholder="user@example.com" {...field} />
+                <Input placeholder={t('userManagement.emailPlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
