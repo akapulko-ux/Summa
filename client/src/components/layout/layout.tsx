@@ -55,10 +55,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { title: t('nav.subscriptions'), path: '/subscriptions', icon: <CreditCard className="h-5 w-5 mr-2" /> },
   ];
   
-  // Пункт "Сервисы" только для клиентов
+  // Пункт "Маркет" только для клиентов
   const clientNavigationItems = [
     ...navigationItems,
-    { title: t('nav.services'), path: '/services', icon: <Grid3x3 className="h-5 w-5 mr-2" /> },
+    { title: t('nav.market'), path: '/services', icon: <Grid3x3 className="h-5 w-5 mr-2" /> },
   ];
 
   const adminNavigationItems = [
