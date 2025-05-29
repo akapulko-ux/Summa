@@ -18,6 +18,7 @@ import { setupOptimizedRoutes } from "./optimized-routes";
 import { db } from "./db";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
 import { users, services, subscriptions, notificationTemplates, notificationLogs } from "@shared/schema";
+import { sendMagicLink, verifyMagicLinkToken } from "./email-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes

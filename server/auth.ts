@@ -45,13 +45,13 @@ async function comparePasswords(supplied: string, stored: string) {
 
 // Create a test SMTP transporter for development
 // In production, use a real email service
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.ethereal.email",
-  port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: process.env.SMTP_SECURE === "true",
+const transporter = nodemailer.createTransporter({
+  host: 'smtp.mail.ru',
+  port: 465,
+  secure: true, // SSL/TLS
   auth: {
-    user: process.env.SMTP_USER || "ethereal.user@ethereal.email",
-    pass: process.env.SMTP_PASS || "ethereal_pass",
+    user: 'no_replay@summapay.ru',
+    pass: 'cOvr83FSVrdYyDCsrLq9',
   },
 });
 
