@@ -373,6 +373,8 @@ export type Translation = {
     commissionDescription: string;
     serviceIcon: string;
     serviceIconDescription: string;
+    editServiceDescription: string;
+    iconSavedInDatabase: string;
     cashback: string;
     commission: string;
     customFields: string;
@@ -967,6 +969,7 @@ export const en: Translation = {
     descending: "Descending",
     applyFilters: "Apply Filters",
     uploadFile: "Upload File",
+    change: "Change",
     sortOptions: "Sort Options",
     clearFilters: "Clear filters",
     status: "Status",
@@ -1349,6 +1352,8 @@ export const en: Translation = {
     commissionDescription: "Enter a commission with % symbol (e.g., 5%) or a fixed amount (e.g., 10.00)",
     serviceIcon: "Service Icon",
     serviceIconDescription: "Upload an icon image in JPG or PNG format",
+    editServiceDescription: "Edit the details of this service",
+    iconSavedInDatabase: "Icon saved in database",
     cashback: "Cashback",
     commission: "Commission",
     customFields: "Custom Fields",
@@ -1894,6 +1899,7 @@ export const ru: Translation = {
     descending: "По убыванию",
     applyFilters: "Применить фильтры",
     uploadFile: "Загрузить файл",
+    change: "Изменить",
     sortOptions: "Параметры сортировки",
     clearFilters: "Очистить фильтры",
     status: "Статус",
@@ -2274,6 +2280,8 @@ export const ru: Translation = {
     commissionDescription: "Введите комиссию с символом % (например, 5%) или фиксированную сумму (например, 10.00)",
     serviceIcon: "Иконка сервиса",
     serviceIconDescription: "Загрузите изображение иконки в формате JPG или PNG",
+    editServiceDescription: "Редактирование деталей этого сервиса",
+    iconSavedInDatabase: "Иконка сохранена в базе данных",
     cashback: "Кэшбэк",
     commission: "Комиссия",
     customFields: "Пользовательские поля",
