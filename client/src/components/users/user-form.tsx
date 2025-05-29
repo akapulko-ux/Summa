@@ -151,9 +151,9 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t('users.columns.name')}</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input placeholder={t('users.namePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -165,9 +165,9 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
           name="companyName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Company Name</FormLabel>
+              <FormLabel>{t('users.columns.company')}</FormLabel>
               <FormControl>
-                <Input placeholder="Acme Inc." {...field} />
+                <Input placeholder={t('users.companyPlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -179,9 +179,9 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel>{t('users.userPhone')}</FormLabel>
               <FormControl>
-                <Input placeholder="+1 (555) 123-4567" {...field} />
+                <Input placeholder={t('users.phonePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -195,7 +195,7 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
             name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Role</FormLabel>
+                <FormLabel>{t('users.userRole')}</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
                   defaultValue={field.value}
@@ -203,12 +203,12 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
+                      <SelectValue placeholder={t('common.selectRole')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="client">Client</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="client">{t('users.roleClient')}</SelectItem>
+                    <SelectItem value="admin">{t('users.roleAdmin')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -225,9 +225,9 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                 <div className="space-y-0.5">
-                  <FormLabel>Active Status</FormLabel>
+                  <FormLabel>{t('users.activeStatus')}</FormLabel>
                   <FormDescription>
-                    User will be able to log in if active
+                    {t('users.activeStatusDescription')}
                   </FormDescription>
                 </div>
                 <FormControl>
