@@ -62,13 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (user: User) => {
       queryClient.setQueryData(["/api/user"], user);
       toast({
-        title: "Registration successful",
-        description: "Your account has been created.",
+        title: t('auth.registrationSuccess'),
+        description: t('auth.accountCreated'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Registration failed",
+        title: t('auth.registrationFailed'),
         description: error.message,
         variant: "destructive",
       });
@@ -95,13 +95,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.clear();
       
       toast({
-        title: "Logged out",
-        description: "You have been logged out successfully.",
+        title: t('auth.loggedOut'),
+        description: t('auth.loggedOutSuccess'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Logout failed",
+        title: t('auth.logoutFailed'),
         description: error.message,
         variant: "destructive",
       });
@@ -115,13 +115,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (data) => {
       toast({
-        title: "Magic link sent",
-        description: data.message || "Check your email for a login link.",
+        title: t('auth.magicLinkSent'),
+        description: data.message || t('auth.checkEmail'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Failed to send magic link",
+        title: t('auth.magicLinkFailed'),
         description: error.message,
         variant: "destructive",
       });

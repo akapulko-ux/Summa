@@ -238,6 +238,17 @@ export type Translation = {
     feature2Desc: string;
     feature3Title: string;
     feature3Desc: string;
+    loginSuccess: string;
+    loggedOut: string;
+    loggedOutSuccess: string;
+    loginFailed: string;
+    logoutFailed: string;
+    registrationSuccess: string;
+    registrationFailed: string;
+    accountCreated: string;
+    magicLinkSent: string;
+    magicLinkFailed: string;
+    checkEmail: string;
   };
 
   // Навигация
@@ -1266,6 +1277,17 @@ export const en: Translation = {
     feature2Desc: "Monitor expenses and optimize your spending",
     feature3Title: "Insights and Analytics",
     feature3Desc: "Get valuable insights on your SaaS usage",
+    loginSuccess: "Login successful",
+    loggedOut: "Logged out",
+    loggedOutSuccess: "You have been logged out successfully",
+    loginFailed: "Login failed",
+    logoutFailed: "Logout failed",
+    registrationSuccess: "Registration successful",
+    registrationFailed: "Registration failed",
+    accountCreated: "Your account has been created",
+    magicLinkSent: "Magic link sent",
+    magicLinkFailed: "Failed to send magic link",
+    checkEmail: "Check your email for a login link",
   },
 
   nav: {
@@ -2176,6 +2198,17 @@ export const ru: Translation = {
     feature2Desc: "Контролируйте расходы и оптимизируйте ваши затраты",
     feature3Title: "Аналитика и отчёты",
     feature3Desc: "Получайте ценные данные об использовании SaaS",
+    loginSuccess: "Вход выполнен успешно",
+    loggedOut: "Выход выполнен",
+    loggedOutSuccess: "Вы успешно вышли из системы",
+    loginFailed: "Ошибка входа",
+    logoutFailed: "Ошибка выхода",
+    registrationSuccess: "Регистрация успешна",
+    registrationFailed: "Ошибка регистрации",
+    accountCreated: "Ваш аккаунт создан",
+    magicLinkSent: "Ссылка отправлена",
+    magicLinkFailed: "Не удалось отправить ссылку",
+    checkEmail: "Проверьте почту для ссылки входа",
   },
 
   nav: {
