@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   const navigationItems = [
-    { title: t('nav.dashboard'), path: '/', icon: <Workflow className="h-5 w-5 mr-2" /> },
+    { title: t('nav.dashboard'), path: '/dashboard', icon: <Workflow className="h-5 w-5 mr-2" /> },
     { title: t('nav.profile'), path: '/profile', icon: <User className="h-5 w-5 mr-2" /> },
     { title: t('nav.subscriptions'), path: '/subscriptions', icon: <CreditCard className="h-5 w-5 mr-2" /> },
   ];
