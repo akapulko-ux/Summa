@@ -248,7 +248,7 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                {userId ? "New Password (leave blank to keep current)" : "Password"}
+                {userId ? t('users.newPassword') : t('users.password')}
               </FormLabel>
               <FormControl>
                 <Input type="password" {...field} />
@@ -262,7 +262,7 @@ export function UserForm({ userId, onSuccess }: UserFormProps) {
           {isSubmitting && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
-          {userId ? "Update User" : "Create User"}
+          {userId ? t('users.updateUser') : t('users.createUser')}
         </Button>
       </form>
     </Form>
