@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation } from "wouter";
@@ -43,15 +44,23 @@ export default function AuthPage() {
     },
   });
 
+  // Extended register schema with terms agreement
+  const extendedRegisterSchema = registerSchema.extend({
+    agreeToTerms: z.boolean().refine(val => val === true, {
+      message: "You must agree to the terms and conditions"
+    })
+  });
+
   // Register form
-  const registerForm = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+  const registerForm = useForm<z.infer<typeof extendedRegisterSchema>>({
+    resolver: zodResolver(extendedRegisterSchema),
     defaultValues: {
       email: "",
       password: "",
       name: "",
       companyName: "",
       phone: "",
+      agreeToTerms: false,
     },
   });
 
@@ -68,8 +77,10 @@ export default function AuthPage() {
     loginMutation.mutate(data);
   };
 
-  const onRegisterSubmit = (data: z.infer<typeof registerSchema>) => {
-    registerMutation.mutate(data);
+  const onRegisterSubmit = (data: z.infer<typeof extendedRegisterSchema>) => {
+    // Remove agreeToTerms from the data before sending to API
+    const { agreeToTerms, ...registerData } = data;
+    registerMutation.mutate(registerData);
   };
 
   const onMagicLinkSubmit = (data: z.infer<typeof magicLinkSchema>) => {
@@ -302,6 +313,26 @@ export default function AuthPage() {
                             <Input placeholder={t('auth.phonePlaceholder')} {...field} />
                           </FormControl>
                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registerForm.control}
+                      name="agreeToTerms"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel className="text-sm font-normal cursor-pointer">
+                              {t('auth.agreeToTerms')}
+                            </FormLabel>
+                            <FormMessage />
+                          </div>
                         </FormItem>
                       )}
                     />
