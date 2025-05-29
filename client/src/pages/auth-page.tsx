@@ -329,7 +329,28 @@ export default function AuthPage() {
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel className="text-sm font-normal cursor-pointer">
-                              {t('auth.agreeToTerms')}
+                              {t('auth.agreeToTerms')}{" "}
+                              <button
+                                type="button"
+                                className="text-primary underline hover:text-primary/80"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  // TODO: Open license agreement modal
+                                }}
+                              >
+                                {t('auth.licenseAgreement')}
+                              </button>{" "}
+                              {t('auth.andConsentTo')}{" "}
+                              <button
+                                type="button"
+                                className="text-primary underline hover:text-primary/80"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  // TODO: Open personal data processing modal
+                                }}
+                              >
+                                {t('auth.personalData')}
+                              </button>
                             </FormLabel>
                             <FormMessage />
                           </div>
