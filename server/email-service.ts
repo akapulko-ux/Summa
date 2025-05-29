@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 
 // Email service configuration
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: 'smtp.mail.ru',
   port: 465,
   secure: true, // SSL/TLS
