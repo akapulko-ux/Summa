@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.setQueryData(["/api/user"], user);
       toast({
         title: t('auth.loginSuccess'),
-        description: t('auth.welcomeBack', { name: user.name || user.email }),
+        description: t('messages.welcomeBack', { name: user.name || user.email }),
       });
     },
     onError: (error: Error) => {
