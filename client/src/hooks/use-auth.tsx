@@ -7,6 +7,7 @@ import {
 import { User, RegisterData, LoginData } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "@/hooks/use-translations";
 
 type AuthContextType = {
   user: User | null;
@@ -22,6 +23,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const { t } = useTranslations();
   const {
     data: user,
     error,
@@ -39,13 +41,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (user: User) => {
       queryClient.setQueryData(["/api/user"], user);
       toast({
-        title: "Login successful",
-        description: `Welcome back, ${user.name || user.email}!`,
+        title: t('auth.loginSuccess'),
+        description: t('auth.welcomeBack', { name: user.name || user.email }),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Login failed",
+        title: t('auth.loginFailed'),
         description: error.message,
         variant: "destructive",
       });
