@@ -45,7 +45,7 @@ async function comparePasswords(supplied: string, stored: string) {
 
 // Create a test SMTP transporter for development
 // In production, use a real email service
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: 'smtp.mail.ru',
   port: 465,
   secure: true, // SSL/TLS
@@ -251,19 +251,77 @@ export function setupAuth(app: Express) {
       
       // Send email with the magic link
       await transporter.sendMail({
-        from: process.env.EMAIL_FROM || '"Summa" <noreply@summa.com>',
+        from: {
+          name: 'Summa',
+          address: 'no_replay@summapay.ru'
+        },
         to: email,
-        subject: "Your Magic Login Link",
-        text: `Click this link to log in: ${magicLink} (valid for 10 minutes)`,
+        subject: 'Вход в Summa - Магическая ссылка',
+        text: `
+Здравствуйте!
+
+Вы запросили вход в систему Summa. Перейдите по ссылке ниже, чтобы войти в свою учетную запись:
+
+${magicLink}
+
+Важно: Эта ссылка действительна в течение 10 минут и может быть использована только один раз.
+
+Если вы не запрашивали этот вход, просто проигнорируйте это письмо.
+
+С уважением,
+Команда Summa
+        `.trim(),
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #333;">Login to Summa</h2>
-            <p>Click the button below to log in to your account. This link will expire in 10 minutes.</p>
-            <a href="${magicLink}" style="display: inline-block; background-color: #7c3aed; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin: 15px 0;">
-              Login to Summa
-            </a>
-            <p style="color: #666; font-size: 0.9em;">If you didn't request this email, you can safely ignore it.</p>
-          </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход в Summa</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+    .container { background: #f9f9f9; padding: 30px; border-radius: 10px; }
+    .header { text-align: center; margin-bottom: 30px; }
+    .logo { color: #2563eb; font-size: 24px; font-weight: bold; }
+    .content { background: white; padding: 30px; border-radius: 8px; margin: 20px 0; }
+    .button { display: inline-block; background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+    .button:hover { background: #1d4ed8; }
+    .footer { text-align: center; margin-top: 30px; font-size: 14px; color: #666; }
+    .warning { background: #fef3c7; padding: 15px; border-radius: 6px; margin: 20px 0; color: #92400e; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Summa</div>
+      <h1>Вход в систему</h1>
+    </div>
+    
+    <div class="content">
+      <p>Здравствуйте!</p>
+      <p>Вы запросили вход в систему Summa. Нажмите на кнопку ниже, чтобы войти в свою учетную запись:</p>
+      
+      <div style="text-align: center;">
+        <a href="${magicLink}" class="button">Войти в Summa</a>
+      </div>
+      
+      <div class="warning">
+        <strong>Важно:</strong> Эта ссылка действительна в течение 10 минут и может быть использована только один раз.
+      </div>
+      
+      <p>Если вы не запрашивали этот вход, просто проигнорируйте это письмо.</p>
+      
+      <p>Если кнопка не работает, скопируйте и вставьте эту ссылку в браузер:</p>
+      <p style="word-break: break-all; color: #2563eb; font-size: 14px;">${magicLink}</p>
+    </div>
+    
+    <div class="footer">
+      <p>С уважением,<br>Команда Summa</p>
+      <p style="font-size: 12px;">Это автоматическое сообщение, не отвечайте на него.</p>
+    </div>
+  </div>
+</body>
+</html>
         `,
       });
       
