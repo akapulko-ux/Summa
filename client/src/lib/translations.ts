@@ -368,6 +368,9 @@ export type Translation = {
     editService: string;
     serviceTitle: string;
     serviceDescription: string;
+    serviceDescriptionPlaceholder: string;
+    cashbackDescription: string;
+    commissionDescription: string;
     serviceIcon: string;
     serviceIconDescription: string;
     cashback: string;
@@ -1341,6 +1344,9 @@ export const en: Translation = {
     editService: "Edit Service",
     serviceTitle: "Service Title",
     serviceDescription: "Description",
+    serviceDescriptionPlaceholder: "A suite of cloud computing, productivity and collaboration tools...",
+    cashbackDescription: "Enter a percentage with % symbol (e.g., 5%) or a fixed amount (e.g., 10.00)",
+    commissionDescription: "Enter a commission with % symbol (e.g., 5%) or a fixed amount (e.g., 10.00)",
     serviceIcon: "Service Icon",
     serviceIconDescription: "Upload an icon image in JPG or PNG format",
     cashback: "Cashback",
@@ -2263,6 +2269,9 @@ export const ru: Translation = {
     editService: "Редактировать сервис",
     serviceTitle: "Название сервиса",
     serviceDescription: "Описание",
+    serviceDescriptionPlaceholder: "Набор инструментов для облачных вычислений, повышения продуктивности и совместной работы...",
+    cashbackDescription: "Введите проценты с символом % (например, 5%) или фиксированную сумму (например, 10.00)",
+    commissionDescription: "Введите комиссию с символом % (например, 5%) или фиксированную сумму (например, 10.00)",
     serviceIcon: "Иконка сервиса",
     serviceIconDescription: "Загрузите изображение иконки в формате JPG или PNG",
     cashback: "Кэшбэк",

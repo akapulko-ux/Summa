@@ -192,7 +192,7 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
                     <FormLabel>{t('services.serviceDescription')}</FormLabel>
                     <FormControl>
                       <Textarea 
-                        placeholder="A suite of cloud computing, productivity and collaboration tools..." 
+                        placeholder={t('services.serviceDescriptionPlaceholder')}
                         {...field} 
                         rows={4}
                       />
@@ -241,7 +241,7 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
                       <Input placeholder="5% or 10.00" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter a percentage with % symbol (e.g., 5%) or a fixed amount (e.g., 10.00)
+                      {t('services.cashbackDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -258,7 +258,7 @@ export function ServiceForm({ serviceId, isCustom = false, onSuccess }: ServiceF
                       <Input placeholder="5% or 10.00" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Enter a commission with % symbol (e.g., 5%) or a fixed amount (e.g., 10.00)
+                      {t('services.commissionDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
