@@ -2,6 +2,7 @@ import { db } from "../db";
 import { notificationTemplates, notificationLogs, subscriptions, services, users } from "@shared/schema";
 import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { telegramBotManager } from "../telegram/telegram-bot";
+import { sendNotificationEmail } from "../email-service";
 
 export type NotificationTrigger = 'month_before' | 'two_weeks_before' | 'ten_days_before' | 'week_before' | 'three_days_before' | 'day_before' | 'expiry_day' | 'renewed' | 'custom';
 
@@ -74,42 +75,98 @@ export class NotificationService {
         return false;
       }
 
-      // Проверяем, есть ли telegram chat ID у пользователя
-      if (!subscription.user.telegramChatId) {
-        console.log(`User ${subscription.user.id} has no Telegram chat ID, skipping notification`);
-        return false;
-      }
-
       // Формируем сообщение из шаблона
       const message = this.replaceTemplateVariables(template.template, context);
 
-      // Отправляем через Telegram бот
-      const success = await telegramBotManager.sendNotificationToUser(subscription.user.id, message);
+      let telegramSuccess = false;
+      let emailSuccess = false;
 
-      // Логируем результат
-      await this.logNotification(
-        subscriptionId,
-        triggerType,
-        success ? 'sent' : 'failed',
-        message,
-        success ? undefined : 'Failed to send via Telegram'
-      );
+      // Отправляем через Telegram бот (если есть chat ID)
+      if (subscription.user.telegramChatId) {
+        telegramSuccess = await telegramBotManager.sendNotificationToUser(subscription.user.id, message);
+        
+        // Логируем результат для Telegram
+        await this.logNotification(
+          subscriptionId,
+          triggerType,
+          telegramSuccess ? 'sent' : 'failed',
+          message,
+          telegramSuccess ? undefined : 'Failed to send via Telegram',
+          'telegram'
+        );
+      } else {
+        console.log(`User ${subscription.user.id} has no Telegram chat ID, skipping Telegram notification`);
+      }
 
-      return success;
+      // Отправляем на email (если есть email)
+      if (subscription.user.email) {
+        const emailSubject = this.getEmailSubjectForTrigger(triggerType, context.service_name);
+        emailSuccess = await sendNotificationEmail(
+          subscription.user.email,
+          emailSubject,
+          message,
+          subscription.user.name || undefined
+        );
+
+        // Логируем результат для Email
+        await this.logNotification(
+          subscriptionId,
+          triggerType,
+          emailSuccess ? 'sent' : 'failed',
+          message,
+          emailSuccess ? undefined : 'Failed to send via Email',
+          'email'
+        );
+      } else {
+        console.log(`User ${subscription.user.id} has no email, skipping email notification`);
+      }
+
+      // Возвращаем true, если хотя бы одно уведомление отправлено успешно
+      return telegramSuccess || emailSuccess;
     } catch (error) {
       console.error('Error sending notification:', error);
       
-      // Логируем ошибку
-      await this.logNotification(
-        subscriptionId,
-        triggerType,
-        'failed',
-        '',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+      // Логируем ошибку для обоих каналов
+      await Promise.all([
+        this.logNotification(
+          subscriptionId,
+          triggerType,
+          'failed',
+          '',
+          error instanceof Error ? error.message : 'Unknown error',
+          'telegram'
+        ),
+        this.logNotification(
+          subscriptionId,
+          triggerType,
+          'failed',
+          '',
+          error instanceof Error ? error.message : 'Unknown error',
+          'email'
+        )
+      ]);
       
       return false;
     }
+  }
+
+  /**
+   * Получить заголовок email для типа уведомления
+   */
+  private getEmailSubjectForTrigger(triggerType: NotificationTrigger, serviceName: string): string {
+    const subjects: Record<NotificationTrigger, string> = {
+      'month_before': `Напоминание: подписка на ${serviceName} истекает через месяц`,
+      'two_weeks_before': `Напоминание: подписка на ${serviceName} истекает через 2 недели`,
+      'ten_days_before': `Напоминание: подписка на ${serviceName} истекает через 10 дней`,
+      'week_before': `Напоминание: подписка на ${serviceName} истекает через неделю`,
+      'three_days_before': `Внимание: подписка на ${serviceName} истекает через 3 дня`,
+      'day_before': `Срочно: подписка на ${serviceName} истекает завтра`,
+      'expiry_day': `Подписка на ${serviceName} истекает сегодня`,
+      'renewed': `Подписка на ${serviceName} продлена`,
+      'custom': `Уведомление о подписке на ${serviceName}`
+    };
+
+    return subjects[triggerType] || `Уведомление о подписке на ${serviceName}`;
   }
 
   /**
@@ -120,12 +177,13 @@ export class NotificationService {
     triggerType: NotificationTrigger,
     status: string,
     message: string,
-    errorMessage?: string
+    errorMessage?: string,
+    channel: 'telegram' | 'email' = 'telegram'
   ) {
     await db.insert(notificationLogs).values({
       subscriptionId,
       triggerType,
-      channel: 'telegram',
+      channel,
       status,
       message,
       errorMessage

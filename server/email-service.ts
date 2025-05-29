@@ -150,6 +150,78 @@ ${magicLink}
   await transporter.sendMail(mailOptions);
 }
 
+// Send system notification email
+export async function sendNotificationEmail(
+  email: string, 
+  subject: string, 
+  message: string,
+  userName?: string
+): Promise<boolean> {
+  try {
+    const htmlTemplate = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${subject}</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+          .container { background: #f9f9f9; padding: 30px; border-radius: 10px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .logo { color: #2563eb; font-size: 24px; font-weight: bold; }
+          .content { background: white; padding: 30px; border-radius: 8px; margin: 20px 0; }
+          .message { white-space: pre-line; font-size: 16px; line-height: 1.5; }
+          .footer { text-align: center; margin-top: 30px; font-size: 14px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">Summa</div>
+            <h1>${subject}</h1>
+          </div>
+          
+          <div class="content">
+            ${userName ? `<p>Здравствуйте, ${userName}!</p>` : '<p>Здравствуйте!</p>'}
+            <div class="message">${message}</div>
+          </div>
+          
+          <div class="footer">
+            <p>С уважением,<br>Команда Summa</p>
+            <p style="font-size: 12px;">Это автоматическое сообщение, не отвечайте на него.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const mailOptions = {
+      from: {
+        name: 'Summa',
+        address: 'no_replay@summapay.ru'
+      },
+      to: email,
+      subject: subject,
+      html: htmlTemplate,
+      text: `
+${userName ? `Здравствуйте, ${userName}!` : 'Здравствуйте!'}
+
+${message}
+
+С уважением,
+Команда Summa
+      `.trim()
+    };
+
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error('Error sending notification email:', error);
+    return false;
+  }
+}
+
 // Test email configuration
 export async function testEmailConnection(): Promise<boolean> {
   try {
