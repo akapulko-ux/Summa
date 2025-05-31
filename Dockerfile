@@ -54,4 +54,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:5000/api/health || exit 1
 
 # 14) Запускаем ваше приложение
-CMD ["npm", "start"]
+# Start the application directly with Node,
+# чтобы npm не сбрасывал NODE_ENV в "development"
+CMD ["node", "dist/index.js"]
+
