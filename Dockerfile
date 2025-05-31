@@ -1,44 +1,57 @@
+# === Stage 1: Builder ===
+FROM node:20-alpine AS builder
 
-# Use Node.js 20 Alpine as base image
-FROM node:20-alpine
-
-# Set working directory
+# 1) Переходим в рабочую директорию
 WORKDIR /app
 
-# Install system dependencies
-RUN apk add --no-cache postgresql-client
-
-# Copy package files
+# 2) Копируем package-файлы и устанавливаем ВСЕ зависимости (dev + prod)
 COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
-
-# Copy source code
+# 3) Копируем весь исходный код и собираем приложение
 COPY . .
-
-# Build the application
 RUN npm run build
 
-# Create necessary directories
+# 4) Создаём необходимые папки для runtime (uploads, reports, backups, tmp)
 RUN mkdir -p uploads reports backups tmp
 
-# Expose port 5000
-EXPOSE 5000
+# === Stage 2: Production ===
+FROM node:20-alpine
 
-# Create non-root user for security
+# 5) Переходим в /app
+WORKDIR /app
+
+# 6) Копируем package-файлы из builder и устанавливаем только production-зависимости
+COPY --from=builder /app/package*.json ./
+RUN npm ci --omit=dev
+
+# 7) Копируем уже собранную папку dist и папку server из build-этапа
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server ./server
+
+# 8) Копируем каталоги, созданные в builder (чтобы volume-маппинг сразу работал)
+COPY --from=builder /app/uploads ./uploads
+COPY --from=builder /app/reports ./reports
+COPY --from=builder /app/backups ./backups
+COPY --from=builder /app/tmp ./tmp
+
+# 9) Устанавливаем системную утилиту для psql (если нужно подключаться к БД через CLI)
+RUN apk add --no-cache postgresql-client
+
+# 10) Делаем периферию: создаём непривилегированного пользователя (для безопасности)
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001 -G nodejs
+    adduser -S nextjs -u 1001 -G nodejs && \
+    chown -R nextjs:nodejs /app
 
-# Change ownership of the app directory
-RUN chown -R nextjs:nodejs /app
-
-# Switch to non-root user
+# 11) Переключаемся на непользователь root
 USER nextjs
 
-# Health check
+# 12) Открываем порт 5000
+EXPOSE 5000
+
+# 13) HEALTHCHECK (проверяет, отвечает ли ваш API на /api/health)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:5000/api/health || exit 1
 
-# Start the application
+# 14) Запускаем ваше приложение
 CMD ["npm", "start"]
