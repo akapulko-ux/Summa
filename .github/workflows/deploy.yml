@@ -48,4 +48,3 @@ jobs:
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
             SESSION_SECRET=${{ secrets.SESSION_SECRET }}
-            PORT=5000
