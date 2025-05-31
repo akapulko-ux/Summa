@@ -1,0 +1,54 @@
+name: Deploy to Yandex Cloud
+
+# Запускаем этот workflow при любом пуше в ветку main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    # Используем виртуальную машину Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Скачиваем весь код из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Собираем Docker-образ по вашему Dockerfile
+      - name: Build Docker image
+        run: |
+          docker build \
+            --no-cache \
+            -t cr.yandex/${{ secrets.REGISTRY_ID }}/myapp:${{ github.sha }} \
+            .
+
+      # 3. Логинимся в Yandex.Container Registry
+      - name: Login to Yandex Container Registry
+        uses: yc-actions/yc-cr-login@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+
+      # 4. Пушим собранный образ в реестр
+      - name: Push image to Registry
+        run: |
+          docker push cr.yandex/${{ secrets.REGISTRY_ID }}/myapp:${{ github.sha }}
+
+      # 5. Деплойим контейнер в Serverless Container Yandex Cloud
+      - name: Deploy to Serverless Container
+        uses: yc-actions/yc-sls-container-deploy@v1
+        with:
+          yc-sa-json-credentials:      ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+          folder-id:                   ${{ secrets.FOLDER_ID }}
+          container-name:              myapp
+          revision-service-account-id: ${{ secrets.SERVICE_ACCOUNT_ID }}
+          revision-image-url:          cr.yandex/${{ secrets.REGISTRY_ID }}/myapp:${{ github.sha }}
+          revision-cores:              0.5
+          revision-memory:             512Mb
+          revision-env: |
+            NODE_ENV=production
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+            SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+            PORT=5000
