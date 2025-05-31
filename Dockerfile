@@ -1,5 +1,5 @@
 # === Stage 1: Builder ===
-FROM node:20-alpine AS builder
+FROM node:20-alpine3.18 AS builder
 
 # 1) Переходим в рабочую директорию
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN npm run build
 RUN mkdir -p uploads reports backups tmp
 
 # === Stage 2: Production ===
-FROM node:20-alpine
+FROM node:20-alpine3.18
 
 # 5) Переходим в /app
 WORKDIR /app
