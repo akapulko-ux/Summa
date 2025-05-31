@@ -1,6 +1,5 @@
 name: Deploy to Yandex Cloud
 
-# Запускаем этот workflow при любом пуше в ветку main
 on:
   push:
     branches:
@@ -8,34 +7,32 @@ on:
 
 jobs:
   deploy:
-    # Используем виртуальную машину Ubuntu
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Скачиваем весь код из репозитория
+      # 1) Скачиваем весь код
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Собираем Docker-образ по вашему Dockerfile
+      # 2) Собираем Docker-образ без кеша
       - name: Build Docker image
         run: |
-          docker build \
-            --no-cache \
+          docker build --no-cache \
             -t cr.yandex/${{ secrets.REGISTRY_ID }}/myapp:${{ github.sha }} \
             .
 
-      # 3. Логинимся в Yandex.Container Registry
+      # 3) Логинимся в Yandex Container Registry
       - name: Login to Yandex Container Registry
         uses: yc-actions/yc-cr-login@v1
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
 
-      # 4. Пушим собранный образ в реестр
+      # 4) Пушим образ в реестр
       - name: Push image to Registry
         run: |
           docker push cr.yandex/${{ secrets.REGISTRY_ID }}/myapp:${{ github.sha }}
 
-      # 5. Деплойим контейнер в Serverless Container Yandex Cloud
+      # 5) Деплоим контейнер в Serverless Containers
       - name: Deploy to Serverless Container
         uses: yc-actions/yc-sls-container-deploy@v1
         with:
